@@ -5,12 +5,12 @@ export function createPeer() {
     return new RTCPeerConnection(RTC_CONFIGURATION);
 }
 
-export async function cleanOldRooms(shopId) {
-    // Get room ids for this shop
+export async function cleanOldRooms(roomCode) {
+    // Get room ids for this roomCode
     const { data: rooms } = await supabase
         .from("video_rooms")
         .select("id")
-        .eq("shop_id", shopId);
+        .eq("room_code", roomCode);
 
     if (rooms && rooms.length > 0) {
         const ids = rooms.map((r) => r.id);

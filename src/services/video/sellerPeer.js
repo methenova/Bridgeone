@@ -21,8 +21,9 @@ export class SellerPeer {
 
   async start() {
     try {
-      console.log("[SellerPeer] Cleaning up old rooms for shop:", this.shopId);
-      await cleanOldRooms(this.shopId);
+      const actualRoomCode = this.customRoomCode || this.shopId;
+      console.log("[SellerPeer] Cleaning up old rooms for room code:", actualRoomCode);
+      await cleanOldRooms(actualRoomCode);
 
       if (this.isDestroyed) return;
 
