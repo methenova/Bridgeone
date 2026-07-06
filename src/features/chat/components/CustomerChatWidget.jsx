@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { MessageSquare, X, Send, Paperclip } from "lucide-react";
+import { MessageSquare, X, Send, Paperclip, Video, PhoneOff, Mic, MicOff } from "lucide-react";
 import { useAuthContext } from "@/context/AuthContext";
 import { useChatMessages, useSendMessage } from "../hooks/useChat";
 import toast from "react-hot-toast";
+import { SellerPeer } from "@/services/video/sellerPeer";
 
 export default function CustomerChatWidget({ shop }) {
   const { user } = useAuthContext();
@@ -13,15 +14,46 @@ export default function CustomerChatWidget({ shop }) {
   const [messageText, setMessageText] = useState("");
   const [attachmentUrl, setAttachmentUrl] = useState("");
 
+  // Video call states
+  const [activeCall, setActiveCall] = useState(false);
+  const [isCalling, setIsCalling] = useState(false);
+  const [callStream, setCallStream] = useState(null);
+  const [callRemoteStream, setCallRemoteStream] = useState(null);
+  const [micMuted, setMicMuted] = useState(false);
+
   const { data: messages = [], isLoading } = useChatMessages(userId, sellerId);
   const sendMsg = useSendMessage();
   const feedEndRef = useRef(null);
+  const callPeerRef = useRef(null);
 
   useEffect(() => {
     if (isOpen) {
       feedEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, isOpen]);
+
+  // Clean up call streams on unmount
+  useEffect(() => {
+    return () => {
+      if (callPeerRef.current) {
+        callPeerRef.current.destroy();
+      }
+      if (callStream) {
+        callStream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [callStream]);
+
+  // Listen for external trigger events (e.g. from shop profile banner)
+  useEffect(() => {
+    const handleTriggerCall = () => {
+      handleStartCall();
+    };
+    window.addEventListener("trigger-shop-call", handleTriggerCall);
+    return () => {
+      window.removeEventListener("trigger-shop-call", handleTriggerCall);
+    };
+  }, [userId, shop, callStream]);
 
   async function handleSend(e) {
     e.preventDefault();
@@ -59,6 +91,85 @@ export default function CustomerChatWidget({ shop }) {
     toast.success("Attachment added!");
   }
 
+  // 1-on-1 Consultation WebRTC Call Flow
+  async function handleStartCall() {
+    if (!user) {
+      toast.error("Please login to consult with the expert");
+      return;
+    }
+
+    try {
+      toast.loading("Accessing media devices...", { id: "media-access" });
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+      } catch (mediaErr) {
+        if (mediaErr.name === "NotReadableError" || mediaErr.name === "TrackStartError") {
+          console.warn("[Call] Webcam already in use, falling back to audio-only stream.");
+          toast.success("Webcam in use, starting audio-only call.", { id: "media-access" });
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: false,
+            audio: true,
+          });
+        } else {
+          throw mediaErr;
+        }
+      }
+      toast.success("Media access granted", { id: "media-access" });
+
+      setCallStream(stream);
+      setIsCalling(true);
+      setActiveCall(true);
+      setMicMuted(false);
+
+      // Create unique call room code: call_shopId_userId
+      const roomCode = `call_${shop.id}_${userId}`;
+      console.log("[Call] Starting expert consultation call with room:", roomCode);
+
+      const peer = new SellerPeer(roomCode, userId, stream, (remoteStream) => {
+        console.log("[Call] Receiver remote stream established");
+        setCallRemoteStream(remoteStream);
+        setIsCalling(false);
+      });
+
+      callPeerRef.current = peer;
+      await peer.start();
+
+    } catch (err) {
+      console.error("[Call] Failed to start consultation:", err);
+      toast.error("Could not access camera/mic: " + err.message, { id: "media-access" });
+      handleHangUp();
+    }
+  }
+
+  function handleHangUp() {
+    if (callPeerRef.current) {
+      callPeerRef.current.destroy();
+      callPeerRef.current = null;
+    }
+    if (callStream) {
+      callStream.getTracks().forEach((track) => track.stop());
+      setCallStream(null);
+    }
+    setCallRemoteStream(null);
+    setIsCalling(false);
+    setActiveCall(false);
+    toast.success("Call ended");
+  }
+
+  function toggleMic() {
+    if (callStream) {
+      const audioTrack = callStream.getAudioTracks()[0];
+      if (audioTrack) {
+        audioTrack.enabled = !audioTrack.enabled;
+        setMicMuted(!audioTrack.enabled);
+      }
+    }
+  }
+
   return (
     <div className="fixed bottom-6 right-6 z-40">
       
@@ -88,12 +199,24 @@ export default function CustomerChatWidget({ shop }) {
               </div>
             </div>
 
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-slate-400 hover:text-white"
-            >
-              <X className="h-5 w-5" />
-            </button>
+            <div className="flex items-center gap-3 shrink-0">
+              {/* Start 1-on-1 Consultation Call */}
+              <button
+                type="button"
+                onClick={handleStartCall}
+                title="Start Video Call with Expert"
+                className="text-blue-400 hover:text-blue-300 p-1 hover:bg-slate-800/40 rounded-lg transition-all"
+              >
+                <Video className="h-4.5 w-4.5" />
+              </button>
+              
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-slate-400 hover:text-white p-1"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
           </div>
 
           {/* Messages Feed */}
@@ -173,6 +296,89 @@ export default function CustomerChatWidget({ shop }) {
               </button>
             </div>
           </form>
+
+        </div>
+      )}
+
+      {/* 1-on-1 Video Call Floating Card (Popin-style) */}
+      {activeCall && (
+        <div className="fixed bottom-24 right-4 left-4 sm:left-auto sm:right-6 z-50 w-auto sm:w-96 h-[440px] max-h-[75vh] rounded-3xl border border-white/10 bg-slate-950/80 backdrop-blur-xl shadow-2xl shadow-blue-950/20 flex flex-col overflow-hidden animate-slide-up">
+          
+          {/* Header */}
+          <div className="flex items-center justify-between border-b border-white/5 px-5 py-4 bg-slate-900/40 backdrop-blur-sm">
+            <div className="flex items-center gap-2.5">
+              <span className="relative flex h-2 w-2">
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${isCalling ? "bg-amber-400" : "bg-green-400"}`}></span>
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${isCalling ? "bg-amber-500" : "bg-green-500"}`}></span>
+              </span>
+              <h4 className="text-xs font-bold text-white">
+                {isCalling ? "Calling Expert..." : `Call with ${shop.name}`}
+              </h4>
+            </div>
+            <p className="text-[9px] text-slate-500 font-semibold uppercase tracking-wider">Consultation</p>
+          </div>
+
+          {/* Video Area */}
+          <div className="flex-1 bg-slate-950 relative flex items-center justify-center overflow-hidden">
+            {callRemoteStream ? (
+              <video
+                ref={(el) => {
+                  if (el) el.srcObject = callRemoteStream;
+                }}
+                autoPlay
+                playsInline
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              /* Dialing view */
+              <div className="flex flex-col items-center gap-4 text-center p-6">
+                <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-blue-600/10 text-blue-500">
+                  <div className="absolute inset-0 rounded-full bg-blue-500/10 animate-ping duration-[1500ms]" />
+                  <Video className="h-6 w-6 text-blue-400" />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-bold text-white tracking-wide">Dialing {shop.name}</p>
+                  <p className="text-[10px] text-slate-400 max-w-[220px] leading-relaxed">Please wait while we connect you directly to the store expert.</p>
+                </div>
+              </div>
+            )}
+
+            {/* PiP Local Video Preview */}
+            {callStream && (
+              <div className="absolute bottom-3 right-3 h-24 aspect-video rounded-xl overflow-hidden border border-white/10 bg-slate-905 shadow-xl z-10">
+                <video
+                  ref={(el) => {
+                    if (el) el.srcObject = callStream;
+                  }}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="h-full w-full object-cover scale-x-[-1]"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Control Bar */}
+          <div className="border-t border-white/5 p-4 bg-slate-900/40 flex items-center justify-center gap-3 backdrop-blur-sm">
+            <button
+              onClick={toggleMic}
+              className={`flex h-11 w-11 items-center justify-center rounded-2xl transition-all hover:scale-105 active:scale-95 border ${
+                micMuted
+                  ? "bg-rose-500/20 hover:bg-rose-500/30 text-rose-455 border-rose-500/20"
+                  : "bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 border-white/5"
+              }`}
+            >
+              {micMuted ? <MicOff className="h-4.5 w-4.5" /> : <Mic className="h-4.5 w-4.5" />}
+            </button>
+
+            <button
+              onClick={handleHangUp}
+              className="flex h-11 w-24 items-center justify-center rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 hover:scale-105 active:scale-95 shadow-lg shadow-red-500/20 transition-all text-white font-bold"
+            >
+              <PhoneOff className="h-4.5 w-4.5" />
+            </button>
+          </div>
 
         </div>
       )}

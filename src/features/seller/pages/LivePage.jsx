@@ -1,14 +1,18 @@
 import { useState, useEffect, useRef } from "react";
-import { Radio, Video, ShoppingBag, Eye, Send, StopCircle } from "lucide-react";
+import { Radio, Video, ShoppingBag, Eye, Send, StopCircle, Phone, PhoneOff, Mic, MicOff, Check, X } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { supabase } from "@/config/supabase";
 import useSellerShop from "../hooks/useSellerShop";
 import { useProducts } from "../hooks/useProducts";
+import { useAuthContext } from "@/context/AuthContext";
+import { SellerPeer } from "@/services/video/sellerPeer";
+import { ViewerPeer } from "@/services/video/viewerPeer";
 
 export default function LivePage() {
   const { shop, loading: shopLoading } = useSellerShop();
   const shopId = shop?.id;
+  const { user } = useAuthContext();
 
   // Products for pinning
   const { data: productData } = useProducts(shopId, { limit: 50 });
@@ -25,8 +29,20 @@ export default function LivePage() {
   const [viewers, setViewers] = useState(0);
   const [hearts, setHearts] = useState([]); // floating animations
 
+  // Consultation states (1-on-1 Call)
+  const [incomingCall, setIncomingCall] = useState(null);
+  const [activeConsultation, setActiveConsultation] = useState(false);
+  const [callRemoteStream, setCallRemoteStream] = useState(null);
+  const [callMicMuted, setCallMicMuted] = useState(false);
+
+  // Viewer Speaker join states
+  const [joinRequests, setJoinRequests] = useState([]);
+  const [connectedViewerStream, setConnectedViewerStream] = useState(null);
+
   const videoRef = useRef(null);
   const channelRef = useRef(null);
+  const sellerPeerRef = useRef(null);
+  const viewerPeerRef = useRef(null); // Ref for 1-on-1 consultation Peer
 
   // Load available camera devices
   useEffect(() => {
@@ -45,21 +61,91 @@ export default function LivePage() {
     getDevices();
   }, []);
 
+  // Clean up WebRTC peer on unmount
+  useEffect(() => {
+    return () => {
+      if (sellerPeerRef.current) {
+        sellerPeerRef.current.destroy();
+      }
+      if (viewerPeerRef.current) {
+        viewerPeerRef.current.destroy();
+      }
+    };
+  }, []);
+
+  // Subscribe to incoming 1-on-1 consultation video call rooms
+  useEffect(() => {
+    if (!shopId) return;
+
+    console.log("[LivePage] Listening for incoming video calls for shop ID:", shopId);
+    const callChannel = supabase
+      .channel(`shop-calls-${shopId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "video_rooms",
+          filter: `shop_id=eq.${shopId}`,
+        },
+        (payload) => {
+          const room = payload.new;
+          // An incoming call starts with 'call_'
+          if (room.room_code.startsWith("call_") && room.status === "live") {
+            console.log("[LivePage] Incoming call room detected:", room);
+            setIncomingCall(room);
+            toast.success("Incoming video consultation request!", { duration: 6000 });
+          }
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "video_rooms",
+        },
+        (payload) => {
+          // If the calling customer cancels, auto-close call box
+          if (incomingCall && payload.old.id === incomingCall.id) {
+            console.log("[LivePage] Incoming call cancelled by caller");
+            setIncomingCall(null);
+            toast.dismiss();
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      callChannel.unsubscribe();
+    };
+  }, [shopId, incomingCall]);
+
   // Request webcam stream when live starts
   async function startStream() {
+    const constraints = {
+      video: selectedVideo ? { deviceId: { exact: selectedVideo } } : true,
+      audio: true,
+    };
+    let mediaStream;
     try {
-      const constraints = {
-        video: selectedVideo ? { deviceId: { exact: selectedVideo } } : true,
-        audio: true,
-      };
-      const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-      setStream(mediaStream);
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
+      mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+    } catch (mediaErr) {
+      if (mediaErr.name === "NotReadableError" || mediaErr.name === "TrackStartError") {
+        console.warn("[LivePage] Webcam already in use, falling back to audio-only stream.");
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: false,
+          audio: true,
+        });
+      } else {
+        throw mediaErr;
       }
-    } catch {
-      toast.error("Webcam access denied. Streaming visual fallback active.");
     }
+    setStream(mediaStream);
+    if (videoRef.current) {
+      videoRef.current.srcObject = mediaStream;
+    }
+    return mediaStream;
   }
 
   function stopStream() {
@@ -87,6 +173,15 @@ export default function LivePage() {
       .on("broadcast", { event: "reaction" }, () => {
         triggerFloatingHeart();
       })
+      .on("broadcast", { event: "request_to_join" }, ({ payload }) => {
+        console.log("[LivePage] Viewer request to join stream received:", payload);
+        // Avoid duplicate requests
+        setJoinRequests((prev) => {
+          if (prev.some((r) => r.senderId === payload.senderId)) return prev;
+          return [...prev, payload];
+        });
+        toast(`${payload.senderName} wants to join as speaker!`, { icon: "🎤" });
+      })
       .subscribe();
 
     return () => {
@@ -111,18 +206,151 @@ export default function LivePage() {
   async function handleToggleLive() {
     if (isLive) {
       // End live
+      if (sellerPeerRef.current) {
+        await sellerPeerRef.current.destroy();
+        sellerPeerRef.current = null;
+      }
       stopStream();
       setIsLive(false);
       setPinnedProduct(null);
+      setConnectedViewerStream(null);
       await supabase.from("shops").update({ is_live: false }).eq("id", shopId);
       toast.success("Stream ended");
     } else {
       // Go live
-      await startStream();
-      setIsLive(true);
-      await supabase.from("shops").update({ is_live: true }).eq("id", shopId);
-      toast.success("You are now live!");
+      try {
+        const mediaStream = await startStream();
+        
+        console.log("[LivePage] Initializing SellerPeer for shop:", shopId);
+        const peer = new SellerPeer(shopId, user?.id, mediaStream);
+        sellerPeerRef.current = peer;
+        await peer.start();
+
+        setIsLive(true);
+        await supabase.from("shops").update({ is_live: true }).eq("id", shopId);
+        toast.success("You are now live!");
+      } catch (err) {
+        console.error("Failed to start live stream:", err);
+        toast.error("Failed to start live stream: " + err.message);
+        if (sellerPeerRef.current) {
+          await sellerPeerRef.current.destroy();
+          sellerPeerRef.current = null;
+        }
+        stopStream();
+      }
     }
+  }
+
+  // Answer 1-on-1 video call from Customer
+  async function handleAcceptCall() {
+    if (!incomingCall) return;
+
+    try {
+      console.log("[LivePage] Accept call room code:", incomingCall.room_code);
+      
+      // Obtain media tracks (either reuse current live stream or acquire new)
+      let callStream = stream;
+      if (!callStream) {
+        toast.loading("Activating camera for call...", { id: "call-media" });
+        try {
+          callStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        } catch (mediaErr) {
+          if (mediaErr.name === "NotReadableError" || mediaErr.name === "TrackStartError") {
+            console.warn("[LivePage] Webcam already in use, falling back to audio-only stream.");
+            toast.success("Webcam in use, starting audio-only consultation.", { id: "call-media" });
+            callStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+          } else {
+            throw mediaErr;
+          }
+        }
+        setStream(callStream);
+        if (videoRef.current) {
+          videoRef.current.srcObject = callStream;
+        }
+        toast.success("Media activated", { id: "call-media" });
+      }
+
+      // ViewerPeer answers the call offer in the room, sending the seller's stream
+      const peer = new ViewerPeer(incomingCall.room_code, (remoteStream) => {
+        console.log("[LivePage] Received customer call stream");
+        setCallRemoteStream(remoteStream);
+      }, callStream);
+
+      viewerPeerRef.current = peer;
+      await peer.start();
+
+      setActiveConsultation(true);
+      setIncomingCall(null);
+      setCallMicMuted(false);
+      toast.success("Consultation started!");
+
+    } catch (err) {
+      console.error("[LivePage] Call acceptance failed:", err);
+      toast.error("Answer call failed: " + err.message, { id: "call-media" });
+      handleDeclineCall();
+    }
+  }
+
+  async function handleDeclineCall() {
+    if (viewerPeerRef.current) {
+      viewerPeerRef.current.destroy();
+      viewerPeerRef.current = null;
+    }
+    if (incomingCall) {
+      console.log("[LivePage] Declining room ID:", incomingCall.id);
+      await supabase.from("video_rooms").delete().eq("id", incomingCall.id);
+    }
+    setIncomingCall(null);
+    setActiveConsultation(false);
+    setCallRemoteStream(null);
+    toast.success("Call declined / hung up");
+  }
+
+  function toggleCallMic() {
+    if (stream) {
+      const audioTrack = stream.getAudioTracks()[0];
+      if (audioTrack) {
+        audioTrack.enabled = !audioTrack.enabled;
+        setCallMicMuted(!audioTrack.enabled);
+      }
+    }
+  }
+
+  // Handle viewer requesting to join the live stream (Speak request)
+  function handleApproveSpeak(req) {
+    console.log("[LivePage] Approving speak request for viewer:", req.senderId);
+    
+    // 1. Notify the viewer via realtime broadcast channel
+    channelRef.current?.send({
+      type: "broadcast",
+      event: "approve_join",
+      payload: { viewerId: req.senderId },
+    });
+
+    // 2. Remove request from list
+    setJoinRequests((prev) => prev.filter((r) => r.senderId !== req.senderId));
+    toast.success(`Approved speaking request for ${req.senderName}`);
+
+    // 3. Attach remote track callback and trigger WebRTC renegotiation on the main seller peer
+    if (sellerPeerRef.current) {
+      sellerPeerRef.current.onRemoteStream = (remoteStream) => {
+        console.log("[LivePage] Connected remote speaker stream");
+        setConnectedViewerStream(remoteStream);
+      };
+
+      // Delay briefly to allow the viewer to attach media and renegotiate
+      setTimeout(async () => {
+        try {
+          await sellerPeerRef.current.renegotiate();
+        } catch (e) {
+          console.error("[LivePage] Renegotiation error during speak approval:", e);
+        }
+      }, 2000);
+    }
+  }
+
+  function handleDeclineSpeak(req) {
+    setJoinRequests((prev) => prev.filter((r) => r.senderId !== req.senderId));
   }
 
   async function handlePinProduct(prod) {
@@ -224,13 +452,30 @@ export default function LivePage() {
           <div className="relative aspect-video rounded-3xl border border-slate-900 bg-slate-950 overflow-hidden shadow-2xl flex items-center justify-center">
             {/* Real video preview */}
             {stream ? (
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className="h-full w-full object-cover scale-x-[-1]"
-              />
+              <div className="relative w-full h-full">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="h-full w-full object-cover scale-x-[-1]"
+                />
+                {connectedViewerStream && (
+                  <div className="absolute bottom-4 right-4 h-32 aspect-video rounded-2xl overflow-hidden border-2 border-blue-500 bg-slate-955 shadow-2xl z-20 animate-fade-in">
+                    <video
+                      ref={(el) => {
+                        if (el) el.srcObject = connectedViewerStream;
+                      }}
+                      autoPlay
+                      playsInline
+                      className="h-full w-full object-cover"
+                    />
+                    <div className="absolute top-1.5 left-1.5 bg-blue-600/90 text-[8px] font-bold text-white px-2 py-0.5 rounded-full backdrop-blur-sm">
+                      Speaker
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : isLive ? (
               /* Fallback visualizer when camera permission denied but live stream is active */
               <div className="flex flex-col items-center gap-4">
@@ -299,6 +544,38 @@ export default function LivePage() {
             )}
           </div>
 
+          {/* Join requests queue widget */}
+          {joinRequests.length > 0 && (
+            <div className="rounded-2xl border border-blue-900/40 bg-blue-950/20 p-4 space-y-3">
+              <h4 className="text-xs font-bold text-blue-400 flex items-center gap-1.5 animate-pulse">
+                🎤 Speak Requests Queue ({joinRequests.length})
+              </h4>
+              <div className="space-y-2">
+                {joinRequests.map((req) => (
+                  <div key={req.senderId} className="flex items-center justify-between gap-3 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 text-xs">
+                    <span className="font-semibold text-white truncate max-w-[120px]">{req.senderName}</span>
+                    <div className="flex gap-1.5 shrink-0">
+                      <button
+                        onClick={() => handleApproveSpeak(req)}
+                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-green-600 text-white hover:bg-green-500 transition-colors"
+                        title="Approve to Speak"
+                      >
+                        <Check className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDeclineSpeak(req)}
+                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-850 text-slate-400 hover:text-white transition-colors"
+                        title="Dismiss Request"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Device selectors */}
           {!isLive && videoDevices.length > 1 && (
             <div className="flex items-center gap-2 rounded-2xl border border-slate-900 bg-slate-900/20 p-4">
@@ -307,7 +584,7 @@ export default function LivePage() {
               <select
                 value={selectedVideo}
                 onChange={(e) => setSelectedVideo(e.target.value)}
-                className="rounded-xl border border-slate-800 bg-slate-900 px-3 py-1.5 text-xs text-white outline-none"
+                className="rounded-xl border border-slate-880 bg-slate-900 px-3 py-1.5 text-xs text-white outline-none"
               >
                 {videoDevices.map((d) => (
                   <option key={d.deviceId} value={d.deviceId}>{d.label || `Camera ${d.deviceId.slice(0, 5)}`}</option>
@@ -403,6 +680,109 @@ export default function LivePage() {
           )}
         </div>
       </div>
+
+      {/* 1-on-1 Incoming Call Dialog */}
+      {incomingCall && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="w-full max-w-sm rounded-3xl border border-slate-850 bg-slate-950 p-6 shadow-2xl flex flex-col items-center text-center space-y-4">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-600/10 text-blue-500 animate-bounce">
+              <Phone className="h-8 w-8" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-base font-bold text-white">Incoming Consultation Call</h3>
+              <p className="text-xs text-slate-400">A customer is requesting a 1-on-1 video call consultation.</p>
+            </div>
+            <div className="flex w-full gap-3">
+              <button
+                onClick={handleDeclineCall}
+                className="flex-1 rounded-xl bg-slate-900 border border-slate-800 py-3 text-xs font-bold text-slate-300 hover:bg-slate-850 hover:text-white transition-colors"
+              >
+                Decline
+              </button>
+              <button
+                onClick={handleAcceptCall}
+                className="flex-1 rounded-xl bg-blue-600 py-3 text-xs font-bold text-white hover:bg-blue-500 shadow-lg shadow-blue-600/10 transition-colors"
+              >
+                Accept
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 1-on-1 Consultation Call Overlay Modal */}
+      {activeConsultation && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-955/85 backdrop-blur-md p-4 animate-fade-in">
+          <div className="relative w-full max-w-2xl h-[460px] sm:h-auto sm:aspect-video rounded-3xl border border-slate-850 bg-slate-900 overflow-hidden shadow-2xl flex flex-col">
+            
+            {/* Call State Info */}
+            <div className="absolute left-4 top-4 z-20 flex items-center gap-2 rounded-full bg-black/60 px-3 py-1 text-xs font-semibold text-white">
+              <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+              1-on-1 Consultation Session
+            </div>
+
+            {/* Remote/Main Video Panel */}
+            <div className="flex-1 bg-slate-950 relative flex items-center justify-center overflow-hidden">
+              {callRemoteStream ? (
+                <video
+                  ref={(el) => {
+                    if (el) el.srcObject = callRemoteStream;
+                  }}
+                  autoPlay
+                  playsInline
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                /* Connecting animation */
+                <div className="flex flex-col items-center gap-4 text-center">
+                  <div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-blue-600/10 text-blue-500 animate-pulse">
+                    <Video className="h-6 w-6" />
+                  </div>
+                  <p className="text-sm font-semibold text-slate-300">Connecting WebRTC feed...</p>
+                  <p className="text-xs text-slate-500">Establishing bidirectional secure video calling.</p>
+                </div>
+              )}
+
+              {/* PiP Local Video Preview (Seller camera) */}
+              {stream && (
+                <div className="absolute bottom-4 right-4 h-32 aspect-video rounded-xl overflow-hidden border border-slate-800 bg-slate-900 shadow-lg z-10">
+                  <video
+                    ref={(el) => {
+                      if (el) el.srcObject = stream;
+                    }}
+                    autoPlay
+                    playsInline
+                    muted
+                    className="h-full w-full object-cover scale-x-[-1]"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Controls Bar */}
+            <div className="border-t border-slate-850 p-4 bg-slate-900/60 flex items-center justify-center gap-4 z-20">
+              <button
+                onClick={toggleCallMic}
+                className={`flex h-11 w-11 items-center justify-center rounded-xl transition-colors ${
+                  callMicMuted
+                    ? "bg-red-500/10 text-red-500 hover:bg-red-500/20"
+                    : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                }`}
+              >
+                {callMicMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+              </button>
+
+              <button
+                onClick={handleDeclineCall}
+                className="flex h-11 w-20 items-center justify-center rounded-xl bg-red-600 text-white hover:bg-red-500 shadow-lg shadow-red-600/10 transition-colors"
+              >
+                <PhoneOff className="h-5 w-5" />
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }

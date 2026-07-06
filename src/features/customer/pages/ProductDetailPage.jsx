@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ShoppingCart, Star, Store, ChevronLeft, ChevronRight } from "lucide-react";
+import { ShoppingCart, Star, Store, ChevronLeft, ChevronRight, Phone } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { Container } from "@/components/common/Container";
@@ -11,6 +11,7 @@ import useRecentlyViewedStore from "@/store/recentlyViewedStore";
 import { useToggleWishlist } from "../hooks/useWishlist";
 import ProductCard from "@/features/product/components/ProductCard";
 import WishlistButton from "@/features/wishlist/components/WishlistButton";
+import CustomerChatWidget from "@/features/chat/components/CustomerChatWidget";
 import { useEffect } from "react";
 
 function ProductDetailSkeleton() {
@@ -275,24 +276,34 @@ export default function ProductDetailPage() {
 
             {/* Shop */}
             {product.shops && (
-              <Link
-                to={`/shops/${product.shops.id}`}
-                className="flex items-center gap-3 rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3 transition-colors hover:border-slate-700"
-              >
-                <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-slate-700 bg-slate-800">
-                  {product.shops.logo_url ? (
-                    <img src={product.shops.logo_url} alt={product.shops.name} className="h-full w-full object-cover" />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center">
-                      <Store className="h-5 w-5 text-slate-600" />
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-white">{product.shops.name}</p>
-                  <p className="text-xs text-slate-500">{product.shops.city} · Visit shop →</p>
-                </div>
-              </Link>
+              <div className="flex items-center justify-between gap-4 rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3">
+                <Link
+                  to={`/shops/${product.shops.id}`}
+                  className="flex items-center gap-3 transition-colors hover:opacity-80"
+                >
+                  <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-slate-700 bg-slate-800">
+                    {product.shops.logo_url ? (
+                      <img src={product.shops.logo_url} alt={product.shops.name} className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center">
+                        <Store className="h-5 w-5 text-slate-600" />
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-white">{product.shops.name}</p>
+                    <p className="text-xs text-slate-500">{product.shops.city} · Visit shop →</p>
+                  </div>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new CustomEvent("trigger-shop-call"))}
+                  className="flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-xs font-bold text-white hover:from-blue-500 hover:to-indigo-500 transition-all hover:scale-[1.03] active:scale-95 shadow-lg shadow-blue-600/20 cursor-pointer"
+                >
+                  <Phone className="h-3.5 w-3.5 fill-current animate-pulse" />
+                  Call Expert
+                </button>
+              </div>
             )}
 
             {/* Description */}
@@ -321,6 +332,7 @@ export default function ProductDetailPage() {
         )}
 
       </Container>
+      {product.shops && <CustomerChatWidget shop={product.shops} />}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { User, Mail, Lock, ShieldCheck } from "lucide-react";
 import { useAuthContext } from "@/context/AuthContext";
 
 export default function RegisterForm() {
@@ -11,6 +12,7 @@ export default function RegisterForm() {
     email: "",
     password: "",
     confirmPassword: "",
+    role: "customer",
   });
 
   const [loading, setLoading] = useState(false);
@@ -52,6 +54,7 @@ export default function RegisterForm() {
         name: formData.name,
         email: formData.email,
         password: formData.password,
+        role: formData.role,
       });
 
       alert("Registration successful! Please check your email.");
@@ -74,48 +77,86 @@ export default function RegisterForm() {
         Register to continue to BridgeOne
       </p>
 
+      {/* Account Type Selector */}
+      <div className="grid grid-cols-2 gap-3 mb-6">
+        <button
+          type="button"
+          onClick={() => setFormData((prev) => ({ ...prev, role: "customer" }))}
+          className={`py-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+            formData.role === "customer"
+              ? "border-blue-500 bg-blue-600/10 text-blue-400"
+              : "border-slate-800 bg-slate-900 text-slate-400 hover:text-slate-300"
+          }`}
+        >
+          🛍️ Customer Account
+        </button>
+        <button
+          type="button"
+          onClick={() => setFormData((prev) => ({ ...prev, role: "seller" }))}
+          className={`py-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+            formData.role === "seller"
+              ? "border-blue-500 bg-blue-600/10 text-blue-400"
+              : "border-slate-800 bg-slate-900 text-slate-400 hover:text-slate-300"
+          }`}
+        >
+          🏪 Shop Owner (Seller)
+        </button>
+      </div>
+
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div>
+        <div className="relative">
+          <User className="absolute left-4 top-3.5 h-5 w-5 text-slate-500" />
           <input
             type="text"
             name="name"
             placeholder="Full Name"
             value={formData.name}
             onChange={handleChange}
-            className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-blue-500"
+            required
+            autoComplete="name"
+            className="w-full rounded-xl border border-slate-700 bg-slate-800/40 pl-12 pr-4 py-3 text-sm text-white outline-none focus:border-blue-500 transition-all focus:bg-slate-800"
           />
         </div>
 
-        <div>
+        <div className="relative">
+          <Mail className="absolute left-4 top-3.5 h-5 w-5 text-slate-500" />
           <input
             type="email"
             name="email"
             placeholder="Email Address"
             value={formData.email}
             onChange={handleChange}
-            className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-blue-500"
+            required
+            autoComplete="email"
+            className="w-full rounded-xl border border-slate-700 bg-slate-800/40 pl-12 pr-4 py-3 text-sm text-white outline-none focus:border-blue-500 transition-all focus:bg-slate-800"
           />
         </div>
 
-        <div>
+        <div className="relative">
+          <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-500" />
           <input
             type="password"
             name="password"
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-blue-500"
+            required
+            autoComplete="new-password"
+            className="w-full rounded-xl border border-slate-700 bg-slate-800/40 pl-12 pr-4 py-3 text-sm text-white outline-none focus:border-blue-500 transition-all focus:bg-slate-800"
           />
         </div>
 
-        <div>
+        <div className="relative">
+          <ShieldCheck className="absolute left-4 top-3.5 h-5 w-5 text-slate-500" />
           <input
             type="password"
             name="confirmPassword"
             placeholder="Confirm Password"
             value={formData.confirmPassword}
             onChange={handleChange}
-            className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none focus:border-blue-500"
+            required
+            autoComplete="new-password"
+            className="w-full rounded-xl border border-slate-700 bg-slate-800/40 pl-12 pr-4 py-3 text-sm text-white outline-none focus:border-blue-500 transition-all focus:bg-slate-800"
           />
         </div>
 

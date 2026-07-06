@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { MapPin, Star, Package, Search, Globe } from "lucide-react";
+import { MapPin, Star, Package, Search, Globe, Phone } from "lucide-react";
 
 import { Container } from "@/components/common/Container";
 import { useShopDetail } from "@/features/customer/hooks/useMarketplaceShops";
@@ -97,6 +97,15 @@ export default function ShopProfilePage() {
                   LIVE
                 </span>
               )}
+              {/* Popin-style Call expert trigger */}
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent("trigger-shop-call"))}
+                className="flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-xs font-bold text-white hover:from-blue-500 hover:to-indigo-500 transition-all hover:scale-[1.03] active:scale-95 shadow-lg shadow-blue-600/20 cursor-pointer"
+              >
+                <Phone className="h-3.5 w-3.5 fill-current animate-pulse" />
+                Call Shop Expert
+              </button>
             </div>
 
             <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-slate-400">

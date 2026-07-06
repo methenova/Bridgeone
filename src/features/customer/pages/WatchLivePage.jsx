@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { Radio, Eye, Send, Heart, ArrowLeft } from "lucide-react";
+import { Radio, Eye, Send, Heart, ArrowLeft, Mic, MicOff, X } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { supabase } from "@/config/supabase";
@@ -8,6 +8,7 @@ import { Container } from "@/components/common/Container";
 import { useShopDetail } from "@/features/customer/hooks/useMarketplaceShops";
 import { useAuthContext } from "@/context/AuthContext";
 import useCartStore from "@/store/cartStore";
+import { ViewerPeer } from "@/services/video/viewerPeer";
 
 export default function WatchLivePage() {
   const { shopId } = useParams();
@@ -24,6 +25,111 @@ export default function WatchLivePage() {
   const [hearts, setHearts] = useState([]);
 
   const channelRef = useRef(null);
+
+  // WebRTC Stream state
+  const [remoteStream, setRemoteStream] = useState(null);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [streamError, setStreamError] = useState(null);
+  const videoRef = useRef(null);
+  const viewerPeerRef = useRef(null);
+
+  // Speak request states
+  const [isSpeaker, setIsSpeaker] = useState(false);
+  const [isRequestPending, setIsRequestPending] = useState(false);
+  const [viewerLocalStream, setViewerLocalStream] = useState(null);
+  const [speakerMicMuted, setSpeakerMicMuted] = useState(false);
+
+  async function initViewerPeer() {
+    if (viewerPeerRef.current) {
+      viewerPeerRef.current.destroy();
+      viewerPeerRef.current = null;
+    }
+    setRemoteStream(null);
+    setStreamError(null);
+    setIsConnecting(true);
+
+    try {
+      console.log("[WatchLivePage] Initializing ViewerPeer...");
+      const peer = new ViewerPeer(shopId, (stream) => {
+        console.log("[WatchLivePage] Remote stream callback triggered");
+        setRemoteStream(stream);
+      });
+      viewerPeerRef.current = peer;
+      await peer.start();
+      setIsConnecting(false);
+    } catch (err) {
+      console.error("[WatchLivePage] Failed to initialize WebRTC connection:", err);
+      setStreamError(err.message);
+      setIsConnecting(false);
+    }
+  }
+
+  function cleanupViewerPeer() {
+    if (viewerPeerRef.current) {
+      viewerPeerRef.current.destroy();
+      viewerPeerRef.current = null;
+    }
+    if (viewerLocalStream) {
+      viewerLocalStream.getTracks().forEach((track) => track.stop());
+      setViewerLocalStream(null);
+    }
+    setRemoteStream(null);
+    setIsSpeaker(false);
+    setIsRequestPending(false);
+  }
+
+  // Subscribe to WebRTC room lifecycle events and initial connection
+  useEffect(() => {
+    if (!shopId) return;
+
+    // Try initial connection
+    initViewerPeer();
+
+    // Listen to video rooms inserts/deletes to update connection state
+    const roomChannel = supabase
+      .channel(`room-lifecycle-${shopId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "video_rooms",
+          filter: `shop_id=eq.${shopId}`,
+        },
+        (payload) => {
+          console.log("[WatchLivePage] New room inserted:", payload.new);
+          initViewerPeer();
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "video_rooms",
+        },
+        (payload) => {
+          if (payload.old && payload.old.shop_id === shopId) {
+            console.log("[WatchLivePage] Active room deleted, stopping stream...");
+            cleanupViewerPeer();
+            setStreamError("Seller went offline");
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      cleanupViewerPeer();
+      roomChannel.unsubscribe();
+    };
+  }, [shopId]);
+
+  // Set remote stream source
+  useEffect(() => {
+    if (videoRef.current && remoteStream) {
+      videoRef.current.srcObject = remoteStream;
+    }
+  }, [remoteStream]);
 
   // Subscribe to real-time stream broadcast events
   useEffect(() => {
@@ -45,6 +151,29 @@ export default function WatchLivePage() {
       .on("broadcast", { event: "reaction" }, () => {
         triggerFloatingHeart();
       })
+      .on("broadcast", { event: "approve_join" }, async ({ payload }) => {
+        if (payload.viewerId === user?.id) {
+          toast.success("Host approved your request to speak! Connecting camera/mic...", { duration: 4000 });
+          setIsRequestPending(false);
+          setIsSpeaker(true);
+          
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+              video: true,
+              audio: true,
+            });
+            setViewerLocalStream(stream);
+            
+            if (viewerPeerRef.current) {
+              await viewerPeerRef.current.addLocalStream(stream);
+            }
+          } catch (err) {
+            console.error("[WatchLivePage] Failed to capture media for speaker:", err);
+            toast.error("Failed to capture local camera/mic: " + err.message);
+            setIsSpeaker(false);
+          }
+        }
+      })
       .subscribe();
 
     // Set initial mock viewers
@@ -53,7 +182,7 @@ export default function WatchLivePage() {
     return () => {
       channel.unsubscribe();
     };
-  }, [shopId]);
+  }, [shopId, user]);
 
   function triggerFloatingHeart() {
     const id = Math.random();
@@ -80,6 +209,51 @@ export default function WatchLivePage() {
     });
 
     setCommentText("");
+  }
+
+  function handleRequestSpeak() {
+    if (isSpeaker || isRequestPending) return;
+
+    if (!user) {
+      toast.error("Please login to request to speak");
+      return;
+    }
+
+    const senderName = user?.email ? user.email.split("@")[0] : "Guest";
+    channelRef.current?.send({
+      type: "broadcast",
+      event: "request_to_join",
+      payload: {
+        senderId: user.id,
+        senderName,
+      },
+    });
+
+    setIsRequestPending(true);
+    toast.success("Request to speak sent to host!");
+  }
+
+  function toggleSpeakerMic() {
+    if (viewerLocalStream) {
+      const audioTrack = viewerLocalStream.getAudioTracks()[0];
+      if (audioTrack) {
+        audioTrack.enabled = !audioTrack.enabled;
+        setSpeakerMicMuted(!audioTrack.enabled);
+      }
+    }
+  }
+
+  function handleLeaveStage() {
+    if (viewerLocalStream) {
+      viewerLocalStream.getTracks().forEach((track) => track.stop());
+      setViewerLocalStream(null);
+    }
+    setIsSpeaker(false);
+    setIsRequestPending(false);
+    toast.success("You left the stage");
+    
+    // Reset connection to watch-only
+    initViewerPeer();
   }
 
   function handleSendReaction() {
@@ -158,22 +332,88 @@ export default function WatchLivePage() {
           <div className="lg:col-span-2 space-y-4">
             <div className="relative aspect-video rounded-3xl border border-slate-900 bg-slate-950 overflow-hidden shadow-2xl flex items-center justify-center">
               
-              {/* Dynamic visualization canvas representing the active stream */}
-              <div className="flex flex-col items-center gap-4 text-center">
-                <div className="flex items-end gap-1.5 h-16">
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div
-                      key={i}
-                      className="w-2.5 bg-blue-500 rounded-full animate-bounce"
-                      style={{ height: `${Math.random() * 100}%`, animationDelay: `${i * 0.1}s` }}
-                    />
-                  ))}
+              {/* Real WebRTC video player */}
+              {remoteStream ? (
+                <div className="relative w-full h-full">
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    className="h-full w-full object-cover"
+                  />
+                  {/* PiP Local video feed when viewer is a speaker */}
+                  {isSpeaker && viewerLocalStream && (
+                    <div className="absolute bottom-4 right-4 h-28 aspect-video rounded-2xl overflow-hidden border-2 border-green-500 bg-slate-955 shadow-2xl z-20 animate-fade-in group">
+                      <video
+                        ref={(el) => {
+                          if (el) el.srcObject = viewerLocalStream;
+                        }}
+                        autoPlay
+                        playsInline
+                        muted
+                        className="h-full w-full object-cover scale-x-[-1]"
+                      />
+                      
+                      {/* Floating Speaker Controls (visible on hover) */}
+                      <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                        <button
+                          type="button"
+                          onClick={toggleSpeakerMic}
+                          className={`p-1.5 rounded-lg transition-colors ${
+                            speakerMicMuted
+                              ? "bg-red-655 text-white"
+                              : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                          }`}
+                          title={speakerMicMuted ? "Unmute Mic" : "Mute Mic"}
+                        >
+                          {speakerMicMuted ? <MicOff className="h-3 w-3" /> : <Mic className="h-3 w-3" />}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleLeaveStage}
+                          className="p-1.5 rounded-lg bg-red-600 text-white hover:bg-red-500 transition-colors"
+                          title="Stop Speaking"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+
+                      <div className="absolute top-1.5 left-1.5 bg-green-600 text-[8px] font-bold text-white px-2 py-0.5 rounded-full">
+                        You
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <p className="text-xs text-blue-400 font-bold uppercase tracking-widest animate-pulse">
-                  Live Stream Broadcast Connection
-                </p>
-                <p className="text-[10px] text-slate-500">Video streaming fallback active.</p>
-              </div>
+              ) : (
+                /* Dynamic visualization canvas representing the active stream or connection status */
+                <div className="flex flex-col items-center gap-4 text-center">
+                  {isConnecting ? (
+                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-700 border-t-blue-500" />
+                  ) : (
+                    <div className="flex items-end gap-1.5 h-16">
+                      {[1, 2, 3, 4, 5, 6].map((i) => (
+                        <div
+                          key={i}
+                          className="w-2.5 bg-blue-500 rounded-full animate-bounce"
+                          style={{ height: `${Math.random() * 100}%`, animationDelay: `${i * 0.15}s` }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  <p className="text-xs text-blue-400 font-bold uppercase tracking-widest animate-pulse">
+                    {isConnecting
+                      ? "Connecting to Live Stream..."
+                      : streamError
+                      ? streamError
+                      : "Live Stream Broadcast Connection"}
+                  </p>
+                  <p className="text-[10px] text-slate-500">
+                    {isConnecting
+                      ? "Establishing peer connection..."
+                      : "Video streaming fallback active."}
+                  </p>
+                </div>
+              )}
 
               {/* Floating Emojis Reaction Layer */}
               <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
@@ -221,13 +461,32 @@ export default function WatchLivePage() {
             <div className="border-b border-slate-900 px-5 py-4 flex items-center justify-between">
               <h3 className="text-sm font-bold text-white">Live Comments</h3>
               
-              {/* Emojis reaction trigger button */}
-              <button
-                onClick={handleSendReaction}
-                className="flex h-8 w-8 items-center justify-center rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all active:scale-90"
-              >
-                <Heart className="h-4.5 w-4.5 fill-current" />
-              </button>
+              <div className="flex gap-2">
+                {/* Request to Speak Button */}
+                <button
+                  type="button"
+                  onClick={handleRequestSpeak}
+                  title="Request to Speak"
+                  className={`flex h-8 px-2.5 items-center justify-center gap-1.5 rounded-xl transition-all active:scale-90 text-[10px] font-bold ${
+                    isSpeaker
+                      ? "bg-green-600 text-white"
+                      : isRequestPending
+                      ? "bg-yellow-600/20 text-yellow-500 cursor-default"
+                      : "bg-blue-600/10 text-blue-500 hover:bg-blue-600 hover:text-white"
+                  }`}
+                >
+                  <Mic className="h-3.5 w-3.5" />
+                  {isSpeaker ? "Speaking" : isRequestPending ? "Pending..." : "Speak"}
+                </button>
+
+                {/* Emojis reaction trigger button */}
+                <button
+                  onClick={handleSendReaction}
+                  className="flex h-8 w-8 items-center justify-center rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all active:scale-90"
+                >
+                  <Heart className="h-4.5 w-4.5 fill-current" />
+                </button>
+              </div>
             </div>
 
             {/* Comments list */}

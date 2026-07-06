@@ -4,6 +4,7 @@ export async function registerUser({
   name,
   email,
   password,
+  role,
 }) {
   const {
     data,
@@ -14,6 +15,7 @@ export async function registerUser({
     options: {
       data: {
         name,
+        role,
       },
     },
   });

@@ -152,14 +152,26 @@ export default function Navbar() {
                         </div>
 
                         <div className="py-1">
-                          <Link
-                            to="/seller"
-                            onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
-                          >
-                            <LayoutDashboard className="h-4 w-4" />
-                            Seller Dashboard
-                          </Link>
+                          {profile?.role === "admin" && (
+                            <Link
+                              to="/admin"
+                              onClick={() => setUserMenuOpen(false)}
+                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
+                            >
+                              <LayoutDashboard className="h-4 w-4" />
+                              Admin Panel
+                            </Link>
+                          )}
+                          {(profile?.role === "seller" || profile?.role === "admin") && (
+                            <Link
+                              to="/seller"
+                              onClick={() => setUserMenuOpen(false)}
+                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
+                            >
+                              <LayoutDashboard className="h-4 w-4" />
+                              Seller Dashboard
+                            </Link>
+                          )}
                           <Link
                             to="/wishlist"
                             onClick={() => setUserMenuOpen(false)}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate, Navigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -28,10 +28,22 @@ const menu = [
 ];
 
 export default function AdminLayout() {
-  const { profile, logout } = useAuthContext();
+  const { profile, loading, logout } = useAuthContext();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white">
+        Loading...
+      </div>
+    );
+  }
+
+  if (profile?.role !== "admin") {
+    return <Navigate to="/" replace />;
+  }
 
   async function handleLogout() {
     await logout();
