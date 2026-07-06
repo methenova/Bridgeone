@@ -129,11 +129,11 @@ export default function CustomerChatWidget({ shop }) {
       const roomCode = `call_${shop.id}_${userId}`;
       console.log("[Call] Starting expert consultation call with room:", roomCode);
 
-      const peer = new SellerPeer(roomCode, userId, stream, (remoteStream) => {
+      const peer = new SellerPeer(shop.id, userId, stream, (remoteStream) => {
         console.log("[Call] Receiver remote stream established");
         setCallRemoteStream(remoteStream);
         setIsCalling(false);
-      });
+      }, roomCode);
 
       callPeerRef.current = peer;
       await peer.start();

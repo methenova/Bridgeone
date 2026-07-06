@@ -2,9 +2,10 @@ import { supabase } from "@/config/supabase";
 import { createPeer, createRoom, addCandidate, deleteRoom, cleanOldRooms } from "./webrtcService";
 
 export class SellerPeer {
-  constructor(shopId, sellerId, localStream, onRemoteStream) {
+  constructor(shopId, sellerId, localStream, onRemoteStream, customRoomCode = null) {
     this.shopId = shopId;
     this.sellerId = sellerId;
+    this.customRoomCode = customRoomCode;
     this.localStream = localStream;
     this.onRemoteStream = onRemoteStream;
     this.peer = null;
@@ -72,10 +73,11 @@ export class SellerPeer {
       if (this.isDestroyed) return;
 
       // Create database room
+      const actualRoomCode = this.customRoomCode || this.shopId;
       const { data: room, error } = await createRoom(
-        this.shopId, // room_code
-        this.shopId, // shop_id
-        this.sellerId,
+        actualRoomCode, // room_code
+        this.shopId,    // shop_id
+        this.sellerId,  // host_id (the caller or seller)
         offer
       );
 
