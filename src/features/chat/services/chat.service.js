@@ -25,8 +25,8 @@ export async function getConversationMessages(userId, otherUserId) {
     .from("messages")
     .select(`
       *,
-      sender:sender_id ( full_name, email ),
-      receiver:receiver_id ( full_name, email )
+      sender:sender_id ( full_name, avatar_url ),
+      receiver:receiver_id ( full_name, avatar_url )
     `)
     .or(`and(sender_id.eq.${userId},receiver_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},receiver_id.eq.${userId})`)
     .order("created_at", { ascending: true });
@@ -42,8 +42,8 @@ export async function getChatContacts(userId) {
     .from("messages")
     .select(`
       *,
-      sender:sender_id ( id, full_name, email ),
-      receiver:receiver_id ( id, full_name, email ),
+      sender:sender_id ( id, full_name, avatar_url ),
+      receiver:receiver_id ( id, full_name, avatar_url ),
       shops ( id, name:shop_name, logo_url )
     `)
     .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
