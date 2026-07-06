@@ -74,7 +74,6 @@ export class SellerPeer {
       if (this.isDestroyed) return;
 
       // Create database room
-      const actualRoomCode = this.customRoomCode || this.shopId;
       const { data: room, error } = await createRoom(
         actualRoomCode, // room_code
         this.shopId,    // shop_id
