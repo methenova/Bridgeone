@@ -2,10 +2,17 @@ import { supabase } from "@/config/supabase";
 import { createPeer, getRoom, updateAnswer, addCandidate } from "./webrtcService";
 
 export class ViewerPeer {
-  constructor(shopId, onStreamReceived, localStream = null) {
+  /**
+   * @param {string} shopId - room_code to look up (shop ID or call room code)
+   * @param {(stream: MediaStream) => void} onStreamReceived
+   * @param {MediaStream|null} localStream - local camera/mic to send to remote peer
+   * @param {(state: RTCIceConnectionState) => void} [onConnectionStateChange]
+   */
+  constructor(shopId, onStreamReceived, localStream = null, onConnectionStateChange = null) {
     this.shopId = shopId;
     this.onStreamReceived = onStreamReceived;
     this.localStream = localStream;
+    this.onConnectionStateChange = onConnectionStateChange;
     this.peer = null;
     this.roomId = null;
     this.channel = null;
@@ -14,27 +21,26 @@ export class ViewerPeer {
 
     this.remoteCandidatesQueue = [];
     this.remoteDescriptionSet = false;
+
+    // Debounce timer: fires onStreamReceived once after all tracks arrive
+    this._trackDebounceTimer = null;
   }
 
   async start() {
     try {
-      console.log("[ViewerPeer] Fetching active room for shop:", this.shopId);
+      console.log("[ViewerPeer] Fetching room for:", this.shopId);
       const room = await getRoom(this.shopId);
-      if (!room) {
-        throw new Error("No active live stream found for this shop");
-      }
+      if (!room) throw new Error("No active room found for this shop");
 
       if (this.isDestroyed) return;
 
       this.roomId = room.id;
-      console.log("[ViewerPeer] Active room found. Room ID:", this.roomId);
+      console.log("[ViewerPeer] Room found. ID:", this.roomId);
 
-      // Create Peer Connection
-      console.log("[ViewerPeer] Creating RTCPeerConnection...");
       this.peer = createPeer();
       this.remoteStream = new MediaStream();
 
-      // Add local stream tracks if available (e.g. for 1-on-1 consultations)
+      // Add local tracks (seller's camera/mic for 1-on-1 call)
       if (this.localStream) {
         this.localStream.getTracks().forEach((track) => {
           this.peer.addTrack(track, this.localStream);
@@ -42,77 +48,84 @@ export class ViewerPeer {
         });
       }
 
-      // Handle receiving remote tracks
+      // Remote track handler — debounced so callback fires ONCE after all tracks arrive
       this.peer.ontrack = (event) => {
         console.log("[ViewerPeer] Remote track received:", event.track.kind);
-        if (event.streams && event.streams[0]) {
-          // Add all tracks from the first stream to our remoteStream
-          event.streams[0].getTracks().forEach((track) => {
+        const tracks = event.streams?.[0]?.getTracks() ?? [event.track];
+        tracks.forEach((track) => {
+          if (!this.remoteStream.getTrackById(track.id)) {
             this.remoteStream.addTrack(track);
-          });
-          this.onStreamReceived(this.remoteStream);
-        } else {
-          // Fallback if no streams array is present
-          this.remoteStream.addTrack(event.track);
-          this.onStreamReceived(this.remoteStream);
+          }
+        });
+        clearTimeout(this._trackDebounceTimer);
+        this._trackDebounceTimer = setTimeout(() => {
+          if (this.onStreamReceived && !this.isDestroyed) {
+            this.onStreamReceived(this.remoteStream);
+          }
+        }, 250);
+      };
+
+      // ICE connection state monitoring
+      this.peer.oniceconnectionstatechange = () => {
+        const state = this.peer?.iceConnectionState;
+        console.log("[ViewerPeer] ICE state:", state);
+        if (this.onConnectionStateChange && !this.isDestroyed) {
+          this.onConnectionStateChange(state);
         }
       };
 
-      // Set Remote Description (Seller's Offer)
-      console.log("[ViewerPeer] Setting remote description (Seller SDP Offer)...");
-      const rtcOffer = new RTCSessionDescription(room.offer);
-      await this.peer.setRemoteDescription(rtcOffer);
+      // Apply customer's offer as remote description
+      console.log("[ViewerPeer] Applying remote offer...");
+      await this.peer.setRemoteDescription(new RTCSessionDescription(room.offer));
       this.remoteDescriptionSet = true;
 
-      // Handle local ICE candidates and upload them as viewer
+      // Upload local ICE candidates as they are gathered
       this.peer.onicecandidate = async (event) => {
         if (event.candidate && this.roomId && !this.isDestroyed) {
           try {
             await addCandidate(this.roomId, "viewer", event.candidate.toJSON());
-            console.log("[ViewerPeer] Local ICE candidate uploaded");
+            console.log("[ViewerPeer] ICE candidate uploaded");
           } catch (err) {
-            console.error("[ViewerPeer] Failed to upload local candidate:", err);
+            console.error("[ViewerPeer] Failed to upload ICE candidate:", err);
           }
         }
       };
 
-      // Create WebRTC SDP Answer
+      // Create SDP Answer
       console.log("[ViewerPeer] Creating SDP Answer...");
       const answer = await this.peer.createAnswer();
       await this.peer.setLocalDescription(answer);
 
       if (this.isDestroyed) return;
 
-      // Save SDP Answer back to the room
+      // Upload answer to DB (triggers SellerPeer's Realtime subscription)
       console.log("[ViewerPeer] Uploading SDP Answer...");
       const { error: answerError } = await updateAnswer(this.shopId, answer);
       if (answerError) throw answerError;
 
-      // Fetch existing seller candidates
+      // Fetch any seller ICE candidates that were uploaded before we subscribed
       await this.fetchExistingCandidates();
 
-      // Process any queued candidates (should be empty, but safety first)
-      console.log(`[ViewerPeer] Processing ${this.remoteCandidatesQueue.length} queued remote candidates...`);
+      // Apply any candidates that were queued during setup
       for (const cand of this.remoteCandidatesQueue) {
         await this.peer.addIceCandidate(new RTCIceCandidate(cand));
       }
       this.remoteCandidatesQueue = [];
 
-      // Subscribe to any new candidates from seller
+      // Subscribe to new seller ICE candidates going forward
       this.setupSignaling(this.roomId);
 
     } catch (err) {
-      console.error("[ViewerPeer] Failed to start viewer session:", err);
+      console.error("[ViewerPeer] Failed to start:", err);
       this.destroy();
       throw err;
     }
   }
 
+  /** Fetch ICE candidates the seller uploaded before this ViewerPeer subscribed */
   async fetchExistingCandidates() {
     if (this.isDestroyed || !this.roomId) return;
-
     try {
-      console.log("[ViewerPeer] Querying existing seller ICE candidates...");
       const { data: candidates, error } = await supabase
         .from("video_candidates")
         .select("*")
@@ -121,46 +134,38 @@ export class ViewerPeer {
 
       if (error) throw error;
 
-      if (candidates && candidates.length > 0) {
-        console.log(`[ViewerPeer] Found ${candidates.length} existing seller candidates. Adding to peer connection...`);
+      if (candidates?.length > 0) {
+        console.log(`[ViewerPeer] Applying ${candidates.length} existing seller ICE candidates...`);
         for (const item of candidates) {
-          if (this.peer) {
-            await this.peer.addIceCandidate(new RTCIceCandidate(item.candidate));
-          }
+          if (this.peer) await this.peer.addIceCandidate(new RTCIceCandidate(item.candidate));
         }
       }
     } catch (err) {
-      console.error("[ViewerPeer] Error fetching existing seller candidates:", err);
+      console.error("[ViewerPeer] Error fetching existing candidates:", err);
     }
   }
 
   setupSignaling(roomId) {
     if (this.isDestroyed) return;
 
-    console.log("[ViewerPeer] Subscribing to candidates for room ID:", roomId);
+    console.log("[ViewerPeer] Subscribing to ICE candidates for room:", roomId);
     this.channel = supabase
       .channel(`webrtc-candidates-${roomId}`)
       .on(
         "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "video_candidates",
-          filter: `room_id=eq.${roomId}`,
-        },
+        { event: "INSERT", schema: "public", table: "video_candidates", filter: `room_id=eq.${roomId}` },
         async (payload) => {
           const { sender, candidate } = payload.new;
           if (sender === "seller" && this.peer && !this.isDestroyed) {
             try {
               if (!this.remoteDescriptionSet) {
-                console.log("[ViewerPeer] Queueing remote candidate");
                 this.remoteCandidatesQueue.push(candidate);
               } else {
-                console.log("[ViewerPeer] Remote candidate received, adding to peer connection");
                 await this.peer.addIceCandidate(new RTCIceCandidate(candidate));
+                console.log("[ViewerPeer] Seller ICE candidate added");
               }
             } catch (err) {
-              console.error("[ViewerPeer] Error adding remote candidate:", err);
+              console.error("[ViewerPeer] Error adding seller ICE candidate:", err);
             }
           }
         }
@@ -168,30 +173,22 @@ export class ViewerPeer {
       .subscribe();
   }
 
+  /** Dynamically add a local stream and renegotiate (used for live stream speaker joining) */
   async addLocalStream(stream) {
     if (!this.peer || this.isDestroyed) return;
-    
-    console.log("[ViewerPeer] Dynamically adding local tracks to peer connection...");
-    stream.getTracks().forEach((track) => {
-      this.peer.addTrack(track, stream);
-    });
-
-    // WebRTC Renegotiation: Viewer creates a new Offer and updates the DB
-    console.log("[ViewerPeer] Renegotiating connection, generating new SDP Offer...");
+    console.log("[ViewerPeer] Adding local stream and renegotiating...");
+    stream.getTracks().forEach((track) => this.peer.addTrack(track, stream));
     const offer = await this.peer.createOffer();
     await this.peer.setLocalDescription(offer);
-
-    // Update the room's offer and clear the answer so the seller will send a new answer
-    await supabase
-      .from("video_rooms")
-      .update({ offer, answer: null })
-      .eq("id", this.roomId);
+    await supabase.from("video_rooms").update({ offer, answer: null }).eq("id", this.roomId);
   }
 
   destroy() {
     if (this.isDestroyed) return;
     this.isDestroyed = true;
-    console.log("[ViewerPeer] Destroying viewer session");
+    console.log("[ViewerPeer] Destroying session");
+
+    clearTimeout(this._trackDebounceTimer);
 
     if (this.channel) {
       supabase.removeChannel(this.channel);

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Radio, Video, ShoppingBag, Eye, Send, StopCircle, Phone, PhoneOff, Mic, MicOff, Check, X } from "lucide-react";
+import { Radio, Video, VideoOff, ShoppingBag, Eye, Send, StopCircle, Phone, PhoneOff, Mic, MicOff, Check, X } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { supabase } from "@/config/supabase";
@@ -34,6 +34,9 @@ export default function LivePage() {
   const [activeConsultation, setActiveConsultation] = useState(false);
   const [callRemoteStream, setCallRemoteStream] = useState(null);
   const [callMicMuted, setCallMicMuted] = useState(false);
+  const [callCamEnabled, setCallCamEnabled] = useState(true);     // camera on/off for consultation
+  const [consultationDuration, setConsultationDuration] = useState(0);  // seconds
+  const [consultationIceState, setConsultationIceState] = useState(null); // RTCIceConnectionState
 
   // Viewer Speaker join states
   const [joinRequests, setJoinRequests] = useState([]);
@@ -42,9 +45,12 @@ export default function LivePage() {
   const videoRef = useRef(null);
   const channelRef = useRef(null);
   const sellerPeerRef = useRef(null);
-  const viewerPeerRef = useRef(null); // Ref for 1-on-1 consultation Peer
-  const incomingCallRef = useRef(null); // Ref mirror of incomingCall for stable callbacks
-  const isAcceptingRef = useRef(false); // Guard against duplicate handleAcceptCall executions
+  const viewerPeerRef = useRef(null);         // Ref for 1-on-1 consultation peer
+  const incomingCallRef = useRef(null);        // Ref mirror of incomingCall for stable callbacks
+  const isAcceptingRef = useRef(false);        // Guard against duplicate handleAcceptCall executions
+  const consultationStreamRef = useRef(null);  // The stream used in consultation (may differ from live stream)
+  const consultationOwnedStream = useRef(false); // true if we acquired stream for consultation (not live)
+  const consultationTimerRef = useRef(null);   // Interval for call duration counter
 
   // Load available camera devices
   useEffect(() => {
@@ -63,14 +69,14 @@ export default function LivePage() {
     getDevices();
   }, []);
 
-  // Clean up WebRTC peer on unmount
+  // Clean up WebRTC peers and consultation timer on unmount
   useEffect(() => {
     return () => {
-      if (sellerPeerRef.current) {
-        sellerPeerRef.current.destroy();
-      }
-      if (viewerPeerRef.current) {
-        viewerPeerRef.current.destroy();
+      if (sellerPeerRef.current) sellerPeerRef.current.destroy();
+      if (viewerPeerRef.current) viewerPeerRef.current.destroy();
+      clearInterval(consultationTimerRef.current);
+      if (consultationOwnedStream.current && consultationStreamRef.current) {
+        consultationStreamRef.current.getTracks().forEach((t) => t.stop());
       }
     };
   }, []);
@@ -263,8 +269,8 @@ export default function LivePage() {
 
     try {
       console.log("[LivePage] Accept call room code:", incomingCall.room_code);
-      
-      // Obtain media tracks (either reuse current live stream or acquire new)
+
+      // Obtain media (reuse live stream if available, else acquire new)
       let callStream = stream;
       if (!callStream) {
         toast.loading("Activating camera for call...", { id: "call-media" });
@@ -272,7 +278,7 @@ export default function LivePage() {
           callStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         } catch (mediaErr) {
           if (mediaErr.name === "NotReadableError" || mediaErr.name === "TrackStartError") {
-            console.warn("[LivePage] Webcam already in use, falling back to audio-only stream.");
+            console.warn("[LivePage] Webcam busy, falling back to audio-only.");
             toast.success("Webcam in use, starting audio-only consultation.", { id: "call-media" });
             callStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
           } else {
@@ -280,24 +286,43 @@ export default function LivePage() {
           }
         }
         setStream(callStream);
-        if (videoRef.current) {
-          videoRef.current.srcObject = callStream;
-        }
+        if (videoRef.current) videoRef.current.srcObject = callStream;
         toast.success("Media activated", { id: "call-media" });
+        consultationOwnedStream.current = true;  // Mark: we own this stream, stop it when call ends
+      } else {
+        consultationOwnedStream.current = false; // Reusing live stream
       }
 
-      // Destroy any stale existing consultation peer before creating a new one
+      consultationStreamRef.current = callStream;
+
+      // Destroy any stale consultation peer
       if (viewerPeerRef.current) {
         console.log("[LivePage] Cleaning up stale ViewerPeer before accepting new call");
         viewerPeerRef.current.destroy();
         viewerPeerRef.current = null;
       }
 
-      // ViewerPeer answers the call offer in the room, sending the seller's stream
-      const peer = new ViewerPeer(incomingCall.room_code, (remoteStream) => {
-        console.log("[LivePage] Received customer call stream");
-        setCallRemoteStream(remoteStream);
-      }, callStream);
+      // ViewerPeer answers the customer's offer, sending seller's stream back
+      const peer = new ViewerPeer(
+        incomingCall.room_code,
+        (remoteStream) => {
+          console.log("[LivePage] Received customer call stream");
+          setCallRemoteStream(remoteStream);
+        },
+        callStream,
+        // ICE state callback
+        (iceState) => {
+          console.log("[LivePage] Consultation ICE state:", iceState);
+          setConsultationIceState(iceState);
+          if (iceState === "connected" || iceState === "completed") {
+            if (!consultationTimerRef.current) {
+              consultationTimerRef.current = setInterval(() => {
+                setConsultationDuration((d) => d + 1);
+              }, 1000);
+            }
+          }
+        }
+      );
 
       viewerPeerRef.current = peer;
       await peer.start();
@@ -306,6 +331,9 @@ export default function LivePage() {
       setIncomingCall(null);
       incomingCallRef.current = null;
       setCallMicMuted(false);
+      setCallCamEnabled(callStream.getVideoTracks().length > 0);
+      setConsultationDuration(0);
+      setConsultationIceState(null);
       toast.success("Consultation started!");
 
     } catch (err) {
@@ -318,26 +346,63 @@ export default function LivePage() {
   }
 
   async function handleDeclineCall() {
+    // Destroy peer
     if (viewerPeerRef.current) {
       viewerPeerRef.current.destroy();
       viewerPeerRef.current = null;
     }
-    if (incomingCall) {
-      console.log("[LivePage] Declining room ID:", incomingCall.id);
-      await supabase.from("video_rooms").delete().eq("id", incomingCall.id);
+
+    // Stop timer
+    clearInterval(consultationTimerRef.current);
+    consultationTimerRef.current = null;
+
+    // Delete the room using incomingCallRef (avoids stale state closure bug)
+    const callToEnd = incomingCallRef.current;
+    if (callToEnd) {
+      console.log("[LivePage] Ending/declining call room ID:", callToEnd.id);
+      await supabase.from("video_rooms").delete().eq("id", callToEnd.id);
     }
+
+    // If we acquired a new stream just for this consultation, release it
+    if (consultationOwnedStream.current && consultationStreamRef.current) {
+      consultationStreamRef.current.getTracks().forEach((t) => t.stop());
+      setStream(null);
+      if (videoRef.current) videoRef.current.srcObject = null;
+      consultationOwnedStream.current = false;
+    }
+    consultationStreamRef.current = null;
+
     setIncomingCall(null);
+    incomingCallRef.current = null;
     setActiveConsultation(false);
     setCallRemoteStream(null);
-    toast.success("Call declined / hung up");
+    setCallMicMuted(false);
+    setCallCamEnabled(true);
+    setConsultationDuration(0);
+    setConsultationIceState(null);
+    toast.success("Call ended");
   }
 
   function toggleCallMic() {
-    if (stream) {
-      const audioTrack = stream.getAudioTracks()[0];
+    // Toggle audio on the consultation stream specifically
+    const consultStream = consultationStreamRef.current;
+    if (consultStream) {
+      const audioTrack = consultStream.getAudioTracks()[0];
       if (audioTrack) {
         audioTrack.enabled = !audioTrack.enabled;
         setCallMicMuted(!audioTrack.enabled);
+      }
+    }
+  }
+
+  function toggleCallCamera() {
+    // Toggle video on the consultation stream
+    const consultStream = consultationStreamRef.current;
+    if (consultStream) {
+      const videoTrack = consultStream.getVideoTracks()[0];
+      if (videoTrack) {
+        videoTrack.enabled = !videoTrack.enabled;
+        setCallCamEnabled(videoTrack.enabled);
       }
     }
   }
@@ -737,78 +802,113 @@ export default function LivePage() {
       )}
 
       {/* 1-on-1 Consultation Call Overlay Modal */}
-      {activeConsultation && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-955/85 backdrop-blur-md p-4 animate-fade-in">
-          <div className="relative w-full max-w-2xl h-[460px] sm:h-auto sm:aspect-video rounded-3xl border border-slate-850 bg-slate-900 overflow-hidden shadow-2xl flex flex-col">
-            
-            {/* Call State Info */}
-            <div className="absolute left-4 top-4 z-20 flex items-center gap-2 rounded-full bg-black/60 px-3 py-1 text-xs font-semibold text-white">
-              <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-              1-on-1 Consultation Session
-            </div>
+      {activeConsultation && (() => {
+        const isConsultConnected = consultationIceState === "connected" || consultationIceState === "completed";
+        const consultStatusColor = isConsultConnected ? "green" : (!consultationIceState || consultationIceState === "new" || consultationIceState === "checking") ? "amber" : "red";
+        const formatDur = (s) => `${Math.floor(s / 60).toString().padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
+            <div className="relative w-full max-w-2xl h-[480px] sm:h-auto sm:aspect-video rounded-3xl border border-slate-800 bg-slate-950 overflow-hidden shadow-2xl flex flex-col">
 
-            {/* Remote/Main Video Panel */}
-            <div className="flex-1 bg-slate-950 relative flex items-center justify-center overflow-hidden">
-              {callRemoteStream ? (
-                <video
-                  ref={(el) => {
-                    if (el) el.srcObject = callRemoteStream;
-                  }}
-                  autoPlay
-                  playsInline
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                /* Connecting animation */
-                <div className="flex flex-col items-center gap-4 text-center">
-                  <div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-blue-600/10 text-blue-500 animate-pulse">
-                    <Video className="h-6 w-6" />
-                  </div>
-                  <p className="text-sm font-semibold text-slate-300">Connecting WebRTC feed...</p>
-                  <p className="text-xs text-slate-500">Establishing bidirectional secure video calling.</p>
-                </div>
-              )}
+              {/* Status Badge (top-left) */}
+              <div className="absolute left-4 top-4 z-20 flex items-center gap-2 rounded-full bg-black/70 backdrop-blur-sm px-3 py-1.5 text-xs font-semibold text-white border border-white/10">
+                <span className="relative flex h-2 w-2">
+                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${consultStatusColor === "green" ? "bg-green-400" : consultStatusColor === "red" ? "bg-red-400" : "bg-amber-400"}`} />
+                  <span className={`relative inline-flex rounded-full h-2 w-2 ${consultStatusColor === "green" ? "bg-green-500" : consultStatusColor === "red" ? "bg-red-500" : "bg-amber-500"}`} />
+                </span>
+                <span>1-on-1 Consultation</span>
+                {isConsultConnected && consultationDuration > 0 && (
+                  <span className="font-mono tabular-nums text-slate-300 ml-1">{formatDur(consultationDuration)}</span>
+                )}
+              </div>
 
-              {/* PiP Local Video Preview (Seller camera) */}
-              {stream && (
-                <div className="absolute bottom-4 right-4 h-32 aspect-video rounded-xl overflow-hidden border border-slate-800 bg-slate-900 shadow-lg z-10">
+              {/* Remote/Main Video Panel */}
+              <div className="flex-1 bg-slate-950 relative flex items-center justify-center overflow-hidden">
+                {callRemoteStream ? (
                   <video
-                    ref={(el) => {
-                      if (el) el.srcObject = stream;
-                    }}
+                    ref={(el) => { if (el) el.srcObject = callRemoteStream; }}
                     autoPlay
                     playsInline
-                    muted
-                    className="h-full w-full object-cover scale-x-[-1]"
+                    className="h-full w-full object-cover"
                   />
-                </div>
-              )}
+                ) : (
+                  <div className="flex flex-col items-center gap-5 text-center">
+                    <div className="relative flex h-16 w-16 items-center justify-center">
+                      <div className="absolute inset-0 rounded-full bg-blue-500/10 animate-ping" style={{ animationDuration: "1.5s" }} />
+                      <div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-blue-600/20 border border-blue-500/30">
+                        <Video className="h-6 w-6 text-blue-400" />
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm font-semibold text-slate-300">Waiting for customer stream...</p>
+                      <p className="text-xs text-slate-500">Establishing bidirectional secure connection</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* PiP — Seller's own camera */}
+                {consultationStreamRef.current && (
+                  <div className="absolute bottom-4 right-4 h-28 aspect-video rounded-xl overflow-hidden border border-slate-700 bg-slate-900 shadow-xl z-10">
+                    <video
+                      ref={(el) => { if (el) el.srcObject = consultationStreamRef.current; }}
+                      autoPlay
+                      playsInline
+                      muted
+                      className={`h-full w-full object-cover scale-x-[-1] transition-opacity ${callCamEnabled ? "opacity-100" : "opacity-0"}`}
+                    />
+                    {!callCamEnabled && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-slate-900">
+                        <VideoOff className="h-5 w-5 text-slate-500" />
+                      </div>
+                    )}
+                    <div className="absolute bottom-1 left-1.5 text-[7px] font-bold text-white/60 uppercase tracking-wide">You</div>
+                  </div>
+                )}
+              </div>
+
+              {/* Controls Bar */}
+              <div className="border-t border-slate-800 px-6 py-4 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center gap-3 z-20">
+                {/* Mic toggle */}
+                <button
+                  onClick={toggleCallMic}
+                  title={callMicMuted ? "Unmute" : "Mute mic"}
+                  className={`flex h-11 w-11 items-center justify-center rounded-2xl transition-all hover:scale-105 active:scale-95 border ${
+                    callMicMuted
+                      ? "bg-rose-500/20 text-rose-400 border-rose-500/20 hover:bg-rose-500/30"
+                      : "bg-slate-800 text-slate-300 border-white/5 hover:bg-slate-700"
+                  }`}
+                >
+                  {callMicMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+                </button>
+
+                {/* Camera toggle */}
+                <button
+                  onClick={toggleCallCamera}
+                  title={callCamEnabled ? "Turn off camera" : "Turn on camera"}
+                  className={`flex h-11 w-11 items-center justify-center rounded-2xl transition-all hover:scale-105 active:scale-95 border ${
+                    !callCamEnabled
+                      ? "bg-rose-500/20 text-rose-400 border-rose-500/20 hover:bg-rose-500/30"
+                      : "bg-slate-800 text-slate-300 border-white/5 hover:bg-slate-700"
+                  }`}
+                >
+                  {callCamEnabled ? <Video className="h-5 w-5" /> : <VideoOff className="h-5 w-5" />}
+                </button>
+
+                {/* End call */}
+                <button
+                  onClick={handleDeclineCall}
+                  title="End consultation"
+                  className="flex h-11 px-6 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 hover:scale-105 active:scale-95 shadow-lg shadow-red-500/20 transition-all text-white font-bold text-xs"
+                >
+                  <PhoneOff className="h-4.5 w-4.5" />
+                  <span>End Call</span>
+                </button>
+              </div>
+
             </div>
-
-            {/* Controls Bar */}
-            <div className="border-t border-slate-850 p-4 bg-slate-900/60 flex items-center justify-center gap-4 z-20">
-              <button
-                onClick={toggleCallMic}
-                className={`flex h-11 w-11 items-center justify-center rounded-xl transition-colors ${
-                  callMicMuted
-                    ? "bg-red-500/10 text-red-500 hover:bg-red-500/20"
-                    : "bg-slate-800 text-slate-300 hover:bg-slate-700"
-                }`}
-              >
-                {callMicMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
-              </button>
-
-              <button
-                onClick={handleDeclineCall}
-                className="flex h-11 w-20 items-center justify-center rounded-xl bg-red-600 text-white hover:bg-red-500 shadow-lg shadow-red-600/10 transition-colors"
-              >
-                <PhoneOff className="h-5 w-5" />
-              </button>
-            </div>
-
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }
