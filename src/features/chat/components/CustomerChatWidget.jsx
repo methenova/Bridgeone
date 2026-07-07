@@ -27,6 +27,8 @@ export default function CustomerChatWidget({ shop }) {
   const callPeerRef = useRef(null);
   // Use a ref to track the stream so cleanup effects don't need it as a dependency
   const callStreamRef = useRef(null);
+  // Synchronous guard: set BEFORE any await to block duplicate triggers during async getUserMedia
+  const isStartingRef = useRef(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -103,11 +105,14 @@ export default function CustomerChatWidget({ shop }) {
       return;
     }
 
-    // Guard: ignore duplicate triggers if a call is already active or starting
-    if (activeCall || callPeerRef.current) {
-      console.warn("[Call] Call already active, ignoring duplicate trigger");
+    // Guard: check ALL three — state, ref, AND the synchronous starting flag
+    // isStartingRef is critical: it blocks duplicates during the async getUserMedia wait
+    if (activeCall || callPeerRef.current || isStartingRef.current) {
+      console.warn("[Call] Call already active or starting, ignoring duplicate trigger");
       return;
     }
+    // Set SYNCHRONOUSLY before any await — this is the true duplicate-call lock
+    isStartingRef.current = true;
 
     try {
       toast.loading("Accessing media devices...", { id: "media-access" });
@@ -154,6 +159,9 @@ export default function CustomerChatWidget({ shop }) {
       console.error("[Call] Failed to start consultation:", err);
       toast.error("Could not access camera/mic: " + err.message, { id: "media-access" });
       handleHangUp();
+    } finally {
+      // Always release the lock so the user can retry after a failure
+      isStartingRef.current = false;
     }
   }
 
