@@ -25,6 +25,8 @@ export default function CustomerChatWidget({ shop }) {
   const sendMsg = useSendMessage();
   const feedEndRef = useRef(null);
   const callPeerRef = useRef(null);
+  // Use a ref to track the stream so cleanup effects don't need it as a dependency
+  const callStreamRef = useRef(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -32,17 +34,19 @@ export default function CustomerChatWidget({ shop }) {
     }
   }, [messages, isOpen]);
 
-  // Clean up call streams on unmount
+  // Clean up peer and stream on unmount only (empty deps = runs once on mount, cleans up on unmount)
   useEffect(() => {
     return () => {
       if (callPeerRef.current) {
         callPeerRef.current.destroy();
+        callPeerRef.current = null;
       }
-      if (callStream) {
-        callStream.getTracks().forEach((track) => track.stop());
+      if (callStreamRef.current) {
+        callStreamRef.current.getTracks().forEach((track) => track.stop());
+        callStreamRef.current = null;
       }
     };
-  }, [callStream]);
+  }, []);
 
   // Listen for external trigger events (e.g. from shop profile banner)
   useEffect(() => {
@@ -53,7 +57,8 @@ export default function CustomerChatWidget({ shop }) {
     return () => {
       window.removeEventListener("trigger-shop-call", handleTriggerCall);
     };
-  }, [userId, shop, callStream]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, shop]);
 
   async function handleSend(e) {
     e.preventDefault();
@@ -120,6 +125,7 @@ export default function CustomerChatWidget({ shop }) {
       }
       toast.success("Media access granted", { id: "media-access" });
 
+      callStreamRef.current = stream;
       setCallStream(stream);
       setIsCalling(true);
       setActiveCall(true);
@@ -150,10 +156,11 @@ export default function CustomerChatWidget({ shop }) {
       callPeerRef.current.destroy();
       callPeerRef.current = null;
     }
-    if (callStream) {
-      callStream.getTracks().forEach((track) => track.stop());
-      setCallStream(null);
+    if (callStreamRef.current) {
+      callStreamRef.current.getTracks().forEach((track) => track.stop());
+      callStreamRef.current = null;
     }
+    setCallStream(null);
     setCallRemoteStream(null);
     setIsCalling(false);
     setActiveCall(false);
