@@ -1,8 +1,9 @@
 import { supabase } from "@/config/supabase";
-import { RTC_CONFIGURATION } from "./constants";
+import { RTC_CONFIGURATION, fetchTurnConfig } from "./constants";
 
-export function createPeer() {
-    return new RTCPeerConnection(RTC_CONFIGURATION);
+export async function createPeer() {
+    const config = await fetchTurnConfig();
+    return new RTCPeerConnection(config);
 }
 
 export async function cleanOldRooms(roomCode) {

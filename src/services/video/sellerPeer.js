@@ -45,7 +45,7 @@ export class SellerPeer {
       if (this.isDestroyed) return;
 
       console.log("[SellerPeer] Creating RTCPeerConnection...");
-      this.peer = createPeer();
+      this.peer = await createPeer();
       this.remoteStream = new MediaStream();
 
       // Remote track handler — debounced so callback fires ONCE after all tracks arrive

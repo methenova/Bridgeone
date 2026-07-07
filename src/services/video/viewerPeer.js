@@ -39,7 +39,7 @@ export class ViewerPeer {
       this.roomId = room.id;
       console.log("[ViewerPeer] Room found. ID:", this.roomId);
 
-      this.peer = createPeer();
+      this.peer = await createPeer();
       this.remoteStream = new MediaStream();
 
       // Add local tracks (seller's camera/mic for 1-on-1 call)
