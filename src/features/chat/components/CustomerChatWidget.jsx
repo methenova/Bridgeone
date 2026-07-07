@@ -51,6 +51,8 @@ export default function CustomerChatWidget({ shop }) {
   const callStreamRef = useRef(null);       // mirrors callStream state without causing dep issues
   const isStartingRef = useRef(false);      // synchronous guard (set BEFORE any await)
   const callTimerRef = useRef(null);        // interval for call duration counter
+  const callRemoteVideoRef = useRef(null);     // Ref for remote video element (prevents blink on re-render)
+  const callLocalVideoRef = useRef(null);      // Ref for local video element (prevents blink on re-render)
 
   // ── Auto-scroll chat ───────────────────────────────────────────────────────
   useEffect(() => {
@@ -71,6 +73,24 @@ export default function CustomerChatWidget({ shop }) {
       clearInterval(callTimerRef.current);
     };
   }, []);
+
+  // Attach remote stream to video element only when it changes (prevents blinking)
+  useEffect(() => {
+    if (callRemoteVideoRef.current && callRemoteStream) {
+      if (callRemoteVideoRef.current.srcObject !== callRemoteStream) {
+        callRemoteVideoRef.current.srcObject = callRemoteStream;
+      }
+    }
+  }, [callRemoteStream]);
+
+  // Attach local stream to PiP video element only when it changes
+  useEffect(() => {
+    if (callLocalVideoRef.current && callStream) {
+      if (callLocalVideoRef.current.srcObject !== callStream) {
+        callLocalVideoRef.current.srcObject = callStream;
+      }
+    }
+  }, [callStream, activeCall]);
 
   // ── External call trigger (e.g. from shop profile banner) ─────────────────
   useEffect(() => {
@@ -415,7 +435,7 @@ export default function CustomerChatWidget({ shop }) {
           <div className="flex-1 bg-slate-950 relative flex items-center justify-center overflow-hidden">
             {callRemoteStream ? (
               <video
-                ref={(el) => { if (el) el.srcObject = callRemoteStream; }}
+                ref={callRemoteVideoRef}
                 autoPlay
                 playsInline
                 className="h-full w-full object-cover"
@@ -445,7 +465,7 @@ export default function CustomerChatWidget({ shop }) {
             {callStream && (
               <div className="absolute bottom-3 right-3 h-24 aspect-video rounded-xl overflow-hidden border border-white/10 bg-slate-900 shadow-xl z-10">
                 <video
-                  ref={(el) => { if (el) el.srcObject = callStream; }}
+                  ref={callLocalVideoRef}
                   autoPlay
                   playsInline
                   muted

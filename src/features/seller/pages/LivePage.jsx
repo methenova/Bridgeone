@@ -53,6 +53,8 @@ export default function LivePage() {
   const consultationStreamRef = useRef(null);  // The stream used in consultation (may differ from live stream)
   const consultationOwnedStream = useRef(false); // true if we acquired stream for consultation (not live)
   const consultationTimerRef = useRef(null);   // Interval for call duration counter
+  const callRemoteVideoRef = useRef(null);     // Ref for remote video element (prevents blink on re-render)
+  const callLocalVideoRef = useRef(null);      // Ref for local PiP video element
 
   // Load available camera devices
   useEffect(() => {
@@ -70,6 +72,24 @@ export default function LivePage() {
     }
     getDevices();
   }, []);
+
+  // Attach remote stream to video element only when it changes (prevents blinking)
+  useEffect(() => {
+    if (callRemoteVideoRef.current && callRemoteStream) {
+      if (callRemoteVideoRef.current.srcObject !== callRemoteStream) {
+        callRemoteVideoRef.current.srcObject = callRemoteStream;
+      }
+    }
+  }, [callRemoteStream]);
+
+  // Attach local consultation stream to PiP video element
+  useEffect(() => {
+    if (callLocalVideoRef.current && consultationStreamRef.current) {
+      if (callLocalVideoRef.current.srcObject !== consultationStreamRef.current) {
+        callLocalVideoRef.current.srcObject = consultationStreamRef.current;
+      }
+    }
+  }, [activeConsultation]);
 
   // Clean up WebRTC peers and consultation timer on unmount
   useEffect(() => {
@@ -860,7 +880,7 @@ export default function LivePage() {
               <div className="flex-1 bg-slate-950 relative flex items-center justify-center overflow-hidden">
                 {callRemoteStream ? (
                   <video
-                    ref={(el) => { if (el) el.srcObject = callRemoteStream; }}
+                    ref={callRemoteVideoRef}
                     autoPlay
                     playsInline
                     className="h-full w-full object-cover"
@@ -884,7 +904,7 @@ export default function LivePage() {
                 {consultationStreamRef.current && (
                   <div className="absolute bottom-4 right-4 h-28 aspect-video rounded-xl overflow-hidden border border-slate-700 bg-slate-900 shadow-xl z-10">
                     <video
-                      ref={(el) => { if (el) el.srcObject = consultationStreamRef.current; }}
+                      ref={callLocalVideoRef}
                       autoPlay
                       playsInline
                       muted
