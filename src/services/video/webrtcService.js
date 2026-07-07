@@ -6,19 +6,23 @@ export async function createPeer() {
     return new RTCPeerConnection(config);
 }
 
-export async function cleanOldRooms(roomCode) {
-    // Get room ids for this roomCode
-    const { data: rooms } = await supabase
-        .from("video_rooms")
-        .select("id")
-        .eq("room_code", roomCode);
+export async function cleanOldRooms(roomCodePrefix) {
+    try {
+        // Get room ids for this roomCode prefix (e.g. call_shopId_userId)
+        const { data: rooms } = await supabase
+            .from("video_rooms")
+            .select("id")
+            .like("room_code", `${roomCodePrefix}%`);
 
-    if (rooms && rooms.length > 0) {
-        const ids = rooms.map((r) => r.id);
-        // Delete candidates for these rooms
-        await supabase.from("video_candidates").delete().in("room_id", ids);
-        // Delete the rooms themselves
-        await supabase.from("video_rooms").delete().in("id", ids);
+        if (rooms && rooms.length > 0) {
+            const ids = rooms.map((r) => r.id);
+            // Delete candidates for these rooms
+            await supabase.from("video_candidates").delete().in("room_id", ids);
+            // Delete the rooms themselves
+            await supabase.from("video_rooms").delete().in("id", ids);
+        }
+    } catch (err) {
+        console.warn("[webrtcService] cleanOldRooms failed:", err.message);
     }
 }
 

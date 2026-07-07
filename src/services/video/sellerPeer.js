@@ -40,7 +40,8 @@ export class SellerPeer {
     try {
       const actualRoomCode = this.customRoomCode || this.shopId;
       console.log("[SellerPeer] Cleaning up old rooms for room code:", actualRoomCode);
-      await cleanOldRooms(actualRoomCode);
+      // Run cleanup asynchronously in the background so it doesn't block call creation
+      cleanOldRooms(actualRoomCode);
 
       if (this.isDestroyed) return;
 

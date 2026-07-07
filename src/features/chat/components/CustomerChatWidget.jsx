@@ -4,6 +4,7 @@ import { useAuthContext } from "@/context/AuthContext";
 import { useChatMessages, useSendMessage } from "../hooks/useChat";
 import toast from "react-hot-toast";
 import { SellerPeer } from "@/services/video/sellerPeer";
+import { cleanOldRooms } from "@/services/video/webrtcService";
 
 // Formats seconds as MM:SS
 function formatDuration(seconds) {
@@ -152,6 +153,11 @@ export default function CustomerChatWidget({ shop }) {
     }
     isStartingRef.current = true; // Set BEFORE any await — the true lock
 
+    // 1. Kick off database cleanup for previous calls of this user/shop asynchronously in the background.
+    // This runs in parallel with the camera spin-up/permission prompt, saving 1.5+ seconds.
+    const roomCodePrefix = `call_${shop.id}_${userId}`;
+    cleanOldRooms(roomCodePrefix);
+
     try {
       toast.loading("Accessing camera & microphone...", { id: "media-access" });
 
@@ -178,7 +184,9 @@ export default function CustomerChatWidget({ shop }) {
       setIceState(null);
       setCallDuration(0);
 
-      const roomCode = `call_${shop.id}_${userId}`;
+      // 2. Generate a unique room code with a random string suffix.
+      // This prevents any unique constraint violations in Supabase, making room creation instantaneous.
+      const roomCode = `${roomCodePrefix}_${Math.random().toString(36).substring(2, 9)}`;
       console.log("[Call] Starting consultation call. Room:", roomCode);
 
       const peer = new SellerPeer(
