@@ -73,14 +73,14 @@ export default function LivePage() {
     getDevices();
   }, []);
 
-  // Attach remote stream to video element only when it changes (prevents blinking)
+  // Attach remote stream to video element only when it changes or modal mounts (prevents blinking)
   useEffect(() => {
     if (callRemoteVideoRef.current && callRemoteStream) {
       if (callRemoteVideoRef.current.srcObject !== callRemoteStream) {
         callRemoteVideoRef.current.srcObject = callRemoteStream;
       }
     }
-  }, [callRemoteStream]);
+  }, [callRemoteStream, activeConsultation]);
 
   // Attach local consultation stream to PiP video element
   useEffect(() => {

@@ -74,14 +74,14 @@ export default function CustomerChatWidget({ shop }) {
     };
   }, []);
 
-  // Attach remote stream to video element only when it changes (prevents blinking)
+  // Attach remote stream to video element only when it changes or card mounts (prevents blinking)
   useEffect(() => {
     if (callRemoteVideoRef.current && callRemoteStream) {
       if (callRemoteVideoRef.current.srcObject !== callRemoteStream) {
         callRemoteVideoRef.current.srcObject = callRemoteStream;
       }
     }
-  }, [callRemoteStream]);
+  }, [callRemoteStream, activeCall]);
 
   // Attach local stream to PiP video element only when it changes
   useEffect(() => {
