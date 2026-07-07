@@ -1,0 +1,13 @@
+node_modules
+dist
+.git
+.github
+Dockerfile
+nginx.conf
+.env
+.oxlintrc.json
+README.md
+workflow.md
+task.md
+implementation_plan.md
+walkthrough.md
