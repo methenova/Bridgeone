@@ -86,15 +86,38 @@ export default function LivePage() {
     incomingCallRef.current = incomingCall;
   }, [incomingCall]);
 
-  // Subscribe to incoming 1-on-1 consultation video call rooms
-  // NOTE: incomingCall removed from deps intentionally — use incomingCallRef inside callbacks
-  // to avoid re-subscribing (which caused duplicate INSERT events firing handleAcceptCall 3x)
+  // Subscribe to both Broadcast events (Chat/Reactions) and Postgres Changes (1-on-1 Call Consultation)
+  // under a single unified Supabase channel to avoid socket-level collisions and ensure clean state.
   useEffect(() => {
     if (!shopId) return;
 
-    console.log("[LivePage] Listening for incoming video calls for shop ID:", shopId);
-    const callChannel = supabase
-      .channel(`shop-calls-${shopId}`)
+    console.log("[LivePage] Initializing unified Realtime channel for shop ID:", shopId);
+
+    const channel = supabase.channel(`live:${shopId}`, {
+      config: { broadcast: { self: true } },
+    });
+
+    channelRef.current = channel;
+
+    channel
+      // 1. Broadcast Chat Events
+      .on("broadcast", { event: "chat" }, ({ payload }) => {
+        setComments((prev) => [...prev, payload]);
+      })
+      // 2. Broadcast Reaction/Heart Events
+      .on("broadcast", { event: "reaction" }, () => {
+        triggerFloatingHeart();
+      })
+      // 3. Broadcast Join requests (Shopper wants to speak)
+      .on("broadcast", { event: "request_to_join" }, ({ payload }) => {
+        console.log("[LivePage] Viewer request to join stream received:", payload);
+        setJoinRequests((prev) => {
+          if (prev.some((r) => r.senderId === payload.senderId)) return prev;
+          return [...prev, payload];
+        });
+        toast(`${payload.senderName} wants to join as speaker!`, { icon: "🎤" });
+      })
+      // 4. Postgres INSERT: Detect new incoming consultation calls
       .on(
         "postgres_changes",
         {
@@ -114,6 +137,7 @@ export default function LivePage() {
           }
         }
       )
+      // 5. Postgres DELETE: Detect caller hung up before accept
       .on(
         "postgres_changes",
         {
@@ -132,11 +156,15 @@ export default function LivePage() {
         }
       )
       .subscribe((status, err) => {
-        console.log(`[LivePage] Realtime subscription status: ${status}`, err || "");
+        console.log(`[LivePage] Unified Realtime channel status: ${status}`, err || "");
       });
 
     return () => {
-      callChannel.unsubscribe();
+      console.log("[LivePage] Cleaning up unified Realtime channel");
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shopId]);
@@ -174,40 +202,6 @@ export default function LivePage() {
       setStream(null);
     }
   }
-
-  // Handle Supabase Realtime broadcast channels
-  useEffect(() => {
-    if (!shopId) return;
-
-    // Connect to live channel
-    const channel = supabase.channel(`live:${shopId}`, {
-      config: { broadcast: { self: true } },
-    });
-
-    channelRef.current = channel;
-
-    channel
-      .on("broadcast", { event: "chat" }, ({ payload }) => {
-        setComments((prev) => [...prev, payload]);
-      })
-      .on("broadcast", { event: "reaction" }, () => {
-        triggerFloatingHeart();
-      })
-      .on("broadcast", { event: "request_to_join" }, ({ payload }) => {
-        console.log("[LivePage] Viewer request to join stream received:", payload);
-        // Avoid duplicate requests
-        setJoinRequests((prev) => {
-          if (prev.some((r) => r.senderId === payload.senderId)) return prev;
-          return [...prev, payload];
-        });
-        toast(`${payload.senderName} wants to join as speaker!`, { icon: "🎤" });
-      })
-      .subscribe();
-
-    return () => {
-      channel.unsubscribe();
-    };
-  }, [shopId]);
 
   // Simulate viewer counts changing
   useEffect(() => {
