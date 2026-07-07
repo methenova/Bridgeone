@@ -171,6 +171,43 @@ export default function LivePage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shopId]);
 
+  // Polling Fallback: Check for active incoming calls in DB every 4 seconds as a safety net
+  // in case the Realtime WebSocket connection drops or gets blocked.
+  useEffect(() => {
+    if (!shopId || activeConsultation) return;
+
+    const pollInterval = setInterval(async () => {
+      // Skip poll if a call is already pending in state or being accepted
+      if (incomingCallRef.current || isAcceptingRef.current) return;
+
+      try {
+        const { data: rooms, error } = await supabase
+          .from("video_rooms")
+          .select("*")
+          .eq("shop_id", shopId)
+          .eq("status", "live");
+
+        if (error) throw error;
+
+        if (rooms && rooms.length > 0) {
+          // Find the active incoming call (starts with 'call_')
+          const callRoom = rooms.find((r) => r.room_code.startsWith("call_"));
+          if (callRoom) {
+            // Avoid duplicate triggers
+            if (incomingCallRef.current?.id === callRoom.id) return;
+            console.log("[LivePage] Incoming call room detected via polling fallback:", callRoom);
+            setIncomingCall(callRoom);
+            toast.success("Incoming video consultation request!", { duration: 6000 });
+          }
+        }
+      } catch (err) {
+        console.warn("[LivePage] Consultation polling fallback skipped:", err.message);
+      }
+    }, 4000);
+
+    return () => clearInterval(pollInterval);
+  }, [shopId, activeConsultation]);
+
   // Request webcam stream when live starts
   async function startStream() {
     const constraints = {
