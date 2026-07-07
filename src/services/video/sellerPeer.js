@@ -90,10 +90,38 @@ export class SellerPeer {
       // Start listening to signaling events (Answer & Candidates)
       this.setupSignaling(room.id);
 
+      // Race condition safety: poll once for an answer that may have arrived
+      // before the Supabase Realtime subscription became active
+      setTimeout(() => this.pollForAnswer(), 2000);
+
     } catch (err) {
       console.error("[SellerPeer] Failed to start seller session:", err);
       this.destroy();
       throw err;
+    }
+  }
+
+  async pollForAnswer() {
+    if (this.isDestroyed || !this.roomId || this.remoteDescriptionSet) return;
+    try {
+      console.log("[SellerPeer] Polling DB for existing answer (race condition check)...");
+      const { data: room } = await supabase
+        .from("video_rooms")
+        .select("answer")
+        .eq("id", this.roomId)
+        .single();
+
+      if (room?.answer && this.peer && this.peer.signalingState !== "stable" && !this.isDestroyed) {
+        console.log("[SellerPeer] Found existing answer via poll, setting remote description...");
+        await this.peer.setRemoteDescription(new RTCSessionDescription(room.answer));
+        this.remoteDescriptionSet = true;
+        for (const cand of this.remoteCandidatesQueue) {
+          await this.peer.addIceCandidate(new RTCIceCandidate(cand));
+        }
+        this.remoteCandidatesQueue = [];
+      }
+    } catch (err) {
+      console.warn("[SellerPeer] Poll for answer failed (non-critical):", err);
     }
   }
 
