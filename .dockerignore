@@ -3,7 +3,6 @@ dist
 .git
 .github
 Dockerfile
-nginx.conf
 .env
 .oxlintrc.json
 README.md
