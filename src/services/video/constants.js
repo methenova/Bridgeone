@@ -1,36 +1,40 @@
 // Metered.ca TURN server configuration
 const METERED_DOMAIN = "digimirai.metered.live";
-const METERED_API_KEY = "tlCVDQNIdmroTNQ0PHk4w3l-iYSrz_nOM0GFlwZBAnNOB7Jz";
+const METERED_API_KEY = "e8581c6cacd4626e2b067ad5c26c18d12267";
 
-// Base config with STUN only (TURN credentials are fetched dynamically)
+// Static TURN credentials (created via Metered.ca API)
+const TURN_USERNAME = "e1c7f977ab3db1021b560100";
+const TURN_PASSWORD = "+i+Hu90i1E1lpSk3";
+
 export const RTC_CONFIGURATION = {
     iceServers: [
+        // STUN servers
         {
             urls: [
                 "stun:stun.l.google.com:19302",
                 "stun:stun1.l.google.com:19302",
             ],
         },
-        // TURN servers with Metered.ca
+        // TURN servers with Metered.ca credentials
         {
             urls: `turn:${METERED_DOMAIN}:80`,
-            username: "guest",
-            credential: "guest",
+            username: TURN_USERNAME,
+            credential: TURN_PASSWORD,
         },
         {
             urls: `turn:${METERED_DOMAIN}:80?transport=tcp`,
-            username: "guest",
-            credential: "guest",
+            username: TURN_USERNAME,
+            credential: TURN_PASSWORD,
         },
         {
             urls: `turn:${METERED_DOMAIN}:443?transport=tcp`,
-            username: "guest",
-            credential: "guest",
+            username: TURN_USERNAME,
+            credential: TURN_PASSWORD,
         },
         {
             urls: `turns:${METERED_DOMAIN}:443?transport=tcp`,
-            username: "guest",
-            credential: "guest",
+            username: TURN_USERNAME,
+            credential: TURN_PASSWORD,
         },
     ],
 };
@@ -51,19 +55,17 @@ export async function fetchTurnConfig() {
 
         return {
             iceServers: [
-                // Keep Google STUN
                 {
                     urls: [
                         "stun:stun.l.google.com:19302",
                         "stun:stun1.l.google.com:19302",
                     ],
                 },
-                // Add Metered TURN servers with fresh credentials
                 ...iceServers,
             ],
         };
     } catch (err) {
-        console.warn("[TURN] Failed to fetch Metered credentials, using fallback:", err.message);
+        console.warn("[TURN] Failed to fetch dynamic credentials, using static fallback:", err.message);
         return RTC_CONFIGURATION;
     }
 }
