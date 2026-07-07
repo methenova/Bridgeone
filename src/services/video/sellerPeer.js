@@ -31,6 +31,9 @@ export class SellerPeer {
     this._trackDebounceTimer = null;
     // Scheduled poll timers for answer (retry safety net)
     this._pollTimers = [];
+    this.pollForAnswerInterval = null;
+    this.pollForCandidatesInterval = null;
+    this.appliedCandidateIds = new Set();
   }
 
   async start() {
