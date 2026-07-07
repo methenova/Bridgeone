@@ -101,12 +101,11 @@ export default function LivePage() {
           event: "INSERT",
           schema: "public",
           table: "video_rooms",
-          filter: `shop_id=eq.${shopId}`,
         },
         (payload) => {
           const room = payload.new;
-          // An incoming call starts with 'call_'
-          if (room.room_code.startsWith("call_") && room.status === "live") {
+          // Filter by shop_id in JS for robustness
+          if (room.shop_id === shopId && room.room_code.startsWith("call_") && room.status === "live") {
             // Ignore if we already have this call pending
             if (incomingCallRef.current?.id === room.id) return;
             console.log("[LivePage] Incoming call room detected:", room);
@@ -132,7 +131,9 @@ export default function LivePage() {
           }
         }
       )
-      .subscribe();
+      .subscribe((status, err) => {
+        console.log(`[LivePage] Realtime subscription status: ${status}`, err || "");
+      });
 
     return () => {
       callChannel.unsubscribe();
