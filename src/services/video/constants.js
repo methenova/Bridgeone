@@ -1,38 +1,29 @@
-// Metered.ca TURN server configuration
-const METERED_DOMAIN = "digimirai.metered.live";
-const METERED_API_KEY = "e8581c6cacd4626e2b067ad5c26c18d12267";
-
-// Static TURN credentials (created via Metered.ca API)
-const TURN_USERNAME = "e1c7f977ab3db1021b560100";
-const TURN_PASSWORD = "+i+Hu90i1E1lpSk3";
+// BridgeOne Custom TURN Server Configuration (Self-Hosted Coturn)
+const SERVER_IP = "103.181.22.70";
+const TURN_USERNAME = "bridgeoneuser";
+const TURN_PASSWORD = "bridgeonepass123";
 
 export const RTC_CONFIGURATION = {
     iceServers: [
-        // STUN servers
+        // Google STUN servers
         {
             urls: [
                 "stun:stun.l.google.com:19302",
                 "stun:stun1.l.google.com:19302",
             ],
         },
-        // TURN servers with Metered.ca credentials
+        // Self-hosted STUN server
         {
-            urls: `turn:${METERED_DOMAIN}:80`,
+            urls: `stun:${SERVER_IP}:3478`,
+        },
+        // Self-hosted TURN servers (UDP and TCP)
+        {
+            urls: `turn:${SERVER_IP}:3478`,
             username: TURN_USERNAME,
             credential: TURN_PASSWORD,
         },
         {
-            urls: `turn:${METERED_DOMAIN}:80?transport=tcp`,
-            username: TURN_USERNAME,
-            credential: TURN_PASSWORD,
-        },
-        {
-            urls: `turn:${METERED_DOMAIN}:443?transport=tcp`,
-            username: TURN_USERNAME,
-            credential: TURN_PASSWORD,
-        },
-        {
-            urls: `turns:${METERED_DOMAIN}:443?transport=tcp`,
+            urls: `turn:${SERVER_IP}:3478?transport=tcp`,
             username: TURN_USERNAME,
             credential: TURN_PASSWORD,
         },
@@ -40,34 +31,12 @@ export const RTC_CONFIGURATION = {
 };
 
 /**
- * Fetch fresh TURN credentials from Metered.ca API.
- * Returns a full RTCConfiguration with working iceServers.
+ * Fetch TURN configuration.
+ * Returns the stable self-hosted TURN configuration directly.
  */
 export async function fetchTurnConfig() {
-    try {
-        const response = await fetch(
-            `https://${METERED_DOMAIN}/api/v1/turn/credentials?apiKey=${METERED_API_KEY}`
-        );
-        if (!response.ok) throw new Error(`Metered API returned ${response.status}`);
-
-        const iceServers = await response.json();
-        console.log("[TURN] Fetched fresh credentials from Metered.ca:", iceServers.length, "servers");
-
-        return {
-            iceServers: [
-                {
-                    urls: [
-                        "stun:stun.l.google.com:19302",
-                        "stun:stun1.l.google.com:19302",
-                    ],
-                },
-                ...iceServers,
-            ],
-        };
-    } catch (err) {
-        console.warn("[TURN] Failed to fetch dynamic credentials, using static fallback:", err.message);
-        return RTC_CONFIGURATION;
-    }
+    // Return our custom self-hosted TURN configuration directly (avoids third-party API dependencies)
+    return RTC_CONFIGURATION;
 }
 
 export const ROOM_STATUS = {
