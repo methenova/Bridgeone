@@ -43,6 +43,8 @@ export default function LivePage() {
   const channelRef = useRef(null);
   const sellerPeerRef = useRef(null);
   const viewerPeerRef = useRef(null); // Ref for 1-on-1 consultation Peer
+  const incomingCallRef = useRef(null); // Ref mirror of incomingCall for stable callbacks
+  const isAcceptingRef = useRef(false); // Guard against duplicate handleAcceptCall executions
 
   // Load available camera devices
   useEffect(() => {
@@ -73,7 +75,14 @@ export default function LivePage() {
     };
   }, []);
 
+  // Keep incomingCallRef in sync with state (for stable callbacks that don't need re-subscribe)
+  useEffect(() => {
+    incomingCallRef.current = incomingCall;
+  }, [incomingCall]);
+
   // Subscribe to incoming 1-on-1 consultation video call rooms
+  // NOTE: incomingCall removed from deps intentionally — use incomingCallRef inside callbacks
+  // to avoid re-subscribing (which caused duplicate INSERT events firing handleAcceptCall 3x)
   useEffect(() => {
     if (!shopId) return;
 
@@ -92,6 +101,8 @@ export default function LivePage() {
           const room = payload.new;
           // An incoming call starts with 'call_'
           if (room.room_code.startsWith("call_") && room.status === "live") {
+            // Ignore if we already have this call pending
+            if (incomingCallRef.current?.id === room.id) return;
             console.log("[LivePage] Incoming call room detected:", room);
             setIncomingCall(room);
             toast.success("Incoming video consultation request!", { duration: 6000 });
@@ -106,10 +117,11 @@ export default function LivePage() {
           table: "video_rooms",
         },
         (payload) => {
-          // If the calling customer cancels, auto-close call box
-          if (incomingCall && payload.old.id === incomingCall.id) {
+          // Use ref so this callback always sees the latest incomingCall
+          if (incomingCallRef.current && payload.old.id === incomingCallRef.current.id) {
             console.log("[LivePage] Incoming call cancelled by caller");
             setIncomingCall(null);
+            incomingCallRef.current = null;
             toast.dismiss();
           }
         }
@@ -119,7 +131,8 @@ export default function LivePage() {
     return () => {
       callChannel.unsubscribe();
     };
-  }, [shopId, incomingCall]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shopId]);
 
   // Request webcam stream when live starts
   async function startStream() {
@@ -244,6 +257,9 @@ export default function LivePage() {
   // Answer 1-on-1 video call from Customer
   async function handleAcceptCall() {
     if (!incomingCall) return;
+    // Guard: prevent double-execution if button clicked rapidly or effect fires twice
+    if (isAcceptingRef.current) return;
+    isAcceptingRef.current = true;
 
     try {
       console.log("[LivePage] Accept call room code:", incomingCall.room_code);
@@ -281,6 +297,7 @@ export default function LivePage() {
 
       setActiveConsultation(true);
       setIncomingCall(null);
+      incomingCallRef.current = null;
       setCallMicMuted(false);
       toast.success("Consultation started!");
 
@@ -288,6 +305,8 @@ export default function LivePage() {
       console.error("[LivePage] Call acceptance failed:", err);
       toast.error("Answer call failed: " + err.message, { id: "call-media" });
       handleDeclineCall();
+    } finally {
+      isAcceptingRef.current = false;
     }
   }
 
