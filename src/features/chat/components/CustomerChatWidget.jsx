@@ -103,6 +103,12 @@ export default function CustomerChatWidget({ shop }) {
       return;
     }
 
+    // Guard: ignore duplicate triggers if a call is already active or starting
+    if (activeCall || callPeerRef.current) {
+      console.warn("[Call] Call already active, ignoring duplicate trigger");
+      return;
+    }
+
     try {
       toast.loading("Accessing media devices...", { id: "media-access" });
       let stream;

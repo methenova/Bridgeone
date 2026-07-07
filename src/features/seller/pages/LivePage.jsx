@@ -286,6 +286,13 @@ export default function LivePage() {
         toast.success("Media activated", { id: "call-media" });
       }
 
+      // Destroy any stale existing consultation peer before creating a new one
+      if (viewerPeerRef.current) {
+        console.log("[LivePage] Cleaning up stale ViewerPeer before accepting new call");
+        viewerPeerRef.current.destroy();
+        viewerPeerRef.current = null;
+      }
+
       // ViewerPeer answers the call offer in the room, sending the seller's stream
       const peer = new ViewerPeer(incomingCall.room_code, (remoteStream) => {
         console.log("[LivePage] Received customer call stream");
