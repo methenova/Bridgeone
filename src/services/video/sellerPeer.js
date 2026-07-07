@@ -116,6 +116,24 @@ export class SellerPeer {
       this.roomId = room.id;
       console.log("[SellerPeer] Room created. Room ID:", this.roomId);
 
+      // Broadcast incoming call event directly to the shop's live stream channel.
+      // This bypasses Postgres WAL replication lag and shows the call popup on the seller dashboard instantly (<100ms).
+      const broadcastChannel = supabase.channel(`live:${this.shopId}`);
+      broadcastChannel.subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          console.log("[SellerPeer] Broadcasting incoming_call to seller channel:", this.shopId);
+          broadcastChannel.send({
+            type: "broadcast",
+            event: "incoming_call",
+            payload: { room }
+          });
+          // Remove channel from Supabase client memory after broadcast completes
+          setTimeout(() => {
+            supabase.removeChannel(broadcastChannel);
+          }, 3000);
+        }
+      });
+
       // Start listening for answer + ICE candidates via Realtime
       this.setupSignaling(room.id);
 

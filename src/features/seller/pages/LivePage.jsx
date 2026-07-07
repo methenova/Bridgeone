@@ -139,6 +139,16 @@ export default function LivePage() {
         });
         toast(`${payload.senderName} wants to join as speaker!`, { icon: "🎤" });
       })
+      // 3.5. Broadcast Incoming Call ( shopper calling the seller directly for instant popup )
+      .on("broadcast", { event: "incoming_call" }, ({ payload }) => {
+        const room = payload.room;
+        if (room && room.shop_id === shopId && room.room_code.startsWith("call_") && room.status === "live") {
+          if (incomingCallRef.current?.id === room.id) return;
+          console.log("[LivePage] Incoming call broadcast received:", room);
+          setIncomingCall(room);
+          toast.success("Incoming video consultation request!", { duration: 6000 });
+        }
+      })
       // 4. Postgres INSERT: Detect new incoming consultation calls
       .on(
         "postgres_changes",
