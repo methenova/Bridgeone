@@ -14,6 +14,8 @@ export default function LivePage() {
   const shopId = shop?.id;
   const { user } = useAuthContext();
 
+  console.log("[LivePage] Render - shopId:", shopId, "shopLoading:", shopLoading, "user:", user?.email);
+
   // Products for pinning
   const { data: productData } = useProducts(shopId, { limit: 50 });
   const products = productData?.products ?? [];
