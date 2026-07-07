@@ -1,6 +1,6 @@
 // Metered.ca TURN server configuration
 const METERED_DOMAIN = "digimirai.metered.live";
-const METERED_API_KEY = "6a4ce123b04157afbcea053c";
+const METERED_API_KEY = "tlCVDQNIdmroTNQ0PHk4w3l-iYSrz_nOM0GFlwZBAnNOB7Jz";
 
 // Base config with STUN only (TURN credentials are fetched dynamically)
 export const RTC_CONFIGURATION = {
