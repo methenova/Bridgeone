@@ -861,102 +861,106 @@ export default function LivePage() {
         const consultStatusColor = isConsultConnected ? "green" : (!consultationIceState || consultationIceState === "new" || consultationIceState === "checking") ? "amber" : "red";
         const formatDur = (s) => `${Math.floor(s / 60).toString().padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
         return (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
-            <div className="relative w-full max-w-2xl h-[480px] sm:h-auto sm:aspect-video rounded-3xl border border-slate-800 bg-slate-950 overflow-hidden shadow-2xl flex flex-col">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-fade-in">
+            <div className="relative w-full max-w-3xl aspect-[16/10] sm:aspect-video rounded-3xl border border-white/10 bg-slate-950 overflow-hidden shadow-2xl shadow-black/80">
 
               {/* Status Badge (top-left) */}
-              <div className="absolute left-4 top-4 z-20 flex items-center gap-2 rounded-full bg-black/70 backdrop-blur-sm px-3 py-1.5 text-xs font-semibold text-white border border-white/10">
+              <div className="absolute left-6 top-6 z-20 flex items-center gap-2.5 rounded-full bg-black/60 backdrop-blur-md px-4 py-2 text-xs font-semibold text-white border border-white/10 shadow-lg">
                 <span className="relative flex h-2 w-2">
                   <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${consultStatusColor === "green" ? "bg-green-400" : consultStatusColor === "red" ? "bg-red-400" : "bg-amber-400"}`} />
                   <span className={`relative inline-flex rounded-full h-2 w-2 ${consultStatusColor === "green" ? "bg-green-500" : consultStatusColor === "red" ? "bg-red-500" : "bg-amber-500"}`} />
                 </span>
                 <span>1-on-1 Consultation</span>
                 {isConsultConnected && consultationDuration > 0 && (
-                  <span className="font-mono tabular-nums text-slate-300 ml-1">{formatDur(consultationDuration)}</span>
+                  <span className="font-mono tabular-nums text-blue-400 ml-1.5 border-l border-white/20 pl-2">{formatDur(consultationDuration)}</span>
                 )}
               </div>
 
-              {/* Remote/Main Video Panel */}
-              <div className="flex-1 bg-slate-950 relative flex items-center justify-center overflow-hidden">
+              {/* Remote/Main Video Panel (Takes full container space) */}
+              <div className="w-full h-full bg-slate-950 relative flex items-center justify-center">
                 {callRemoteStream ? (
                   <video
                     ref={callRemoteVideoRef}
                     autoPlay
                     playsInline
-                    className="h-full w-full object-cover"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="flex flex-col items-center gap-5 text-center">
-                    <div className="relative flex h-16 w-16 items-center justify-center">
+                  <div className="flex flex-col items-center gap-5 text-center p-8">
+                    <div className="relative flex h-20 w-20 items-center justify-center">
                       <div className="absolute inset-0 rounded-full bg-blue-500/10 animate-ping" style={{ animationDuration: "1.5s" }} />
-                      <div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-blue-600/20 border border-blue-500/30">
+                      <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-blue-600/10 border border-blue-500/30">
                         <Video className="h-6 w-6 text-blue-400" />
                       </div>
                     </div>
-                    <div className="space-y-1">
-                      <p className="text-sm font-semibold text-slate-300">Waiting for customer stream...</p>
-                      <p className="text-xs text-slate-500">Establishing bidirectional secure connection</p>
+                    <div className="space-y-1.5">
+                      <p className="text-sm font-bold text-white tracking-wide">Connecting Consultation Call...</p>
+                      <p className="text-xs text-slate-500">Establishing direct secure connection to customer</p>
                     </div>
                   </div>
                 )}
 
-                {/* PiP — Seller's own camera */}
+                {/* PiP — Seller's own camera (Self View) */}
                 {consultationStreamRef.current && (
-                  <div className="absolute bottom-4 right-4 h-28 aspect-video rounded-xl overflow-hidden border border-slate-700 bg-slate-900 shadow-xl z-10">
+                  <div className="absolute top-6 right-6 h-28 sm:h-36 aspect-[3/4] sm:aspect-video rounded-2xl overflow-hidden border border-white/10 bg-slate-900 shadow-2xl z-20 transition-all hover:scale-105 duration-300">
                     <video
                       ref={callLocalVideoRef}
                       autoPlay
                       playsInline
                       muted
-                      className={`h-full w-full object-cover scale-x-[-1] transition-opacity ${callCamEnabled ? "opacity-100" : "opacity-0"}`}
+                      className={`w-full h-full object-cover scale-x-[-1] transition-opacity duration-300 ${callCamEnabled ? "opacity-100" : "opacity-0"}`}
                     />
                     {!callCamEnabled && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-slate-900">
-                        <VideoOff className="h-5 w-5 text-slate-500" />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 text-slate-600 gap-1.5">
+                        <VideoOff className="h-5 w-5" />
+                        <span className="text-[8px] uppercase tracking-wider font-bold">Cam Off</span>
                       </div>
                     )}
-                    <div className="absolute bottom-1 left-1.5 text-[7px] font-bold text-white/60 uppercase tracking-wide">You</div>
+                    <div className="absolute bottom-2 left-2.5 bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded-md text-[8px] font-bold text-white/80 uppercase tracking-wide">You</div>
                   </div>
                 )}
-              </div>
 
-              {/* Controls Bar */}
-              <div className="border-t border-slate-800 px-6 py-4 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center gap-3 z-20">
-                {/* Mic toggle */}
-                <button
-                  onClick={toggleCallMic}
-                  title={callMicMuted ? "Unmute" : "Mute mic"}
-                  className={`flex h-11 w-11 items-center justify-center rounded-2xl transition-all hover:scale-105 active:scale-95 border ${
-                    callMicMuted
-                      ? "bg-rose-500/20 text-rose-400 border-rose-500/20 hover:bg-rose-500/30"
-                      : "bg-slate-800 text-slate-300 border-white/5 hover:bg-slate-700"
-                  }`}
-                >
-                  {callMicMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
-                </button>
+                {/* Floating Controls Bar (FaceTime Style Overlay) */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3.5 bg-black/60 backdrop-blur-md px-6 py-3.5 rounded-full border border-white/10 shadow-2xl shadow-black/80">
+                  {/* Mic toggle */}
+                  <button
+                    onClick={toggleCallMic}
+                    title={callMicMuted ? "Unmute Mic" : "Mute Mic"}
+                    className={`flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border ${
+                      callMicMuted
+                        ? "bg-rose-500/20 text-rose-400 border-rose-500/30 hover:bg-rose-500/30"
+                        : "bg-white/10 text-white border-white/10 hover:bg-white/20"
+                    }`}
+                  >
+                    {callMicMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+                  </button>
 
-                {/* Camera toggle */}
-                <button
-                  onClick={toggleCallCamera}
-                  title={callCamEnabled ? "Turn off camera" : "Turn on camera"}
-                  className={`flex h-11 w-11 items-center justify-center rounded-2xl transition-all hover:scale-105 active:scale-95 border ${
-                    !callCamEnabled
-                      ? "bg-rose-500/20 text-rose-400 border-rose-500/20 hover:bg-rose-500/30"
-                      : "bg-slate-800 text-slate-300 border-white/5 hover:bg-slate-700"
-                  }`}
-                >
-                  {callCamEnabled ? <Video className="h-5 w-5" /> : <VideoOff className="h-5 w-5" />}
-                </button>
+                  {/* Camera toggle */}
+                  <button
+                    onClick={toggleCallCamera}
+                    title={callCamEnabled ? "Turn off Camera" : "Turn on Camera"}
+                    className={`flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border ${
+                      !callCamEnabled
+                        ? "bg-rose-500/20 text-rose-400 border-rose-500/30 hover:bg-rose-500/30"
+                        : "bg-white/10 text-white border-white/10 hover:bg-white/20"
+                    }`}
+                  >
+                    {callCamEnabled ? <Video className="h-5 w-5" /> : <VideoOff className="h-5 w-5" />}
+                  </button>
 
-                {/* End call */}
-                <button
-                  onClick={handleDeclineCall}
-                  title="End consultation"
-                  className="flex h-11 px-6 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 hover:scale-105 active:scale-95 shadow-lg shadow-red-500/20 transition-all text-white font-bold text-xs"
-                >
-                  <PhoneOff className="h-4.5 w-4.5" />
-                  <span>End Call</span>
-                </button>
+                  {/* Divider */}
+                  <div className="h-6 w-px bg-white/20 mx-0.5" />
+
+                  {/* End call */}
+                  <button
+                    onClick={handleDeclineCall}
+                    title="End Call"
+                    className="flex h-11 px-6 items-center justify-center gap-2 rounded-full bg-red-600 hover:bg-red-500 hover:scale-105 active:scale-95 transition-all text-white font-bold text-xs shadow-lg shadow-red-600/30"
+                  >
+                    <PhoneOff className="h-4 w-4" />
+                    <span>End Call</span>
+                  </button>
+                </div>
               </div>
 
             </div>

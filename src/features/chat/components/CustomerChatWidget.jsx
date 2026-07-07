@@ -403,121 +403,125 @@ export default function CustomerChatWidget({ shop }) {
 
       {/* ── 1-on-1 Video Call Floating Card ───────────────────────────────── */}
       {activeCall && (
-        <div className="fixed bottom-24 right-4 left-4 sm:left-auto sm:right-6 z-50 w-auto sm:w-96 h-[460px] max-h-[78vh] rounded-3xl border border-white/10 bg-slate-950/90 backdrop-blur-xl shadow-2xl shadow-blue-950/30 flex flex-col overflow-hidden animate-slide-up">
+        <div className="fixed bottom-24 right-4 left-4 sm:left-auto sm:right-6 z-50 w-auto sm:w-96 h-[480px] max-h-[78vh] rounded-3xl border border-white/10 bg-slate-950 shadow-2xl shadow-black/80 flex flex-col overflow-hidden animate-slide-up relative">
 
-          {/* Call Header */}
-          <div className="flex items-center justify-between border-b border-white/5 px-5 py-3.5 bg-slate-900/50 backdrop-blur-sm">
-            <div className="flex items-center gap-2.5">
+          {/* Call Header (Floating Overlay) */}
+          <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between bg-black/60 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/10 shadow-lg">
+            <div className="flex items-center gap-2">
               {/* Status indicator */}
-              <span className="relative flex h-2.5 w-2.5 shrink-0">
+              <span className="relative flex h-2 w-2 shrink-0">
                 <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
                   connColor === "green" ? "bg-green-400" :
                   connColor === "red" ? "bg-red-400" : "bg-amber-400"
                 }`} />
-                <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${
                   connColor === "green" ? "bg-green-500" :
                   connColor === "red" ? "bg-red-500" : "bg-amber-500"
                 }`} />
               </span>
               <div>
-                <h4 className="text-xs font-bold text-white leading-tight">
-                  {isConnected ? `In call with ${shop.name}` : connLabel}
+                <h4 className="text-[11px] font-bold text-white leading-tight">
+                  {isConnected ? `Zara Shop` : connLabel}
                 </h4>
                 {isConnected && (
-                  <p className="text-[10px] text-slate-400 font-mono tabular-nums">{formatDuration(callDuration)}</p>
+                  <p className="text-[9px] text-slate-400 font-mono tabular-nums leading-none mt-0.5">{formatDuration(callDuration)}</p>
                 )}
               </div>
             </div>
-            <span className="text-[9px] text-slate-500 font-semibold uppercase tracking-wider">Consultation</span>
+            <span className="text-[8px] bg-white/10 px-2 py-0.5 rounded-md text-white font-bold uppercase tracking-wider">Consultation</span>
           </div>
 
-          {/* Video Area */}
-          <div className="flex-1 bg-slate-950 relative flex items-center justify-center overflow-hidden">
+          {/* Video Area (Occupies full space) */}
+          <div className="w-full h-full bg-slate-950 relative flex items-center justify-center overflow-hidden">
             {callRemoteStream ? (
               <video
                 ref={callRemoteVideoRef}
                 autoPlay
                 playsInline
-                className="h-full w-full object-cover"
+                className="w-full h-full object-cover"
               />
             ) : (
               // Dialing animation
-              <div className="flex flex-col items-center gap-5 text-center p-6">
+              <div className="flex flex-col items-center gap-5 text-center p-6 bg-gradient-to-b from-slate-950 to-slate-900 w-full h-full justify-center">
                 <div className="relative flex h-20 w-20 items-center justify-center">
                   <div className="absolute inset-0 rounded-full bg-blue-500/10 animate-ping" style={{ animationDuration: "1.5s" }} />
                   <div className="absolute inset-2 rounded-full bg-blue-500/10 animate-ping" style={{ animationDuration: "1.5s", animationDelay: "0.5s" }} />
-                  <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-blue-600/20 border border-blue-500/30">
-                    <Video className="h-7 w-7 text-blue-400" />
+                  <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-blue-600/10 border border-blue-500/30">
+                    <Video className="h-6 w-6 text-blue-400 animate-pulse" />
                   </div>
                 </div>
-                <div className="space-y-1.5">
-                  <p className="text-sm font-bold text-white">
-                    {isCalling ? `Calling ${shop.name}...` : connLabel}
+                <div className="space-y-1">
+                  <p className="text-sm font-bold text-white tracking-wide">
+                    {isCalling ? `Calling Zara Shop...` : connLabel}
                   </p>
-                  <p className="text-[10px] text-slate-500 max-w-[200px] leading-relaxed">
+                  <p className="text-[10px] text-slate-500 max-w-[200px] leading-relaxed mx-auto">
                     Connecting you directly to the store expert
                   </p>
                 </div>
               </div>
             )}
 
-            {/* PiP — Local Camera Preview */}
+            {/* PiP — Local Camera Preview (Self View) */}
             {callStream && (
-              <div className="absolute bottom-3 right-3 h-24 aspect-video rounded-xl overflow-hidden border border-white/10 bg-slate-900 shadow-xl z-10">
+              <div className="absolute bottom-20 right-4 h-24 aspect-[3/4] sm:aspect-video rounded-xl overflow-hidden border border-white/10 bg-slate-900 shadow-2xl z-20 transition-all hover:scale-105 duration-300">
                 <video
                   ref={callLocalVideoRef}
                   autoPlay
                   playsInline
                   muted
-                  className={`h-full w-full object-cover scale-x-[-1] transition-opacity duration-300 ${camEnabled ? "opacity-100" : "opacity-0"}`}
+                  className={`w-full h-full object-cover scale-x-[-1] transition-opacity duration-300 ${camEnabled ? "opacity-100" : "opacity-0"}`}
                 />
                 {!camEnabled && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-slate-900">
-                    <VideoOff className="h-5 w-5 text-slate-500" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 text-slate-600 gap-1.5">
+                    <VideoOff className="h-4 w-4" />
+                    <span className="text-[7px] uppercase tracking-wider font-bold">Cam Off</span>
                   </div>
                 )}
-                <div className="absolute bottom-1 left-1 text-[7px] font-bold text-white/60 uppercase tracking-wide">You</div>
+                <div className="absolute bottom-1.5 left-2 bg-black/40 backdrop-blur-sm px-1.5 py-0.5 rounded-md text-[7px] font-bold text-white/80 uppercase tracking-wide">You</div>
               </div>
             )}
-          </div>
 
-          {/* Control Bar */}
-          <div className="border-t border-white/5 px-5 py-4 bg-slate-900/50 flex items-center justify-center gap-3 backdrop-blur-sm">
-            {/* Mic */}
-            <button
-              onClick={toggleMic}
-              title={micMuted ? "Unmute" : "Mute"}
-              className={`flex h-11 w-11 items-center justify-center rounded-2xl transition-all hover:scale-105 active:scale-95 border ${
-                micMuted
-                  ? "bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 border-rose-500/20"
-                  : "bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 border-white/5"
-              }`}
-            >
-              {micMuted ? <MicOff className="h-4.5 w-4.5" /> : <Mic className="h-4.5 w-4.5" />}
-            </button>
+            {/* Floating Controls Bar (FaceTime Style Overlay) */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 bg-black/60 backdrop-blur-md px-5 py-3 rounded-full border border-white/10 shadow-2xl">
+              {/* Mic */}
+              <button
+                onClick={toggleMic}
+                title={micMuted ? "Unmute Mic" : "Mute Mic"}
+                className={`flex h-10 w-10 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border ${
+                  micMuted
+                    ? "bg-rose-500/20 text-rose-400 border-rose-500/30 hover:bg-rose-500/30"
+                    : "bg-white/10 text-white border-white/10 hover:bg-white/20"
+                }`}
+              >
+                {micMuted ? <MicOff className="h-4.5 w-4.5" /> : <Mic className="h-4.5 w-4.5" />}
+              </button>
 
-            {/* Camera */}
-            <button
-              onClick={toggleCamera}
-              title={camEnabled ? "Turn off camera" : "Turn on camera"}
-              className={`flex h-11 w-11 items-center justify-center rounded-2xl transition-all hover:scale-105 active:scale-95 border ${
-                !camEnabled
-                  ? "bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 border-rose-500/20"
-                  : "bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 border-white/5"
-              }`}
-            >
-              {camEnabled ? <Video className="h-4.5 w-4.5" /> : <VideoOff className="h-4.5 w-4.5" />}
-            </button>
+              {/* Camera */}
+              <button
+                onClick={toggleCamera}
+                title={camEnabled ? "Turn off Camera" : "Turn on Camera"}
+                className={`flex h-10 w-10 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border ${
+                  !camEnabled
+                    ? "bg-rose-500/20 text-rose-400 border-rose-500/30 hover:bg-rose-500/30"
+                    : "bg-white/10 text-white border-white/10 hover:bg-white/20"
+                }`}
+              >
+                {camEnabled ? <Video className="h-4.5 w-4.5" /> : <VideoOff className="h-4.5 w-4.5" />}
+              </button>
 
-            {/* Hang up */}
-            <button
-              onClick={handleHangUp}
-              title="End call"
-              className="flex h-11 w-24 items-center justify-center gap-1.5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 hover:scale-105 active:scale-95 shadow-lg shadow-red-500/20 transition-all text-white font-bold text-xs"
-            >
-              <PhoneOff className="h-4 w-4" />
-              <span>End</span>
-            </button>
+              {/* Divider */}
+              <div className="h-5 w-px bg-white/20" />
+
+              {/* End call */}
+              <button
+                onClick={handleHangUp}
+                title="End Call"
+                className="flex h-10 px-5 items-center justify-center gap-1.5 rounded-full bg-red-600 hover:bg-red-500 hover:scale-105 active:scale-95 transition-all text-white font-bold text-[11px] shadow-lg shadow-red-600/30"
+              >
+                <PhoneOff className="h-3.5 w-3.5" />
+                <span>End</span>
+              </button>
+            </div>
           </div>
 
         </div>
