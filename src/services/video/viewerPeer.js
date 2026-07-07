@@ -24,6 +24,8 @@ export class ViewerPeer {
 
     // Debounce timer: fires onStreamReceived once after all tracks arrive
     this._trackDebounceTimer = null;
+    this.pollForCandidatesInterval = null;
+    this.appliedCandidateIds = new Set();
   }
 
   async start() {
@@ -115,6 +117,9 @@ export class ViewerPeer {
       // Subscribe to new seller ICE candidates going forward
       this.setupSignaling(this.roomId);
 
+      // Continuous polling fallback: check for seller ICE candidates every 3 seconds
+      this.pollForCandidatesInterval = setInterval(() => this.pollForCandidates(), 3000);
+
     } catch (err) {
       console.error("[ViewerPeer] Failed to start:", err);
       this.destroy();
@@ -137,11 +142,38 @@ export class ViewerPeer {
       if (candidates?.length > 0) {
         console.log(`[ViewerPeer] Applying ${candidates.length} existing seller ICE candidates...`);
         for (const item of candidates) {
+          this.appliedCandidateIds.add(item.id);
           if (this.peer) await this.peer.addIceCandidate(new RTCIceCandidate(item.candidate));
         }
       }
     } catch (err) {
       console.error("[ViewerPeer] Error fetching existing candidates:", err);
+    }
+  }
+
+  /** Poll DB directly for new seller ICE candidates (safety net for closed Realtime sockets) */
+  async pollForCandidates() {
+    if (this.isDestroyed || !this.roomId || !this.remoteDescriptionSet) return;
+    try {
+      const { data: candidates } = await supabase
+        .from("video_candidates")
+        .select("*")
+        .eq("room_id", this.roomId)
+        .eq("sender", "seller");
+
+      if (candidates && candidates.length > 0 && !this.isDestroyed) {
+        for (const item of candidates) {
+          if (!this.appliedCandidateIds.has(item.id)) {
+            this.appliedCandidateIds.add(item.id);
+            if (this.peer) {
+              await this.peer.addIceCandidate(new RTCIceCandidate(item.candidate));
+              console.log("[ViewerPeer] Seller ICE candidate added via poll");
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("[ViewerPeer] Candidate poll skipped:", err?.message);
     }
   }
 
@@ -189,6 +221,8 @@ export class ViewerPeer {
     console.log("[ViewerPeer] Destroying session");
 
     clearTimeout(this._trackDebounceTimer);
+    clearInterval(this.pollForCandidatesInterval);
+    this.pollForCandidatesInterval = null;
 
     if (this.channel) {
       supabase.removeChannel(this.channel);

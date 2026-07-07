@@ -115,11 +115,8 @@ export class SellerPeer {
       // Start listening for answer + ICE candidates via Realtime
       this.setupSignaling(room.id);
 
-      // Safety polls: retry at 2s, 5s, 10s in case Realtime subscription was slow to activate
-      [2000, 5000, 10000].forEach((delay) => {
-        const t = setTimeout(() => this.pollForAnswer(), delay);
-        this._pollTimers.push(t);
-      });
+      // Continuous polling fallback: check for answer every 3 seconds
+      this.pollForAnswerInterval = setInterval(() => this.pollForAnswer(), 3000);
 
     } catch (err) {
       console.error("[SellerPeer] Failed to start:", err);
@@ -130,7 +127,13 @@ export class SellerPeer {
 
   /** Poll DB directly for an answer (safety net against Realtime race condition) */
   async pollForAnswer() {
-    if (this.isDestroyed || !this.roomId || this.remoteDescriptionSet) return;
+    if (this.isDestroyed || !this.roomId || this.remoteDescriptionSet) {
+      if (this.remoteDescriptionSet && this.pollForAnswerInterval) {
+        clearInterval(this.pollForAnswerInterval);
+        this.pollForAnswerInterval = null;
+      }
+      return;
+    }
     try {
       console.log("[SellerPeer] Polling DB for answer...");
       const { data: room } = await supabase
@@ -141,16 +144,49 @@ export class SellerPeer {
 
       if (room?.answer && this.peer && this.peer.signalingState !== "stable" && !this.isDestroyed) {
         console.log("[SellerPeer] Answer found via poll — applying remote description...");
+        clearInterval(this.pollForAnswerInterval);
+        this.pollForAnswerInterval = null;
+
         await this.peer.setRemoteDescription(new RTCSessionDescription(room.answer));
         this.remoteDescriptionSet = true;
+        
+        console.log(`[SellerPeer] Processing ${this.remoteCandidatesQueue.length} queued ICE candidates...`);
         for (const cand of this.remoteCandidatesQueue) {
           await this.peer.addIceCandidate(new RTCIceCandidate(cand));
         }
         this.remoteCandidatesQueue = [];
+
+        // Start polling for candidates
+        this.pollForCandidatesInterval = setInterval(() => this.pollForCandidates(), 3000);
       }
     } catch (err) {
-      // Room may not exist yet or answer not set — non-critical
       console.warn("[SellerPeer] Poll skipped:", err?.message);
+    }
+  }
+
+  /** Poll DB directly for new viewer ICE candidates (safety net for closed Realtime sockets) */
+  async pollForCandidates() {
+    if (this.isDestroyed || !this.roomId || !this.remoteDescriptionSet) return;
+    try {
+      const { data: candidates } = await supabase
+        .from("video_candidates")
+        .select("*")
+        .eq("room_id", this.roomId)
+        .eq("sender", "viewer");
+
+      if (candidates && candidates.length > 0 && !this.isDestroyed) {
+        for (const item of candidates) {
+          if (!this.appliedCandidateIds.has(item.id)) {
+            this.appliedCandidateIds.add(item.id);
+            if (this.peer) {
+              await this.peer.addIceCandidate(new RTCIceCandidate(item.candidate));
+              console.log("[SellerPeer] Viewer ICE candidate added via poll");
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("[SellerPeer] Candidate poll skipped:", err?.message);
     }
   }
 
@@ -175,6 +211,9 @@ export class SellerPeer {
           ) {
             try {
               console.log("[SellerPeer] SDP Answer received via Realtime — applying...");
+              clearInterval(this.pollForAnswerInterval);
+              this.pollForAnswerInterval = null;
+
               await this.peer.setRemoteDescription(new RTCSessionDescription(room.answer));
               this.remoteDescriptionSet = true;
               console.log(`[SellerPeer] Processing ${this.remoteCandidatesQueue.length} queued ICE candidates...`);
@@ -182,6 +221,9 @@ export class SellerPeer {
                 await this.peer.addIceCandidate(new RTCIceCandidate(cand));
               }
               this.remoteCandidatesQueue = [];
+
+              // Start polling for candidates
+              this.pollForCandidatesInterval = setInterval(() => this.pollForCandidates(), 3000);
             } catch (err) {
               console.error("[SellerPeer] Error applying SDP answer:", err);
             }
@@ -200,6 +242,10 @@ export class SellerPeer {
                 this.remoteCandidatesQueue.push(candidate);
                 console.log("[SellerPeer] Queued viewer ICE candidate (answer not yet applied)");
               } else {
+                // Deduplicate if already added via poll
+                // Since postgres changes returns the raw payload, we don't have row ID here directly,
+                // but we can check if it exists in appliedCandidateIds or try to add it.
+                // RTCPeerConnection handles duplicate candidates gracefully, but it's cleaner to just apply it.
                 await this.peer.addIceCandidate(new RTCIceCandidate(candidate));
                 console.log("[SellerPeer] Viewer ICE candidate added");
               }
@@ -228,9 +274,13 @@ export class SellerPeer {
     this.isDestroyed = true;
     console.log("[SellerPeer] Destroying session");
 
-    // Cancel all pending poll timers
+    // Cancel all pending poll timers and intervals
     this._pollTimers.forEach(clearTimeout);
     this._pollTimers = [];
+    clearInterval(this.pollForAnswerInterval);
+    this.pollForAnswerInterval = null;
+    clearInterval(this.pollForCandidatesInterval);
+    this.pollForCandidatesInterval = null;
     clearTimeout(this._trackDebounceTimer);
 
     if (this.channel) {
