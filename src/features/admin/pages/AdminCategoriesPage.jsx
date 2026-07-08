@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { useAdminCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from "../hooks/useAdmin";
-import { Plus, Pencil, Trash2, FolderPlus, FolderEdit } from "lucide-react";
+import { Plus, Pencil, Trash2, FolderPlus, FolderEdit, Folder, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+
+import { useAdminCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from "../hooks/useAdmin";
 
 export default function AdminCategoriesPage() {
   const { data: categories = [], isLoading } = useAdminCategories();
@@ -43,7 +45,9 @@ export default function AdminCategoriesPage() {
         await createCat.mutateAsync({ name, icon });
       }
       handleCancel();
-    } catch {}
+    } catch (err) {
+      console.error("[Categories] Update error:", err);
+    }
   }
 
   async function handleDelete(id, name) {
@@ -53,65 +57,78 @@ export default function AdminCategoriesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-white max-w-7xl">
+      
+      {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-white">Categories</h1>
-        <p className="mt-1 text-slate-400">Manage categories, icons, and slug generation.</p>
+        <h1 className="text-3xl font-extrabold tracking-tight">Categories</h1>
+        <p className="mt-1 text-xs text-slate-400">Configure marketplace product verticals and visual symbols.</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
         
         {/* List of Categories */}
-        <div className="md:col-span-2 rounded-2xl border border-slate-900 bg-slate-900/40 p-6 space-y-4">
-          <h3 className="text-lg font-bold text-white">Existing Categories</h3>
+        <div className="md:col-span-2 rounded-2xl border border-slate-900 bg-slate-900/30 p-6 space-y-4">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500">Existing Categories</h3>
 
           {isLoading ? (
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-12 animate-pulse rounded-xl bg-slate-800" />
+                <div key={i} className="h-14 animate-pulse rounded-xl bg-slate-900 border border-slate-850" />
               ))}
             </div>
           ) : categories.length === 0 ? (
-            <p className="text-sm text-slate-500 py-6 text-center">No categories created yet.</p>
+            <div className="py-20 text-center flex flex-col items-center">
+              <Folder className="h-10 w-10 text-slate-700 mb-3 animate-pulse" />
+              <p className="text-sm font-bold text-slate-400">No Categories Found</p>
+            </div>
           ) : (
-            <div className="divide-y divide-slate-800">
-              {categories.map((cat) => (
-                <div key={cat.id} className="flex justify-between items-center py-3.5 first:pt-0 last:pb-0 text-sm">
+            <div className="divide-y divide-slate-900">
+              {categories.map((cat, idx) => (
+                <motion.div 
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.04 }}
+                  key={cat.id} 
+                  className="flex justify-between items-center py-3.5 first:pt-0 last:pb-0 text-sm"
+                >
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{cat.icon || "📂"}</span>
+                    <span className="text-2xl h-10 w-10 rounded-xl bg-slate-950 border border-slate-850 flex items-center justify-center shadow-sm">
+                      {cat.icon || "📂"}
+                    </span>
                     <div>
-                      <p className="font-semibold text-white">{cat.name}</p>
-                      <p className="text-xs text-slate-500 font-mono">slug: {cat.slug}</p>
+                      <p className="font-bold text-white">{cat.name}</p>
+                      <p className="text-[10px] text-slate-500 font-mono mt-0.5">slug: {cat.slug}</p>
                     </div>
                   </div>
                   
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEdit(cat)}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-800 bg-slate-900 text-slate-400 hover:text-white"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-850 bg-slate-900/60 text-slate-400 hover:text-white transition-colors cursor-pointer"
                       title="Edit Category"
                     >
-                      <Pencil className="h-4 w-4" />
+                      <Pencil className="h-3.5 w-3.5" />
                     </button>
                     <button
                       onClick={() => handleDelete(cat.id, cat.name)}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-800 bg-slate-900 text-slate-400 hover:text-red-400 hover:border-red-500/30"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-850 bg-slate-900/60 text-slate-450 hover:text-red-400 hover:border-red-500/30 transition-colors cursor-pointer"
                       title="Delete Category"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           )}
         </div>
 
         {/* Creator / Editor Form */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/40 p-6 h-fit space-y-4">
+        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-6 h-fit space-y-4">
           <div className="flex items-center gap-2 text-white">
             {editingId ? <FolderEdit className="h-5 w-5 text-blue-400" /> : <FolderPlus className="h-5 w-5 text-blue-400" />}
-            <h3 className="text-lg font-bold">{editingId ? "Edit Category" : "Add Category"}</h3>
+            <h3 className="text-base font-bold">{editingId ? "Edit Category" : "Add Category"}</h3>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -122,7 +139,7 @@ export default function AdminCategoriesPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Electronics, Fashion"
-                className="w-full rounded-xl border border-slate-800 bg-slate-900 px-4 py-2.5 text-sm text-white placeholder-slate-600 outline-none focus:border-blue-500"
+                className="w-full rounded-xl border border-slate-800 bg-slate-950/80 px-4 py-2.5 text-xs text-white placeholder-slate-600 outline-none focus:border-blue-500 transition-colors"
               />
             </div>
 
@@ -133,7 +150,7 @@ export default function AdminCategoriesPage() {
                 value={icon}
                 onChange={(e) => setIcon(e.target.value)}
                 placeholder="e.g. 💻, 👕"
-                className="w-full rounded-xl border border-slate-800 bg-slate-900 px-4 py-2.5 text-sm text-white placeholder-slate-600 outline-none focus:border-blue-500"
+                className="w-full rounded-xl border border-slate-800 bg-slate-950/80 px-4 py-2.5 text-xs text-white placeholder-slate-600 outline-none focus:border-blue-500 transition-colors"
               />
             </div>
 
@@ -141,16 +158,20 @@ export default function AdminCategoriesPage() {
               <button
                 type="submit"
                 disabled={createCat.isPending || updateCat.isPending}
-                className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-2.5 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50 transition-all active:scale-[0.98]"
+                className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-2.5 text-xs font-bold text-white hover:bg-blue-500 disabled:opacity-50 transition-all active:scale-[0.98] cursor-pointer shadow-lg shadow-blue-650/10"
               >
-                <Plus className="h-4 w-4" />
-                {editingId ? "Update" : "Create"}
+                {createCat.isPending || updateCat.isPending ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Plus className="h-3.5 w-3.5" />
+                )}
+                <span>{editingId ? "Update" : "Create"}</span>
               </button>
               {editingId && (
                 <button
                   type="button"
                   onClick={handleCancel}
-                  className="rounded-xl border border-slate-800 px-4 py-2.5 text-sm text-slate-400 hover:text-white"
+                  className="rounded-xl border border-slate-800 px-4 py-2.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
