@@ -7,6 +7,7 @@ import {
   updateProfileRole,
   getAdminShops,
   toggleShopStatus,
+  updateShopPlan,
   getAdminProducts,
   toggleProductFeatured,
   toggleProductActive,
@@ -69,6 +70,18 @@ export function useToggleShopStatus() {
       toast.success("Shop status updated");
     },
     onError: (err) => toast.error(err.message || "Failed to update status"),
+  });
+}
+
+export function useUpdateShopPlan() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ shopId, planName }) => updateShopPlan(shopId, planName),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminKeys.shops() });
+      toast.success("Shop subscription plan updated successfully");
+    },
+    onError: (err) => toast.error(err.message || "Failed to update subscription plan"),
   });
 }
 

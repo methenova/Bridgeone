@@ -83,6 +83,18 @@ export async function toggleShopStatus(shopId, isActive) {
   return data;
 }
 
+export async function updateShopPlan(shopId, planName) {
+  const { data, error } = await supabase
+    .from("shops")
+    .update({ plan_name: planName })
+    .eq("id", shopId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
 // ─────────────────────────────────────────────────────────────
 // PRODUCTS MANAGEMENT
 // ─────────────────────────────────────────────────────────────

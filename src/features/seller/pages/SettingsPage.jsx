@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { Store, Phone, Mail, MapPin, Loader2, Save, Sliders, Code, Copy, Check, Video } from "lucide-react";
+import { Store, Phone, Mail, MapPin, Loader2, Save, Sliders, Code, Copy, Check, Video, Sparkles } from "lucide-react";
 import useSellerShop from "../hooks/useSellerShop";
 import { updateShop } from "../services/shop.service";
 import { supabase } from "@/config/supabase";
@@ -29,6 +29,42 @@ export default function SettingsPage() {
   const [isOnline, setIsOnline] = useState(false);
   const [savingWidget, setSavingWidget] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  const [thisMonthCalls, setThisMonthCalls] = useState(0);
+
+  const PLAN_LIMITS = {
+    free: { name: "Free Plan", limit: 10, description: "Basic video consultation calls for starting shops." },
+    basic: { name: "Basic Plan", limit: 100, description: "Full styling and elevated call capacity." },
+    pro: { name: "Pro Plan", limit: Infinity, description: "Unlimited video calls, custom styles, priority support." },
+  };
+
+  // Fetch monthly call usage
+  useEffect(() => {
+    if (!shop?.id) return;
+    async function loadMonthlyUsage() {
+      const now = new Date();
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      try {
+        const { count, error } = await supabase
+          .from("call_logs")
+          .select("id", { count: "exact", head: true })
+          .eq("shop_id", shop.id)
+          .gte("created_at", firstDay);
+
+        if (!error) {
+          setThisMonthCalls(count || 0);
+        }
+      } catch (err) {
+        console.warn("Failed to fetch monthly call usage:", err);
+      }
+    }
+    loadMonthlyUsage();
+  }, [shop]);
+
+  const currentPlanKey = shop?.plan_name || "free";
+  const planInfo = PLAN_LIMITS[currentPlanKey] || PLAN_LIMITS.free;
+  const planLimit = planInfo.limit;
+  const usagePercentage = planLimit === Infinity ? 0 : Math.min(100, Math.round((thisMonthCalls / planLimit) * 100));
 
   const {
     register,
@@ -335,6 +371,53 @@ export default function SettingsPage() {
       {activeTab === "widget" && (
         <div className="space-y-6 animate-fade-in">
           
+          {/* Subscription Summary Card */}
+          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 space-y-6">
+            <div className="flex items-center gap-2 pb-4 border-b border-slate-800">
+              <Sparkles className="h-5 w-5 text-amber-400" />
+              <h2 className="text-lg font-semibold text-white">Subscription & Limits</h2>
+            </div>
+            
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">Current Plan</p>
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-extrabold text-white capitalize">{planInfo.name}</span>
+                  <span className="inline-flex items-center rounded-full bg-blue-500/10 px-2.5 py-0.5 text-[10px] font-bold text-blue-400 border border-blue-500/20 uppercase">
+                    Active
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed max-w-sm">{planInfo.description}</p>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-xs font-semibold">
+                  <span className="text-slate-400">Monthly Call Usage</span>
+                  <span className="text-white">
+                    {thisMonthCalls} / {planLimit === Infinity ? "Unlimited" : planLimit} calls
+                  </span>
+                </div>
+                {planLimit !== Infinity ? (
+                  <div className="space-y-1.5">
+                    <div className="h-2 w-full bg-slate-950 rounded-full overflow-hidden border border-slate-850">
+                      <div
+                        style={{ width: `${usagePercentage}%`, backgroundColor: usagePercentage >= 90 ? "#f43f5e" : "#2563eb" }}
+                        className="h-full rounded-full transition-all duration-300"
+                      />
+                    </div>
+                    <p className="text-[10px] text-slate-500 font-medium">
+                      Resets on the 1st of next month.
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-xs text-slate-500 font-medium pt-2">
+                    Enjoy unlimited live video shopping consultations.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
           {/* Customizer Card */}
           <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 space-y-6">
             <div className="flex items-center gap-2 pb-4 border-b border-slate-800">

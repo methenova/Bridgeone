@@ -1,10 +1,21 @@
-import { useAdminShops, useToggleShopStatus } from "../hooks/useAdmin";
+import { useAdminShops, useToggleShopStatus, useUpdateShopPlan } from "../hooks/useAdmin";
 import { Store, Check, AlertTriangle, ToggleLeft, ToggleRight } from "lucide-react";
 import ProductSkeleton from "@/features/seller/components/ProductSkeleton";
+
+const PLANS = [
+  { value: "free", label: "Free Plan" },
+  { value: "basic", label: "Basic Plan" },
+  { value: "pro", label: "Pro Plan" },
+];
 
 export default function AdminShopsPage() {
   const { data: shops = [], isLoading } = useAdminShops();
   const toggleStatus = useToggleShopStatus();
+  const updatePlan = useUpdateShopPlan();
+
+  async function handlePlanChange(shopId, newPlan) {
+    await updatePlan.mutateAsync({ shopId, planName: newPlan });
+  }
 
   async function handleToggleActive(shop) {
     await toggleStatus.mutateAsync({
@@ -31,7 +42,7 @@ export default function AdminShopsPage() {
                   <th className="px-6 py-4">Shop</th>
                   <th className="px-6 py-4">Owner</th>
                   <th className="px-6 py-4">Category</th>
-                  <th className="px-6 py-4">Location</th>
+                  <th className="px-6 py-4">Subscription Plan</th>
                   <th className="px-6 py-4">Approval Status</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
@@ -71,9 +82,18 @@ export default function AdminShopsPage() {
                         {s.categories?.name || "—"}
                       </td>
 
-                      {/* Location */}
-                      <td className="px-6 py-4 text-slate-400">
-                        {s.city ? `${s.city}, ${s.state}` : "—"}
+                      {/* Subscription Plan Select */}
+                      <td className="px-6 py-4">
+                        <select
+                          value={s.plan_name || "free"}
+                          onChange={(e) => handlePlanChange(s.id, e.target.value)}
+                          disabled={updatePlan.isPending}
+                          className="rounded-xl border border-slate-800 bg-slate-900 px-3 py-1.5 text-xs text-white outline-none focus:border-blue-500 disabled:opacity-50 font-semibold"
+                        >
+                          {PLANS.map((plan) => (
+                            <option key={plan.value} value={plan.value}>{plan.label}</option>
+                          ))}
+                        </select>
                       </td>
 
                       {/* Active Status Badge */}

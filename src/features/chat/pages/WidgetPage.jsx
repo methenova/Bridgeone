@@ -29,6 +29,7 @@ export default function WidgetPage() {
   const [micMuted, setMicMuted] = useState(false);
   const [camEnabled, setCamEnabled] = useState(true);
   const [callDuration, setCallDuration] = useState(0);
+  const [limitExceeded, setLimitExceeded] = useState(false);
 
   const peerRef = useRef(null);
   const localVideoRef = useRef(null);
@@ -45,13 +46,28 @@ export default function WidgetPage() {
       try {
         const { data, error } = await supabase
           .from("shops")
-          .select("id, name, logo_url, widget_color, is_online")
+          .select("id, name, logo_url, widget_color, is_online, plan_name")
           .eq("id", shopId)
           .single();
 
         if (error) throw error;
         setShop(data);
-        if (!data.is_online) {
+
+        // Fetch call logs count for the current calendar month
+        const now = new Date();
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+        const { count: callCount } = await supabase
+          .from("call_logs")
+          .select("id", { count: "exact", head: true })
+          .eq("shop_id", shopId)
+          .gte("created_at", firstDay);
+
+        const currentCalls = callCount || 0;
+        const plan = data.plan_name || "free";
+        const limit = plan === "pro" ? Infinity : plan === "basic" ? 100 : 10;
+        if (currentCalls >= limit) {
+          setLimitExceeded(true);
+        } else if (!data.is_online) {
           setFlowState("offline");
         }
       } catch (err) {
@@ -318,6 +334,50 @@ export default function WidgetPage() {
       <div className="flex h-screen flex-col items-center justify-center bg-slate-950 text-slate-400">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-800 border-t-blue-500" />
         <span className="mt-3 text-xs uppercase tracking-widest font-bold">Loading...</span>
+      </div>
+    );
+  }
+
+  if (limitExceeded) {
+    return (
+      <div className="h-screen flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans border border-slate-900 shadow-2xl relative select-none">
+        <header className="flex items-center justify-between border-b border-slate-900 px-5 py-4 bg-slate-900/40 backdrop-blur-md shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-xl border border-slate-800 overflow-hidden bg-slate-900 flex items-center justify-center shrink-0">
+              {shop?.logo_url ? <img src={shop.logo_url} alt="" className="h-full w-full object-cover" /> : <Video className="h-4.5 w-4.5 text-slate-500" />}
+            </div>
+            <div>
+              <h1 className="text-sm font-bold text-white leading-tight">{shop?.name || "Live Consultation"}</h1>
+            </div>
+          </div>
+          <button
+            onClick={() => window.parent.postMessage("close-widget", "*")}
+            className="h-8 w-8 flex items-center justify-center rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white transition-colors"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </header>
+        <main className="flex-1 p-6 flex flex-col items-center justify-center text-center space-y-5 bg-slate-950">
+          <div className="h-16 w-16 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-500 flex items-center justify-center animate-bounce">
+            <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <div className="space-y-1.5">
+            <h2 className="text-base font-extrabold text-white">Call Limit Reached</h2>
+            <p className="text-xs text-slate-400 max-w-[260px] leading-relaxed mx-auto">
+              This merchant has reached their monthly video consultation call limit. Please contact store support for assistance.
+            </p>
+          </div>
+          <button
+            onClick={() => window.parent.postMessage("close-widget", "*")}
+            className="rounded-xl border border-slate-900 hover:border-slate-800 bg-slate-900/60 hover:bg-slate-800 text-xs font-semibold px-6 py-2.5 text-slate-300 hover:text-white transition-colors cursor-pointer"
+          >
+            Close Widget
+          </button>
+        </main>
       </div>
     );
   }
