@@ -114,14 +114,14 @@ export default function SellerSidebar({ isOpen, onClose }) {
                 end={item.path === "/seller"}
                 onClick={onClose} // close mobile drawer when route changes
                 className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-xl px-4 py-3 font-semibold transition-all duration-200 ${
+                  `flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider border transition-all duration-150 ${
                     isActive
-                      ? "bg-blue-600 text-white shadow-lg shadow-blue-600/10"
-                      : "text-slate-400 hover:bg-slate-900 hover:text-white"
+                      ? "bg-blue-500/10 border-blue-500/20 text-blue-400"
+                      : "border-transparent text-slate-400 hover:bg-slate-900/60 hover:text-slate-200"
                   }`
                 }
               >
-                <Icon size={20} />
+                <Icon size={16} className="shrink-0" />
                 <span>{item.title}</span>
               </NavLink>
             );
