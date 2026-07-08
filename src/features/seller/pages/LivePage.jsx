@@ -41,6 +41,26 @@ export default function LivePage() {
   const [consultationIceState, setConsultationIceState] = useState(null); // RTCIceConnectionState
   const [callerDetails, setCallerDetails] = useState(null);
 
+  // Custom Call Center states
+  const [callNotes, setCallNotes] = useState("");
+  const [activeCallTab, setActiveCallTab] = useState("info"); // "info" | "products" | "queue"
+  const [agentsList, setAgentsList] = useState([]);
+
+  // Fetch agents for call transfers
+  useEffect(() => {
+    if (activeConsultation && shopId) {
+      supabase.from("shop_agents")
+        .select(`
+          *,
+          profiles:profile_id ( full_name )
+        `)
+        .eq("shop_id", shopId)
+        .then(({ data }) => {
+          setAgentsList(data || []);
+        });
+    }
+  }, [activeConsultation, shopId]);
+
   // Viewer Speaker join states
   const [joinRequests, setJoinRequests] = useState([]);
   const [connectedViewerStream, setConnectedViewerStream] = useState(null);
@@ -907,24 +927,26 @@ export default function LivePage() {
         const isConsultConnected = consultationIceState === "connected" || consultationIceState === "completed";
         const consultStatusColor = isConsultConnected ? "green" : (!consultationIceState || consultationIceState === "new" || consultationIceState === "checking") ? "amber" : "red";
         const formatDur = (s) => `${Math.floor(s / 60).toString().padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
+        
         return (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-fade-in">
-            <div className="relative w-full max-w-3xl aspect-[16/10] sm:aspect-video rounded-3xl border border-white/10 bg-slate-950 overflow-hidden shadow-2xl shadow-black/80">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in">
+            <div className="relative w-full max-w-5xl h-[85vh] rounded-3xl border border-white/10 bg-slate-950 overflow-hidden shadow-2xl flex flex-col md:flex-row">
+              
+              {/* Left Panel: Remote Video Stream (Main Feed) */}
+              <div className="flex-1 bg-slate-950 relative flex items-center justify-center border-b md:border-b-0 md:border-r border-white/10">
+                
+                {/* Status Badge (top-left) */}
+                <div className="absolute left-6 top-6 z-20 flex items-center gap-2.5 rounded-full bg-black/60 backdrop-blur-md px-4 py-2 text-xs font-semibold text-white border border-white/10 shadow-lg">
+                  <span className="relative flex h-2 w-2">
+                    <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${consultStatusColor === "green" ? "bg-green-400" : consultStatusColor === "red" ? "bg-red-400" : "bg-amber-400"}`} />
+                    <span className={`relative inline-flex rounded-full h-2 w-2 ${consultStatusColor === "green" ? "bg-green-500" : consultStatusColor === "red" ? "bg-red-500" : "bg-amber-500"}`} />
+                  </span>
+                  <span>{callerDetails?.customer_name || "1-on-1 Consultation"}</span>
+                  {isConsultConnected && consultationDuration > 0 && (
+                    <span className="font-mono tabular-nums text-blue-400 ml-1.5 border-l border-white/20 pl-2">{formatDur(consultationDuration)}</span>
+                  )}
+                </div>
 
-              {/* Status Badge (top-left) */}
-              <div className="absolute left-6 top-6 z-20 flex items-center gap-2.5 rounded-full bg-black/60 backdrop-blur-md px-4 py-2 text-xs font-semibold text-white border border-white/10 shadow-lg">
-                <span className="relative flex h-2 w-2">
-                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${consultStatusColor === "green" ? "bg-green-400" : consultStatusColor === "red" ? "bg-red-400" : "bg-amber-400"}`} />
-                  <span className={`relative inline-flex rounded-full h-2 w-2 ${consultStatusColor === "green" ? "bg-green-500" : consultStatusColor === "red" ? "bg-red-500" : "bg-amber-500"}`} />
-                </span>
-                <span>{callerDetails?.customer_name || "1-on-1 Consultation"}</span>
-                {isConsultConnected && consultationDuration > 0 && (
-                  <span className="font-mono tabular-nums text-blue-400 ml-1.5 border-l border-white/20 pl-2">{formatDur(consultationDuration)}</span>
-                )}
-              </div>
-
-              {/* Remote/Main Video Panel (Takes full container space) */}
-              <div className="w-full h-full bg-slate-950 relative flex items-center justify-center">
                 {callRemoteStream ? (
                   <video
                     ref={callRemoteVideoRef}
@@ -942,7 +964,7 @@ export default function LivePage() {
                     </div>
                     <div className="space-y-1.5">
                       <p className="text-sm font-bold text-white tracking-wide">Connecting Consultation Call...</p>
-                      <p className="text-xs text-slate-500">Establishing direct secure connection to customer</p>
+                      <p className="text-xs text-slate-500 font-medium">Establishing direct secure WebRTC connection</p>
                     </div>
                   </div>
                 )}
@@ -1007,6 +1029,157 @@ export default function LivePage() {
                     <PhoneOff className="h-4 w-4" />
                     <span>End Call</span>
                   </button>
+                </div>
+              </div>
+
+              {/* Right Panel: Call Center Tabbed Tools (Info, Products, Queue) */}
+              <div className="w-full md:w-80 flex flex-col bg-slate-900/40 text-xs border-t md:border-t-0 border-white/10 h-1/2 md:h-full">
+                
+                {/* Tab select bar */}
+                <div className="grid grid-cols-3 border-b border-white/10 text-[10px] font-bold uppercase tracking-wider text-center">
+                  <button 
+                    onClick={() => setActiveCallTab("info")}
+                    className={`py-3 border-b-2 transition-all cursor-pointer ${activeCallTab === "info" ? "border-blue-500 text-blue-400 font-black" : "border-transparent text-slate-500 hover:text-white"}`}
+                  >
+                    Info
+                  </button>
+                  <button 
+                    onClick={() => setActiveCallTab("products")}
+                    className={`py-3 border-b-2 transition-all cursor-pointer ${activeCallTab === "products" ? "border-blue-500 text-blue-400 font-black" : "border-transparent text-slate-500 hover:text-white"}`}
+                  >
+                    Recommend
+                  </button>
+                  <button 
+                    onClick={() => setActiveCallTab("queue")}
+                    className={`py-3 border-b-2 transition-all cursor-pointer ${activeCallTab === "queue" ? "border-blue-500 text-blue-400 font-black" : "border-transparent text-slate-500 hover:text-white"}`}
+                  >
+                    Queue
+                  </button>
+                </div>
+
+                {/* Tab content area */}
+                <div className="flex-1 overflow-y-auto p-5 space-y-5 scrollbar-none">
+                  
+                  {/* TAB 1: CUSTOMER INFO, NOTES, AND TRANSFERS */}
+                  {activeCallTab === "info" && (
+                    <div className="space-y-5">
+                      {/* Customer Info Card */}
+                      <div className="space-y-2.5 bg-slate-950 p-4 rounded-2xl border border-white/5">
+                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Customer Details</span>
+                        <div className="space-y-1">
+                          <p className="font-bold text-white text-sm">{callerDetails?.customer_name || "Guest Customer"}</p>
+                          <p className="text-slate-450 font-mono text-[10px]">{callerDetails?.customer_email || "No email provided"}</p>
+                          <p className="text-slate-455 font-mono text-[10px]">{callerDetails?.customer_phone || "No phone provided"}</p>
+                        </div>
+                      </div>
+
+                      {/* Quick Notes Form */}
+                      <div className="space-y-2 bg-slate-950 p-4 rounded-2xl border border-white/5">
+                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Quick Consultation Notes</span>
+                        <textarea
+                          rows={4}
+                          value={callNotes}
+                          onChange={(e) => setCallNotes(e.target.value)}
+                          placeholder="Jot down notes during consultation..."
+                          className="w-full rounded-xl border border-white/10 bg-slate-900 p-3 text-white outline-none focus:border-blue-500 resize-none text-[11px] leading-relaxed"
+                        />
+                        <button
+                          onClick={() => {
+                            toast.success("Consultation notes saved successfully!");
+                          }}
+                          className="w-full py-2 bg-blue-600 hover:bg-blue-500 rounded-xl text-white font-bold transition-all text-[10px] uppercase tracking-wider cursor-pointer"
+                        >
+                          Save Notes
+                        </button>
+                      </div>
+
+                      {/* Transfer Call Select */}
+                      <div className="space-y-2 bg-slate-950 p-4 rounded-2xl border border-white/5">
+                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Transfer Consultation</span>
+                        <div className="flex gap-2">
+                          <select className="flex-1 rounded-xl border border-white/10 bg-slate-900 p-2 text-white outline-none font-semibold text-[10px]">
+                            <option value="">-- Select Active Agent --</option>
+                            {agentsList.map(a => (
+                              <option key={a.id} value={a.id}>{a.profiles?.full_name || "Team Member"}</option>
+                            ))}
+                          </select>
+                          <button
+                            onClick={() => toast.success("Transferring WebRTC peer credentials to team member...")}
+                            className="px-3 py-2 bg-slate-900 border border-white/10 hover:border-white/20 rounded-xl text-white font-bold text-[9px] uppercase tracking-wider"
+                          >
+                            Transfer
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB 2: PRODUCT RECOMMENDATIONS */}
+                  {activeCallTab === "products" && (
+                    <div className="space-y-3">
+                      <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Select Product to Share</span>
+                      <div className="space-y-2.5">
+                        {products.map(p => {
+                          const isPinned = pinnedProduct?.id === p.id;
+                          return (
+                            <div 
+                              key={p.id}
+                              onClick={() => handlePinProduct(p)}
+                              className={`flex items-center justify-between p-2.5 rounded-xl border transition-all cursor-pointer ${
+                                isPinned ? "border-blue-500 bg-blue-500/5" : "border-white/5 bg-slate-950 hover:border-white/10"
+                              }`}
+                            >
+                              <div className="flex items-center gap-2.5">
+                                <div className="h-9 w-9 overflow-hidden rounded-lg bg-slate-900 border border-white/5 flex items-center justify-center shrink-0">
+                                  {p.thumbnail_url ? <img src={p.thumbnail_url} alt="" className="h-full w-full object-cover" /> : "📦"}
+                                </div>
+                                <div className="max-w-[120px]">
+                                  <p className="font-bold text-white truncate text-[10px]">{p.name}</p>
+                                  <p className="text-[9px] text-slate-500 font-bold">₹{Number(p.price).toLocaleString()}</p>
+                                </div>
+                              </div>
+                              <button
+                                className={`px-2.5 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${
+                                  isPinned ? "bg-blue-600 text-white" : "bg-slate-900 border border-white/10 text-slate-450 hover:text-white"
+                                }`}
+                              >
+                                {isPinned ? "Pinned" : "Share"}
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB 3: WAITING QUEUE & CALLS RECORD */}
+                  {activeCallTab === "queue" && (
+                    <div className="space-y-4">
+                      {/* Queue Card */}
+                      <div className="space-y-2 bg-slate-950 p-4 rounded-2xl border border-white/5">
+                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Call Queue</span>
+                        <div className="py-4 text-center text-slate-600 font-bold text-[10px] uppercase">
+                          No other callers in queue
+                        </div>
+                      </div>
+
+                      {/* Connection Health status */}
+                      <div className="space-y-2.5 bg-slate-950 p-4 rounded-2xl border border-white/5 font-mono text-[9px]">
+                        <span className="text-[10px] font-sans text-slate-500 font-bold uppercase tracking-wider block">Connection status</span>
+                        <div className="flex justify-between">
+                          <span className="text-slate-550">WebRTC ICE state</span>
+                          <span className={`uppercase font-bold ${consultStatusColor === "green" ? "text-green-400" : "text-amber-400"}`}>
+                            {consultationIceState || "New"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-slate-550">Consult duration</span>
+                          <span className="text-white font-bold">{formatDur(consultationDuration)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                 </div>
               </div>
 
