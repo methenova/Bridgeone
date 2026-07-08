@@ -82,7 +82,28 @@ export default function SellerAgentsPage() {
   }
 
   useEffect(() => {
+    if (!shopId) return;
     loadTeamData();
+
+    // Subscribe to shop_agents presence updates in real-time
+    const channel = supabase.channel(`shop-agents-presence-${shopId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "shop_agents",
+          filter: `shop_id=eq.${shopId}`
+        },
+        () => {
+          loadTeamData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [shopId]);
 
   // Invite Agent trigger
@@ -101,7 +122,8 @@ export default function SellerAgentsPage() {
           profile_id: selectedProfileId,
           role: selectedRole,
           department: selectedDept,
-          is_online: false
+          is_online: false,
+          status: "Offline"
         });
 
       if (error) throw error;
@@ -133,17 +155,17 @@ export default function SellerAgentsPage() {
     }
   }
 
-  // Toggle online status
-  async function handleToggleStatus(agent) {
-    const nextStatus = !agent.is_online;
+  // Update status dropdown
+  async function handleUpdateStatus(agentId, newStatus) {
+    const isOnline = ["Available", "Busy", "In Call", "Away", "Break", "Meeting"].includes(newStatus);
     try {
       const { error } = await supabase
         .from("shop_agents")
-        .update({ is_online: nextStatus })
-        .eq("id", agent.id);
+        .update({ status: newStatus, is_online: isOnline })
+        .eq("id", agentId);
 
       if (error) throw error;
-      toast.success(`Agent is now ${nextStatus ? "Online" : "Offline"}`);
+      toast.success(`Agent status updated to ${newStatus}`);
       loadTeamData();
     } catch (err) {
       toast.error(err.message || "Failed to update agent status");
@@ -179,8 +201,7 @@ export default function SellerAgentsPage() {
       const matchesDept = deptFilter === "all" || ag.department === deptFilter;
       const matchesStatus = 
         statusFilter === "all" || 
-        (statusFilter === "online" && ag.is_online) || 
-        (statusFilter === "offline" && !ag.is_online);
+        ag.status?.toLowerCase() === statusFilter.toLowerCase();
 
       return matchesSearch && matchesRole && matchesDept && matchesStatus;
     });
@@ -251,11 +272,16 @@ export default function SellerAgentsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-xl border border-slate-850 bg-slate-955 bg-slate-955 bg-slate-950 px-3 py-1.5 text-xs text-slate-350 outline-none focus:border-slate-855"
+              className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-slate-350 outline-none focus:border-slate-850"
             >
               <option value="all">All States</option>
-              <option value="online">Online</option>
-              <option value="offline">Offline</option>
+              <option value="Available">Available</option>
+              <option value="Busy">Busy</option>
+              <option value="In Call">In Call</option>
+              <option value="Away">Away</option>
+              <option value="Offline">Offline</option>
+              <option value="Break">Break</option>
+              <option value="Meeting">Meeting</option>
             </select>
           </div>
 
@@ -341,22 +367,27 @@ export default function SellerAgentsPage() {
 
                     {/* Status switcher */}
                     <td className="px-6 py-4">
-                      <button
-                        onClick={() => handleToggleStatus(ag)}
-                        className="text-slate-450 hover:text-white transition-colors cursor-pointer flex items-center gap-2"
+                      <select
+                        value={ag.status || "Offline"}
+                        onChange={(e) => handleUpdateStatus(ag.id, e.target.value)}
+                        className={`rounded-lg border px-2.5 py-1 text-xs outline-none font-bold uppercase cursor-pointer ${
+                          ag.status === "Available" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/25" :
+                          ag.status === "Busy" ? "bg-rose-500/10 text-rose-400 border-rose-500/25" :
+                          ag.status === "In Call" ? "bg-purple-500/10 text-purple-400 border-purple-500/25" :
+                          ag.status === "Away" ? "bg-amber-500/10 text-amber-400 border-amber-500/25" :
+                          ag.status === "Break" ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/25" :
+                          ag.status === "Meeting" ? "bg-indigo-500/10 text-indigo-400 border-indigo-500/25" :
+                          "bg-slate-950 text-slate-400 border-slate-800"
+                        }`}
                       >
-                        {ag.is_online ? (
-                          <>
-                            <ToggleRight className="h-6 w-6 text-emerald-500" />
-                            <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Online</span>
-                          </>
-                        ) : (
-                          <>
-                            <ToggleLeft className="h-6 w-6 text-slate-700" />
-                            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Offline</span>
-                          </>
-                        )}
-                      </button>
+                        <option value="Available" className="bg-slate-950 text-emerald-400">Available</option>
+                        <option value="Busy" className="bg-slate-950 text-rose-400">Busy</option>
+                        <option value="In Call" className="bg-slate-950 text-purple-400">In Call</option>
+                        <option value="Away" className="bg-slate-950 text-amber-400">Away</option>
+                        <option value="Break" className="bg-slate-950 text-yellow-400">Break</option>
+                        <option value="Meeting" className="bg-slate-950 text-indigo-400">Meeting</option>
+                        <option value="Offline" className="bg-slate-950 text-slate-400">Offline</option>
+                      </select>
                     </td>
 
                     {/* Deletion action */}

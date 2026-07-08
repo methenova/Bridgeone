@@ -59,6 +59,14 @@ export default function SettingsPage() {
   const [agents, setAgents] = useState([]);
   const [visitorsWaiting, setVisitorsWaiting] = useState(0);
 
+  // Business hours advanced states
+  const [timezone, setTimezone] = useState("UTC");
+  const [holidaysText, setHolidaysText] = useState("");
+  const [shift1Start, setShift1Start] = useState("09:00");
+  const [shift1End, setShift1End] = useState("13:00");
+  const [shift2Start, setShift2Start] = useState("14:00");
+  const [shift2End, setShift2End] = useState("18:00");
+
   const {
     register,
     handleSubmit,
@@ -96,6 +104,16 @@ export default function SettingsPage() {
         respect_business_hours: true,
         fallback_agent_id: ""
       });
+
+      const bhConfig = shop.business_hours_config || { timezone: "UTC", holidays: [], shifts: [] };
+      setTimezone(bhConfig.timezone || "UTC");
+      setHolidaysText(bhConfig.holidays?.join(", ") || "");
+      const s1 = bhConfig.shifts?.[0] || { start: "09:00", end: "13:00" };
+      const s2 = bhConfig.shifts?.[1] || { start: "14:00", end: "18:00" };
+      setShift1Start(s1.start || "09:00");
+      setShift1End(s1.end || "13:00");
+      setShift2Start(s2.start || "14:00");
+      setShift2End(s2.end || "18:00");
     }
   }, [shop, reset]);
 
@@ -142,13 +160,25 @@ export default function SettingsPage() {
   // Update business hours
   async function handleSaveHours() {
     try {
+      const compiledConfig = {
+        timezone,
+        holidays: holidaysText.split(",").map(d => d.trim()).filter(Boolean),
+        shifts: [
+          { start: shift1Start, end: shift1End },
+          { start: shift2Start, end: shift2End }
+        ]
+      };
+
       const { error } = await supabase
         .from("shops")
-        .update({ business_hours: businessHours })
+        .update({ 
+          business_hours: businessHours,
+          business_hours_config: compiledConfig
+        })
         .eq("id", shop.id);
 
       if (error) throw error;
-      toast.success("Business hours schedule saved!");
+      toast.success("Business hours & schedule configs saved!");
       reloadShop();
     } catch (err) {
       toast.error("Failed to update business hours");
@@ -379,7 +409,7 @@ export default function SettingsPage() {
           {activeTab === "hours" && (
             <div className="space-y-5 text-xs">
               <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider pb-3 border-b border-slate-900">
-                Operation schedules
+                Operation schedules & shifts
               </h3>
 
               <div className="space-y-2">
@@ -393,11 +423,78 @@ export default function SettingsPage() {
                 />
               </div>
 
+              <div className="grid gap-5 sm:grid-cols-2">
+                {/* Timezone selection */}
+                <div className="space-y-2">
+                  <label className="text-[10px] text-slate-500 font-bold uppercase">Business Time Zone</label>
+                  <select
+                    value={timezone}
+                    onChange={(e) => setTimezone(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-slate-955 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none cursor-pointer font-semibold text-xs"
+                  >
+                    <option value="UTC">UTC (Universal Coordinated)</option>
+                    <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+                    <option value="America/New_York">America/New_York (EST)</option>
+                    <option value="Europe/London">Europe/London (GMT/BST)</option>
+                    <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
+                  </select>
+                </div>
+
+                {/* Public Holidays list */}
+                <div className="space-y-2">
+                  <label className="text-[10px] text-slate-500 font-bold uppercase">Public Holidays (Comma separated YYYY-MM-DD)</label>
+                  <input
+                    type="text"
+                    value={holidaysText}
+                    onChange={(e) => setHolidaysText(e.target.value)}
+                    placeholder="e.g. 2026-07-09, 2026-12-25"
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Working Shifts */}
+              <div className="space-y-3 p-4 bg-slate-950 border border-slate-850 rounded-xl">
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Daily Shifts (Multiple Shifts support)</span>
+                
+                <div className="grid gap-5 sm:grid-cols-2 text-xs">
+                  {/* Shift 1 */}
+                  <div className="space-y-2 border-r border-slate-900 pr-3">
+                    <span className="font-bold text-slate-400 block text-[10px]">Shift 1 (Primary)</span>
+                    <div className="flex gap-2">
+                      <div className="flex-1">
+                        <label className="text-[9px] text-slate-500 block mb-1">Start Time</label>
+                        <input type="time" value={shift1Start} onChange={(e) => setShift1Start(e.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white outline-none" />
+                      </div>
+                      <div className="flex-1">
+                        <label className="text-[9px] text-slate-500 block mb-1">End Time</label>
+                        <input type="time" value={shift1End} onChange={(e) => setShift1End(e.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white outline-none" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Shift 2 */}
+                  <div className="space-y-2">
+                    <span className="font-bold text-slate-400 block text-[10px]">Shift 2 (Split Shift)</span>
+                    <div className="flex gap-2">
+                      <div className="flex-1">
+                        <label className="text-[9px] text-slate-500 block mb-1">Start Time</label>
+                        <input type="time" value={shift2Start} onChange={(e) => setShift2Start(e.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white outline-none" />
+                      </div>
+                      <div className="flex-1">
+                        <label className="text-[9px] text-slate-500 block mb-1">End Time</label>
+                        <input type="time" value={shift2End} onChange={(e) => setShift2End(e.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white outline-none" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <button
                 onClick={handleSaveHours}
                 className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-xl font-bold text-white text-xs cursor-pointer"
               >
-                <Save className="h-4 w-4" /> Save Hours
+                <Save className="h-4 w-4" /> Save Operations Config
               </button>
             </div>
           )}

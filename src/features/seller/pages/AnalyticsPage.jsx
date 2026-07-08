@@ -208,21 +208,53 @@ export default function AnalyticsPage() {
       .slice(0, 5);
   }, [filteredData.orders]);
 
-  // Top Agents Performance (distributing calls stats)
+  // Top Agents Performance (using real database data)
   const agentPerformance = useMemo(() => {
-    return agents.map((ag, idx) => {
-      const callsHandled = Math.max(1, Math.round(callStats.connected * (0.4 - idx * 0.1)));
-      const avgDuration = Math.round(callStats.avgDuration * (1.1 - idx * 0.1));
+    return agents.map((ag) => {
+      const agentProfileId = ag.profile_id;
       
+      // Filter calls for this agent (answered or transferred to them)
+      const agentCalls = filteredData.calls.filter(c => c.agent_id === agentProfileId || c.transferred_agent_id === agentProfileId);
+      
+      const totalCalls = agentCalls.length;
+      const callsAnswered = agentCalls.filter(c => c.status === "completed" || c.duration > 0).length;
+      const callsMissed = totalCalls - callsAnswered;
+      
+      let totalDuration = 0;
+      let totalCSAT = 0;
+      let countWithCSAT = 0;
+      let revenue = 0;
+
+      agentCalls.forEach(c => {
+        totalDuration += c.duration || 0;
+        if (c.csat_score !== null && c.csat_score !== undefined) {
+          totalCSAT += c.csat_score;
+          countWithCSAT++;
+        }
+        revenue += Number(c.revenue_generated || 0);
+      });
+
+      const avgDuration = callsAnswered > 0 ? Math.round(totalDuration / callsAnswered) : 0;
+      const avgRating = countWithCSAT > 0 ? (totalCSAT / countWithCSAT).toFixed(1) : "5.0";
+      
+      // Conversion Rate: completed calls vs revenue calls
+      const conversionRateVal = callsAnswered > 0 
+        ? `${((agentCalls.filter(c => Number(c.revenue_generated) > 0).length / callsAnswered) * 100).toFixed(1)}%`
+        : "0.0%";
+
       return {
         name: ag.profiles?.full_name || "Agent",
         role: ag.role || "agent",
         department: ag.department || "Sales",
-        callsHandled,
-        avgDuration
+        callsHandled: callsAnswered,
+        callsMissed,
+        avgDuration,
+        avgRating,
+        revenue,
+        conversionRate: conversionRateVal
       };
     }).sort((a, b) => b.callsHandled - a.callsHandled);
-  }, [agents, callStats.connected, callStats.avgDuration]);
+  }, [agents, filteredData.calls]);
 
   // Export report to CSV
   function handleExportCSV() {
@@ -443,23 +475,46 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        {/* Agents */}
+        {/* Agents Leaderboard */}
         <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4">
           <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-slate-900">
-            <Users className="h-4 w-4 text-blue-500" />
-            <span>Agent Performance roster</span>
+            <Award className="h-4 w-4 text-blue-500" />
+            <span>Agent Performance Leaderboard</span>
           </h3>
 
-          <div className="divide-y divide-slate-900 text-xs">
+          <div className="divide-y divide-slate-900 text-xs space-y-3.5">
             {agentPerformance.map((ag, idx) => (
-              <div key={idx} className="flex items-center justify-between py-3.5 first:pt-0 last:pb-0">
-                <div>
-                  <p className="font-bold text-white">{ag.name}</p>
-                  <p className="text-[10px] text-slate-500 capitalize mt-0.5">{ag.department} · {ag.role}</p>
+              <div key={idx} className="pt-3.5 first:pt-0">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <span className="font-bold text-white text-sm">{ag.name}</span>
+                    <p className="text-[10px] text-slate-500 capitalize mt-0.5">{ag.department} · {ag.role}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-bold text-emerald-400 text-sm">₹{ag.revenue.toLocaleString()}</span>
+                    <span className="text-[9px] text-slate-500 block uppercase tracking-wider font-bold">Revenue</span>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <span className="font-bold text-white block">{ag.callsHandled} calls</span>
-                  <span className="text-[10px] text-slate-500 font-mono mt-0.5 block">Avg: {formatDuration(ag.avgDuration)}</span>
+
+                <div className="grid grid-cols-4 gap-2 mt-2.5 bg-slate-950 p-2.5 rounded-xl border border-slate-900 text-[10px] font-mono">
+                  <div>
+                    <span className="text-slate-500 block text-[9px] uppercase font-bold tracking-wider font-sans">Answered</span>
+                    <span className="text-white font-bold">{ag.callsHandled}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block text-[9px] uppercase font-bold tracking-wider font-sans">Missed</span>
+                    <span className="text-rose-400 font-bold">{ag.callsMissed}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block text-[9px] uppercase font-bold tracking-wider font-sans">Avg Dur</span>
+                    <span className="text-white font-bold">{formatDuration(ag.avgDuration)}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block text-[9px] uppercase font-bold tracking-wider font-sans">Rating</span>
+                    <span className="text-amber-400 font-bold flex items-center gap-0.5">
+                      ★ {ag.avgRating}
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}

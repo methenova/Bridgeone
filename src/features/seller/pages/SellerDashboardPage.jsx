@@ -38,6 +38,12 @@ export default function SellerDashboardPage() {
   const [recentActivities, setRecentActivities] = useState([]);
   const [onlineAgents, setOnlineAgents] = useState(0);
 
+  // Workflow states
+  const [conversionsToday, setConversionsToday] = useState(0);
+  const [topSharedProducts, setTopSharedProducts] = useState([]);
+  const [followUpCustomers, setFollowUpCustomers] = useState([]);
+  const [availableAgentsList, setAvailableAgentsList] = useState([]);
+
   // Real-Time Visitor states
   const [visitorSessions, setVisitorSessions] = useState([]);
   const [selectedVisitor, setSelectedVisitor] = useState(null);
@@ -172,13 +178,54 @@ export default function SellerDashboardPage() {
         const salesTotal = orders?.reduce((acc, o) => acc + Number(o.total || 0), 0) || 0;
         setSalesAssisted(salesTotal);
 
-        // 4.5. Online Agents count
+        // 4.5. Online Agents count & list
         const { data: onlineAgs } = await supabase
           .from("shop_agents")
-          .select("id")
+          .select("*, profiles(full_name)")
           .eq("shop_id", shopId)
           .eq("is_online", true);
         setOnlineAgents(onlineAgs?.length || 0);
+        setAvailableAgentsList(onlineAgs || []);
+
+        // 4.6. Conversions Today (Orders completed today)
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        const { data: todayOrders } = await supabase
+          .from("orders")
+          .select("id")
+          .eq("shop_id", shopId)
+          .neq("status", "cancelled")
+          .gte("created_at", todayStart.toISOString());
+        setConversionsToday(todayOrders?.length || 0);
+
+        // 4.7. Top Shared Products
+        const { data: callProducts } = await supabase
+          .from("call_logs")
+          .select("products_shared")
+          .eq("shop_id", shopId)
+          .not("products_shared", "is", null);
+        
+        const productFreq = {};
+        callProducts?.forEach(c => {
+          c.products_shared?.forEach(p => {
+            productFreq[p] = (productFreq[p] || 0) + 1;
+          });
+        });
+        const sortedShared = Object.entries(productFreq)
+          .map(([name, count]) => ({ name, count }))
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 3);
+        setTopSharedProducts(sortedShared);
+
+        // 4.8. Customers requiring follow-up
+        const { data: followUps } = await supabase
+          .from("call_logs")
+          .select("id, customer_name, customer_email, created_at, resolution_status")
+          .eq("shop_id", shopId)
+          .or("resolution_status.eq.Follow-up Required,status.eq.missed")
+          .order("created_at", { ascending: false })
+          .limit(3);
+        setFollowUpCustomers(followUps || []);
 
         // 5. Recent Activities
         const { data: recentCalls } = await supabase
@@ -256,7 +303,7 @@ export default function SellerDashboardPage() {
       </div>
 
       {/* Visitor Session Tracking Widgets */}
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-6 bg-slate-900/10 p-4 rounded-2xl border border-slate-900 text-xs">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-5 bg-slate-900/10 p-4 rounded-2xl border border-slate-900 text-xs">
         <div className="space-y-1">
           <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Active Visitors</span>
           <p className="text-lg font-black text-white">{activeVisitors}</p>
@@ -268,18 +315,13 @@ export default function SellerDashboardPage() {
         </div>
 
         <div className="space-y-1">
-          <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Waiting Assistance</span>
+          <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Waiting Help</span>
           <p className="text-lg font-black text-amber-400">{queueLength}</p>
         </div>
 
         <div className="space-y-1">
           <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">In Call Sessions</span>
           <p className="text-lg font-black text-emerald-400">{inVideoCall}</p>
-        </div>
-
-        <div className="space-y-1">
-          <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Queue Length</span>
-          <p className="text-lg font-black text-indigo-400">{queueLength}</p>
         </div>
 
         <div className="space-y-1">
@@ -307,11 +349,11 @@ export default function SellerDashboardPage() {
         />
 
         <StatCard
-          title="Missed Calls"
-          value={missedCalls.toString()}
-          icon={PhoneMissed}
-          color="bg-red-600/10 text-red-400"
-          change="Require follow-up"
+          title="Conversions Today"
+          value={conversionsToday.toString()}
+          icon={Percent}
+          color="bg-green-600/10 text-green-400"
+          change="Checkout invoices"
         />
 
         <StatCard
@@ -413,53 +455,101 @@ export default function SellerDashboardPage() {
         </div>
       </div>
 
-      {/* Bottom section: Recent activities vs Quick actions */}
+      {/* Bottom section: Recent activities, shared products, follow-ups, and online agents list */}
       <div className="grid gap-6 lg:grid-cols-3">
         
-        {/* Recent Activity */}
-        <div className="lg:col-span-2 rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-400 flex items-center gap-2">
-            <Activity className="h-4 w-4 text-blue-500" />
-            <span>Recent Activity Logs</span>
-          </h2>
+        {/* Left Column: Recent Logs and Online Agents */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Recent Activity */}
+          <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-400 flex items-center gap-2">
+              <Activity className="h-4 w-4 text-blue-500" />
+              <span>Recent Activity Logs</span>
+            </h2>
 
-          <div className="space-y-4">
-            {recentActivities.map((act) => (
-              <div key={act.id} className="flex justify-between items-center rounded-xl bg-slate-950 p-4 border border-slate-900">
-                <div>
-                  <p className="font-bold text-white text-xs">{act.title}</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5">{act.desc}</p>
+            <div className="space-y-4">
+              {recentActivities.map((act) => (
+                <div key={act.id} className="flex justify-between items-center rounded-xl bg-slate-950 p-4 border border-slate-900">
+                  <div>
+                    <p className="font-bold text-white text-xs">{act.title}</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">{act.desc}</p>
+                  </div>
+                  <span className="font-mono text-[9px] text-slate-500">{act.time}</span>
                 </div>
-                <span className="font-mono text-[9px] text-slate-500">{act.time}</span>
-              </div>
-            ))}
-            {recentActivities.length === 0 && (
-              <div className="py-10 text-center flex flex-col items-center">
-                <Video className="h-8 w-8 text-slate-800 mb-2" />
-                <p className="text-[10px] text-slate-500 font-bold">No calling sessions tracked today.</p>
-              </div>
-            )}
+              ))}
+              {recentActivities.length === 0 && (
+                <div className="py-10 text-center flex flex-col items-center">
+                  <Video className="h-8 w-8 text-slate-800 mb-2" />
+                  <p className="text-[10px] text-slate-500 font-bold">No calling sessions tracked today.</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Available Agents */}
+          <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-400">Available Team Agents</h2>
+            
+            <div className="grid gap-3.5 sm:grid-cols-2 text-xs">
+              {availableAgentsList.map((ag) => (
+                <div key={ag.id} className="flex justify-between items-center bg-slate-950 border border-slate-900 p-3.5 rounded-xl">
+                  <div>
+                    <span className="font-bold text-white block">{ag.profiles?.full_name || "Agent"}</span>
+                    <span className="text-[9px] text-slate-500 block uppercase font-mono mt-0.5">{ag.department || "Sales"}</span>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded text-[8px] font-bold uppercase ${
+                    ag.status === "Available" ? "bg-green-500/10 text-green-400" : "bg-purple-500/10 text-purple-400"
+                  }`}>
+                    {ag.status || "Available"}
+                  </span>
+                </div>
+              ))}
+              {availableAgentsList.length === 0 && (
+                <p className="text-slate-500 italic block text-center py-4">No available agents online.</p>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-400">Live Quick Actions</h2>
-          
-          <div className="grid gap-3.5 text-xs font-bold text-white">
-            <a 
-              href="/seller/live" 
-              className="flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 hover:bg-blue-500 transition-all text-center"
-            >
-              Enter Live Calling Room
-            </a>
+        {/* Right Column: Shared products, follow-ups & quick links */}
+        <div className="space-y-6">
+          {/* Top Shared Catalog Items */}
+          <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4 text-xs">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-450">Most Shared Products</h2>
             
-            <a 
-              href="/seller/widget" 
-              className="flex items-center justify-center rounded-xl bg-slate-900 border border-slate-850 px-5 py-3 hover:border-slate-800 transition-all text-center"
-            >
-              Configure Widget Colors
-            </a>
+            <div className="space-y-3.5">
+              {topSharedProducts.map((p, idx) => (
+                <div key={idx} className="flex justify-between items-center bg-slate-950 border border-slate-900 p-3 rounded-xl">
+                  <span className="font-bold text-white truncate max-w-[160px]">{p.name}</span>
+                  <span className="font-mono text-blue-400 font-bold">{p.count} shares</span>
+                </div>
+              ))}
+              {topSharedProducts.length === 0 && (
+                <p className="text-slate-500 italic">No products shared in recent calls.</p>
+              )}
+            </div>
+          </div>
+
+          {/* Follow-up Queue */}
+          <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4 text-xs">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-450">Follow-up Queue</h2>
+            
+            <div className="space-y-3.5">
+              {followUpCustomers.map((c) => (
+                <div key={c.id} className="bg-slate-950 border border-slate-900 p-3 rounded-xl leading-normal">
+                  <div className="flex justify-between items-start">
+                    <span className="font-bold text-white">{c.customer_name}</span>
+                    <span className="text-[8px] bg-rose-500/10 border border-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded uppercase font-bold">
+                      {c.resolution_status || "Missed"}
+                    </span>
+                  </div>
+                  <span className="text-[9px] text-slate-500 block font-mono mt-1">Ref: #{c.id.substring(0,8).toUpperCase()}</span>
+                </div>
+              ))}
+              {followUpCustomers.length === 0 && (
+                <p className="text-slate-500 italic">Follow-up queue is clear.</p>
+              )}
+            </div>
           </div>
         </div>
 

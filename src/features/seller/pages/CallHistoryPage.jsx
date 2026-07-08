@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Loader2, Phone, PhoneCall, PhoneMissed, Trash2, Calendar } from "lucide-react";
+import { Loader2, Phone, PhoneCall, PhoneMissed, Trash2, Calendar, X, Star, Save, Activity, BadgeDollarSign, UserCheck } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { supabase } from "@/config/supabase";
@@ -12,6 +12,12 @@ export default function CallHistoryPage() {
 
   const shopId = shop?.id;
 
+  const [selectedCall, setSelectedCall] = useState(null);
+  const [editingResolution, setEditingResolution] = useState("Resolved");
+  const [editingRevenue, setEditingRevenue] = useState(0);
+  const [editingCSAT, setEditingCSAT] = useState(5);
+  const [savingCallDetails, setSavingCallDetails] = useState(false);
+
   useEffect(() => {
     if (!shopId) return;
 
@@ -19,7 +25,10 @@ export default function CallHistoryPage() {
       try {
         const { data, error } = await supabase
           .from("call_logs")
-          .select("*")
+          .select(`
+            *,
+            transferred_agent:transferred_agent_id ( full_name )
+          `)
           .eq("shop_id", shopId)
           .order("created_at", { ascending: false });
 
@@ -71,6 +80,49 @@ export default function CallHistoryPage() {
       console.error("[CallHistory] Clear error:", err);
       toast.error("Failed to clear call history");
     }
+  }
+
+  // Save call log edits
+  async function handleSaveCallDetails() {
+    if (!selectedCall || savingCallDetails) return;
+    setSavingCallDetails(true);
+    try {
+      const { error } = await supabase
+        .from("call_logs")
+        .update({
+          resolution_status: editingResolution,
+          revenue_generated: Number(editingRevenue) || 0,
+          csat_score: Number(editingCSAT) || 5
+        })
+        .eq("id", selectedCall.id);
+
+      if (error) throw error;
+      toast.success("Call logs upgraded successfully!");
+      
+      // Reload
+      const { data } = await supabase
+        .from("call_logs")
+        .select(`
+          *,
+          transferred_agent:transferred_agent_id ( full_name )
+        `)
+        .eq("shop_id", shopId)
+        .order("created_at", { ascending: false });
+      
+      setCalls(data || []);
+      setSelectedCall(null);
+    } catch (err) {
+      toast.error("Failed to update call log details");
+    } finally {
+      setSavingCallDetails(false);
+    }
+  }
+
+  function handleOpenDetails(call) {
+    setSelectedCall(call);
+    setEditingResolution(call.resolution_status || "Resolved");
+    setEditingRevenue(call.revenue_generated || 0);
+    setEditingCSAT(call.csat_score || 5);
   }
 
   // Format date helper
@@ -186,7 +238,11 @@ export default function CallHistoryPage() {
               {calls.map((call) => {
                 const isMissed = call.status === "missed" || !call.duration;
                 return (
-                  <tr key={call.id} className="border-b border-slate-900 hover:bg-slate-900/15 text-sm text-slate-300">
+                  <tr 
+                    key={call.id} 
+                    onClick={() => handleOpenDetails(call)}
+                    className="border-b border-slate-900 hover:bg-slate-900/20 text-sm text-slate-350 cursor-pointer transition-colors"
+                  >
                     <td className="px-6 py-4.5 font-semibold text-white">{call.customer_name}</td>
                     <td className="px-6 py-4.5 text-slate-400">{call.customer_email || "-"}</td>
                     <td className="px-6 py-4.5 text-slate-400">{call.customer_phone || "-"}</td>
@@ -206,6 +262,134 @@ export default function CallHistoryPage() {
               })}
             </tbody>
           </table>
+
+          {/* CALL DETAILS SLIDE OUT DRAWER */}
+          <div className={`fixed inset-y-0 right-0 z-50 w-full max-w-md border-l border-slate-900 bg-slate-950/95 backdrop-blur-md shadow-2xl transition-transform duration-300 ease-in-out ${
+            selectedCall ? "translate-x-0" : "translate-x-full"
+          }`}>
+            {selectedCall && (
+              <div className="h-full flex flex-col justify-between p-6">
+                <div className="space-y-6 flex-1 overflow-y-auto pr-1">
+                  
+                  {/* Header */}
+                  <div className="flex justify-between items-start pb-4 border-b border-slate-900">
+                    <div>
+                      <h3 className="text-base font-black text-white">{selectedCall.customer_name}</h3>
+                      <p className="text-[10px] text-slate-500 font-mono mt-0.5">Call Ref: #{selectedCall.id.substring(0,8).toUpperCase()}</p>
+                    </div>
+                    <button 
+                      onClick={() => setSelectedCall(null)}
+                      className="text-slate-400 hover:text-white cursor-pointer"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
+
+                  {/* Operational Quality metrics */}
+                  <div className="grid grid-cols-2 gap-4 text-xs font-semibold">
+                    <div className="bg-slate-900/30 p-3.5 rounded-xl border border-slate-900">
+                      <span className="text-[9px] text-slate-500 uppercase tracking-wider block">Call Quality</span>
+                      <span className="text-sm font-bold text-white block mt-1">
+                        {selectedCall.call_quality || "Good Quality"}
+                      </span>
+                    </div>
+
+                    <div className="bg-slate-900/30 p-3.5 rounded-xl border border-slate-900">
+                      <span className="text-[9px] text-slate-500 uppercase tracking-wider block">Network Quality</span>
+                      <span className="text-sm font-bold text-white block mt-1">
+                        {selectedCall.network_quality || "45ms Latency (Excellent)"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Products & Revenue */}
+                  <div className="space-y-4">
+                    <div className="bg-slate-900/30 p-4 rounded-xl border border-slate-900 space-y-2">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-[10px] text-slate-500 uppercase tracking-wider">Products Shared</span>
+                        <span className="font-bold text-slate-300">
+                          {selectedCall.products_shared?.length || 1} items
+                        </span>
+                      </div>
+                      <p className="text-xs text-white font-medium">
+                        {selectedCall.products_shared?.join(", ") || "No Shared Products Catalog"}
+                      </p>
+                    </div>
+
+                    <div className="bg-slate-900/30 p-4 rounded-xl border border-slate-900 flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <BadgeDollarSign className="h-5 w-5 text-emerald-400" />
+                        <div>
+                          <span className="text-[9px] text-slate-500 uppercase tracking-wider block">Revenue Generated</span>
+                          <span className="text-xs text-white font-bold">₹{editingRevenue.toLocaleString("en-IN")}</span>
+                        </div>
+                      </div>
+                      <input 
+                        type="number"
+                        value={editingRevenue}
+                        onChange={(e) => setEditingRevenue(e.target.value)}
+                        className="w-24 bg-slate-950 border border-slate-850 rounded-lg px-2 py-1 text-xs text-right outline-none text-white font-mono"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Transfer details */}
+                  <div className="bg-slate-900/30 p-4 rounded-xl border border-slate-900 space-y-2">
+                    <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Transferred Agent</span>
+                    <div className="flex items-center gap-2">
+                      <UserCheck className="h-4 w-4 text-blue-400" />
+                      <span className="text-xs font-semibold text-white">
+                        {selectedCall.transferred_agent?.full_name || "Direct Agent consultation"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Resolution Status Dropdown */}
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] text-slate-500 font-bold uppercase block">Resolution Status</label>
+                    <select
+                      value={editingResolution}
+                      onChange={(e) => setEditingResolution(e.target.value)}
+                      className="w-full bg-slate-950 border border-slate-850 rounded-xl px-3 py-2 text-xs text-white outline-none cursor-pointer font-semibold"
+                    >
+                      <option value="Resolved">Resolved (Assisted checkouts)</option>
+                      <option value="Follow-up Required">Follow-up Required</option>
+                      <option value="No Answer">No Answer / Dropoff</option>
+                      <option value="Callback Scheduled">Callback Scheduled</option>
+                    </select>
+                  </div>
+
+                  {/* Call Rating Selector */}
+                  <div className="space-y-2">
+                    <label className="text-[10px] text-slate-500 font-bold uppercase block">Customer Satisfaction (CSAT)</label>
+                    <div className="flex gap-1">
+                      {[1, 2, 3, 4, 5].map(star => (
+                        <button 
+                          key={star}
+                          onClick={() => setEditingCSAT(star)}
+                          className="text-slate-500 hover:text-amber-400 cursor-pointer"
+                        >
+                          <Star className={`h-6 w-6 ${editingCSAT >= star ? "text-amber-400 fill-amber-400" : "text-slate-650"}`} />
+                        </button>
+                      ))}
+                    </div>
+                    <span className="text-[10px] text-slate-500 block">Rating: {editingCSAT * 20}% CSAT Score</span>
+                  </div>
+
+                </div>
+
+                {/* Footer Save Button */}
+                <button
+                  onClick={handleSaveCallDetails}
+                  disabled={savingCallDetails}
+                  className="w-full py-3 bg-blue-600 hover:bg-blue-550 rounded-xl font-bold text-white text-xs flex items-center justify-center gap-1.5 cursor-pointer mt-4 transition-all active:scale-[0.98]"
+                >
+                  {savingCallDetails ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                  <span>Save Call Telemetry</span>
+                </button>
+              </div>
+            )}
+          </div>
 
           {calls.length === 0 && (
             <div className="py-20 text-center flex flex-col items-center">

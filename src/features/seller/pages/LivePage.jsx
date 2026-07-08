@@ -45,6 +45,22 @@ export default function LivePage() {
   const [callNotes, setCallNotes] = useState("");
   const [activeCallTab, setActiveCallTab] = useState("info"); // "info" | "products" | "queue"
   const [agentsList, setAgentsList] = useState([]);
+  const [activeCallLogId, setActiveCallLogId] = useState(null);
+
+  // Auto-update agent presence status
+  async function updateAgentStatus(newStatus) {
+    if (!shopId || !user?.id) return;
+    try {
+      const isOnline = ["Available", "Busy", "In Call", "Away", "Break", "Meeting"].includes(newStatus);
+      await supabase
+        .from("shop_agents")
+        .update({ status: newStatus, is_online: isOnline })
+        .eq("shop_id", shopId)
+        .eq("profile_id", user.id);
+    } catch (err) {
+      console.warn("Failed to automatically update agent status:", err);
+    }
+  }
 
   // Fetch agents for call transfers
   useEffect(() => {
@@ -440,12 +456,28 @@ export default function LivePage() {
       await peer.start();
 
       setActiveConsultation(true);
+      
+      // Link the current agent to this call log
+      try {
+        await supabase
+          .from("call_logs")
+          .update({ agent_id: user.id })
+          .eq("id", incomingCall.seller_id);
+        setActiveCallLogId(incomingCall.seller_id);
+      } catch (logErr) {
+        console.warn("Failed to associate agent with call log:", logErr);
+      }
+
       setIncomingCall(null);
       incomingCallRef.current = null;
       setCallMicMuted(false);
       setCallCamEnabled(callStream.getVideoTracks().length > 0);
       setConsultationDuration(0);
       setConsultationIceState(null);
+      
+      // Auto transition presence to In Call
+      await updateAgentStatus("In Call");
+      
       toast.success("Consultation started!");
 
     } catch (err) {
@@ -484,6 +516,8 @@ export default function LivePage() {
     }
     consultationStreamRef.current = null;
 
+    setActiveCallLogId(null);
+    setCallNotes("");
     setIncomingCall(null);
     incomingCallRef.current = null;
     setActiveConsultation(false);
@@ -492,6 +526,10 @@ export default function LivePage() {
     setCallCamEnabled(true);
     setConsultationDuration(0);
     setConsultationIceState(null);
+    
+    // Auto transition presence back to Available
+    await updateAgentStatus("Available");
+    
     toast.success("Call ended");
   }
 
@@ -573,6 +611,28 @@ export default function LivePage() {
         payload: { product: prod },
       });
       toast.success(`${prod.name} pinned to stream!`);
+
+      // Dynamically record this shared product in the active call log database record
+      if (activeCallLogId) {
+        try {
+          const { data: callLog } = await supabase
+            .from("call_logs")
+            .select("products_shared")
+            .eq("id", activeCallLogId)
+            .single();
+
+          const existingShared = callLog?.products_shared || [];
+          if (!existingShared.includes(prod.name)) {
+            const updatedShared = [...existingShared, prod.name];
+            await supabase
+              .from("call_logs")
+              .update({ products_shared: updatedShared })
+              .eq("id", activeCallLogId);
+          }
+        } catch (dbErr) {
+          console.warn("Failed to append shared product to call log:", dbErr);
+        }
+      }
     }
   }
 
@@ -1084,8 +1144,21 @@ export default function LivePage() {
                           className="w-full rounded-xl border border-white/10 bg-slate-900 p-3 text-white outline-none focus:border-blue-500 resize-none text-[11px] leading-relaxed"
                         />
                         <button
-                          onClick={() => {
-                            toast.success("Consultation notes saved successfully!");
+                          onClick={async () => {
+                            if (!activeCallLogId) {
+                              toast.error("No active call log reference found");
+                              return;
+                            }
+                            try {
+                              const { error } = await supabase
+                                .from("call_logs")
+                                .update({ notes: callNotes })
+                                .eq("id", activeCallLogId);
+                              if (error) throw error;
+                              toast.success("Consultation notes saved successfully!");
+                            } catch (err) {
+                              toast.error("Failed to save notes to database");
+                            }
                           }}
                           className="w-full py-2 bg-blue-600 hover:bg-blue-500 rounded-xl text-white font-bold transition-all text-[10px] uppercase tracking-wider cursor-pointer"
                         >

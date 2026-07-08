@@ -44,6 +44,10 @@ export default function CustomersPage() {
   const [customerCalls, setCustomerCalls] = useState([]);
   const [loadingCalls, setLoadingCalls] = useState(false);
 
+  // Chronological timeline states
+  const [timelineItems, setTimelineItems] = useState([]);
+  const [loadingTimeline, setLoadingTimeline] = useState(false);
+
   // Query order items for this shop
   const { data: orderItems = [], isLoading: itemsLoading, refetch: refetchOrders } = useQuery({
     queryKey: ["seller-order-items", shopId],
@@ -86,6 +90,116 @@ export default function CustomersPage() {
     }
     loadCustomerCalls();
   }, [selectedCust, shopId]);
+
+  // Load unified chronological history for the CRM profile
+  async function loadCustomerTimeline(cust) {
+    if (!shopId || !cust) return;
+    try {
+      setLoadingTimeline(true);
+      const items = [];
+
+      // 1. Fetch website visits & products viewed (from visitor_sessions)
+      const { data: visits } = await supabase
+        .from("visitor_sessions")
+        .select("*")
+        .eq("shop_id", shopId)
+        .eq("profile_id", cust.id);
+
+      visits?.forEach(v => {
+        items.push({
+          type: "visit",
+          title: "Website Visit",
+          body: `Visited page: ${v.current_page || "/"}`,
+          time: new Date(v.created_at || v.updated_at),
+        });
+
+        const viewed = v.viewed_products || [];
+        viewed.forEach(prod => {
+          items.push({
+            type: "product_view",
+            title: "Product Viewed",
+            body: `Viewed product: ${prod.name || prod}`,
+            time: new Date(v.updated_at || v.created_at),
+          });
+        });
+      });
+
+      // 2. Fetch video calls (from call_logs)
+      const { data: calls } = await supabase
+        .from("call_logs")
+        .select("*")
+        .eq("shop_id", shopId)
+        .or(`customer_email.eq.${cust.email},customer_name.eq.${cust.name}`);
+
+      calls?.forEach(c => {
+        items.push({
+          type: "call",
+          title: "Video Call Log",
+          body: `Consultation call status: ${c.status || "completed"}. Duration: ${Math.round((c.duration || 0)/60)}m ${(c.duration || 0)%60}s`,
+          time: new Date(c.created_at),
+        });
+      });
+
+      // 3. Fetch checkout orders (from orders)
+      const { data: orders } = await supabase
+        .from("orders")
+        .select("*, order_items(*)")
+        .eq("shop_id", shopId)
+        .eq("user_id", cust.id);
+
+      orders?.forEach(o => {
+        items.push({
+          type: "order",
+          title: "Order Placed",
+          body: `Invoice #${o.id.substring(0,8).toUpperCase()} placed. Total: ₹${Number(o.total_price || 0).toLocaleString()}`,
+          time: new Date(o.created_at),
+        });
+      });
+
+      // 4. Fetch callbacks (from callback_requests)
+      const { data: callbacks } = await supabase
+        .from("callback_requests")
+        .select("*")
+        .eq("shop_id", shopId)
+        .or(`customer_email.eq.${cust.email},customer_name.eq.${cust.name}`);
+
+      callbacks?.forEach(cb => {
+        items.push({
+          type: "callback",
+          title: "Callback Requested",
+          body: `Scheduled callback for: ${new Date(cb.scheduled_time).toLocaleString("en-IN")}. Status: ${cb.status || "pending"}`,
+          time: new Date(cb.created_at),
+        });
+      });
+
+      // 5. Notes / registration placeholders
+      if (cust.notes) {
+        items.push({
+          type: "notes",
+          title: "Profile Notes Updated",
+          body: `Notes updated: ${cust.notes.substring(0, 100)}`,
+          time: new Date(cust.lastOrderDate || Date.now() - 3600000),
+        });
+      }
+
+      // Add profile creation/registration
+      items.push({
+        type: "registration",
+        title: "CRM Contact Registered",
+        body: `Created shopper profile for ${cust.name}`,
+        time: new Date(cust.createdAt || Date.now() - 86400000),
+      });
+
+      // Sort chronological history descending (newest first)
+      items.sort((a, b) => b.time - a.time);
+      setTimelineItems(items);
+
+    } catch (err) {
+      console.warn("Failed to load customer timeline history:", err);
+    } finally {
+      setLoadingTimeline(false);
+    }
+  }
 
   // Aggregate customer metrics
   const customerList = useMemo(() => {
@@ -193,6 +307,7 @@ export default function CustomersPage() {
     setAssignedAgent("");
     setFollowUpDate("");
     setActiveCrmTab("timeline");
+    loadCustomerTimeline(cust);
   }
 
   const isLoading = shopLoading || itemsLoading;
@@ -419,46 +534,43 @@ export default function CustomersPage() {
               {/* TAB 1: TIMELINE */}
               {activeCrmTab === "timeline" && (
                 <div className="space-y-4">
-                  {/* Account created */}
-                  <div className="flex gap-3 items-start">
-                    <div className="h-6 w-6 rounded-full bg-slate-900 border border-slate-850 flex items-center justify-center shrink-0">
-                      <Clock className="h-3.5 w-3.5 text-blue-400" />
+                  {loadingTimeline ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
                     </div>
-                    <div>
-                      <p className="font-bold text-white">Shopper Profile Registered</p>
-                      <span className="text-[10px] text-slate-500 mt-0.5 block">
-                        Account created on {selectedCust.createdAt ? new Date(selectedCust.createdAt).toLocaleDateString("en-IN") : "01-Jul-2026"}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Call Connected */}
-                  {customerCalls.length > 0 && (
-                    <div className="flex gap-3 items-start">
-                      <div className="h-6 w-6 rounded-full bg-slate-900 border border-slate-850 flex items-center justify-center shrink-0">
-                        <Video className="h-3.5 w-3.5 text-indigo-400" />
+                  ) : timelineItems.map((item, idx) => (
+                    <div key={idx} className="flex gap-3 items-start relative pb-2 border-l border-slate-900 ml-3 pl-4">
+                      {/* Left icon wrapper */}
+                      <div className={`absolute -left-3 top-0 h-6 w-6 rounded-full bg-slate-950 border flex items-center justify-center shrink-0 ${
+                        item.type === "visit" ? "border-sky-500/30 text-sky-400" :
+                        item.type === "product_view" ? "border-amber-500/30 text-amber-400" :
+                        item.type === "call" ? "border-indigo-500/30 text-indigo-400" :
+                        item.type === "order" ? "border-emerald-500/30 text-emerald-400" :
+                        item.type === "callback" ? "border-purple-500/30 text-purple-400" :
+                        "border-slate-800 text-slate-500"
+                      }`}>
+                        {item.type === "visit" && <Activity className="h-3 w-3" />}
+                        {item.type === "product_view" && <ShoppingBag className="h-3 w-3" />}
+                        {item.type === "call" && <Video className="h-3 w-3" />}
+                        {item.type === "order" && <IndianRupee className="h-3 w-3" />}
+                        {item.type === "callback" && <CalendarCheck className="h-3 w-3" />}
+                        {item.type !== "visit" && item.type !== "product_view" && item.type !== "call" && item.type !== "order" && item.type !== "callback" && <Clock className="h-3 w-3" />}
                       </div>
-                      <div>
-                        <p className="font-bold text-white">Consultation Call Established</p>
-                        <span className="text-[10px] text-slate-500 mt-0.5 block">
-                          Customer engaged in WebRTC call for {Math.round(customerCalls[0].duration / 60)} minutes.
+
+                      {/* Content block */}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-white text-xs">{item.title}</p>
+                        <p className="text-[10px] text-slate-400 mt-0.5 leading-normal">{item.body}</p>
+                        <span className="text-[8px] text-slate-500 mt-0.5 block font-mono">
+                          {item.time.toLocaleString("en-IN")}
                         </span>
                       </div>
                     </div>
-                  )}
+                  ))}
 
-                  {/* Last Purchase timeline */}
-                  <div className="flex gap-3 items-start">
-                    <div className="h-6 w-6 rounded-full bg-slate-900 border border-slate-850 flex items-center justify-center shrink-0">
-                      <ShoppingBag className="h-3.5 w-3.5 text-emerald-400" />
-                    </div>
-                    <div>
-                      <p className="font-bold text-white">Checkout invoice placed</p>
-                      <span className="text-[10px] text-slate-500 mt-0.5 block">
-                        Completed purchase value of ₹{selectedCust.totalSpent.toLocaleString("en-IN")}.
-                      </span>
-                    </div>
-                  </div>
+                  {timelineItems.length === 0 && !loadingTimeline && (
+                    <p className="text-center text-slate-500 py-8 italic">No timeline logs recorded.</p>
+                  )}
                 </div>
               )}
 
