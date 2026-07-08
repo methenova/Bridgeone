@@ -39,6 +39,7 @@ export default function LivePage() {
   const [callCamEnabled, setCallCamEnabled] = useState(true);     // camera on/off for consultation
   const [consultationDuration, setConsultationDuration] = useState(0);  // seconds
   const [consultationIceState, setConsultationIceState] = useState(null); // RTCIceConnectionState
+  const [callerDetails, setCallerDetails] = useState(null);
 
   // Viewer Speaker join states
   const [joinRequests, setJoinRequests] = useState([]);
@@ -90,6 +91,27 @@ export default function LivePage() {
       }
     }
   }, [activeConsultation]);
+
+  // Fetch caller details on incoming call
+  useEffect(() => {
+    if (!incomingCall) return;
+
+    async function fetchCaller() {
+      try {
+        const { data, error } = await supabase
+          .from("call_logs")
+          .select("customer_name, customer_email, customer_phone")
+          .eq("id", incomingCall.seller_id)
+          .single();
+
+        if (error) throw error;
+        if (data) setCallerDetails(data);
+      } catch (err) {
+        console.warn("Failed to fetch caller details:", err);
+      }
+    }
+    fetchCaller();
+  }, [incomingCall]);
 
   // Clean up WebRTC peers and consultation timer on unmount
   useEffect(() => {
@@ -850,8 +872,17 @@ export default function LivePage() {
               <Phone className="h-8 w-8" />
             </div>
             <div className="space-y-1">
-              <h3 className="text-base font-bold text-white">Incoming Consultation Call</h3>
-              <p className="text-xs text-slate-400">A customer is requesting a 1-on-1 video call consultation.</p>
+              <h3 className="text-base font-bold text-white">
+                {callerDetails?.customer_name || "Incoming Consultation Call"}
+              </h3>
+              <p className="text-xs text-slate-400">
+                {callerDetails 
+                  ? `${callerDetails.customer_name} is requesting a 1-on-1 video call consultation.` 
+                  : "A customer is requesting a 1-on-1 video call consultation."}
+              </p>
+              {callerDetails?.customer_email && (
+                <p className="text-[10px] text-slate-500 font-mono mt-1">{callerDetails.customer_email}</p>
+              )}
             </div>
             <div className="flex w-full gap-3">
               <button
@@ -886,7 +917,7 @@ export default function LivePage() {
                   <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${consultStatusColor === "green" ? "bg-green-400" : consultStatusColor === "red" ? "bg-red-400" : "bg-amber-400"}`} />
                   <span className={`relative inline-flex rounded-full h-2 w-2 ${consultStatusColor === "green" ? "bg-green-500" : consultStatusColor === "red" ? "bg-red-500" : "bg-amber-500"}`} />
                 </span>
-                <span>1-on-1 Consultation</span>
+                <span>{callerDetails?.customer_name || "1-on-1 Consultation"}</span>
                 {isConsultConnected && consultationDuration > 0 && (
                   <span className="font-mono tabular-nums text-blue-400 ml-1.5 border-l border-white/20 pl-2">{formatDur(consultationDuration)}</span>
                 )}

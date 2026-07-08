@@ -9,6 +9,8 @@ import {
   BarChart3,
   Settings,
   X,
+  PhoneCall,
+  CalendarClock,
 } from "lucide-react";
 
 const menu = [
@@ -41,6 +43,16 @@ const menu = [
     title: "Live Selling",
     icon: Radio,
     path: "/seller/live",
+  },
+  {
+    title: "Call History",
+    icon: PhoneCall,
+    path: "/seller/calls",
+  },
+  {
+    title: "Callback Requests",
+    icon: CalendarClock,
+    path: "/seller/callbacks",
   },
   {
     title: "Analytics",

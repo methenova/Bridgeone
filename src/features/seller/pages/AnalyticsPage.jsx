@@ -1,7 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import useSellerShop from "../hooks/useSellerShop";
 import { useSellerOrders } from "../hooks/useSellerOrders";
-import { TrendingUp, ShoppingBag, Package, BadgeDollarSign } from "lucide-react";
+import { supabase } from "@/config/supabase";
+import { TrendingUp, ShoppingBag, Package, BadgeDollarSign, Video, PhoneCall, PhoneMissed, Clock, Loader2 } from "lucide-react";
 
 import LineChartSVG from "@/components/common/Charts/LineChartSVG";
 import DonutChartSVG from "@/components/common/Charts/DonutChartSVG";
@@ -12,6 +13,33 @@ export default function AnalyticsPage() {
   const shopId = shop?.id;
 
   const { data: orders = [], isLoading } = useSellerOrders(shopId);
+
+  // Widget Calls state
+  const [calls, setCalls] = useState([]);
+  const [loadingCalls, setLoadingCalls] = useState(true);
+
+  // Fetch calls logs
+  useEffect(() => {
+    if (!shopId) return;
+
+    async function loadCalls() {
+      try {
+        const { data, error } = await supabase
+          .from("call_logs")
+          .select("*")
+          .eq("shop_id", shopId);
+
+        if (error) throw error;
+        setCalls(data || []);
+      } catch (err) {
+        console.warn("[Analytics] Failed to fetch calls:", err);
+      } finally {
+        setLoadingCalls(false);
+      }
+    }
+
+    loadCalls();
+  }, [shopId]);
 
   // 1. Calculate General metrics
   const metrics = useMemo(() => {
@@ -36,6 +64,22 @@ export default function AnalyticsPage() {
       averageOrderValue,
     };
   }, [orders]);
+
+  // Call stats calculator
+  const callStats = useMemo(() => {
+    const total = calls.length;
+    const connected = calls.filter((c) => c.status === "completed" || c.duration > 0).length;
+    const missed = total - connected;
+    
+    let totalDur = 0;
+    calls.forEach((c) => {
+      totalDur += c.duration || 0;
+    });
+
+    const avgDuration = connected > 0 ? Math.round(totalDur / connected) : 0;
+
+    return { total, connected, missed, avgDuration };
+  }, [calls]);
 
   // 2. Sales Over Time (Last 7 Days Sales)
   const salesOverTime = useMemo(() => {
@@ -97,10 +141,17 @@ export default function AnalyticsPage() {
       .slice(0, 5);
   }, [orders]);
 
-  if (shopLoading || isLoading) {
+  const formatDuration = (sec) => {
+    if (!sec) return "0s";
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return m > 0 ? `${m}m ${s}s` : `${s}s`;
+  };
+
+  if (shopLoading || isLoading || loadingCalls) {
     return (
       <div className="flex items-center justify-center py-20 text-slate-400">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-700 border-t-blue-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
       </div>
     );
   }
@@ -120,17 +171,17 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 text-white">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-white">Analytics</h1>
+        <h1 className="text-3xl font-bold">Analytics</h1>
         <p className="mt-1 text-slate-400">
-          Detailed sales projections and performance insights for {shop.name}
+          Detailed sales projections, video call metrics, and performance insights for {shop.name}
         </p>
       </div>
 
       {/* Metrics Cards */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 animate-fade-in">
         {/* Revenue */}
         <div className="rounded-2xl border border-slate-900 bg-slate-900/40 p-6 flex items-center justify-between">
           <div>
@@ -173,6 +224,61 @@ export default function AnalyticsPage() {
           <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-purple-500/10 text-purple-400">
             <TrendingUp className="h-5 w-5" />
           </div>
+        </div>
+      </div>
+
+      {/* Call Consultation Insights Section */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-bold text-white flex items-center gap-2">
+          <Video className="h-5 w-5 text-blue-400" />
+          Live Call Widget Insights
+        </h2>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          
+          {/* Total Calls */}
+          <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-5 flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Consultations</p>
+              <p className="mt-2 text-xl font-bold text-white">{callStats.total}</p>
+            </div>
+            <div className="h-9 w-9 flex items-center justify-center rounded-xl bg-blue-600/10 text-blue-400">
+              <Video className="h-4.5 w-4.5" />
+            </div>
+          </div>
+
+          {/* Connected */}
+          <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-5 flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Connected</p>
+              <p className="mt-2 text-xl font-bold text-green-400">{callStats.connected}</p>
+            </div>
+            <div className="h-9 w-9 flex items-center justify-center rounded-xl bg-green-500/10 text-green-400">
+              <PhoneCall className="h-4.5 w-4.5" />
+            </div>
+          </div>
+
+          {/* Missed */}
+          <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-5 flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Missed / Unanswered</p>
+              <p className="mt-2 text-xl font-bold text-rose-400">{callStats.missed}</p>
+            </div>
+            <div className="h-9 w-9 flex items-center justify-center rounded-xl bg-rose-500/10 text-rose-400">
+              <PhoneMissed className="h-4.5 w-4.5" />
+            </div>
+          </div>
+
+          {/* Avg Duration */}
+          <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-5 flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Avg. Duration</p>
+              <p className="mt-2 text-xl font-bold text-white">{formatDuration(callStats.avgDuration)}</p>
+            </div>
+            <div className="h-9 w-9 flex items-center justify-center rounded-xl bg-slate-800/60 text-slate-400">
+              <Clock className="h-4.5 w-4.5" />
+            </div>
+          </div>
+
         </div>
       </div>
 

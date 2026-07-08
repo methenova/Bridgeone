@@ -56,6 +56,9 @@ const CheckoutPage = lazy(() => import("@/features/checkout/pages/CheckoutPage")
 const OrderSuccessPage = lazy(() => import("@/features/checkout/pages/OrderSuccessPage"));
 const CustomersPage = lazy(() => import("@/features/seller/pages/CustomersPage"));
 const SettingsPage = lazy(() => import("@/features/seller/pages/SettingsPage"));
+const WidgetPage = lazy(() => import("@/features/chat/pages/WidgetPage"));
+const CallHistoryPage = lazy(() => import("@/features/seller/pages/CallHistoryPage"));
+const CallbacksPage = lazy(() => import("@/features/seller/pages/CallbacksPage"));
 
 const AdminLayout = lazy(() => import("@/layouts/AdminLayout"));
 const AdminDashboardPage = lazy(() => import("@/features/admin/pages/AdminDashboardPage"));
@@ -229,6 +232,14 @@ const router = createBrowserRouter([
         path: "settings",
         element: Loadable(SettingsPage),
       },
+      {
+        path: "calls",
+        element: Loadable(CallHistoryPage),
+      },
+      {
+        path: "callbacks",
+        element: Loadable(CallbacksPage),
+      },
     ],
   },
 
@@ -272,6 +283,10 @@ const router = createBrowserRouter([
         element: Loadable(AdminSettingsPage),
       },
     ],
+  },
+  {
+    path: "/widget/:shopId",
+    element: Loadable(WidgetPage),
   },
 ]);
 

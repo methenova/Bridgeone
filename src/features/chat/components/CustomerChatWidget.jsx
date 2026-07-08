@@ -5,6 +5,7 @@ import { useChatMessages, useSendMessage } from "../hooks/useChat";
 import toast from "react-hot-toast";
 import { SellerPeer } from "@/services/video/sellerPeer";
 import { cleanOldRooms } from "@/services/video/webrtcService";
+import { supabase } from "@/config/supabase";
 
 // Formats seconds as MM:SS
 function formatDuration(seconds) {
@@ -54,6 +55,8 @@ export default function CustomerChatWidget({ shop }) {
   const callTimerRef = useRef(null);        // interval for call duration counter
   const callRemoteVideoRef = useRef(null);     // Ref for remote video element (prevents blink on re-render)
   const callLocalVideoRef = useRef(null);      // Ref for local video element (prevents blink on re-render)
+  const currentCallLogIdRef = useRef(null);
+  const callStartTimeRef = useRef(null);
 
   // ── Auto-scroll chat ───────────────────────────────────────────────────────
   useEffect(() => {
@@ -105,6 +108,7 @@ export default function CustomerChatWidget({ shop }) {
   useEffect(() => {
     if (iceState === "connected" || iceState === "completed") {
       if (!callTimerRef.current) {
+        callStartTimeRef.current = Date.now();
         callTimerRef.current = setInterval(() => {
           setCallDuration((d) => d + 1);
         }, 1000);
@@ -184,14 +188,29 @@ export default function CustomerChatWidget({ shop }) {
       setIceState(null);
       setCallDuration(0);
 
-      // 2. Generate a unique room code with a random string suffix.
-      // This prevents any unique constraint violations in Supabase, making room creation instantaneous.
+      // 2. Create a Call Log row (initially 'missed')
+      const { data: log, error: logErr } = await supabase
+        .from("call_logs")
+        .insert({
+          shop_id: shop.id,
+          customer_name: user?.user_metadata?.full_name || user?.email || "Registered Customer",
+          customer_email: user?.email || "",
+          customer_phone: user?.phone || "",
+          status: "missed"
+        })
+        .select()
+        .single();
+
+      if (logErr) throw logErr;
+      currentCallLogIdRef.current = log.id;
+
+      // 3. Generate a unique room code
       const roomCode = `${roomCodePrefix}_${Math.random().toString(36).substring(2, 9)}`;
       console.log("[Call] Starting consultation call. Room:", roomCode);
 
       const peer = new SellerPeer(
         shop.id,
-        userId,
+        log.id, // Use the callLogId (UUID) as the caller ID instead of raw userId
         stream,
         // onRemoteStream: remote (seller) stream received
         (remoteStream) => {
@@ -231,6 +250,28 @@ export default function CustomerChatWidget({ shop }) {
 
   // ── Hang up ────────────────────────────────────────────────────────────────
   const handleHangUp = useCallback(() => {
+    // Save final call duration & status in DB
+    const logId = currentCallLogIdRef.current;
+    if (logId) {
+      const finalDuration = callStartTimeRef.current 
+        ? Math.round((Date.now() - callStartTimeRef.current) / 1000) 
+        : 0;
+
+      supabase
+        .from("call_logs")
+        .update({
+          duration: finalDuration,
+          status: finalDuration > 0 ? "completed" : "missed"
+        })
+        .eq("id", logId)
+        .then(() => {
+          currentCallLogIdRef.current = null;
+        })
+        .catch(err => {
+          console.warn("Failed to update call log:", err);
+        });
+    }
+
     if (callPeerRef.current) {
       callPeerRef.current.destroy();
       callPeerRef.current = null;
