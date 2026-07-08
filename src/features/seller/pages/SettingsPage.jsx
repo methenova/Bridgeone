@@ -1,12 +1,28 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { Store, Phone, Mail, Loader2, Save } from "lucide-react";
+import { 
+  Store, 
+  Phone, 
+  Mail, 
+  Loader2, 
+  Save, 
+  Clock, 
+  Video, 
+  Bell, 
+  Shield, 
+  Layers, 
+  KeyRound,
+  ArrowRight
+} from "lucide-react";
+
 import useSellerShop from "../hooks/useSellerShop";
 import { updateShop } from "../services/shop.service";
+import { supabase } from "@/config/supabase";
 
 const settingsSchema = z.object({
   shop_name: z.string().min(2, "Shop name must be at least 2 characters"),
@@ -19,7 +35,18 @@ const settingsSchema = z.object({
 });
 
 export default function SettingsPage() {
+  const navigate = useNavigate();
   const { shop, loading, reloadShop } = useSellerShop();
+  
+  // Tab states
+  const [activeTab, setActiveTab] = useState("profile"); // "profile" | "hours" | "widget" | "notifications" | "security" | "integrations"
+
+  // Custom states
+  const [businessHours, setBusinessHours] = useState("");
+  const [emailAlerts, setEmailAlerts] = useState(true);
+  const [pushAlerts, setPushAlerts] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
 
   const {
     register,
@@ -39,7 +66,7 @@ export default function SettingsPage() {
     },
   });
 
-  // Prefill storefront details
+  // Prefill details
   useEffect(() => {
     if (shop) {
       reset({
@@ -51,6 +78,7 @@ export default function SettingsPage() {
         state: shop.state || "",
         country: shop.country || "",
       });
+      setBusinessHours(shop.business_hours || "Mon-Fri: 09:00 - 18:00");
     }
   }, [shop, reset]);
 
@@ -70,6 +98,39 @@ export default function SettingsPage() {
     updateMutation.mutate(values);
   }
 
+  // Update business hours
+  async function handleSaveHours() {
+    try {
+      const { error } = await supabase
+        .from("shops")
+        .update({ business_hours: businessHours })
+        .eq("id", shop.id);
+
+      if (error) throw error;
+      toast.success("Business hours schedule saved!");
+      reloadShop();
+    } catch (err) {
+      toast.error("Failed to update business hours");
+    }
+  }
+
+  // Change account password
+  async function handleChangePassword(e) {
+    e.preventDefault();
+    if (!newPassword || changingPassword) return;
+    setChangingPassword(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      toast.success("Account security password updated!");
+      setNewPassword("");
+    } catch (err) {
+      toast.error(err.message || "Failed to change password");
+    } finally {
+      setChangingPassword(false);
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
@@ -86,159 +147,343 @@ export default function SettingsPage() {
         </div>
         <h3 className="text-lg font-semibold text-slate-200">No Shop Registered</h3>
         <p className="text-sm text-slate-500 mt-1 max-w-sm">
-          Please register your shop under the Profile page first.
+          Please register your shop profile to manage settings.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 text-white max-w-4xl">
+    <div className="space-y-6 text-white max-w-6xl">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Shop Settings</h1>
-        <p className="mt-1 text-slate-400">Configure storefront details and address coordinates.</p>
+        <h1 className="text-3xl font-extrabold tracking-tight">Console Settings</h1>
+        <p className="mt-1 text-xs text-slate-400">Manage business details, scheduling hours, security alerts, and channel toggles.</p>
       </div>
 
-      {/* Storefront Details Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 space-y-6">
-          <div className="flex items-center gap-2 pb-4 border-b border-slate-800">
-            <Store className="h-5 w-5 text-blue-400" />
-            <h2 className="text-lg font-semibold text-white">Storefront Info</h2>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 text-xs">
-            {/* Shop Name */}
-            <div className="space-y-2">
-              <label className="text-sm text-slate-350 font-medium">Shop Name</label>
-              <input
-                type="text"
-                {...register("shop_name")}
-                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
-                placeholder="e.g. Fashion Hub"
-              />
-              {errors.shop_name && (
-                <p className="text-xs text-red-400">{errors.shop_name.message}</p>
-              )}
-            </div>
-
-            {/* Email */}
-            <div className="space-y-2">
-              <label className="text-sm text-slate-350 font-medium flex items-center gap-1.5">
-                <Mail className="h-3.5 w-3.5 text-slate-500" /> Shop Email Address
-              </label>
-              <input
-                type="email"
-                {...register("email")}
-                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
-                placeholder="shop@example.com"
-              />
-              {errors.email && (
-                <p className="text-xs text-red-400">{errors.email.message}</p>
-              )}
-            </div>
-
-            {/* Phone */}
-            <div className="space-y-2">
-              <label className="text-sm text-slate-350 font-medium flex items-center gap-1.5">
-                <Phone className="h-3.5 w-3.5 text-slate-500" /> Contact Phone
-              </label>
-              <input
-                type="text"
-                {...register("phone")}
-                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
-                placeholder="9876543210"
-              />
-              {errors.phone && (
-                <p className="text-xs text-red-400">{errors.phone.message}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Description */}
-          <div className="space-y-2">
-            <label className="text-sm text-slate-350 font-medium">Shop Description</label>
-            <textarea
-              rows={4}
-              {...register("description")}
-              className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition-colors resize-none leading-relaxed text-xs"
-              placeholder="Tell customers about your store, product categories, or live selling hours..."
-            />
-            {errors.description && (
-              <p className="text-xs text-red-400">{errors.description.message}</p>
-            )}
-          </div>
-        </div>
-
-        {/* Address Card */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 space-y-6">
-          <div className="flex items-center gap-2 pb-4 border-b border-slate-800">
-            <Store className="h-5 w-5 text-blue-400" />
-            <h2 className="text-lg font-semibold text-white">Address Details</h2>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-3 text-xs">
-            {/* City */}
-            <div className="space-y-2">
-              <label className="text-sm text-slate-350 font-medium">City</label>
-              <input
-                type="text"
-                {...register("city")}
-                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
-              />
-              {errors.city && (
-                <p className="text-xs text-red-400">{errors.city.message}</p>
-              )}
-            </div>
-
-            {/* State */}
-            <div className="space-y-2">
-              <label className="text-sm text-slate-350 font-medium">State</label>
-              <input
-                type="text"
-                {...register("state")}
-                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
-              />
-              {errors.state && (
-                <p className="text-xs text-red-400">{errors.state.message}</p>
-              )}
-            </div>
-
-            {/* Country */}
-            <div className="space-y-2">
-              <label className="text-sm text-slate-350 font-medium">Country</label>
-              <input
-                type="text"
-                {...register("country")}
-                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-blue-500 transition-colors"
-              />
-              {errors.country && (
-                <p className="text-xs text-red-400">{errors.country.message}</p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Submit */}
-        <div className="flex justify-end pt-2">
+      <div className="flex flex-col lg:flex-row gap-6">
+        
+        {/* Left side: Tab navigation */}
+        <div className="w-full lg:w-64 shrink-0 flex flex-col gap-1 bg-slate-900/30 p-2 rounded-2xl border border-slate-900 text-xs font-semibold">
           <button
-            type="submit"
-            disabled={updateMutation.isPending}
-            className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-2.5 font-semibold text-white hover:bg-blue-500 focus:outline-none disabled:opacity-50 transition-all cursor-pointer text-xs"
+            onClick={() => setActiveTab("profile")}
+            className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
+              activeTab === "profile" ? "bg-blue-600 text-white font-bold" : "text-slate-400 hover:text-white"
+            }`}
           >
-            {updateMutation.isPending ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" /> Saving...
-              </>
-            ) : (
-              <>
-                <Save className="h-4 w-4" /> Save Store Settings
-              </>
-            )}
+            <Store className="h-4 w-4" />
+            <span>Business Profile</span>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab("hours")}
+            className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
+              activeTab === "hours" ? "bg-blue-600 text-white font-bold" : "text-slate-400 hover:text-white"
+            }`}
+          >
+            <Clock className="h-4 w-4" />
+            <span>Business Hours</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("widget")}
+            className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
+              activeTab === "widget" ? "bg-blue-600 text-white font-bold" : "text-slate-400 hover:text-white"
+            }`}
+          >
+            <Video className="h-4 w-4" />
+            <span>Widget & Branding</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("notifications")}
+            className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
+              activeTab === "notifications" ? "bg-blue-600 text-white font-bold" : "text-slate-400 hover:text-white"
+            }`}
+          >
+            <Bell className="h-4 w-4" />
+            <span>Notification Settings</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("security")}
+            className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
+              activeTab === "security" ? "bg-blue-600 text-white font-bold" : "text-slate-400 hover:text-white"
+            }`}
+          >
+            <Shield className="h-4 w-4" />
+            <span>Privacy & Security</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("integrations")}
+            className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
+              activeTab === "integrations" ? "bg-blue-600 text-white font-bold" : "text-slate-400 hover:text-white"
+            }`}
+          >
+            <Layers className="h-4 w-4" />
+            <span>Integrations</span>
           </button>
         </div>
-      </form>
+
+        {/* Right side: Tab Panels */}
+        <div className="flex-1 bg-slate-900/10 rounded-2xl border border-slate-900 p-6">
+          
+          {/* TAB 1: BUSINESS PROFILE */}
+          {activeTab === "profile" && (
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider pb-3 border-b border-slate-900">
+                Business Details
+              </h3>
+
+              <div className="grid gap-5 sm:grid-cols-2 text-xs">
+                <div className="space-y-2">
+                  <label className="text-[10px] text-slate-500 font-bold uppercase">Shop Name</label>
+                  <input
+                    type="text"
+                    {...register("shop_name")}
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none focus:border-blue-500"
+                  />
+                  {errors.shop_name && <p className="text-xs text-red-400">{errors.shop_name.message}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] text-slate-500 font-bold uppercase">Shop Email</label>
+                  <input
+                    type="email"
+                    {...register("email")}
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none"
+                  />
+                  {errors.email && <p className="text-xs text-red-400">{errors.email.message}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] text-slate-500 font-bold uppercase">Shop Contact Phone</label>
+                  <input
+                    type="text"
+                    {...register("phone")}
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none"
+                  />
+                  {errors.phone && <p className="text-xs text-red-400">{errors.phone.message}</p>}
+                </div>
+              </div>
+
+              <div className="space-y-2 text-xs">
+                <label className="text-[10px] text-slate-500 font-bold uppercase">Shop Description</label>
+                <textarea
+                  rows={4}
+                  {...register("description")}
+                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none focus:border-blue-500 resize-none leading-relaxed"
+                />
+              </div>
+
+              <h3 className="text-xs font-bold text-slate-455 uppercase tracking-wider pt-4 pb-2 border-b border-slate-900">
+                Address details
+              </h3>
+
+              <div className="grid gap-5 sm:grid-cols-3 text-xs">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] text-slate-500 font-bold uppercase">City</label>
+                  <input type="text" {...register("city")} className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] text-slate-500 font-bold uppercase">State</label>
+                  <input type="text" {...register("state")} className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] text-slate-500 font-bold uppercase">Country</label>
+                  <input type="text" {...register("country")} className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none" />
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-3">
+                <button
+                  type="submit"
+                  disabled={updateMutation.isPending}
+                  className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-xl font-bold text-white transition-all text-xs cursor-pointer"
+                >
+                  <Save className="h-4 w-4" /> Save Profile
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* TAB 2: BUSINESS HOURS */}
+          {activeTab === "hours" && (
+            <div className="space-y-5 text-xs">
+              <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider pb-3 border-b border-slate-900">
+                Operation schedules
+              </h3>
+
+              <div className="space-y-2">
+                <label className="text-[10px] text-slate-500 font-bold uppercase">Weekly Business Hours Slot</label>
+                <input
+                  type="text"
+                  value={businessHours}
+                  onChange={(e) => setBusinessHours(e.target.value)}
+                  placeholder="e.g. Mon-Fri: 09:00 - 18:00"
+                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none"
+                />
+              </div>
+
+              <button
+                onClick={handleSaveHours}
+                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-xl font-bold text-white text-xs cursor-pointer"
+              >
+                <Save className="h-4 w-4" /> Save Hours
+              </button>
+            </div>
+          )}
+
+          {/* TAB 3: WIDGET & BRANDING */}
+          {activeTab === "widget" && (
+            <div className="space-y-6 text-xs">
+              <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider pb-3 border-b border-slate-900">
+                Widget & Customizer settings
+              </h3>
+
+              <div className="p-4 bg-slate-950 rounded-2xl border border-slate-850 space-y-4">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <span className="font-bold text-white text-sm">Theme Branding</span>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Widget styling is managed inside the dedicated Customizer page.</p>
+                  </div>
+                  
+                  <span 
+                    style={{ backgroundColor: shop.widget_color || "#2563eb" }}
+                    className="h-6 w-6 rounded-full border border-slate-700" 
+                  />
+                </div>
+
+                <div className="flex justify-between items-center text-[11px] border-t border-slate-900 pt-3">
+                  <span className="text-slate-400">Position Alignment:</span>
+                  <span className="font-mono text-white capitalize">{shop.widget_position || "bottom-right"}</span>
+                </div>
+
+                <div className="flex justify-between items-center text-[11px]">
+                  <span className="text-slate-400">Consultation Calls availability:</span>
+                  <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${shop.is_online ? "bg-emerald-500/10 text-emerald-400" : "bg-slate-800 text-slate-400"}`}>
+                    {shop.is_online ? "Online" : "Offline"}
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => navigate("/seller/widget")}
+                className="flex items-center gap-1 bg-slate-900 border border-slate-800 hover:border-slate-700 px-4 py-2.5 rounded-xl font-bold text-white text-xs transition-all cursor-pointer"
+              >
+                <span>Open Customizer page</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+
+          {/* TAB 4: NOTIFICATION SETTINGS */}
+          {activeTab === "notifications" && (
+            <div className="space-y-6 text-xs">
+              <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider pb-3 border-b border-slate-900">
+                Console Alert Channels
+              </h3>
+
+              <div className="space-y-4">
+                <div className="flex justify-between items-center p-3.5 bg-slate-950 rounded-xl border border-slate-850">
+                  <div>
+                    <span className="font-bold text-white">Email alerts</span>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Receive missed consultation digests via email.</p>
+                  </div>
+                  <button
+                    onClick={() => { setEmailAlerts(!emailAlerts); toast.success("Email preference saved!"); }}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${emailAlerts ? "bg-blue-600" : "bg-slate-800"}`}
+                  >
+                    <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${emailAlerts ? "translate-x-4" : "translate-x-1"}`} />
+                  </button>
+                </div>
+
+                <div className="flex justify-between items-center p-3.5 bg-slate-950 rounded-xl border border-slate-850">
+                  <div>
+                    <span className="font-bold text-white">Browser Push warnings</span>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Allow HTML browser alerts for new WebRTC signals.</p>
+                  </div>
+                  <button
+                    onClick={() => { setPushAlerts(!pushAlerts); toast.success("Push warning alert saved!"); }}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${pushAlerts ? "bg-blue-600" : "bg-slate-800"}`}
+                  >
+                    <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${pushAlerts ? "translate-x-4" : "translate-x-1"}`} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: PRIVACY & SECURITY */}
+          {activeTab === "security" && (
+            <form onSubmit={handleChangePassword} className="space-y-5 text-xs">
+              <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider pb-3 border-b border-slate-900">
+                Privacy & Account Security
+              </h3>
+
+              <div className="space-y-2">
+                <label className="text-[10px] text-slate-500 font-bold uppercase">Change Account Password</label>
+                <div className="relative">
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Enter new secure password..."
+                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none focus:border-blue-500 font-mono"
+                    required
+                  />
+                  <KeyRound className="absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={changingPassword}
+                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-xl font-bold text-white text-xs cursor-pointer"
+              >
+                {changingPassword ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                <span>Update Password</span>
+              </button>
+            </form>
+          )}
+
+          {/* TAB 6: INTEGRATIONS */}
+          {activeTab === "integrations" && (
+            <div className="space-y-6 text-xs">
+              <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider pb-3 border-b border-slate-900">
+                Connected App settings
+              </h3>
+
+              <div className="p-4 bg-slate-950 rounded-2xl border border-slate-850 space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">Shopify domain:</span>
+                  <span className="font-mono text-white text-[11px]">{shop.shopify_domain || "Not connected"}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">Webhooks endpoint URL:</span>
+                  <span className="font-mono text-white text-[11px] truncate max-w-[180px]">{shop.webhook_url || "Not set"}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">Google tracking ID:</span>
+                  <span className="font-mono text-white text-[11px]">{shop.google_analytics_id || "Not injected"}</span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => navigate("/seller/integrations")}
+                className="flex items-center gap-1 bg-slate-900 border border-slate-800 hover:border-slate-700 px-4 py-2.5 rounded-xl font-bold text-white text-xs transition-all cursor-pointer"
+              >
+                <span>Manage Integrations dashboard</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+
+        </div>
+
+      </div>
+
     </div>
   );
 }
