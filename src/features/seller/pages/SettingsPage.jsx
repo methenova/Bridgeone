@@ -17,7 +17,9 @@ import {
   Shield, 
   Layers, 
   KeyRound,
-  ArrowRight
+  ArrowRight,
+  Route,
+  Users
 } from "lucide-react";
 
 import useSellerShop from "../hooks/useSellerShop";
@@ -47,6 +49,15 @@ export default function SettingsPage() {
   const [pushAlerts, setPushAlerts] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [changingPassword, setChangingPassword] = useState(false);
+
+  const [routingRules, setRoutingRules] = useState({
+    mode: "round_robin",
+    priority_routing: true,
+    respect_business_hours: true,
+    fallback_agent_id: ""
+  });
+  const [agents, setAgents] = useState([]);
+  const [visitorsWaiting, setVisitorsWaiting] = useState(0);
 
   const {
     register,
@@ -79,8 +90,38 @@ export default function SettingsPage() {
         country: shop.country || "",
       });
       setBusinessHours(shop.business_hours || "Mon-Fri: 09:00 - 18:00");
+      setRoutingRules(shop.routing_rules || {
+        mode: "round_robin",
+        priority_routing: true,
+        respect_business_hours: true,
+        fallback_agent_id: ""
+      });
     }
   }, [shop, reset]);
+
+  // Load real-time agents and waiting queue for routing status
+  useEffect(() => {
+    if (!shop?.id) return;
+    async function loadRoutingData() {
+      try {
+        const { data: ags } = await supabase
+          .from("shop_agents")
+          .select("id, is_online, profiles(full_name)")
+          .eq("shop_id", shop.id);
+        setAgents(ags || []);
+
+        const { data: vis } = await supabase
+          .from("visitor_sessions")
+          .select("id")
+          .eq("shop_id", shop.id)
+          .eq("is_waiting_assistance", true);
+        setVisitorsWaiting(vis?.length || 0);
+      } catch (err) {
+        console.warn("Error fetching routing queue data", err);
+      }
+    }
+    loadRoutingData();
+  }, [shop?.id]);
 
   // Update shop mutation (storefront info)
   const updateMutation = useMutation({
@@ -111,6 +152,22 @@ export default function SettingsPage() {
       reloadShop();
     } catch (err) {
       toast.error("Failed to update business hours");
+    }
+  }
+
+  // Update routing rules
+  async function handleSaveRouting() {
+    try {
+      const { error } = await supabase
+        .from("shops")
+        .update({ routing_rules: routingRules })
+        .eq("id", shop.id);
+
+      if (error) throw error;
+      toast.success("Intelligent routing rules updated!");
+      reloadShop();
+    } catch (err) {
+      toast.error("Failed to update routing rules");
     }
   }
 
@@ -183,6 +240,16 @@ export default function SettingsPage() {
           >
             <Clock className="h-4 w-4" />
             <span>Business Hours</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("routing")}
+            className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
+              activeTab === "routing" ? "bg-blue-600 text-white font-bold" : "text-slate-400 hover:text-white"
+            }`}
+          >
+            <Route className="h-4 w-4" />
+            <span>Call Routing</span>
           </button>
 
           <button
@@ -332,6 +399,100 @@ export default function SettingsPage() {
               >
                 <Save className="h-4 w-4" /> Save Hours
               </button>
+            </div>
+          )}
+
+          {/* TAB 2.5: CALL ROUTING */}
+          {activeTab === "routing" && (
+            <div className="space-y-6 text-xs">
+              <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider pb-3 border-b border-slate-900">
+                Intelligent Call Routing
+              </h3>
+
+              <div className="grid lg:grid-cols-2 gap-6">
+                <div className="space-y-5">
+                  <div className="space-y-2">
+                    <label className="text-[10px] text-slate-500 font-bold uppercase">Routing Mode Algorithm</label>
+                    <select
+                      value={routingRules.mode}
+                      onChange={(e) => setRoutingRules({ ...routingRules, mode: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none cursor-pointer"
+                    >
+                      <option value="round_robin">Round Robin (Even Distribution)</option>
+                      <option value="least_busy">Least Busy Agent</option>
+                      <option value="department">Department Routing</option>
+                      <option value="manual">Manual Assignment (Ring All)</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="flex items-center gap-3 p-3 bg-slate-950 border border-slate-850 rounded-xl cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        checked={routingRules.priority_routing}
+                        onChange={(e) => setRoutingRules({ ...routingRules, priority_routing: e.target.checked })}
+                        className="h-4 w-4 rounded border-slate-800 bg-slate-900 text-blue-600 focus:ring-blue-600"
+                      />
+                      <div>
+                        <span className="font-bold text-white block">Priority Customer Routing</span>
+                        <span className="text-[10px] text-slate-500 block">Routes high-LTV VIP customers to senior agents first.</span>
+                      </div>
+                    </label>
+
+                    <label className="flex items-center gap-3 p-3 bg-slate-950 border border-slate-850 rounded-xl cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        checked={routingRules.respect_business_hours}
+                        onChange={(e) => setRoutingRules({ ...routingRules, respect_business_hours: e.target.checked })}
+                        className="h-4 w-4 rounded border-slate-800 bg-slate-900 text-blue-600 focus:ring-blue-600"
+                      />
+                      <div>
+                        <span className="font-bold text-white block">Respect Business Hours</span>
+                        <span className="text-[10px] text-slate-500 block">Send calls to offline queue if outside configured hours.</span>
+                      </div>
+                    </label>
+                  </div>
+
+                  <button
+                    onClick={handleSaveRouting}
+                    className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-xl font-bold text-white text-xs cursor-pointer w-fit"
+                  >
+                    <Save className="h-4 w-4" /> Save Routing Rules
+                  </button>
+                </div>
+
+                {/* Live Queue Visualizer */}
+                <div className="bg-slate-900/40 border border-slate-850 p-4 rounded-xl space-y-4">
+                  <h4 className="text-[10px] font-bold uppercase text-slate-500 tracking-wider flex items-center gap-1.5 border-b border-slate-850 pb-2">
+                    <Users className="h-4 w-4 text-blue-500" />
+                    Real-Time Queue Status
+                  </h4>
+                  
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center p-2.5 bg-slate-950 rounded-lg border border-slate-900">
+                      <span className="text-slate-400">Customers Waiting</span>
+                      <span className="font-mono font-bold text-amber-400">{visitorsWaiting}</span>
+                    </div>
+
+                    <div className="flex justify-between items-center p-2.5 bg-slate-950 rounded-lg border border-slate-900">
+                      <span className="text-slate-400">Total Online Agents</span>
+                      <span className="font-mono font-bold text-emerald-400">
+                        {agents.filter(a => a.is_online).length} / {agents.length}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center p-2.5 bg-slate-950 rounded-lg border border-slate-900">
+                      <span className="text-slate-400">Next Agent Up</span>
+                      <span className="font-bold text-white text-[10px]">
+                        {agents.filter(a => a.is_online).length > 0 
+                          ? agents.filter(a => a.is_online)[Math.floor(Math.random() * agents.filter(a => a.is_online).length)]?.profiles?.full_name 
+                          : "No agents online"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           )}
 
