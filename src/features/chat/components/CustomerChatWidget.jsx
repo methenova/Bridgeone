@@ -211,6 +211,12 @@ export default function CustomerChatWidget({ shop }) {
         }
       );
 
+      peer.onRoomDeleted = () => {
+        console.log("[Call] Room deleted by remote peer — ending call");
+        toast.info("Call ended by seller");
+        handleHangUp();
+      };
+
       callPeerRef.current = peer;
       await peer.start();
 

@@ -34,6 +34,7 @@ export class SellerPeer {
     this.pollForAnswerInterval = null;
     this.pollForCandidatesInterval = null;
     this.appliedCandidateIds = new Set();
+    this.onRoomDeleted = null;
   }
 
   async start() {
@@ -278,6 +279,17 @@ export class SellerPeer {
             } catch (err) {
               console.error("[SellerPeer] Error handling viewer ICE candidate:", err);
             }
+          }
+        }
+      )
+      // Listen for room deletion (hang up)
+      .on(
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: "video_rooms", filter: `id=eq.${roomId}` },
+        () => {
+          console.log("[SellerPeer] Room deleted by remote peer");
+          if (this.onRoomDeleted && !this.isDestroyed) {
+            this.onRoomDeleted();
           }
         }
       )

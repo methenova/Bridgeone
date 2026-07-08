@@ -388,6 +388,12 @@ export default function LivePage() {
         }
       );
 
+      peer.onRoomDeleted = () => {
+        console.log("[LivePage] Room deleted by customer — ending call");
+        toast.info("Call ended by customer");
+        handleDeclineCall();
+      };
+
       viewerPeerRef.current = peer;
       await peer.start();
 

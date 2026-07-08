@@ -26,6 +26,7 @@ export class ViewerPeer {
     this._trackDebounceTimer = null;
     this.pollForCandidatesInterval = null;
     this.appliedCandidateIds = new Set();
+    this.onRoomDeleted = null;
   }
 
   async start() {
@@ -199,6 +200,17 @@ export class ViewerPeer {
             } catch (err) {
               console.error("[ViewerPeer] Error adding seller ICE candidate:", err);
             }
+          }
+        }
+      )
+      // Listen for room deletion (hang up)
+      .on(
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: "video_rooms", filter: `id=eq.${roomId}` },
+        () => {
+          console.log("[ViewerPeer] Room deleted by customer");
+          if (this.onRoomDeleted && !this.isDestroyed) {
+            this.onRoomDeleted();
           }
         }
       )
