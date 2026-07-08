@@ -19,6 +19,9 @@ import {
   getAdminCalls,
   getLiveRooms,
   deleteCallLog,
+  getAdminCallbacks,
+  updateCallbackStatus,
+  deleteCallback,
 } from "../services/admin.service";
 
 const adminKeys = {
@@ -31,6 +34,7 @@ const adminKeys = {
   orders: () => [...adminKeys.all, "orders"],
   calls: () => [...adminKeys.all, "calls"],
   liveRooms: () => [...adminKeys.all, "liveRooms"],
+  callbacks: () => [...adminKeys.all, "callbacks"],
 };
 
 export function useAdminStats() {
@@ -195,5 +199,36 @@ export function useDeleteCallLog() {
       toast.success("Call log deleted successfully");
     },
     onError: (err) => toast.error(err.message || "Failed to delete call log"),
+  });
+}
+
+export function useAdminCallbacks() {
+  return useQuery({
+    queryKey: adminKeys.callbacks(),
+    queryFn: getAdminCallbacks,
+  });
+}
+
+export function useUpdateCallbackStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ callbackId, status }) => updateCallbackStatus(callbackId, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminKeys.callbacks() });
+      toast.success("Callback status updated");
+    },
+    onError: (err) => toast.error(err.message || "Failed to update callback status"),
+  });
+}
+
+export function useDeleteCallback() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteCallback,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminKeys.callbacks() });
+      toast.success("Callback request deleted");
+    },
+    onError: (err) => toast.error(err.message || "Failed to delete callback"),
   });
 }

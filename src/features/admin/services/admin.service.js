@@ -242,3 +242,40 @@ export async function deleteCallLog(logId) {
 
   if (error) throw error;
 }
+
+// ─────────────────────────────────────────────────────────────
+// CALLBACKS MANAGEMENT
+// ─────────────────────────────────────────────────────────────
+export async function getAdminCallbacks() {
+  const { data, error } = await supabase
+    .from("callback_requests")
+    .select(`
+      *,
+      shops ( shop_name )
+    `)
+    .order("scheduled_time", { ascending: false });
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function updateCallbackStatus(callbackId, status) {
+  const { data, error } = await supabase
+    .from("callback_requests")
+    .update({ status })
+    .eq("id", callbackId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteCallback(callbackId) {
+  const { error } = await supabase
+    .from("callback_requests")
+    .delete()
+    .eq("id", callbackId);
+
+  if (error) throw error;
+}
