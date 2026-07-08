@@ -210,7 +210,7 @@ export default function CustomerChatWidget({ shop }) {
 
       const peer = new SellerPeer(
         shop.id,
-        log.id, // Use the callLogId (UUID) as the caller ID instead of raw userId
+        shop.owner_id, // Use the owner ID as the seller identifier
         stream,
         // onRemoteStream: remote (seller) stream received
         (remoteStream) => {

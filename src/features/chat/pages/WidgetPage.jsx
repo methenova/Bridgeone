@@ -185,7 +185,7 @@ export default function WidgetPage() {
       // 3. Instantiate SellerPeer (Host of Room)
       const peer = new SellerPeer(
         shopId,
-        log.id, // Set the log ID as the caller identifier
+        shop.owner_id, // Set the owner ID as the seller identifier
         mediaStream,
         // onRemoteStream callback
         (remStream) => {
