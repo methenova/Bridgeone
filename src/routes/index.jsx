@@ -60,6 +60,11 @@ const WidgetPage = lazy(() => import("@/features/chat/pages/WidgetPage"));
 const CallHistoryPage = lazy(() => import("@/features/seller/pages/CallHistoryPage"));
 const CallbacksPage = lazy(() => import("@/features/seller/pages/CallbacksPage"));
 
+const SellerAgentsPage = lazy(() => import("@/features/seller/pages/SellerAgentsPage"));
+const SellerWidgetPage = lazy(() => import("@/features/seller/pages/SellerWidgetPage"));
+const SellerNotificationsPage = lazy(() => import("@/features/seller/pages/SellerNotificationsPage"));
+const SellerIntegrationsPage = lazy(() => import("@/features/seller/pages/SellerIntegrationsPage"));
+
 const AdminLayout = lazy(() => import("@/layouts/AdminLayout"));
 const AdminDashboardPage = lazy(() => import("@/features/admin/pages/AdminDashboardPage"));
 const AdminUsersPage = lazy(() => import("@/features/admin/pages/AdminUsersPage"));
@@ -212,6 +217,10 @@ const router = createBrowserRouter([
         element: <MyShopPage />,
       },
       {
+        path: "profile",
+        element: <MyShopPage />,
+      },
+      {
         path: "products",
         element: <ProductsPage />,
       },
@@ -246,6 +255,22 @@ const router = createBrowserRouter([
       {
         path: "callbacks",
         element: Loadable(CallbacksPage),
+      },
+      {
+        path: "agents",
+        element: Loadable(SellerAgentsPage),
+      },
+      {
+        path: "widget",
+        element: Loadable(SellerWidgetPage),
+      },
+      {
+        path: "notifications",
+        element: Loadable(SellerNotificationsPage),
+      },
+      {
+        path: "integrations",
+        element: Loadable(SellerIntegrationsPage),
       },
     ],
   },

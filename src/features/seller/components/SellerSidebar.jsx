@@ -1,16 +1,16 @@
 import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
-  Store,
-  Package,
-  ShoppingCart,
+  Video,
   Users,
-  Radio,
+  Shield,
+  Sliders,
   BarChart3,
+  Bell,
+  Layers,
   Settings,
-  X,
-  PhoneCall,
-  CalendarClock,
+  User,
+  X
 } from "lucide-react";
 
 const menu = [
@@ -20,19 +20,9 @@ const menu = [
     path: "/seller",
   },
   {
-    title: "My Shop",
-    icon: Store,
-    path: "/seller/shop",
-  },
-  {
-    title: "Products",
-    icon: Package,
-    path: "/seller/products",
-  },
-  {
-    title: "Orders",
-    icon: ShoppingCart,
-    path: "/seller/orders",
+    title: "Live Calls",
+    icon: Video,
+    path: "/seller/live",
   },
   {
     title: "Customers",
@@ -40,19 +30,14 @@ const menu = [
     path: "/seller/customers",
   },
   {
-    title: "Live Selling",
-    icon: Radio,
-    path: "/seller/live",
+    title: "Agents",
+    icon: Shield,
+    path: "/seller/agents",
   },
   {
-    title: "Call History",
-    icon: PhoneCall,
-    path: "/seller/calls",
-  },
-  {
-    title: "Callback Requests",
-    icon: CalendarClock,
-    path: "/seller/callbacks",
+    title: "Widget",
+    icon: Sliders,
+    path: "/seller/widget",
   },
   {
     title: "Analytics",
@@ -60,9 +45,24 @@ const menu = [
     path: "/seller/analytics",
   },
   {
+    title: "Notifications",
+    icon: Bell,
+    path: "/seller/notifications",
+  },
+  {
+    title: "Integrations",
+    icon: Layers,
+    path: "/seller/integrations",
+  },
+  {
     title: "Settings",
     icon: Settings,
     path: "/seller/settings",
+  },
+  {
+    title: "Profile",
+    icon: User,
+    path: "/seller/profile",
   },
 ];
 
