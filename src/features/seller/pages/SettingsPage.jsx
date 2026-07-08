@@ -440,7 +440,7 @@ export default function SettingsPage() {
                     type="text"
                     value={widgetColor}
                     onChange={(e) => setWidgetColor(e.target.value)}
-                    className="flex-1 px-4 py-2 bg-slate-955 border border-slate-850 rounded-xl text-sm font-mono text-slate-205 focus:outline-none focus:border-blue-500"
+                    className="flex-1 px-4 py-2 bg-slate-950 border border-slate-850 rounded-xl text-sm font-mono text-slate-200 focus:outline-none focus:border-blue-500"
                   />
                 </div>
               </div>
@@ -451,7 +451,7 @@ export default function SettingsPage() {
                 <select
                   value={widgetPosition}
                   onChange={(e) => setWidgetPosition(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-slate-955 border border-slate-850 rounded-xl text-sm text-slate-205 focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-blue-500"
                 >
                   <option value="bottom-right">Bottom Right (Recommended)</option>
                   <option value="bottom-left">Bottom Left</option>

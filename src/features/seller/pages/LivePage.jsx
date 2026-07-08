@@ -644,7 +644,7 @@ export default function LivePage() {
                   className="h-full w-full object-cover scale-x-[-1]"
                 />
                 {connectedViewerStream && (
-                  <div className="absolute bottom-4 right-4 h-32 aspect-video rounded-2xl overflow-hidden border-2 border-blue-500 bg-slate-955 shadow-2xl z-20 animate-fade-in">
+                  <div className="absolute bottom-4 right-4 h-32 aspect-video rounded-2xl overflow-hidden border-2 border-blue-500 bg-slate-900 shadow-2xl z-20 animate-fade-in">
                     <video
                       ref={(el) => {
                         if (el) el.srcObject = connectedViewerStream;

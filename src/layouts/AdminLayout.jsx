@@ -130,7 +130,7 @@ export default function AdminLayout() {
   });
 
   return (
-    <div className="flex min-h-screen bg-slate-955 text-slate-100 font-sans selection:bg-blue-600/30 selection:text-blue-200">
+    <div className="flex min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-blue-600/30 selection:text-blue-200">
       
       {/* ── Left Sidebar (Desktop) ────────────────────── */}
       <aside 
@@ -356,7 +356,7 @@ export default function AdminLayout() {
       <div className="flex flex-1 flex-col min-w-0">
         
         {/* Sticky Header Bar */}
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-900 bg-slate-955 px-6 backdrop-blur-md sticky top-0 z-30">
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-900 bg-slate-950 px-6 backdrop-blur-md sticky top-0 z-30">
           
           {/* Breadcrumbs & Title */}
           <div className="flex items-center gap-4 min-w-0">
@@ -464,7 +464,7 @@ export default function AdminLayout() {
         </header>
 
         {/* Body View */}
-        <main className="flex-1 p-6 md:p-8 overflow-y-auto bg-slate-955">
+        <main className="flex-1 p-6 md:p-8 overflow-y-auto bg-slate-950">
           <Outlet />
         </main>
 

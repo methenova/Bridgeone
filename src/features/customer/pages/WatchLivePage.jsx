@@ -343,7 +343,7 @@ export default function WatchLivePage() {
                   />
                   {/* PiP Local video feed when viewer is a speaker */}
                   {isSpeaker && viewerLocalStream && (
-                    <div className="absolute bottom-4 right-4 h-28 aspect-video rounded-2xl overflow-hidden border-2 border-green-500 bg-slate-955 shadow-2xl z-20 animate-fade-in group">
+                    <div className="absolute bottom-4 right-4 h-28 aspect-video rounded-2xl overflow-hidden border-2 border-green-500 bg-slate-900 shadow-2xl z-20 animate-fade-in group">
                       <video
                         ref={(el) => {
                           if (el) el.srcObject = viewerLocalStream;
