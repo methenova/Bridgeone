@@ -64,7 +64,15 @@ export default function WidgetPage() {
 
         const currentCalls = callCount || 0;
         const plan = data.plan_name || "free";
-        const limit = plan === "pro" ? Infinity : plan === "basic" ? 100 : 10;
+
+        // Query plans limit configuration from db
+        const { data: planInfo } = await supabase
+          .from("subscription_plans")
+          .select("call_limit")
+          .eq("id", plan)
+          .maybeSingle();
+
+        const limit = planInfo ? (planInfo.call_limit === -1 ? Infinity : planInfo.call_limit) : 10;
         if (currentCalls >= limit) {
           setLimitExceeded(true);
         } else if (!data.is_online) {

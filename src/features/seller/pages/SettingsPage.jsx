@@ -31,12 +31,24 @@ export default function SettingsPage() {
   const [copied, setCopied] = useState(false);
 
   const [thisMonthCalls, setThisMonthCalls] = useState(0);
+  const [dbPlans, setDbPlans] = useState([]);
 
-  const PLAN_LIMITS = {
-    free: { name: "Free Plan", limit: 10, description: "Basic video consultation calls for starting shops." },
-    basic: { name: "Basic Plan", limit: 100, description: "Full styling and elevated call capacity." },
-    pro: { name: "Pro Plan", limit: Infinity, description: "Unlimited video calls, custom styles, priority support." },
-  };
+  // Fetch subscription plans metadata from database
+  useEffect(() => {
+    async function loadPlans() {
+      try {
+        const { data, error } = await supabase
+          .from("subscription_plans")
+          .select("*");
+        if (!error && data) {
+          setDbPlans(data);
+        }
+      } catch (err) {
+        console.warn("Failed to fetch subscription plans:", err);
+      }
+    }
+    loadPlans();
+  }, []);
 
   // Fetch monthly call usage
   useEffect(() => {
@@ -62,8 +74,10 @@ export default function SettingsPage() {
   }, [shop]);
 
   const currentPlanKey = shop?.plan_name || "free";
-  const planInfo = PLAN_LIMITS[currentPlanKey] || PLAN_LIMITS.free;
-  const planLimit = planInfo.limit;
+  const dbPlan = dbPlans.find(p => p.id === currentPlanKey);
+  const planName = dbPlan ? dbPlan.display_name : (currentPlanKey === "pro" ? "Pro Plan" : currentPlanKey === "basic" ? "Basic Plan" : "Free Plan");
+  const planLimit = dbPlan ? (dbPlan.call_limit === -1 ? Infinity : dbPlan.call_limit) : (currentPlanKey === "pro" ? Infinity : currentPlanKey === "basic" ? 100 : 10);
+  const planDescription = currentPlanKey === "pro" ? "Unlimited video calls, custom styles, priority support." : currentPlanKey === "basic" ? "Full styling and elevated call capacity." : "Basic video consultation calls for starting shops.";
   const usagePercentage = planLimit === Infinity ? 0 : Math.min(100, Math.round((thisMonthCalls / planLimit) * 100));
 
   const {
@@ -382,12 +396,12 @@ export default function SettingsPage() {
               <div className="space-y-1.5">
                 <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">Current Plan</p>
                 <div className="flex items-center gap-2">
-                  <span className="text-xl font-extrabold text-white capitalize">{planInfo.name}</span>
+                  <span className="text-xl font-extrabold text-white capitalize">{planName}</span>
                   <span className="inline-flex items-center rounded-full bg-blue-500/10 px-2.5 py-0.5 text-[10px] font-bold text-blue-400 border border-blue-500/20 uppercase">
                     Active
                   </span>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed max-w-sm">{planInfo.description}</p>
+                <p className="text-xs text-slate-400 leading-relaxed max-w-sm">{planDescription}</p>
               </div>
 
               <div className="space-y-3">

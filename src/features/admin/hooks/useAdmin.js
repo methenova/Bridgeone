@@ -22,6 +22,10 @@ import {
   getAdminCallbacks,
   updateCallbackStatus,
   deleteCallback,
+  getPlatformSettings,
+  updatePlatformSettings,
+  getSubscriptionPlans,
+  updateSubscriptionPlan,
 } from "../services/admin.service";
 
 const adminKeys = {
@@ -35,6 +39,8 @@ const adminKeys = {
   calls: () => [...adminKeys.all, "calls"],
   liveRooms: () => [...adminKeys.all, "liveRooms"],
   callbacks: () => [...adminKeys.all, "callbacks"],
+  settings: () => [...adminKeys.all, "settings"],
+  plans: () => [...adminKeys.all, "plans"],
 };
 
 export function useAdminStats() {
@@ -230,5 +236,43 @@ export function useDeleteCallback() {
       toast.success("Callback request deleted");
     },
     onError: (err) => toast.error(err.message || "Failed to delete callback"),
+  });
+}
+
+export function usePlatformSettings() {
+  return useQuery({
+    queryKey: adminKeys.settings(),
+    queryFn: getPlatformSettings,
+  });
+}
+
+export function useUpdatePlatformSettings() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updatePlatformSettings,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminKeys.settings() });
+      toast.success("Platform configurations saved");
+    },
+    onError: (err) => toast.error(err.message || "Failed to update configurations"),
+  });
+}
+
+export function useSubscriptionPlans() {
+  return useQuery({
+    queryKey: adminKeys.plans(),
+    queryFn: getSubscriptionPlans,
+  });
+}
+
+export function useUpdateSubscriptionPlan() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ planId, updates }) => updateSubscriptionPlan(planId, updates),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminKeys.plans() });
+      toast.success("Subscription tier updated");
+    },
+    onError: (err) => toast.error(err.message || "Failed to update plan"),
   });
 }

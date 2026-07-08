@@ -279,3 +279,51 @@ export async function deleteCallback(callbackId) {
 
   if (error) throw error;
 }
+
+// ─────────────────────────────────────────────────────────────
+// PLATFORM CONFIGURATION & PLANS
+// ─────────────────────────────────────────────────────────────
+export async function getPlatformSettings() {
+  const { data, error } = await supabase
+    .from("platform_settings")
+    .select("*")
+    .eq("id", "global")
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updatePlatformSettings(settings) {
+  const { data, error } = await supabase
+    .from("platform_settings")
+    .update(settings)
+    .eq("id", "global")
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function getSubscriptionPlans() {
+  const { data, error } = await supabase
+    .from("subscription_plans")
+    .select("*")
+    .order("price", { ascending: true });
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function updateSubscriptionPlan(planId, updates) {
+  const { data, error } = await supabase
+    .from("subscription_plans")
+    .update(updates)
+    .eq("id", planId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
