@@ -34,7 +34,7 @@ export default function AdminShopsPage() {
 
   async function handleToggleActive(shop) {
     const actionText = shop.is_verified ? "suspend" : "approve";
-    if (window.confirm(`Are you sure you want to ${actionText} the shop "${shop.name}"?`)) {
+    if (window.confirm(`Are you sure you want to ${actionText} the shop "${shop.shop_name}"?`)) {
       await toggleStatus.mutateAsync({
         shopId: shop.id,
         isActive: !shop.is_verified,
@@ -46,7 +46,7 @@ export default function AdminShopsPage() {
   const filteredShops = useMemo(() => {
     return shops.filter((shop) => {
       const matchesSearch = 
-        shop.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (shop.shop_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
         (shop.profiles?.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
         (shop.profiles?.email || "").toLowerCase().includes(searchQuery.toLowerCase());
 
@@ -213,7 +213,7 @@ export default function AdminShopsPage() {
                           )}
                         </div>
                         <div>
-                          <span className="font-bold text-white block text-sm">{s.name}</span>
+                          <span className="font-bold text-white block text-sm">{s.shop_name}</span>
                           <span className="text-[10px] text-slate-500 font-mono mt-0.5 block uppercase">
                             #{s.id.slice(0, 8)}
                           </span>

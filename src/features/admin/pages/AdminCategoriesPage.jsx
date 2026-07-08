@@ -1,9 +1,22 @@
 import { useState } from "react";
 import { Plus, Pencil, Trash2, FolderPlus, FolderEdit, Folder, Loader2 } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 
 import { useAdminCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from "../hooks/useAdmin";
+
+function getLucideIcon(iconName) {
+  if (!iconName) return Folder;
+  
+  // Convert kebab-case to PascalCase (e.g. book-open -> BookOpen)
+  const pascalName = iconName
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join("");
+    
+  return LucideIcons[pascalName] || Folder;
+}
 
 export default function AdminCategoriesPage() {
   const { data: categories = [], isLoading } = useAdminCategories();
@@ -93,8 +106,11 @@ export default function AdminCategoriesPage() {
                   className="flex justify-between items-center py-3.5 first:pt-0 last:pb-0 text-sm"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl h-10 w-10 rounded-xl bg-slate-950 border border-slate-850 flex items-center justify-center shadow-sm">
-                      {cat.icon || "📂"}
+                    <span className="h-10 w-10 rounded-xl bg-slate-950 border border-slate-850 flex items-center justify-center shadow-sm text-slate-450 shrink-0">
+                      {(() => {
+                        const IconComponent = getLucideIcon(cat.icon);
+                        return <IconComponent className="h-5 w-5" />;
+                      })()}
                     </span>
                     <div>
                       <p className="font-bold text-white">{cat.name}</p>
