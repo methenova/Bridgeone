@@ -271,3 +271,39 @@ Viewer clicks Heart ──► Broadcasts Reaction ──► Triggers Floating an
                             ▼
                 Live Shopping Experience
 ```
+
+---
+
+## 8. Widget Live Call Consultation Flow (Backend Mapping)
+
+This section maps out how the serverless Supabase implementation mirrors standard client-server backend routing flows for widget consultation calls.
+
+```
+Standard Backend Flow                   Supabase WebRTC Implementation
+──────────────────────                   ──────────────────────────────
+Customer Call Start                     Insert row → call_logs (status: 'missed')
+       │                                                 │
+       ▼                                                 ▼
+POST /create-session                     Insert row → video_rooms (status: 'live')
+       │                                                 │
+       ▼                                                 ▼
+Authentication                           Supabase Auth + Database RLS policies
+       │                                                 │
+       ▼                                                 ▼
+Find Available Agent                     Query is_online → shops table
+       │                                                 │
+       ▼                                                 ▼
+Generate Room ID                         Custom room_code dynamically built
+       │                                                 │
+       ▼                                                 ▼
+Socket Event                             Supabase Realtime Database Channel
+       │                                                 │
+       ▼                                                 ▼
+Notify Agent                             LivePage.jsx postgres_changes listener
+       │                                                 │
+       ▼                                                 ▼
+Agent Accepts                            Update room offer with answer SDP
+       │                                                 │
+       ▼                                                 ▼
+Join Video Room                          Exchange ICE candidates via DB triggers
+```
