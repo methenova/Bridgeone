@@ -27,11 +27,18 @@ export default function LoginForm() {
     try {
       setLoading(true);
 
-      await login(formData);
+      const result = await login(formData);
+      const userRole = result?.profile?.role || "customer";
 
       alert("Login Successful");
 
-      navigate("/");
+      if (userRole === "admin") {
+        navigate("/admin");
+      } else if (userRole === "seller") {
+        navigate("/seller");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       alert(error.message);
     } finally {

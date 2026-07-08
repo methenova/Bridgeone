@@ -77,7 +77,7 @@ export function AuthProvider({ children }) {
 
     setProfile(profileData);
 
-    return user;
+    return { user, profile: profileData };
   }
 
   async function register(values) {
