@@ -16,6 +16,9 @@ import {
   updateCategory,
   deleteCategory,
   getAdminOrders,
+  getAdminCalls,
+  getLiveRooms,
+  deleteCallLog,
 } from "../services/admin.service";
 
 const adminKeys = {
@@ -26,6 +29,8 @@ const adminKeys = {
   products: () => [...adminKeys.all, "products"],
   categories: () => [...adminKeys.all, "categories"],
   orders: () => [...adminKeys.all, "orders"],
+  calls: () => [...adminKeys.all, "calls"],
+  liveRooms: () => [...adminKeys.all, "liveRooms"],
 };
 
 export function useAdminStats() {
@@ -163,5 +168,32 @@ export function useAdminOrders() {
   return useQuery({
     queryKey: adminKeys.orders(),
     queryFn: getAdminOrders,
+  });
+}
+
+export function useAdminCalls() {
+  return useQuery({
+    queryKey: adminKeys.calls(),
+    queryFn: getAdminCalls,
+  });
+}
+
+export function useLiveRooms() {
+  return useQuery({
+    queryKey: adminKeys.liveRooms(),
+    queryFn: getLiveRooms,
+    refetchInterval: 5000,
+  });
+}
+
+export function useDeleteCallLog() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteCallLog,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminKeys.calls() });
+      toast.success("Call log deleted successfully");
+    },
+    onError: (err) => toast.error(err.message || "Failed to delete call log"),
   });
 }

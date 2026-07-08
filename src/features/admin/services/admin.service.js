@@ -204,3 +204,41 @@ export async function getAdminOrders() {
   if (error) throw error;
   return data ?? [];
 }
+
+// ─────────────────────────────────────────────────────────────
+// CALLS MANAGEMENT
+// ─────────────────────────────────────────────────────────────
+export async function getAdminCalls() {
+  const { data, error } = await supabase
+    .from("call_logs")
+    .select(`
+      *,
+      shops ( shop_name )
+    `)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function getLiveRooms() {
+  const { data, error } = await supabase
+    .from("video_rooms")
+    .select(`
+      *,
+      shops ( shop_name ),
+      profiles:seller_id ( full_name )
+    `);
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function deleteCallLog(logId) {
+  const { error } = await supabase
+    .from("call_logs")
+    .delete()
+    .eq("id", logId);
+
+  if (error) throw error;
+}

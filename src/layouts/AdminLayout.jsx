@@ -17,6 +17,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ShieldAlert,
+  Video,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -28,6 +29,7 @@ const menu = [
   { title: "Shops", icon: Store, path: "/admin/shops", badge: "2" },
   { title: "Products", icon: Package, path: "/admin/products", badge: null },
   { title: "Categories", icon: FolderTree, path: "/admin/categories", badge: null },
+  { title: "Live Calls", icon: Video, path: "/admin/calls", badge: "Live" },
   { title: "Orders", icon: ShoppingBag, path: "/admin/orders", badge: "New" },
   { title: "Settings", icon: Settings, path: "/admin/settings", badge: null },
 ];

@@ -68,6 +68,7 @@ const AdminProductsPage = lazy(() => import("@/features/admin/pages/AdminProduct
 const AdminCategoriesPage = lazy(() => import("@/features/admin/pages/AdminCategoriesPage"));
 const AdminOrdersPage = lazy(() => import("@/features/admin/pages/AdminOrdersPage"));
 const AdminSettingsPage = lazy(() => import("@/features/admin/pages/AdminSettingsPage"));
+const AdminCallsPage = lazy(() => import("@/features/admin/pages/AdminCallsPage"));
 
 const router = createBrowserRouter([
   // ============================================
@@ -277,6 +278,10 @@ const router = createBrowserRouter([
       {
         path: "orders",
         element: Loadable(AdminOrdersPage),
+      },
+      {
+        path: "calls",
+        element: Loadable(AdminCallsPage),
       },
       {
         path: "settings",
