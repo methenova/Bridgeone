@@ -71,6 +71,27 @@ export async function getAdminShops() {
   return data ?? [];
 }
 
+// ─────────────────────────────────────────────────────────────
+// AUDIT LOG HELPER
+// ─────────────────────────────────────────────────────────────
+export async function writeAuditLog(action, module, status = "success") {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    await supabase.from("audit_logs").insert({
+      user_id: user.id,
+      action,
+      module,
+      status,
+      ip_address: "127.0.0.1",
+      browser: navigator.userAgent || "Chrome Client"
+    });
+  } catch (err) {
+    console.warn("Failed to write audit log:", err);
+  }
+}
+
 export async function toggleShopStatus(shopId, isActive) {
   const { data, error } = await supabase
     .from("shops")
@@ -79,7 +100,11 @@ export async function toggleShopStatus(shopId, isActive) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    await writeAuditLog(`Failed to toggle verification for shop ${shopId}`, "Shops", "failed");
+    throw error;
+  }
+  await writeAuditLog(`${isActive ? "Approved" : "Suspended"} organization access for ${data.shop_name}`, "Shops", "success");
   return data;
 }
 
@@ -91,7 +116,11 @@ export async function updateShopPlan(shopId, planName) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    await writeAuditLog(`Failed to update plan to ${planName} for shop ${shopId}`, "Plans", "failed");
+    throw error;
+  }
+  await writeAuditLog(`Updated subscription plan for ${data.shop_name} to ${planName.toUpperCase()}`, "Plans", "success");
   return data;
 }
 
@@ -302,7 +331,11 @@ export async function updatePlatformSettings(settings) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    await writeAuditLog("Failed to update platform configurations", "Settings", "failed");
+    throw error;
+  }
+  await writeAuditLog("Updated global platform settings", "Settings", "success");
   return data;
 }
 
@@ -324,6 +357,10 @@ export async function updateSubscriptionPlan(planId, updates) {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    await writeAuditLog(`Failed to update subscription plan ${planId}`, "Plans", "failed");
+    throw error;
+  }
+  await writeAuditLog(`Updated subscription plan thresholds for ${planId.toUpperCase()}`, "Plans", "success");
   return data;
 }

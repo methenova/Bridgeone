@@ -63,12 +63,18 @@ const CallbacksPage = lazy(() => import("@/features/seller/pages/CallbacksPage")
 const AdminLayout = lazy(() => import("@/layouts/AdminLayout"));
 const AdminDashboardPage = lazy(() => import("@/features/admin/pages/AdminDashboardPage"));
 const AdminUsersPage = lazy(() => import("@/features/admin/pages/AdminUsersPage"));
-const AdminShopsPage = lazy(() => import("@/features/admin/pages/AdminShopsPage"));
-const AdminProductsPage = lazy(() => import("@/features/admin/pages/AdminProductsPage"));
-const AdminCategoriesPage = lazy(() => import("@/features/admin/pages/AdminCategoriesPage"));
-const AdminOrdersPage = lazy(() => import("@/features/admin/pages/AdminOrdersPage"));
-const AdminSettingsPage = lazy(() => import("@/features/admin/pages/AdminSettingsPage"));
+const AdminOrganizationsPage = lazy(() => import("@/features/admin/pages/AdminOrganizationsPage"));
+const AdminOrgAdminsPage = lazy(() => import("@/features/admin/pages/AdminOrgAdminsPage"));
+const AdminSubscriptionsPage = lazy(() => import("@/features/admin/pages/AdminSubscriptionsPage"));
+const AdminWidgetsPage = lazy(() => import("@/features/admin/pages/AdminWidgetsPage"));
+const AdminAnalyticsPage = lazy(() => import("@/features/admin/pages/AdminAnalyticsPage"));
+const AdminSupportPage = lazy(() => import("@/features/admin/pages/AdminSupportPage"));
+const AdminNotificationsPage = lazy(() => import("@/features/admin/pages/AdminNotificationsPage"));
+const AdminAuditLogsPage = lazy(() => import("@/features/admin/pages/AdminAuditLogsPage"));
+const AdminDeveloperPage = lazy(() => import("@/features/admin/pages/AdminDeveloperPage"));
+const AdminSystemHealthPage = lazy(() => import("@/features/admin/pages/AdminSystemHealthPage"));
 const AdminCallsPage = lazy(() => import("@/features/admin/pages/AdminCallsPage"));
+const AdminSettingsPage = lazy(() => import("@/features/admin/pages/AdminSettingsPage"));
 
 const router = createBrowserRouter([
   // ============================================
@@ -260,28 +266,52 @@ const router = createBrowserRouter([
         element: Loadable(AdminDashboardPage),
       },
       {
+        path: "organizations",
+        element: Loadable(AdminOrganizationsPage),
+      },
+      {
+        path: "org-admins",
+        element: Loadable(AdminOrgAdminsPage),
+      },
+      {
         path: "users",
         element: Loadable(AdminUsersPage),
       },
       {
-        path: "shops",
-        element: Loadable(AdminShopsPage),
+        path: "subscriptions",
+        element: Loadable(AdminSubscriptionsPage),
       },
       {
-        path: "products",
-        element: Loadable(AdminProductsPage),
-      },
-      {
-        path: "categories",
-        element: Loadable(AdminCategoriesPage),
-      },
-      {
-        path: "orders",
-        element: Loadable(AdminOrdersPage),
+        path: "widgets",
+        element: Loadable(AdminWidgetsPage),
       },
       {
         path: "calls",
         element: Loadable(AdminCallsPage),
+      },
+      {
+        path: "analytics",
+        element: Loadable(AdminAnalyticsPage),
+      },
+      {
+        path: "support",
+        element: Loadable(AdminSupportPage),
+      },
+      {
+        path: "notifications",
+        element: Loadable(AdminNotificationsPage),
+      },
+      {
+        path: "audit",
+        element: Loadable(AdminAuditLogsPage),
+      },
+      {
+        path: "developer",
+        element: Loadable(AdminDeveloperPage),
+      },
+      {
+        path: "health",
+        element: Loadable(AdminSystemHealthPage),
       },
       {
         path: "settings",
