@@ -28,6 +28,7 @@ export default function SellerDashboardPage() {
   const [salesAssisted, setSalesAssisted] = useState(0);
   const [totalCallsCount, setTotalCallsCount] = useState(0);
   const [recentActivities, setRecentActivities] = useState([]);
+  const [onlineAgents, setOnlineAgents] = useState(0);
 
   // Fetch live stats from database
   useEffect(() => {
@@ -80,6 +81,14 @@ export default function SellerDashboardPage() {
           .neq("status", "cancelled");
         const salesTotal = orders?.reduce((acc, o) => acc + Number(o.total || 0), 0) || 0;
         setSalesAssisted(salesTotal);
+
+        // 4.5. Online Agents count
+        const { data: onlineAgs } = await supabase
+          .from("shop_agents")
+          .select("id")
+          .eq("shop_id", shopId)
+          .eq("is_online", true);
+        setOnlineAgents(onlineAgs?.length || 0);
 
         // 5. Recent Activities
         // Fetch recent calls
@@ -183,18 +192,13 @@ export default function SellerDashboardPage() {
         </div>
 
         {/* Online Agents */}
-        <div className="relative">
-          <StatCard
-            title="Online Agents"
-            value="1"
-            icon={UserCheck}
-            color="bg-indigo-600/10 text-indigo-400"
-            change="1 Active Owner"
-          />
-          <span className="absolute top-2 right-2 bg-rose-500/10 text-rose-400 text-[8px] font-mono font-bold px-1.5 py-0.5 rounded border border-rose-500/20">
-            BACKEND NOT IMPLEMENTED
-          </span>
-        </div>
+        <StatCard
+          title="Online Agents"
+          value={onlineAgents.toString()}
+          icon={UserCheck}
+          color="bg-indigo-600/10 text-indigo-400"
+          change="Available staff"
+        />
 
         {/* Live Calls */}
         <StatCard
@@ -301,7 +305,7 @@ export default function SellerDashboardPage() {
             </a>
             
             <a 
-              href="/seller/settings" 
+              href="/seller/widget" 
               className="flex items-center justify-center rounded-xl bg-slate-900 border border-slate-850 px-5 py-3 hover:border-slate-800 transition-all text-center"
             >
               Configure Widget Colors
