@@ -39,9 +39,13 @@ export class SellerPeer {
   async start() {
     try {
       const actualRoomCode = this.customRoomCode || this.shopId;
-      console.log("[SellerPeer] Cleaning up old rooms for room code:", actualRoomCode);
-      // Run cleanup asynchronously in the background so it doesn't block call creation
-      cleanOldRooms(actualRoomCode);
+      
+      // Only clean up old rooms if we are in live stream mode (no custom room code).
+      // For 1-on-1 calls, the initiator already cleaned up the base prefix.
+      if (!this.customRoomCode) {
+        console.log("[SellerPeer] Cleaning up old rooms for shop:", actualRoomCode);
+        await cleanOldRooms(actualRoomCode);
+      }
 
       if (this.isDestroyed) return;
 
@@ -162,7 +166,7 @@ export class SellerPeer {
         .from("video_rooms")
         .select("answer")
         .eq("id", this.roomId)
-        .single();
+        .maybeSingle();
 
       if (room?.answer && this.peer && this.peer.signalingState !== "stable" && !this.isDestroyed) {
         console.log("[SellerPeer] Answer found via poll — applying remote description...");
