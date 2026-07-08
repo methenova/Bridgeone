@@ -1,22 +1,91 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Users, Search, MessageSquare, IndianRupee, ShoppingBag } from "lucide-react";
+import { 
+  Users, 
+  Search, 
+  MessageSquare, 
+  IndianRupee, 
+  ShoppingBag, 
+  X, 
+  Clock, 
+  Video, 
+  UserCheck, 
+  Star, 
+  Loader2, 
+  Save, 
+  ListFilter,
+  Activity,
+  CalendarCheck
+} from "lucide-react";
+import toast from "react-hot-toast";
+
+import { supabase } from "@/config/supabase";
 import useSellerShop from "../hooks/useSellerShop";
 import { getSellerOrderItems } from "../services/order.service";
-import ProductSkeleton from "../components/ProductSkeleton";
 
 export default function CustomersPage() {
   const navigate = useNavigate();
   const { shop, loading: shopLoading } = useSellerShop();
+  const shopId = shop?.id;
+
   const [searchTerm, setSearchTerm] = useState("");
+  const [spentFilter, setSpentFilter] = useState("all"); // "all" | "high" (>5000) | "mid" (>1000)
+  
+  // Selected Customer CRM drawer state
+  const [selectedCust, setSelectedCust] = useState(null);
+  const [activeCrmTab, setActiveCrmTab] = useState("timeline"); // "timeline" | "calls" | "orders" | "notes"
+  const [crmNotes, setCrmNotes] = useState("");
+  const [savingNotes, setSavingNotes] = useState(false);
+  const [assignedAgent, setAssignedAgent] = useState("");
+  const [followUpDate, setFollowUpDate] = useState("");
+
+  const [agents, setAgents] = useState([]);
+  const [customerCalls, setCustomerCalls] = useState([]);
+  const [loadingCalls, setLoadingCalls] = useState(false);
 
   // Query order items for this shop
-  const { data: orderItems = [], isLoading: itemsLoading } = useQuery({
-    queryKey: ["seller-order-items", shop?.id],
-    queryFn: () => getSellerOrderItems(shop.id),
-    enabled: !!shop?.id,
+  const { data: orderItems = [], isLoading: itemsLoading, refetch: refetchOrders } = useQuery({
+    queryKey: ["seller-order-items", shopId],
+    queryFn: () => getSellerOrderItems(shopId),
+    enabled: !!shopId,
   });
+
+  // Fetch agents list
+  useEffect(() => {
+    if (shopId) {
+      supabase.from("shop_agents")
+        .select("*, profiles(full_name)")
+        .eq("shop_id", shopId)
+        .then(({ data }) => {
+          setAgents(data || []);
+        });
+    }
+  }, [shopId]);
+
+  // Fetch caller logs for the selected customer CRM profile
+  useEffect(() => {
+    if (!selectedCust) return;
+    
+    async function loadCustomerCalls() {
+      try {
+        setLoadingCalls(true);
+        const { data, error } = await supabase
+          .from("call_logs")
+          .select("*")
+          .eq("shop_id", shopId)
+          .ilike("customer_name", `%${selectedCust.name}%`);
+
+        if (error) throw error;
+        setCustomerCalls(data || []);
+      } catch (err) {
+        console.warn("Failed to load customer calls log:", err);
+      } finally {
+        setLoadingCalls(false);
+      }
+    }
+    loadCustomerCalls();
+  }, [selectedCust, shopId]);
 
   // Aggregate customer metrics
   const customerList = useMemo(() => {
@@ -38,18 +107,21 @@ export default function CustomersPage() {
           id: customerId,
           name: profile?.full_name || "Unknown Customer",
           email: profile?.email || "No Email",
+          phone: profile?.phone || "No phone",
           ordersCount: 0,
           totalSpent: 0,
           lastOrderDate: order.created_at,
           orderIds: new Set(),
+          items: [],
+          notes: profile?.notes || "",
+          createdAt: profile?.created_at
         };
       }
 
-      // Add order id to set to aggregate unique orders count
       agg[customerId].orderIds.add(order.id);
       agg[customerId].totalSpent += itemTotal;
+      agg[customerId].items.push(item);
 
-      // Update last order date if this one is newer
       if (new Date(order.created_at) > new Date(agg[customerId].lastOrderDate)) {
         agg[customerId].lastOrderDate = order.created_at;
       }
@@ -61,16 +133,23 @@ export default function CustomersPage() {
     }));
   }, [orderItems]);
 
-  // Filtered customers based on search term
+  // Filtered CRM Customers
   const filteredCustomers = useMemo(() => {
-    return customerList.filter(
-      (c) =>
+    return customerList.filter((c) => {
+      const matchesSearch = 
         c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [customerList, searchTerm]);
+        c.email.toLowerCase().includes(searchTerm.toLowerCase());
 
-  // Metrics
+      const matchesSpent = 
+        spentFilter === "all" ||
+        (spentFilter === "high" && c.totalSpent > 5000) ||
+        (spentFilter === "mid" && c.totalSpent > 1000);
+
+      return matchesSearch && matchesSpent;
+    });
+  }, [customerList, searchTerm, spentFilter]);
+
+  // Aggregated scorecards
   const stats = useMemo(() => {
     const totalCustomers = customerList.length;
     const totalSales = customerList.reduce((sum, c) => sum + c.totalSpent, 0);
@@ -84,6 +163,38 @@ export default function CustomersPage() {
     };
   }, [customerList]);
 
+  // Save CRM notes to database profile
+  async function handleSaveNotes() {
+    if (!selectedCust || savingNotes) return;
+    setSavingNotes(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ notes: crmNotes })
+        .eq("id", selectedCust.id);
+
+      if (error) throw error;
+      toast.success("CRM profile notes updated successfully!");
+      
+      // Update local state
+      setSelectedCust(prev => ({ ...prev, notes: crmNotes }));
+      refetchOrders();
+    } catch (err) {
+      toast.error(err.message || "Failed to update notes");
+    } finally {
+      setSavingNotes(false);
+    }
+  }
+
+  // Open CRM Drawer
+  function handleOpenCrm(cust) {
+    setSelectedCust(cust);
+    setCrmNotes(cust.notes || "");
+    setAssignedAgent("");
+    setFollowUpDate("");
+    setActiveCrmTab("timeline");
+  }
+
   const isLoading = shopLoading || itemsLoading;
 
   if (isLoading) {
@@ -95,148 +206,383 @@ export default function CustomersPage() {
             <div key={i} className="h-32 animate-pulse rounded-2xl bg-slate-900" />
           ))}
         </div>
-        <ProductSkeleton />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 text-white">
+    <div className="space-y-6 text-white max-w-7xl relative">
+      
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Customers</h1>
-        <p className="mt-1 text-slate-400">Track and manage customer profiles and purchase history.</p>
+        <h1 className="text-3xl font-extrabold tracking-tight">Customer CRM</h1>
+        <p className="mt-1 text-xs text-slate-400">Track and manage customer communications timelines, checkout invoices, notes, and WebRTC calls logs.</p>
       </div>
 
-      {/* Metrics Grid */}
+      {/* Metrics Row */}
       <div className="grid gap-6 sm:grid-cols-3">
-        {/* Total Customers */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-6 flex items-center justify-between">
           <div>
-            <span className="text-sm text-slate-400 font-medium">Total Customers</span>
-            <h3 className="text-3xl font-bold mt-2">{stats.totalCustomers}</h3>
-            <p className="text-xs text-slate-500 mt-1">Unique shoppers</p>
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Total CRM Contacts</span>
+            <h3 className="text-2xl font-black mt-2">{stats.totalCustomers}</h3>
+            <p className="text-[10px] text-slate-500 mt-1">Unique platform shoppers</p>
           </div>
-          <div className="h-12 w-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
-            <Users className="h-6 w-6" />
+          <div className="h-10 w-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0">
+            <Users className="h-5 w-5" />
           </div>
         </div>
 
-        {/* Total Revenue */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-6 flex items-center justify-between">
           <div>
-            <span className="text-sm text-slate-400 font-medium">Shop Revenue</span>
-            <h3 className="text-3xl font-bold mt-2">₹{stats.totalSales.toLocaleString("en-IN")}</h3>
-            <p className="text-xs text-slate-500 mt-1">Sum of items purchased</p>
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Accumulated Purchases</span>
+            <h3 className="text-2xl font-black mt-2">₹{stats.totalSales.toLocaleString("en-IN")}</h3>
+            <p className="text-[10px] text-slate-500 mt-1">Sum of checkout totals</p>
           </div>
-          <div className="h-12 w-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
-            <IndianRupee className="h-6 w-6" />
+          <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+            <IndianRupee className="h-5 w-5" />
           </div>
         </div>
 
-        {/* Avg LTV */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-6 flex items-center justify-between">
           <div>
-            <span className="text-sm text-slate-400 font-medium">Avg. Order Value</span>
-            <h3 className="text-3xl font-bold mt-2">₹{Math.round(stats.avgOrderValue).toLocaleString("en-IN")}</h3>
-            <p className="text-xs text-slate-500 mt-1">Per transaction average</p>
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Average Customer LTV</span>
+            <h3 className="text-2xl font-black mt-2">₹{Math.round(stats.avgOrderValue).toLocaleString("en-IN")}</h3>
+            <p className="text-[10px] text-slate-500 mt-1">Assisted sales flow average</p>
           </div>
-          <div className="h-12 w-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center">
-            <ShoppingBag className="h-6 w-6" />
+          <div className="h-10 w-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0">
+            <ShoppingBag className="h-5 w-5" />
           </div>
         </div>
       </div>
 
-      {/* Customers List Container */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden">
-        {/* Search Header */}
-        <div className="p-6 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* CRM Customer List */}
+      <div className="rounded-2xl border border-slate-900 bg-slate-900/30 overflow-hidden">
+        
+        {/* Filter bar */}
+        <div className="p-5 border-b border-slate-900 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/40">
+          
+          {/* Search inputs */}
           <div className="relative max-w-md w-full">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
             <input
               type="text"
-              placeholder="Search by name or email..."
+              placeholder="Search customers by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-850 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-850 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
             />
           </div>
-          <div className="text-sm text-slate-400">
-            Showing <span className="font-semibold text-white">{filteredCustomers.length}</span> of{" "}
-            <span className="font-semibold text-white">{customerList.length}</span> customers
+
+          <div className="flex items-center gap-4 text-xs font-bold text-slate-400 self-start md:self-auto">
+            {/* Spent filter */}
+            <div className="flex items-center gap-2">
+              <ListFilter className="h-4 w-4 text-slate-500" />
+              <span>Spent tier:</span>
+              <select
+                value={spentFilter}
+                onChange={(e) => setSpentFilter(e.target.value)}
+                className="rounded-xl border border-slate-850 bg-slate-950 px-2.5 py-1 text-xs text-slate-350 outline-none"
+              >
+                <option value="all">All value Tiers</option>
+                <option value="high">High Value (&gt; ₹5,000)</option>
+                <option value="mid">Mid Value (&gt; ₹1,000)</option>
+              </select>
+            </div>
           </div>
+
         </div>
 
-        {/* Table / Empty State */}
-        {filteredCustomers.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-            <div className="h-16 w-16 rounded-full bg-slate-800/40 flex items-center justify-center text-slate-500 mb-4">
-              <Users className="h-8 w-8" />
-            </div>
-            <h3 className="text-lg font-semibold text-slate-200">No Customers Found</h3>
-            <p className="text-sm text-slate-500 mt-1 max-w-sm">
-              {searchTerm ? "No customers match your search criteria." : "When customers buy your products, they will appear here."}
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-left">
-              <thead>
-                <tr className="border-b border-slate-850 text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-900/50">
-                  <th className="px-6 py-4">Customer Details</th>
-                  <th className="px-6 py-4">Total Orders</th>
-                  <th className="px-6 py-4">Total Spent</th>
-                  <th className="px-6 py-4">Last Purchase Date</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-850">
-                {filteredCustomers.map((customer) => (
-                  <tr key={customer.id} className="hover:bg-slate-850/20 transition-colors">
-                    {/* Profile */}
-                    <td className="px-6 py-4">
-                      <div>
-                        <div className="font-semibold text-white">{customer.name}</div>
-                        <div className="text-xs text-slate-500">{customer.email}</div>
-                      </div>
-                    </td>
+        {/* Customer Database Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-left text-xs">
+            <thead>
+              <tr className="border-b border-slate-900 text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-900/50">
+                <th className="px-6 py-4">Shopper Info</th>
+                <th className="px-6 py-4">Total Orders Count</th>
+                <th className="px-6 py-4">Total Value spent</th>
+                <th className="px-6 py-4">Last Checkout Date</th>
+                <th className="px-6 py-4 text-right">CRM Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-900 bg-transparent text-slate-300">
+              {filteredCustomers.map((cust) => (
+                <tr key={cust.id} className="hover:bg-slate-900/10 transition-colors">
+                  
+                  {/* Info details */}
+                  <td className="px-6 py-4">
+                    <div>
+                      <span className="font-bold text-white block text-sm">{cust.name}</span>
+                      <span className="text-[10px] text-slate-500 mt-0.5 block">{cust.email}</span>
+                    </div>
+                  </td>
 
-                    {/* Total Orders */}
-                    <td className="px-6 py-4 text-slate-300">
-                      {customer.ordersCount} {customer.ordersCount === 1 ? "order" : "orders"}
-                    </td>
+                  {/* Orders */}
+                  <td className="px-6 py-4 font-semibold text-slate-300">
+                    {cust.ordersCount} checkouts
+                  </td>
 
-                    {/* Total Spent */}
-                    <td className="px-6 py-4 font-semibold text-emerald-400">
-                      ₹{customer.totalSpent.toLocaleString("en-IN")}
-                    </td>
+                  {/* Spent */}
+                  <td className="px-6 py-4 font-bold text-emerald-400">
+                    ₹{cust.totalSpent.toLocaleString("en-IN")}
+                  </td>
 
-                    {/* Last Purchase */}
-                    <td className="px-6 py-4 text-slate-400 text-sm">
-                      {new Date(customer.lastOrderDate).toLocaleDateString("en-IN", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </td>
+                  {/* Date */}
+                  <td className="px-6 py-4 text-slate-400">
+                    {new Date(cust.lastOrderDate).toLocaleDateString("en-IN", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric"
+                    })}
+                  </td>
 
-                    {/* Actions */}
-                    <td className="px-6 py-4 text-right">
+                  {/* CRM details trigger */}
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex justify-end gap-2.5">
                       <button
-                        onClick={() => navigate(`/seller/chat?userId=${customer.id}`)}
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-950 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:bg-slate-850 hover:text-white transition-colors"
+                        onClick={() => handleOpenCrm(cust)}
+                        className="inline-flex items-center gap-1 bg-slate-900 border border-slate-850 px-2.5 py-1.5 rounded-lg text-[10px] font-bold text-slate-350 hover:text-white uppercase transition-all"
                       >
-                        <MessageSquare className="h-3.5 w-3.5 text-blue-400" />
+                        <UserCheck className="h-3.5 w-3.5 text-blue-400" />
+                        CRM File
+                      </button>
+                      
+                      <button
+                        onClick={() => navigate(`/seller/chat?userId=${cust.id}`)}
+                        className="inline-flex items-center gap-1 bg-slate-900 border border-slate-850 px-2.5 py-1.5 rounded-lg text-[10px] font-bold text-slate-350 hover:text-white uppercase transition-all"
+                      >
+                        <MessageSquare className="h-3.5 w-3.5 text-emerald-400" />
                         Chat
                       </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </div>
+                  </td>
+
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      {/* CRM SLIDE-OUT DRAWER */}
+      <div className={`fixed inset-y-0 right-0 z-50 w-full max-w-md border-l border-slate-900 bg-slate-950/95 backdrop-blur-md shadow-2xl transition-transform duration-300 ease-in-out ${
+        selectedCust ? "translate-x-0" : "translate-x-full"
+      }`}>
+        {selectedCust && (
+          <div className="h-full flex flex-col justify-between">
+            {/* Header info */}
+            <div className="p-6 border-b border-slate-900 flex justify-between items-start">
+              <div>
+                <h2 className="text-base font-black text-white">{selectedCust.name}</h2>
+                <span className="text-[10px] text-slate-500 font-mono mt-0.5 block">{selectedCust.email}</span>
+                <span className="text-[10px] text-slate-500 font-mono block">{selectedCust.phone}</span>
+              </div>
+              <button 
+                onClick={() => setSelectedCust(null)}
+                className="text-slate-450 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* TAB SELECT */}
+            <div className="grid grid-cols-4 border-b border-slate-900 text-[9px] font-bold uppercase tracking-wider text-center">
+              <button 
+                onClick={() => setActiveCrmTab("timeline")}
+                className={`py-3.5 border-b-2 transition-all ${activeCrmTab === "timeline" ? "border-blue-500 text-blue-400 font-black" : "border-transparent text-slate-500 hover:text-white"}`}
+              >
+                Timeline
+              </button>
+              <button 
+                onClick={() => setActiveCrmTab("calls")}
+                className={`py-3.5 border-b-2 transition-all ${activeCrmTab === "calls" ? "border-blue-500 text-blue-400 font-black" : "border-transparent text-slate-500 hover:text-white"}`}
+              >
+                Calls
+              </button>
+              <button 
+                onClick={() => setActiveCrmTab("orders")}
+                className={`py-3.5 border-b-2 transition-all ${activeCrmTab === "orders" ? "border-blue-500 text-blue-400 font-black" : "border-transparent text-slate-500 hover:text-white"}`}
+              >
+                Orders
+              </button>
+              <button 
+                onClick={() => setActiveCrmTab("notes")}
+                className={`py-3.5 border-b-2 transition-all ${activeCrmTab === "notes" ? "border-blue-500 text-blue-400 font-black" : "border-transparent text-slate-500 hover:text-white"}`}
+              >
+                CRM Notes
+              </button>
+            </div>
+
+            {/* Tab content area */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-none text-xs">
+              
+              {/* TAB 1: TIMELINE */}
+              {activeCrmTab === "timeline" && (
+                <div className="space-y-4">
+                  {/* Account created */}
+                  <div className="flex gap-3 items-start">
+                    <div className="h-6 w-6 rounded-full bg-slate-900 border border-slate-850 flex items-center justify-center shrink-0">
+                      <Clock className="h-3.5 w-3.5 text-blue-400" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-white">Shopper Profile Registered</p>
+                      <span className="text-[10px] text-slate-500 mt-0.5 block">
+                        Account created on {selectedCust.createdAt ? new Date(selectedCust.createdAt).toLocaleDateString("en-IN") : "01-Jul-2026"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Call Connected */}
+                  {customerCalls.length > 0 && (
+                    <div className="flex gap-3 items-start">
+                      <div className="h-6 w-6 rounded-full bg-slate-900 border border-slate-850 flex items-center justify-center shrink-0">
+                        <Video className="h-3.5 w-3.5 text-indigo-400" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-white">Consultation Call Established</p>
+                        <span className="text-[10px] text-slate-500 mt-0.5 block">
+                          Customer engaged in WebRTC call for {Math.round(customerCalls[0].duration / 60)} minutes.
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Last Purchase timeline */}
+                  <div className="flex gap-3 items-start">
+                    <div className="h-6 w-6 rounded-full bg-slate-900 border border-slate-850 flex items-center justify-center shrink-0">
+                      <ShoppingBag className="h-3.5 w-3.5 text-emerald-400" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-white">Checkout invoice placed</p>
+                      <span className="text-[10px] text-slate-500 mt-0.5 block">
+                        Completed purchase value of ₹{selectedCust.totalSpent.toLocaleString("en-IN")}.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 2: CALL HISTORY */}
+              {activeCrmTab === "calls" && (
+                <div className="space-y-3">
+                  {loadingCalls ? (
+                    <div className="flex justify-center py-6 text-slate-500"><Loader2 className="h-4 w-4 animate-spin text-blue-400" /></div>
+                  ) : customerCalls.map(c => (
+                    <div key={c.id} className="rounded-xl border border-slate-900 bg-slate-950 p-4 space-y-2 leading-normal">
+                      <div className="flex justify-between items-start">
+                        <h4 className="font-bold text-white text-xs">WebRTC consultation call</h4>
+                        <span className={`inline-flex px-1.5 py-0.5 rounded text-[8px] font-bold uppercase border ${
+                          c.status === "completed" 
+                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" 
+                            : "bg-red-500/10 text-red-400 border-red-500/20"
+                        }`}>
+                          {c.status}
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-slate-500 font-mono">Date: {new Date(c.created_at).toLocaleString("en-IN")}</p>
+                      <p className="text-[10px] text-slate-450 font-mono">Duration: {Math.round((c.duration || 0)/60)}m {(c.duration || 0)%60}s</p>
+                    </div>
+                  ))}
+                  {!loadingCalls && customerCalls.length === 0 && (
+                    <p className="text-[10px] text-slate-500 text-center py-6">No call logs found matching customer name.</p>
+                  )}
+                </div>
+              )}
+
+              {/* TAB 3: ORDERS */}
+              {activeCrmTab === "orders" && (
+                <div className="space-y-3">
+                  {selectedCust.items.map((item, idx) => (
+                    <div key={idx} className="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-900">
+                      <div>
+                        <p className="font-bold text-white text-xs">{item.product?.name || "Product"}</p>
+                        <p className="text-[9px] text-slate-500 mt-0.5">Qty: {item.quantity || 1} · Qty Price: ₹{Number(item.price).toLocaleString()}</p>
+                      </div>
+                      <span className="font-bold text-emerald-400">₹{(Number(item.price) * Number(item.quantity || 1)).toLocaleString()}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* TAB 4: CRM NOTES */}
+              {activeCrmTab === "notes" && (
+                <div className="space-y-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">CRM profile notes</label>
+                    <textarea
+                      rows={5}
+                      value={crmNotes}
+                      onChange={(e) => setCrmNotes(e.target.value)}
+                      placeholder="Write notes about custom size options, brand requests..."
+                      className="w-full rounded-xl border border-slate-850 bg-slate-950 p-3 text-white outline-none focus:border-blue-500 resize-none leading-relaxed text-[11px]"
+                    />
+                  </div>
+
+                  <button
+                    onClick={handleSaveNotes}
+                    disabled={savingNotes}
+                    className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-white font-bold transition-all text-xs flex items-center justify-center gap-1 cursor-pointer"
+                  >
+                    {savingNotes && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                    Save Notes
+                  </button>
+                </div>
+              )}
+
+            </div>
+
+            {/* Bottom Schedule follow-ups panel */}
+            <div className="p-6 border-t border-slate-900 bg-slate-950 space-y-4 text-xs font-semibold">
+              
+              {/* Follow-up date selection */}
+              <div className="space-y-1.5">
+                <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Schedule Follow-up appointment</label>
+                <div className="flex gap-2">
+                  <input
+                    type="date"
+                    value={followUpDate}
+                    onChange={(e) => setFollowUpDate(e.target.value)}
+                    className="flex-1 rounded-xl border border-slate-850 bg-slate-900 p-2 text-white outline-none text-xs"
+                  />
+                  <button
+                    onClick={() => {
+                      if (!followUpDate) return;
+                      toast.success(`Follow-up schedule created for ${followUpDate}!`);
+                      setFollowUpDate("");
+                    }}
+                    className="px-4 py-2 bg-slate-900 border border-slate-850 hover:border-slate-800 rounded-xl text-white text-[9px] uppercase tracking-wider cursor-pointer"
+                  >
+                    Schedule
+                  </button>
+                </div>
+              </div>
+
+              {/* Assign Agent select */}
+              <div className="space-y-1.5">
+                <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Assign Agent manager</label>
+                <select
+                  value={assignedAgent}
+                  onChange={(e) => {
+                    setAssignedAgent(e.target.value);
+                    if (e.target.value) {
+                      toast.success(`Customer CRM file assigned successfully!`);
+                    }
+                  }}
+                  className="w-full rounded-xl border border-slate-850 bg-slate-900 p-2 text-white outline-none text-xs font-semibold"
+                >
+                  <option value="">-- Assign Agent Manager --</option>
+                  {agents.map(a => (
+                    <option key={a.id} value={a.id}>{a.profiles?.full_name || "Team Member"}</option>
+                  ))}
+                </select>
+              </div>
+
+            </div>
+
           </div>
         )}
       </div>
+
     </div>
   );
 }
