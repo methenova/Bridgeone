@@ -204,11 +204,38 @@ export class SellerPeer {
         }
         this.remoteCandidatesQueue = [];
 
-        // Start polling for candidates
+        // Immediately fetch viewer candidates that were uploaded before we applied the answer
+        await this.fetchExistingViewerCandidates();
+
+        // Start polling for new candidates every 3s as fallback
         this.pollForCandidatesInterval = setInterval(() => this.pollForCandidates(), 3000);
       }
     } catch (err) {
       console.warn("[SellerPeer] Poll skipped:", err?.message);
+    }
+  }
+
+  /** Fetch all existing viewer ICE candidates from DB immediately after answer is applied */
+  async fetchExistingViewerCandidates() {
+    if (this.isDestroyed || !this.roomId) return;
+    try {
+      const { data: candidates } = await supabase
+        .from("video_candidates")
+        .select("*")
+        .eq("room_id", this.roomId)
+        .eq("sender", "viewer");
+
+      if (candidates && candidates.length > 0) {
+        console.log(`[SellerPeer] Applying ${candidates.length} existing viewer ICE candidates immediately...`);
+        for (const item of candidates) {
+          if (!this.appliedCandidateIds.has(item.id)) {
+            this.appliedCandidateIds.add(item.id);
+            if (this.peer) await this.peer.addIceCandidate(new RTCIceCandidate(item.candidate));
+          }
+        }
+      }
+    } catch (err) {
+      console.error("[SellerPeer] Error fetching existing viewer candidates:", err);
     }
   }
 
@@ -270,7 +297,10 @@ export class SellerPeer {
               }
               this.remoteCandidatesQueue = [];
 
-              // Start polling for candidates
+              // Immediately fetch viewer candidates that were uploaded before Realtime fired
+              await this.fetchExistingViewerCandidates();
+
+              // Start polling for new candidates every 3s as fallback
               this.pollForCandidatesInterval = setInterval(() => this.pollForCandidates(), 3000);
             } catch (err) {
               console.error("[SellerPeer] Error applying SDP answer:", err);
