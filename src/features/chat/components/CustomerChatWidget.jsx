@@ -210,7 +210,7 @@ export default function CustomerChatWidget({ shop }) {
 
       const peer = new SellerPeer(
         shop.id,
-        shop.owner_id, // Use the owner ID as the seller identifier
+        log.id, // Set the call log ID as the identifier so LivePage can fetch caller details
         stream,
         // onRemoteStream: remote (seller) stream received
         (remoteStream) => {

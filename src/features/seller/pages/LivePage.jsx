@@ -138,7 +138,7 @@ export default function LivePage() {
           .from("call_logs")
           .select("customer_name, customer_email, customer_phone")
           .eq("id", incomingCall.seller_id)
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
         if (data) setCallerDetails(data);
@@ -619,7 +619,7 @@ export default function LivePage() {
             .from("call_logs")
             .select("products_shared")
             .eq("id", activeCallLogId)
-            .single();
+            .maybeSingle();
 
           const existingShared = callLog?.products_shared || [];
           if (!existingShared.includes(prod.name)) {
