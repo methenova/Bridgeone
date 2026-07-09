@@ -204,13 +204,13 @@ export default function CustomerChatWidget({ shop }) {
       if (logErr) throw logErr;
       currentCallLogIdRef.current = log.id;
 
-      // 3. Generate a unique room code
-      const roomCode = `${roomCodePrefix}_${Math.random().toString(36).substring(2, 9)}`;
+      // 3. Generate a unique room code embedding log.id
+      const roomCode = `call_${shop.id}_${log.id}_${Math.random().toString(36).substring(2, 9)}`;
       console.log("[Call] Starting consultation call. Room:", roomCode);
 
       const peer = new SellerPeer(
         shop.id,
-        log.id, // Set the call log ID as the identifier so LivePage can fetch caller details
+        shop.owner_id, // Satisfy FK constraint by using the shop owner's valid profile ID
         stream,
         // onRemoteStream: remote (seller) stream received
         (remoteStream) => {

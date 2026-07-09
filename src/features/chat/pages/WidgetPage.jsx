@@ -732,13 +732,13 @@ export default function WidgetPage() {
       if (logErr) throw logErr;
       currentCallLogIdRef.current = log.id;
 
-      // 2. Setup Unique Room Code
-      const roomCode = `call_${shopId}_guest_${Math.random().toString(36).substring(2, 9)}`;
+      // 2. Setup Unique Room Code (Embedding log.id for the LivePage to parse)
+      const roomCode = `call_${shopId}_${log.id}_${Math.random().toString(36).substring(2, 9)}`;
 
       // 3. Instantiate SellerPeer (Host of Room)
       const peer = new SellerPeer(
         shopId,
-        log.id, // Set the call log ID as the identifier so LivePage can fetch caller details
+        shop?.owner_id, // Satisfy FK constraint by using the shop owner's valid profile ID
         mediaStream,
         // onRemoteStream callback
         (remStream) => {

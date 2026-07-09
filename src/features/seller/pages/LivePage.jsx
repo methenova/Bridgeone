@@ -134,10 +134,16 @@ export default function LivePage() {
 
     async function fetchCaller() {
       try {
+        // Parse the call log ID embedded in the room code (e.g. call_shopId_logId_random)
+        const parts = incomingCall.room_code.split("_");
+        const callLogId = parts.length >= 3 ? parts[2] : null;
+
+        if (!callLogId) return;
+
         const { data, error } = await supabase
           .from("call_logs")
           .select("customer_name, customer_email, customer_phone")
-          .eq("id", incomingCall.seller_id)
+          .eq("id", callLogId)
           .maybeSingle();
 
         if (error) throw error;
@@ -459,11 +465,16 @@ export default function LivePage() {
       
       // Link the current agent to this call log
       try {
-        await supabase
-          .from("call_logs")
-          .update({ agent_id: user.id })
-          .eq("id", incomingCall.seller_id);
-        setActiveCallLogId(incomingCall.seller_id);
+        const parts = incomingCall.room_code.split("_");
+        const callLogId = parts.length >= 3 ? parts[2] : null;
+
+        if (callLogId) {
+          await supabase
+            .from("call_logs")
+            .update({ agent_id: user.id })
+            .eq("id", callLogId);
+          setActiveCallLogId(callLogId);
+        }
       } catch (logErr) {
         console.warn("Failed to associate agent with call log:", logErr);
       }
