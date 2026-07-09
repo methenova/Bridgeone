@@ -143,8 +143,8 @@ export default function CustomersPage() {
       // 3. Fetch checkout orders (from orders)
       const { data: orders } = await supabase
         .from("orders")
-        .select("*, order_items(*)")
-        .eq("shop_id", shopId)
+        .select("*, order_items!inner(*)")
+        .eq("order_items.shop_id", shopId)
         .eq("user_id", cust.id);
 
       orders?.forEach(o => {

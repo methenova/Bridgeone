@@ -2,6 +2,24 @@ import { supabase } from "@/config/supabase";
 
 // Send message
 export async function sendMessage({ senderId, receiverId, shopId, content, imageUrl = "" }) {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    const apiKey = window.BridgeOneShopApiKey || "";
+    const { data, error } = await supabase.functions.invoke("guest-gateway", {
+      body: {
+        action: "send_message",
+        shopId,
+        apiKey,
+        senderId,
+        receiverId,
+        content,
+        imageUrl,
+      }
+    });
+    if (error) throw error;
+    return data;
+  }
+
   const { data, error } = await supabase
     .from("messages")
     .insert({

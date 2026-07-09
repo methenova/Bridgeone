@@ -9,10 +9,10 @@ import { SellerPeer } from "@/services/video/sellerPeer";
 // Check if current time in shop timezone is outside operational hours, shifts, or holidays
 function checkIsOutsideBusinessHours(shop) {
   if (!shop) return false;
-  
+
   const config = shop.business_hours_config || { timezone: "UTC", holidays: [], shifts: [] };
   const timezone = config.timezone || "UTC";
-  
+
   // Get current time in specified timezone
   const now = new Date();
   let timeInTZ;
@@ -31,7 +31,7 @@ function checkIsOutsideBusinessHours(shop) {
   // Check holidays
   const holidays = config.holidays || [];
   if (holidays.includes(todayStr) || holidays.includes(todayMDStr)) {
-    return true; 
+    return true;
   }
 
   const dayName = timeInTZ.toLocaleDateString("en-US", { weekday: "short" }); // e.g. "Mon"
@@ -105,7 +105,7 @@ export default function WidgetPage() {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       if (!AudioCtx) return;
       const ctx = new AudioCtx();
-      
+
       if (type === "accepted") {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -176,7 +176,7 @@ export default function WidgetPage() {
       const storedEmail = localStorage.getItem("bo_customer_email") || "";
       const storedPhone = localStorage.getItem("bo_customer_phone") || "";
       const storedLang = localStorage.getItem("bo_customer_language") || "en";
-      
+
       const storedCalls = JSON.parse(localStorage.getItem("bo_previous_calls") || "[]");
       const storedProducts = JSON.parse(localStorage.getItem("bo_previous_products") || "[]");
 
@@ -192,6 +192,7 @@ export default function WidgetPage() {
 
     // Monitor internet connectivity changes
     const handleOnline = () => {
+
       setIsOnline(true);
       toast.success("Internet connection restored!", { id: "network-status" });
     };
@@ -205,8 +206,8 @@ export default function WidgetPage() {
 
     // Optimize media handshake: Query and cache permissions early to reduce call connection delay
     if (typeof navigator !== "undefined" && navigator.permissions && navigator.permissions.query) {
-      navigator.permissions.query({ name: "camera" }).catch(() => {});
-      navigator.permissions.query({ name: "microphone" }).catch(() => {});
+      navigator.permissions.query({ name: "camera" }).catch(() => { });
+      navigator.permissions.query({ name: "microphone" }).catch(() => { });
     }
 
     return () => {
@@ -296,12 +297,14 @@ export default function WidgetPage() {
       try {
         const { data, error } = await supabase
           .from("shops")
-          .select("id, name, logo_url, widget_color, is_online, plan_name, business_hours, business_hours_config, owner_id")
+          .select("id, name, logo_url, widget_color, is_online, plan_name, business_hours, business_hours_config, owner_id, api_key")
           .eq("id", shopId)
           .single();
 
         if (error) throw error;
         setShop(data);
+        window.BridgeOneShopId = shopId;
+        window.BridgeOneShopApiKey = data.api_key || "";
 
         // Fetch call logs count for the current calendar month
         const now = new Date();
@@ -323,7 +326,7 @@ export default function WidgetPage() {
           .maybeSingle();
 
         const limit = planInfo ? (planInfo.call_limit === -1 ? Infinity : planInfo.call_limit) : 10;
-        
+
         const isClosed = checkIsOutsideBusinessHours(data);
 
         // Fetch active online agents
@@ -364,17 +367,17 @@ export default function WidgetPage() {
           `)
           .eq("shop_id", shopId)
           .eq("is_active", true);
-        
+
         if (prods) {
           // Detect current product based on parent referrer URL
           const referrer = document.referrer || "";
-          
+
           // Try to find a product whose name/slug matches a segment of the referrer URL
           const matchedProd = prods.find(p => {
             const slug = p.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
             return referrer.toLowerCase().includes(slug) || referrer.toLowerCase().includes(p.id);
           });
-          
+
           if (matchedProd) {
             setDetectedProduct(matchedProd);
           } else if (prods.length > 0) {
@@ -407,7 +410,7 @@ export default function WidgetPage() {
         (payload) => {
           const updatedShop = payload.new;
           setShop((prev) => ({ ...prev, ...updatedShop }));
-          
+
           const isClosed = checkIsOutsideBusinessHours(updatedShop);
           if (updatedShop.is_online && !isClosed) {
             setFlowState((curr) => (curr === "offline" ? "form" : curr));
@@ -692,18 +695,40 @@ export default function WidgetPage() {
 
     try {
       // 1. Create a Call Log row first (defaults to status 'missed')
-      const { data: log, error: logErr } = await supabase
-        .from("call_logs")
-        .insert({
-          shop_id: shopId,
-          customer_name: name.trim(),
-          customer_email: email.trim() || null,
-          customer_phone: phone.trim() || null,
-          status: "missed",
-          products_shared: productToInquire ? [productToInquire.name] : null
-        })
-        .select()
-        .single();
+      let log, logErr;
+      const { data: authSession } = await supabase.auth.getSession();
+      if (!authSession.session) {
+        const { data, error } = await supabase.functions.invoke("guest-gateway", {
+          body: {
+            action: "create_call_log",
+            shopId,
+            apiKey: shop?.api_key || window.BridgeOneShopApiKey || "",
+            customerName: name.trim(),
+            customerEmail: email.trim() || null,
+            customerPhone: phone.trim() || null,
+            status: "missed",
+            duration: 0,
+            productsShared: productToInquire ? [productToInquire.name] : null,
+          }
+        });
+        log = data;
+        logErr = error;
+      } else {
+        const res = await supabase
+          .from("call_logs")
+          .insert({
+            shop_id: shopId,
+            customer_name: name.trim(),
+            customer_email: email.trim() || null,
+            customer_phone: phone.trim() || null,
+            status: "missed",
+            products_shared: productToInquire ? [productToInquire.name] : null
+          })
+          .select()
+          .single();
+        log = res.data;
+        logErr = res.error;
+      }
 
       if (logErr) throw logErr;
       currentCallLogIdRef.current = log.id;
@@ -714,7 +739,7 @@ export default function WidgetPage() {
       // 3. Instantiate SellerPeer (Host of Room)
       const peer = new SellerPeer(
         shopId,
-        shop.owner_id, // Set the owner ID as the seller identifier
+        log.id, // Set the call log ID as the identifier so LivePage can fetch caller details
         mediaStream,
         // onRemoteStream callback
         (remStream) => {
@@ -764,8 +789,8 @@ export default function WidgetPage() {
     // Save final call duration & status in DB
     const logId = currentCallLogIdRef.current;
     if (logId) {
-      const finalDuration = callStartTimeRef.current 
-        ? Math.round((Date.now() - callStartTimeRef.current) / 1000) 
+      const finalDuration = callStartTimeRef.current
+        ? Math.round((Date.now() - callStartTimeRef.current) / 1000)
         : 0;
 
       // Log call locally for returning customer history
@@ -773,7 +798,7 @@ export default function WidgetPage() {
         const dateStr = new Date().toISOString();
         const durationStr = finalDuration > 0 ? `${Math.floor(finalDuration / 60)}m ${finalDuration % 60}s` : "0s";
         const statusStr = finalDuration > 0 ? "Completed" : "Missed";
-        
+
         const existing = JSON.parse(localStorage.getItem("bo_previous_calls") || "[]");
         const updated = [{ date: dateStr, duration: durationStr, status: statusStr }, ...existing].slice(0, 5);
         localStorage.setItem("bo_previous_calls", JSON.stringify(updated));
@@ -794,7 +819,7 @@ export default function WidgetPage() {
           setPostCallLogId(logId);
           setDiscussedProducts(callDetails.products_shared || []);
           setFinalDurationText(finalDuration > 0 ? `${Math.floor(finalDuration / 60)}m ${finalDuration % 60}s` : "0s");
-          
+
           if (callDetails.agent_id) {
             const { data: prof } = await supabase
               .from("profiles")
@@ -807,13 +832,27 @@ export default function WidgetPage() {
           }
         }
 
-        await supabase
-          .from("call_logs")
-          .update({
-            duration: finalDuration,
-            status: finalDuration > 0 ? "completed" : "missed"
-          })
-          .eq("id", logId);
+        const { data: authSession } = await supabase.auth.getSession();
+        if (!authSession.session) {
+          await supabase.functions.invoke("guest-gateway", {
+            body: {
+              action: "update_call_log",
+              shopId,
+              apiKey: shop?.api_key || window.BridgeOneShopApiKey || "",
+              id: logId,
+              duration: finalDuration,
+              status: finalDuration > 0 ? "completed" : "missed"
+            }
+          });
+        } else {
+          await supabase
+            .from("call_logs")
+            .update({
+              duration: finalDuration,
+              status: finalDuration > 0 ? "completed" : "missed"
+            })
+            .eq("id", logId);
+        }
 
         // Transition to post-call screen only if the call was successfully connected/completed!
         if (finalDuration > 0) {
@@ -914,19 +953,39 @@ export default function WidgetPage() {
         playAudioChime("accepted");
       } else {
         // Create new callback
-        const { data, error } = await supabase
-          .from("callback_requests")
-          .insert({
-            shop_id: shopId,
-            customer_name: name.trim(),
-            customer_email: email.trim() || null,
-            customer_phone: phone.trim() || null,
-            scheduled_time: scheduledISO,
-            status: "pending",
-            notes: `Timezone: ${callbackTimezone}`
-          })
-          .select()
-          .single();
+        let data, error;
+        const { data: authSession } = await supabase.auth.getSession();
+        if (!authSession.session) {
+          const { data: resData, error: resErr } = await supabase.functions.invoke("guest-gateway", {
+            body: {
+              action: "create_callback",
+              shopId,
+              apiKey: shop?.api_key || window.BridgeOneShopApiKey || "",
+              customerName: name.trim(),
+              customerEmail: email.trim() || null,
+              customerPhone: phone.trim() || null,
+              scheduledTime: scheduledISO,
+            }
+          });
+          data = resData;
+          error = resErr;
+        } else {
+          const res = await supabase
+            .from("callback_requests")
+            .insert({
+              shop_id: shopId,
+              customer_name: name.trim(),
+              customer_email: email.trim() || null,
+              customer_phone: phone.trim() || null,
+              scheduled_time: scheduledISO,
+              status: "pending",
+              notes: `Timezone: ${callbackTimezone}`
+            })
+            .select()
+            .single();
+          data = res.data;
+          error = res.error;
+        }
 
         if (error) throw error;
         setBookedCallbackId(data.id);
@@ -1027,12 +1086,25 @@ export default function WidgetPage() {
     const logId = currentCallLogIdRef.current;
     if (logId) {
       try {
-        await supabase
-          .from("call_logs")
-          .update({
-            status: "missed"
-          })
-          .eq("id", logId);
+        const { data: authSession } = await supabase.auth.getSession();
+        if (!authSession.session) {
+          await supabase.functions.invoke("guest-gateway", {
+            body: {
+              action: "update_call_log",
+              shopId,
+              apiKey: shop?.api_key || window.BridgeOneShopApiKey || "",
+              id: logId,
+              status: "missed"
+            }
+          });
+        } else {
+          await supabase
+            .from("call_logs")
+            .update({
+              status: "missed"
+            })
+            .eq("id", logId);
+        }
       } catch (err) {
         console.warn("[Widget] Failed to mark call missed:", err);
       }
@@ -1112,7 +1184,7 @@ export default function WidgetPage() {
 
   return (
     <div ref={containerRef} className="h-screen flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans border border-slate-900 shadow-2xl relative select-none">
-      
+
       {/* Keyboard, Screen Reader and Mobile Responsive Style Injections */}
       <style>{`
         @media (prefers-reduced-motion: reduce) {
@@ -1169,7 +1241,7 @@ export default function WidgetPage() {
 
       {/* Network offline error bar */}
       {!isOnline && (
-        <div 
+        <div
           role="alert"
           aria-live="assertive"
           className="bg-rose-600/90 text-white px-4 py-1.5 text-[9px] font-black tracking-widest text-center uppercase flex items-center justify-center gap-1.5 shrink-0 z-50"
@@ -1212,7 +1284,7 @@ export default function WidgetPage() {
 
       {/* Main Body Flow */}
       <main className="flex-1 overflow-y-auto p-5 flex flex-col relative min-h-0 bg-slate-950">
-        
+
         {/* State A: Calling Form */}
         {flowState === "form" && (() => {
           const getGreeting = () => {
@@ -1221,18 +1293,18 @@ export default function WidgetPage() {
             if (hr >= 12 && hr < 17) return "Good Afternoon";
             return "Good Evening";
           };
-          
+
           return (
             <form onSubmit={handleStartCall} className="my-auto space-y-5 flex flex-col justify-center">
               <div className="text-center space-y-2 mb-1">
                 <span className="text-[10px] text-blue-500 uppercase tracking-widest font-black block">
                   {getGreeting()} · Welcome to {shop?.name || "Store"}
                 </span>
-                
+
                 <h2 className="text-lg font-black text-white tracking-tight leading-tight">
                   {shop?.welcome_message || "Start a Live Consultation"}
                 </h2>
-                
+
                 <div className="flex justify-center gap-2 mt-1">
                   {onlineAgentsCount > 0 ? (
                     <span className="inline-flex items-center gap-1 bg-green-500/10 border border-green-500/20 text-green-400 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider">
@@ -1254,7 +1326,7 @@ export default function WidgetPage() {
                     {onlineAgentsCount > 0 ? "< 2 minutes" : "< 5 minutes"}
                   </span>
                 </div>
-                
+
                 <div className="bg-slate-900/35 border border-slate-900 rounded-xl p-3.5 space-y-1 min-w-0">
                   <span className="text-slate-500 uppercase tracking-wider block text-[8px] truncate">Store hours status</span>
                   <span className="font-bold text-white text-xs block truncate text-green-400">
@@ -1274,7 +1346,7 @@ export default function WidgetPage() {
                         <Sparkles className="h-5 w-5 text-slate-500 animate-pulse" />
                       )}
                     </div>
-                    
+
                     <div className="space-y-0.5 min-w-0 flex-1">
                       <span className="text-[8px] text-blue-400 uppercase tracking-wider font-bold block">Active Product Details</span>
                       <h3 className="text-[11px] font-bold text-white leading-tight truncate">
@@ -1285,7 +1357,7 @@ export default function WidgetPage() {
                       </span>
                     </div>
                   </div>
-                  
+
                   <button
                     type="button"
                     onClick={() => {
@@ -1315,10 +1387,10 @@ export default function WidgetPage() {
                       const status = ag.status || "Offline";
                       const dept = ag.department || "Consultant";
                       const isOnline = ag.is_online;
-                      
+
                       let statusBadgeColor = "bg-slate-600";
                       let statusText = "Offline";
-                      
+
                       if (isOnline) {
                         if (status === "Available") {
                           statusBadgeColor = "bg-green-500";
@@ -1331,7 +1403,7 @@ export default function WidgetPage() {
                           statusText = status; // Away, Break
                         }
                       }
-                      
+
                       return (
                         <div key={ag.id} className="flex items-center justify-between text-[10px]">
                           <div className="flex items-center gap-2">
@@ -1347,7 +1419,7 @@ export default function WidgetPage() {
                               <span className="text-slate-500 text-[8px] leading-tight block">{dept}</span>
                             </div>
                           </div>
-                          
+
                           <div className="flex items-center gap-1.5 shrink-0">
                             <span className={`h-1.5 w-1.5 rounded-full ${statusBadgeColor}`} />
                             <span className="text-[9px] text-slate-400 capitalize">{statusText}</span>
@@ -1416,7 +1488,7 @@ export default function WidgetPage() {
                     aria-label="Select preferred consultation language"
                     onChange={(e) => {
                       setLanguage(e.target.value);
-                      try { localStorage.setItem("bo_customer_language", e.target.value); } catch (err) {}
+                      try { localStorage.setItem("bo_customer_language", e.target.value); } catch (err) { }
                     }}
                     className="w-full rounded-xl border border-slate-900 bg-slate-900/60 pl-11 pr-8 py-3 text-xs text-white outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-colors appearance-none cursor-pointer"
                   >
@@ -1505,7 +1577,7 @@ export default function WidgetPage() {
         {/* State B: Dialing/Calling Screen */}
         {flowState === "calling" && (
           <div className="my-auto flex flex-col items-center justify-center text-center space-y-6 py-6" aria-live="polite">
-            
+
             {/* Ringing animation */}
             <div className="relative flex items-center justify-center h-20 w-20 mx-auto">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500/10 opacity-75" />
@@ -1579,9 +1651,9 @@ export default function WidgetPage() {
           const isReconnecting = iceState === "disconnected" || iceState === "checking";
           const isGoodSignal = iceState === "connected" || iceState === "completed";
 
-          const productImages = pinnedProductCall?.product_images?.map(img => img.image_url) || 
-                                [pinnedProductCall?.image_url].filter(Boolean);
-          
+          const productImages = pinnedProductCall?.product_images?.map(img => img.image_url) ||
+            [pinnedProductCall?.image_url].filter(Boolean);
+
           return (
             <div className="absolute inset-0 flex flex-col bg-slate-950">
               {/* Full-width Remote Video */}
@@ -1648,7 +1720,7 @@ export default function WidgetPage() {
 
                 {/* Floating Shared Product Card Trigger */}
                 {pinnedProductCall && !showProductDetailCall && (
-                  <div 
+                  <div
                     role="banner"
                     aria-live="polite"
                     className="absolute bottom-16 left-4 z-30 bg-black/85 backdrop-blur-md p-2.5 rounded-xl border border-white/10 text-left max-w-[190px] flex gap-2 shadow-2xl animate-bounce"
@@ -1676,7 +1748,7 @@ export default function WidgetPage() {
 
                 {/* Full Product Detail Overlay Modal inside call screen */}
                 {pinnedProductCall && showProductDetailCall && (
-                  <div 
+                  <div
                     role="dialog"
                     aria-modal="true"
                     aria-label={`Product showcase detail modal for ${pinnedProductCall.name}`}
@@ -1738,7 +1810,7 @@ export default function WidgetPage() {
                       >
                         Add to Cart
                       </button>
-                      
+
                       <button
                         onClick={() => {
                           toast.success("Opening checkout...");
@@ -1777,11 +1849,10 @@ export default function WidgetPage() {
                   <button
                     onClick={toggleMic}
                     aria-label={micMuted ? "Unmute microphone" : "Mute microphone"}
-                    className={`flex h-11 w-11 items-center justify-center rounded-full transition-all active:scale-95 border focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none ${
-                      micMuted
+                    className={`flex h-11 w-11 items-center justify-center rounded-full transition-all active:scale-95 border focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none ${micMuted
                         ? "bg-rose-500/25 text-rose-400 border-rose-500/30 hover:bg-rose-500/35"
                         : "bg-white/10 text-white border-white/10 hover:bg-white/20"
-                    }`}
+                      }`}
                   >
                     {micMuted ? <MicOff className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5" />}
                   </button>
@@ -1790,11 +1861,10 @@ export default function WidgetPage() {
                   <button
                     onClick={toggleCamera}
                     aria-label={camEnabled ? "Disable camera" : "Enable camera"}
-                    className={`flex h-11 w-11 items-center justify-center rounded-full transition-all active:scale-95 border focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none ${
-                      !camEnabled
+                    className={`flex h-11 w-11 items-center justify-center rounded-full transition-all active:scale-95 border focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none ${!camEnabled
                         ? "bg-rose-500/25 text-rose-400 border-rose-500/30 hover:bg-rose-500/35"
                         : "bg-white/10 text-white border-white/10 hover:bg-white/20"
-                    }`}
+                      }`}
                   >
                     {camEnabled ? <Video className="h-3.5 w-3.5" /> : <VideoOff className="h-3.5 w-3.5" />}
                   </button>
@@ -1860,7 +1930,7 @@ export default function WidgetPage() {
                     const name = ag.profiles?.full_name || "Agent";
                     const avatar = ag.profiles?.avatar_url;
                     const dept = ag.department || "Consultant";
-                    
+
                     return (
                       <div key={ag.id} className="flex items-center justify-between text-[10px]">
                         <div className="flex items-center gap-2">
@@ -1876,7 +1946,7 @@ export default function WidgetPage() {
                             <span className="text-slate-500 text-[8px] leading-tight block">{dept}</span>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center gap-1.5 shrink-0">
                           <span className="h-1.5 w-1.5 rounded-full bg-slate-600" />
                           <span className="text-[9px] text-slate-500 capitalize">Offline</span>
@@ -2022,7 +2092,7 @@ export default function WidgetPage() {
             <div className="h-14 w-14 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 flex items-center justify-center animate-bounce">
               <Calendar className="h-6 w-6" />
             </div>
-            
+
             <div className="space-y-1.5">
               <h2 className="text-sm font-extrabold text-white">Callback Scheduled!</h2>
               <p className="text-[11px] text-slate-400 max-w-[240px] leading-relaxed mx-auto">
@@ -2162,7 +2232,7 @@ export default function WidgetPage() {
 
             {/* Star Rating and Comment Form */}
             {!feedbackSubmitted ? (
-              <form 
+              <form
                 onSubmit={async (e) => {
                   e.preventDefault();
                   if (!postCallLogId) return;
@@ -2179,14 +2249,29 @@ export default function WidgetPage() {
                       ? `${agentNotes}\n\n[Customer Feedback]: ${feedbackText.trim()}`
                       : agentNotes;
 
-                    await supabase
-                      .from("call_logs")
-                      .update({
-                        csat_score: customerRating,
-                        call_rating: customerRating,
-                        notes: updatedNotes
-                      })
-                      .eq("id", postCallLogId);
+                    const { data: authSession } = await supabase.auth.getSession();
+                    if (!authSession.session) {
+                      await supabase.functions.invoke("guest-gateway", {
+                        body: {
+                          action: "update_call_log",
+                          shopId,
+                          apiKey: shop?.api_key || window.BridgeOneShopApiKey || "",
+                          id: postCallLogId,
+                          notes: updatedNotes,
+                          csatScore: customerRating,
+                          callRating: customerRating
+                        }
+                      });
+                    } else {
+                      await supabase
+                        .from("call_logs")
+                        .update({
+                          csat_score: customerRating,
+                          call_rating: customerRating,
+                          notes: updatedNotes
+                        })
+                        .eq("id", postCallLogId);
+                    }
 
                     setFeedbackSubmitted(true);
                     toast.success("Feedback submitted!");

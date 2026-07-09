@@ -27,6 +27,23 @@ export async function cleanOldRooms(roomCodePrefix) {
 }
 
 export async function createRoom(roomCode, shopId, sellerId, offer) {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        const apiKey = window.BridgeOneShopApiKey || "";
+        const { data, error } = await supabase.functions.invoke("guest-gateway", {
+            body: {
+                action: "create_room",
+                shopId,
+                apiKey,
+                roomCode,
+                sellerId,
+                offer,
+            }
+        });
+        if (error) throw error;
+        return { data, error: null };
+    }
+
     return supabase
         .from("video_rooms")
         .insert({
@@ -65,6 +82,22 @@ export async function deleteRoom(roomId) {
 }
 
 export async function addCandidate(roomId, sender, candidate) {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        const apiKey = window.BridgeOneShopApiKey || "";
+        const shopId = window.BridgeOneShopId || "";
+        return supabase.functions.invoke("guest-gateway", {
+            body: {
+                action: "add_candidate",
+                shopId,
+                apiKey,
+                roomId,
+                sender,
+                candidate,
+            }
+        });
+    }
+
     return supabase.from("video_candidates").insert({
         room_id: roomId,
         sender,

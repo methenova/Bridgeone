@@ -170,12 +170,12 @@ export default function SellerDashboardPage() {
         setCallbacks(scheduled?.length || 0);
 
         // 4. Sales Assisted (Completed orders)
-        const { data: orders } = await supabase
-          .from("orders")
-          .select("total")
+        const { data: items } = await supabase
+          .from("order_items")
+          .select("price, quantity, orders!inner(status)")
           .eq("shop_id", shopId)
-          .neq("status", "cancelled");
-        const salesTotal = orders?.reduce((acc, o) => acc + Number(o.total || 0), 0) || 0;
+          .neq("orders.status", "cancelled");
+        const salesTotal = items?.reduce((acc, item) => acc + Number(item.price || 0) * (item.quantity || 1), 0) || 0;
         setSalesAssisted(salesTotal);
 
         // 4.5. Online Agents count & list
@@ -190,13 +190,14 @@ export default function SellerDashboardPage() {
         // 4.6. Conversions Today (Orders completed today)
         const todayStart = new Date();
         todayStart.setHours(0, 0, 0, 0);
-        const { data: todayOrders } = await supabase
-          .from("orders")
-          .select("id")
+        const { data: todayItems } = await supabase
+          .from("order_items")
+          .select("order_id, orders!inner(status, created_at)")
           .eq("shop_id", shopId)
-          .neq("status", "cancelled")
-          .gte("created_at", todayStart.toISOString());
-        setConversionsToday(todayOrders?.length || 0);
+          .neq("orders.status", "cancelled")
+          .gte("orders.created_at", todayStart.toISOString());
+        const uniqueOrdersToday = new Set(todayItems?.map(item => item.order_id) || []);
+        setConversionsToday(uniqueOrdersToday.size);
 
         // 4.7. Top Shared Products
         const { data: callProducts } = await supabase

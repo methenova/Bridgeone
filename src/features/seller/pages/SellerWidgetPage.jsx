@@ -114,14 +114,15 @@ export default function SellerWidgetPage() {
         const avgWaitStr = `${Math.min(45, Math.max(10, Math.round(avgDuration * 0.12)))}s`;
 
         // Conversion rate (orders completed / call requests)
-        const { data: orders } = await supabase
-          .from("orders")
-          .select("id")
+        const { data: items } = await supabase
+          .from("order_items")
+          .select("order_id, orders!inner(status)")
           .eq("shop_id", shopId)
-          .neq("status", "cancelled");
+          .neq("orders.status", "cancelled");
         
+        const uniqueOrderIds = new Set(items?.map(item => item.order_id) || []);
         const conversionRateVal = callRequests > 0 
-          ? `${(( (orders?.length || 0) / callRequests) * 100).toFixed(1)}%` 
+          ? `${((uniqueOrderIds.size / callRequests) * 100).toFixed(1)}%` 
           : "0.0%";
 
         // Landing pages aggregation
