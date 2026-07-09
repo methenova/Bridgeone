@@ -89,14 +89,22 @@ export class SellerPeer {
         });
       }
 
+      // Queue for ICE candidates gathered before room creation completes
+      this._localIceQueue = [];
+
       // Upload local ICE candidates as they are gathered
       this.peer.onicecandidate = async (event) => {
-        if (event.candidate && this.roomId && !this.isDestroyed) {
-          try {
-            await addCandidate(this.roomId, "seller", event.candidate.toJSON());
-            console.log("[SellerPeer] ICE candidate uploaded");
-          } catch (err) {
-            console.error("[SellerPeer] Failed to upload ICE candidate:", err);
+        if (event.candidate && !this.isDestroyed) {
+          if (this.roomId) {
+            try {
+              await addCandidate(this.roomId, "seller", event.candidate.toJSON());
+              console.log("[SellerPeer] ICE candidate uploaded");
+            } catch (err) {
+              console.error("[SellerPeer] Failed to upload ICE candidate:", err);
+            }
+          } else {
+            // Room not yet created in DB; queue the candidate
+            this._localIceQueue.push(event.candidate.toJSON());
           }
         }
       };
@@ -120,6 +128,19 @@ export class SellerPeer {
 
       this.roomId = room.id;
       console.log("[SellerPeer] Room created. Room ID:", this.roomId);
+
+      // Flush any queued local ICE candidates that were gathered before the DB returned the UUID
+      if (this._localIceQueue && this._localIceQueue.length > 0) {
+        console.log(`[SellerPeer] Flushing ${this._localIceQueue.length} queued local ICE candidates...`);
+        for (const candidate of this._localIceQueue) {
+          try {
+            await addCandidate(this.roomId, "seller", candidate);
+          } catch (err) {
+            console.error("[SellerPeer] Failed to flush ICE candidate:", err);
+          }
+        }
+        this._localIceQueue = [];
+      }
 
       // Broadcast incoming call event directly to the shop's live stream channel.
       // This bypasses Postgres WAL replication lag and shows the call popup on the seller dashboard instantly (<100ms).
