@@ -711,7 +711,7 @@ export default function WidgetPage() {
             productsShared: productToInquire ? [productToInquire.name] : null,
           }
         });
-        log = data;
+        log = Array.isArray(data) ? data[0] : data;
         logErr = error;
       } else {
         const res = await supabase
@@ -724,9 +724,8 @@ export default function WidgetPage() {
             status: "missed",
             products_shared: productToInquire ? [productToInquire.name] : null
           })
-          .select()
-          .single();
-        log = res.data;
+          .select();
+        log = Array.isArray(res.data) ? res.data[0] : res.data;
         logErr = res.error;
       }
 
@@ -967,7 +966,7 @@ export default function WidgetPage() {
               scheduledTime: scheduledISO,
             }
           });
-          data = resData;
+          data = Array.isArray(resData) ? resData[0] : resData;
           error = resErr;
         } else {
           const res = await supabase
@@ -981,9 +980,8 @@ export default function WidgetPage() {
               status: "pending",
               notes: `Timezone: ${callbackTimezone}`
             })
-            .select()
-            .single();
-          data = res.data;
+            .select();
+          data = Array.isArray(res.data) ? res.data[0] : res.data;
           error = res.error;
         }
 

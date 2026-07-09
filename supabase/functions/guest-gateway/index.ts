@@ -104,14 +104,15 @@ serve(async (req) => {
     let result = null;
     let writeError = null;
 
+    const resolveSingle = (data: any) => Array.isArray(data) ? data[0] : data;
+
     if (action === "create_room") {
       const { roomCode, sellerId, offer } = body;
       const { data, error } = await supabaseAdmin
         .from("video_rooms")
         .insert({ room_code: roomCode, shop_id: shopId, seller_id: sellerId, status: "live", offer })
-        .select()
-        .single();
-      result = data;
+        .select();
+      result = resolveSingle(data);
       writeError = error;
 
     } else if (action === "add_candidate") {
@@ -136,9 +137,8 @@ serve(async (req) => {
           duration,
           products_shared: productsShared
         })
-        .select()
-        .single();
-      result = data;
+        .select();
+      result = resolveSingle(data);
       writeError = error;
 
     } else if (action === "update_call_log") {
@@ -147,9 +147,8 @@ serve(async (req) => {
         .from("call_logs")
         .update({ duration, status, notes, csat_score: csatScore, call_rating: callRating })
         .eq("id", id)
-        .select()
-        .single();
-      result = data;
+        .select();
+      result = resolveSingle(data);
       writeError = error;
 
     } else if (action === "create_callback") {
@@ -157,9 +156,8 @@ serve(async (req) => {
       const { data, error } = await supabaseAdmin
         .from("callback_requests")
         .insert({ shop_id: shopId, customer_name: customerName, customer_email: customerEmail, customer_phone: customerPhone, scheduled_time: scheduledTime, status: "pending" })
-        .select()
-        .single();
-      result = data;
+        .select();
+      result = resolveSingle(data);
       writeError = error;
 
     } else if (action === "send_message") {
@@ -167,9 +165,8 @@ serve(async (req) => {
       const { data, error } = await supabaseAdmin
         .from("messages")
         .insert({ sender_id: senderId, receiver_id: receiverId, shop_id: shopId, content, image_url: imageUrl, read: false })
-        .select()
-        .single();
-      result = data;
+        .select();
+      result = resolveSingle(data);
       writeError = error;
 
     } else {
