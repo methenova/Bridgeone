@@ -92,6 +92,7 @@ export default function LivePage() {
   const consultationTimerRef = useRef(null);   // Interval for call duration counter
   const callRemoteVideoRef = useRef(null);     // Ref for remote video element (prevents blink on re-render)
   const callLocalVideoRef = useRef(null);      // Ref for local PiP video element
+  const activeCallRoomIdRef = useRef(null);    // Track active call room ID for deletion
 
   // Load available camera devices
   useEffect(() => {
@@ -285,7 +286,16 @@ export default function LivePage() {
 
         if (rooms && rooms.length > 0) {
           // Find the active incoming call (starts with 'call_')
-          const callRoom = rooms.find((r) => r.room_code.startsWith("call_"));
+          const callRoom = rooms.find((r) => {
+            if (!r.room_code.startsWith("call_")) return false;
+            // Ignore if already answered by an agent
+            if (r.answer) return false;
+            // Filter out calls created more than 60 seconds ago to avoid stale triggers
+            const createdTime = new Date(r.created_at).getTime();
+            const now = Date.now();
+            return (now - createdTime) < 60000;
+          });
+
           if (callRoom) {
             // Avoid duplicate triggers
             if (incomingCallRef.current?.id === callRoom.id) return;
@@ -394,6 +404,9 @@ export default function LivePage() {
     // Guard: prevent double-execution if button clicked rapidly or effect fires twice
     if (isAcceptingRef.current) return;
     isAcceptingRef.current = true;
+
+    // Cache the active call room ID so we can clean it up when hanging up
+    activeCallRoomIdRef.current = incomingCall.id;
 
     try {
       console.log("[LivePage] Accept call room code:", incomingCall.room_code);
@@ -511,11 +524,12 @@ export default function LivePage() {
     clearInterval(consultationTimerRef.current);
     consultationTimerRef.current = null;
 
-    // Delete the room using incomingCallRef (avoids stale state closure bug)
-    const callToEnd = incomingCallRef.current;
-    if (callToEnd) {
-      console.log("[LivePage] Ending/declining call room ID:", callToEnd.id);
-      await supabase.from("video_rooms").delete().eq("id", callToEnd.id);
+    // Delete the room using activeCallRoomIdRef or incomingCallRef (avoids stale state closure bug)
+    const roomIdToEnd = activeCallRoomIdRef.current || (incomingCallRef.current ? incomingCallRef.current.id : null);
+    if (roomIdToEnd) {
+      console.log("[LivePage] Ending/declining call room ID:", roomIdToEnd);
+      await supabase.from("video_rooms").delete().eq("id", roomIdToEnd);
+      activeCallRoomIdRef.current = null;
     }
 
     // If we acquired a new stream just for this consultation, release it
