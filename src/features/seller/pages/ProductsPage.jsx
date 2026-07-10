@@ -24,17 +24,17 @@ import ProductForm from "../components/ProductForm";
 function NoShopWarning() {
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/10">
-        <AlertTriangle className="h-8 w-8 text-amber-400" />
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50 border border-amber-100/50">
+        <AlertTriangle className="h-8 w-8 text-amber-600 font-semibold" />
       </div>
-      <h3 className="mb-2 text-xl font-semibold text-white">No Shop Found</h3>
-      <p className="mb-6 max-w-sm text-sm text-slate-400">
+      <h3 className="mb-2 text-xl font-semibold text-slate-900">No Shop Found</h3>
+      <p className="mb-6 max-w-sm text-sm text-slate-500">
         You need to create your shop before you can manage products. Head to the
         My Shop section to get started.
       </p>
       <a
         href="/seller/shop"
-        className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-blue-500"
+        className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-blue-500"
       >
         Create My Shop
       </a>
@@ -67,15 +67,15 @@ function ProductDrawer({ isOpen, product, shopId, shopName, onClose }) {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 350, damping: 35 }}
-            className="fixed right-0 top-0 z-50 flex h-full w-full max-w-2xl flex-col border-l border-slate-800 bg-slate-950 shadow-2xl"
+            className="fixed right-0 top-0 z-50 flex h-full w-full max-w-2xl flex-col border-l border-slate-200 bg-slate-50 shadow-2xl"
           >
             {/* Drawer header */}
-            <div className="flex shrink-0 items-center justify-between border-b border-slate-800 px-6 py-5">
+            <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-5">
               <div>
-                <h2 className="text-lg font-semibold text-white">
+                <h2 className="text-lg font-semibold text-slate-900">
                   {product ? "Edit Product" : "Add New Product"}
                 </h2>
-                <p className="mt-0.5 text-sm text-slate-400">
+                <p className="mt-0.5 text-sm text-slate-500">
                   {product
                     ? "Update product details and images"
                     : "Fill in the details to add a product"}
@@ -84,7 +84,7 @@ function ProductDrawer({ isOpen, product, shopId, shopName, onClose }) {
 
               <button
                 onClick={onClose}
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
+                className="flex h-8 w-8 items-center justify-center rounded-2xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -194,8 +194,8 @@ export default function ProductsPage() {
   // ── Shop loading ────────────────────────────────────────────
   if (shopLoading) {
     return (
-      <div className="flex items-center justify-center py-20 text-slate-400">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-700 border-t-blue-500" />
+      <div className="flex items-center justify-center py-20 text-slate-500">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-200 border-t-blue-500" />
       </div>
     );
   }
@@ -215,15 +215,15 @@ export default function ProductsPage() {
       {/* ── Page Header ──────────────────────────────────────── */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">Products</h1>
-          <p className="mt-1 text-slate-400">
+          <h1 className="text-3xl font-bold text-slate-900">Products</h1>
+          <p className="mt-1 text-slate-500">
             Manage your product catalog · {shop.name}
           </p>
         </div>
 
         <button
           onClick={openAddDrawer}
-          className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/20 active:scale-95"
+          className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/20 active:scale-95"
         >
           <Plus className="h-4 w-4" />
           Add Product

@@ -91,8 +91,8 @@ export default function ProductList({
   function SortIcon({ field }) {
     if (sortField !== field) return <ArrowUpDown className="h-3.5 w-3.5 text-slate-600" />;
     return sortDir === "asc"
-      ? <ArrowUp className="h-3.5 w-3.5 text-blue-400" />
-      : <ArrowDown className="h-3.5 w-3.5 text-blue-400" />;
+      ? <ArrowUp className="h-3.5 w-3.5 text-blue-600 font-semibold" />
+      : <ArrowDown className="h-3.5 w-3.5 text-blue-600 font-semibold" />;
   }
 
   // ── States ───────────────────────────────────────────────────
@@ -105,12 +105,12 @@ export default function ProductList({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300">
       <div className="overflow-x-auto">
         <table className="min-w-full">
 
           {/* ── Header ──────────────────────────────────────── */}
-          <thead className="border-b border-slate-800 bg-slate-950">
+          <thead className="border-b border-slate-200 bg-slate-50">
             <tr>
 
               {/* Checkbox */}
@@ -130,7 +130,7 @@ export default function ProductList({
               <th className="px-4 py-4 text-left">
                 <button
                   onClick={() => handleSort("name")}
-                  className="flex items-center gap-1.5 text-sm font-semibold text-slate-300 hover:text-white"
+                  className="flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-slate-900"
                 >
                   Product
                   <SortIcon field="name" />
@@ -138,7 +138,7 @@ export default function ProductList({
               </th>
 
               {/* Category */}
-              <th className="px-4 py-4 text-left text-sm font-semibold text-slate-300">
+              <th className="px-4 py-4 text-left text-sm font-semibold text-slate-600">
                 Category
               </th>
 
@@ -146,7 +146,7 @@ export default function ProductList({
               <th className="px-4 py-4 text-left">
                 <button
                   onClick={() => handleSort("price")}
-                  className="flex items-center gap-1.5 text-sm font-semibold text-slate-300 hover:text-white"
+                  className="flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-slate-900"
                 >
                   Price
                   <SortIcon field="price" />
@@ -157,7 +157,7 @@ export default function ProductList({
               <th className="px-4 py-4 text-left">
                 <button
                   onClick={() => handleSort("stock")}
-                  className="flex items-center gap-1.5 text-sm font-semibold text-slate-300 hover:text-white"
+                  className="flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-slate-900"
                 >
                   Stock
                   <SortIcon field="stock" />
@@ -165,12 +165,12 @@ export default function ProductList({
               </th>
 
               {/* Status */}
-              <th className="px-4 py-4 text-left text-sm font-semibold text-slate-300">
+              <th className="px-4 py-4 text-left text-sm font-semibold text-slate-600">
                 Status
               </th>
 
               {/* Actions */}
-              <th className="px-4 py-4 text-right text-sm font-semibold text-slate-300">
+              <th className="px-4 py-4 text-right text-sm font-semibold text-slate-600">
                 Actions
               </th>
 
@@ -178,7 +178,7 @@ export default function ProductList({
           </thead>
 
           {/* ── Body ────────────────────────────────────────── */}
-          <tbody className="divide-y divide-slate-800">
+          <tbody className="divide-y divide-slate-200">
             {sortedProducts.map((product) => {
               const isSelected = selectedIds.includes(product.id);
               const isDeleting =
@@ -219,7 +219,7 @@ export default function ProductList({
                   {/* Product image + name */}
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-slate-700 bg-slate-800">
+                      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
                         {thumbnail ? (
                           <img
                             src={thumbnail}
@@ -234,21 +234,21 @@ export default function ProductList({
                         )}
                         {/* Image count badge */}
                         {product.product_images?.length > 0 && (
-                          <div className="absolute bottom-0 right-0 rounded-tl-md bg-slate-900/80 px-1 text-[10px] text-slate-300">
+                          <div className="absolute bottom-0 right-0 rounded-tl-md bg-slate-50/80 px-1 text-[10px] text-slate-600">
                             {product.product_images.length}
                           </div>
                         )}
                       </div>
 
                       <div className="min-w-0">
-                        <p className="truncate font-medium text-white">
+                        <p className="truncate font-medium text-slate-900">
                           {product.name}
                         </p>
                         <p className="mt-0.5 text-xs text-slate-500">
                           {product.sku}
                         </p>
                         {(product.featured || product.is_featured) && (
-                          <div className="mt-1 flex items-center gap-1 text-amber-400">
+                          <div className="mt-1 flex items-center gap-1 text-amber-600 font-semibold">
                             <Star className="h-3 w-3 fill-amber-400" />
                             <span className="text-[10px] font-medium">Featured</span>
                           </div>
@@ -258,7 +258,7 @@ export default function ProductList({
                   </td>
 
                   {/* Category */}
-                  <td className="px-4 py-4 text-sm text-slate-400">
+                  <td className="px-4 py-4 text-sm text-slate-500">
                     {product.categories?.name || "—"}
                   </td>
 
@@ -267,7 +267,7 @@ export default function ProductList({
                     <div className="space-y-0.5">
                       {product.discount_price ? (
                         <>
-                          <p className="font-semibold text-white">
+                          <p className="font-semibold text-slate-900">
                             ₹{Number(product.discount_price).toLocaleString()}
                           </p>
                           <p className="text-xs text-slate-500 line-through">
@@ -275,7 +275,7 @@ export default function ProductList({
                           </p>
                         </>
                       ) : (
-                        <p className="font-semibold text-white">
+                        <p className="font-semibold text-slate-900">
                           ₹{Number(product.price).toLocaleString()}
                         </p>
                       )}
@@ -298,7 +298,7 @@ export default function ProductList({
                         onClick={() => handleToggleStatus(product)}
                         disabled={isTogglingStatus}
                         title={product.is_active ? "Deactivate" : "Activate"}
-                        className="text-slate-500 transition-colors hover:text-white disabled:opacity-50"
+                        className="text-slate-500 transition-colors hover:text-slate-900 disabled:opacity-50"
                       >
                         {product.is_active ? (
                           <ToggleRight className="h-5 w-5 text-emerald-500" />
@@ -316,7 +316,7 @@ export default function ProductList({
                       <button
                         onClick={() => onEdit(product)}
                         title="Edit product"
-                        className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-700 bg-slate-800 text-slate-400 transition-all hover:border-blue-500 hover:bg-blue-500/10 hover:text-blue-400"
+                        className="flex h-8 w-8 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-500 transition-all hover:border-blue-500 hover:bg-blue-550/10 hover:text-blue-600"
                       >
                         <Pencil className="h-3.5 w-3.5" />
                       </button>
@@ -325,7 +325,7 @@ export default function ProductList({
                         onClick={() => handleDelete(product)}
                         disabled={isDeleting}
                         title="Delete product"
-                        className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-700 bg-slate-800 text-slate-400 transition-all hover:border-red-500 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50"
+                        className="flex h-8 w-8 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-500 transition-all hover:border-red-500 hover:bg-red-550/10 hover:text-red-600 disabled:opacity-50"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>

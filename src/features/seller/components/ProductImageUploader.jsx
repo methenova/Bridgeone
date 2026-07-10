@@ -178,7 +178,7 @@ export default function ProductImageUploader({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-slate-300">
+        <label className="text-sm font-medium text-slate-600">
           Product Images
           <span className="ml-2 text-xs text-slate-500">
             ({allImages.length}/{MAX_FILES})
@@ -195,7 +195,7 @@ export default function ProductImageUploader({
           {errors.map((err, i) => (
             <div
               key={i}
-              className="flex items-center gap-2 rounded-lg bg-red-500/10 px-3 py-2 text-xs text-red-400"
+              className="flex items-center gap-2 rounded-2xl bg-red-50 border border-red-100/50 px-3 py-2 text-xs text-red-650 font-semibold"
             >
               <AlertCircle className="h-3 w-3 shrink-0" />
               {err}
@@ -214,27 +214,27 @@ export default function ProductImageUploader({
           onClick={() => fileInputRef.current?.click()}
           className={cn(
             "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed p-10 text-center transition-all",
-            isDragging
-              ? "border-blue-500 bg-blue-500/5"
-              : "border-slate-700 bg-slate-800/30 hover:border-slate-600 hover:bg-slate-800/50"
-          )}
-        >
-          <div
-            className={cn(
-              "flex h-12 w-12 items-center justify-center rounded-2xl transition-colors",
-              isDragging ? "bg-blue-500/20" : "bg-slate-800"
-            )}
-          >
-            <ImagePlus
-              className={cn(
-                "h-6 w-6 transition-colors",
-                isDragging ? "text-blue-400" : "text-slate-500"
-              )}
-            />
-          </div>
+             isDragging
+               ? "border-blue-500 bg-blue-50"
+               : "border-slate-200 bg-slate-50 hover:border-slate-300 hover:bg-slate-100/50"
+           )}
+         >
+           <div
+             className={cn(
+               "flex h-12 w-12 items-center justify-center rounded-2xl transition-colors",
+               isDragging ? "bg-blue-100/50" : "bg-slate-100"
+             )}
+           >
+             <ImagePlus
+               className={cn(
+                 "h-6 w-6 transition-colors",
+                 isDragging ? "text-blue-600" : "text-slate-500"
+               )}
+             />
+           </div>
 
           <div>
-            <p className="text-sm font-medium text-slate-300">
+            <p className="text-sm font-medium text-slate-600">
               {isDragging ? "Drop images here" : "Drag & drop images"}
             </p>
             <p className="mt-1 text-xs text-slate-500">
@@ -268,7 +268,7 @@ export default function ProductImageUploader({
                 onDragStart={(e) => handleImageDragStart(e, image)}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => handleImageDrop(e, image)}
-                className="group relative aspect-square overflow-hidden rounded-xl border border-slate-700 bg-slate-800"
+                className="group relative aspect-square overflow-hidden rounded-2xl border border-slate-200 bg-slate-50"
               >
                 {/* Image */}
                 <img
@@ -279,15 +279,15 @@ export default function ProductImageUploader({
 
                 {/* Uploading overlay */}
                 {isUploading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-slate-900/70">
-                    <Loader2 className="h-6 w-6 animate-spin text-white" />
+                  <div className="absolute inset-0 flex items-center justify-center bg-slate-50/70">
+                    <Loader2 className="h-6 w-6 animate-spin text-slate-900" />
                   </div>
                 )}
 
                 {/* Drag handle */}
                 {isSaved && (
                   <div className="absolute left-1 top-1 cursor-grab opacity-0 transition-opacity group-hover:opacity-100">
-                    <GripVertical className="h-4 w-4 text-white drop-shadow" />
+                    <GripVertical className="h-4 w-4 text-slate-900 drop-shadow" />
                   </div>
                 )}
 

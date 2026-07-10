@@ -3,23 +3,23 @@ import { cn } from "@/lib/utils";
 const STATUS_CONFIG = {
   active: {
     label: "Active",
-    className: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30",
+    className: "bg-emerald-50 text-emerald-700 border border-emerald-100",
   },
   inactive: {
     label: "Inactive",
-    className: "bg-slate-500/15 text-slate-400 border border-slate-500/30",
+    className: "bg-slate-100 text-slate-600 border border-slate-200",
   },
   featured: {
     label: "Featured",
-    className: "bg-amber-500/15 text-amber-400 border border-amber-500/30",
+    className: "bg-amber-50 text-amber-700 border border-amber-100",
   },
   "low-stock": {
     label: "Low Stock",
-    className: "bg-orange-500/15 text-orange-400 border border-orange-500/30",
+    className: "bg-orange-50 text-orange-700 border border-orange-100",
   },
   "out-of-stock": {
     label: "Out of Stock",
-    className: "bg-red-500/15 text-red-400 border border-red-500/30",
+    className: "bg-red-50 text-red-700 border border-red-100",
   },
 };
 

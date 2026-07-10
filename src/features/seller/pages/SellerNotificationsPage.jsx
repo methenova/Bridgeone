@@ -140,26 +140,26 @@ export default function SellerNotificationsPage() {
   if (shopLoading || loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-850" />
+        <div className="h-10 w-48 animate-pulse rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300" />
+        <div className="h-96 animate-pulse rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 text-white max-w-7xl relative">
+    <div className="space-y-6 text-slate-900 max-w-7xl relative">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight">Notification Center</h1>
-          <p className="mt-1 text-xs text-slate-400">View real-time video consultation alerts, missed call queues, and configure channels settings.</p>
+          <p className="mt-1 text-xs text-slate-500">View real-time video consultation alerts, missed call queues, and configure channels settings.</p>
         </div>
 
         {notifications.length > 0 && (
           <button
             onClick={handleClearAll}
-            className="flex items-center gap-1.5 bg-slate-900 border border-slate-850 hover:border-slate-800 text-xs font-bold text-slate-400 hover:text-white px-4 py-2 rounded-xl transition-all cursor-pointer"
+            className="flex items-center gap-1.5 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 hover:border-slate-300 text-xs font-bold text-slate-500 hover:text-slate-900 px-4 py-2 rounded-2xl cursor-pointer"
           >
             <Trash2 className="h-3.5 w-3.5" />
             <span>Clear All</span>
@@ -173,7 +173,7 @@ export default function SellerNotificationsPage() {
         <div className="lg:col-span-2 space-y-6">
           
           {/* Tabs header selector */}
-          <div className="flex items-center gap-1.5 p-1 bg-slate-900 border border-slate-850 rounded-2xl self-start overflow-x-auto text-[10px] font-bold uppercase tracking-wider">
+          <div className="flex items-center gap-1.5 p-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 rounded-2xl self-start overflow-x-auto text-[10px] font-bold uppercase tracking-wider">
             {["all", "unread", "calls", "callbacks", "system"].map(tab => (
               <button
                 key={tab}
@@ -203,21 +203,21 @@ export default function SellerNotificationsPage() {
                     exit={{ opacity: 0 }}
                     transition={{ delay: idx * 0.02 }}
                     key={n.id}
-                    className={`rounded-2xl border p-4.5 flex gap-4 items-start transition-all ${
+                    className={`rounded-2xl border p-4.5 flex gap-4 items-start transition-all hover:shadow-sm ${
                       n.is_read 
-                        ? "border-slate-900 bg-slate-900/10 opacity-70" 
-                        : "border-slate-850 bg-slate-900/30"
+                        ? "border-slate-100 bg-slate-50/50 opacity-75" 
+                        : "border-slate-100 bg-white shadow-sm ring-1 ring-slate-100/50"
                     }`}
                   >
                     {/* Icon */}
-                    <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 ${
+                    <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 border ${
                       n.type === "incoming_call" 
-                        ? "bg-blue-500/10 text-blue-400" 
+                        ? "bg-blue-50 border-blue-100/50 text-blue-600" 
                         : n.type === "missed_call" 
-                        ? "bg-rose-500/10 text-rose-400"
+                        ? "bg-rose-50 border-rose-100/50 text-rose-600"
                         : isCallback 
-                        ? "bg-emerald-500/10 text-emerald-400"
-                        : "bg-indigo-500/10 text-indigo-400"
+                        ? "bg-emerald-50 border-emerald-100/50 text-emerald-600"
+                        : "bg-indigo-50 border-indigo-100/50 text-indigo-600"
                     }`}>
                       {n.type === "incoming_call" ? (
                         <PhoneCall className="h-4 w-4" />
@@ -233,7 +233,7 @@ export default function SellerNotificationsPage() {
                     {/* Details content */}
                     <div className="flex-1 space-y-1 text-xs">
                       <div className="flex justify-between items-start">
-                        <span className="font-bold text-white block">{n.title}</span>
+                        <span className="font-bold text-slate-900 block">{n.title}</span>
                         <span className="text-[9px] text-slate-500 font-mono">
                           {new Date(n.created_at).toLocaleDateString("en-IN", {
                             day: "2-digit",
@@ -243,14 +243,14 @@ export default function SellerNotificationsPage() {
                           })}
                         </span>
                       </div>
-                      <p className="text-slate-450 leading-relaxed text-[11px]">{n.message}</p>
+                      <p className="text-slate-500 leading-relaxed text-[11px]">{n.message}</p>
                     </div>
 
                     {/* Actions */}
                     {!n.is_read && (
                       <button
                         onClick={() => handleMarkRead(n.id)}
-                        className="h-7 w-7 rounded-lg border border-slate-800 bg-slate-950 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+                        className="h-7 w-7 rounded-2xl border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors"
                         title="Mark as Read"
                       >
                         <Check className="h-3.5 w-3.5" />
@@ -262,9 +262,9 @@ export default function SellerNotificationsPage() {
             </AnimatePresence>
 
             {filteredNotifications.length === 0 && (
-              <div className="py-20 text-center flex flex-col items-center border border-slate-900 rounded-2xl bg-slate-900/10">
+              <div className="py-20 text-center flex flex-col items-center border border-slate-100 rounded-2xl bg-slate-50">
                 <Bell className="h-10 w-10 text-slate-700 mb-3 animate-pulse" />
-                <p className="text-sm font-bold text-slate-400">All caught up!</p>
+                <p className="text-sm font-bold text-slate-500">All caught up!</p>
                 <p className="text-[10px] text-slate-500 mt-0.5">No notifications found under this category.</p>
               </div>
             )}
@@ -276,8 +276,8 @@ export default function SellerNotificationsPage() {
         <div className="space-y-6">
           
           {/* Configurations */}
-          <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-5 space-y-5 text-xs">
-            <h3 className="text-[10px] font-bold text-slate-550 uppercase tracking-wider flex items-center gap-1.5 pb-3 border-b border-slate-900">
+          <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 p-5 space-y-5 text-xs">
+            <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5 pb-3 border-b border-slate-100">
               <Sparkles className="h-4 w-4 text-blue-500" />
               <span>Channels Settings</span>
             </h3>
@@ -285,13 +285,13 @@ export default function SellerNotificationsPage() {
             {/* In-app */}
             <div className="flex items-center justify-between">
               <div className="space-y-0.5 max-w-[180px]">
-                <span className="font-bold text-white block">In-App Notices</span>
+                <span className="font-bold text-slate-900 block">In-App Notices</span>
                 <p className="text-[10px] text-slate-500 leading-normal">Render call banners inside seller dashboards.</p>
               </div>
               <button
                 onClick={() => setInAppEnabled(!inAppEnabled)}
                 className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${
-                  inAppEnabled ? "bg-blue-600" : "bg-slate-800"
+                  inAppEnabled ? "bg-blue-600" : "bg-slate-200"
                 }`}
               >
                 <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${inAppEnabled ? "translate-x-4" : "translate-x-1"}`} />
@@ -301,15 +301,15 @@ export default function SellerNotificationsPage() {
             {/* Email notifications */}
             <div className="flex items-center justify-between">
               <div className="space-y-0.5 max-w-[180px]">
-                <span className="font-bold text-white block flex items-center gap-1">
-                  <Mail className="h-3 w-3 text-slate-400" /> Email Warning alerts
+                <span className="font-bold text-slate-900 block flex items-center gap-1">
+                  <Mail className="h-3 w-3 text-slate-500" /> Email Warning alerts
                 </span>
                 <p className="text-[10px] text-slate-500 leading-normal">Send logs of missed consultations via mail.</p>
               </div>
               <button
                 onClick={() => setEmailEnabled(!emailEnabled)}
                 className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${
-                  emailEnabled ? "bg-blue-600" : "bg-slate-800"
+                  emailEnabled ? "bg-blue-600" : "bg-slate-200"
                 }`}
               >
                 <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${emailEnabled ? "translate-x-4" : "translate-x-1"}`} />
@@ -319,15 +319,15 @@ export default function SellerNotificationsPage() {
             {/* Push notifications */}
             <div className="flex items-center justify-between">
               <div className="space-y-0.5 max-w-[180px]">
-                <span className="font-bold text-white block flex items-center gap-1">
-                  <Smartphone className="h-3 w-3 text-slate-400" /> Browser Push alerts
+                <span className="font-bold text-slate-900 block flex items-center gap-1">
+                  <Smartphone className="h-3 w-3 text-slate-500" /> Browser Push alerts
                 </span>
                 <p className="text-[10px] text-slate-500 leading-normal">Allow system chrome alerts for calls room signalling.</p>
               </div>
               <button
                 onClick={() => setPushEnabled(!pushEnabled)}
                 className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${
-                  pushEnabled ? "bg-blue-600" : "bg-slate-800"
+                  pushEnabled ? "bg-blue-600" : "bg-slate-200"
                 }`}
               >
                 <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${pushEnabled ? "translate-x-4" : "translate-x-1"}`} />
@@ -336,37 +336,37 @@ export default function SellerNotificationsPage() {
           </div>
 
           {/* Alert trigger Sandbox testing */}
-          <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-5 space-y-4 text-xs">
+          <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 p-5 space-y-4 text-xs">
             <div>
-              <span className="font-bold text-white block">Alert testing sandbox</span>
+              <span className="font-bold text-slate-900 block">Alert testing sandbox</span>
               <p className="text-[10px] text-slate-500 mt-0.5">Manually invoke notifications triggers to test channels flow.</p>
             </div>
 
             <div className="grid gap-2 grid-cols-2 text-[10px] uppercase font-bold tracking-wider">
               <button
                 onClick={() => handleCreateTestNotification("incoming_call")}
-                className="py-2.5 bg-slate-900 border border-slate-850 rounded-xl hover:border-slate-800 hover:text-white text-slate-400 transition-colors"
+                className="py-2.5 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 rounded-2xl hover:border-slate-300 hover:text-slate-900 text-slate-500 transition-colors"
               >
                 Trigger call
               </button>
               
               <button
                 onClick={() => handleCreateTestNotification("missed_call")}
-                className="py-2.5 bg-slate-900 border border-slate-850 rounded-xl hover:border-slate-800 hover:text-white text-slate-400 transition-colors"
+                className="py-2.5 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 rounded-2xl hover:border-slate-300 hover:text-slate-900 text-slate-500 transition-colors"
               >
                 Trigger missed
               </button>
 
               <button
                 onClick={() => handleCreateTestNotification("callback_reminder")}
-                className="py-2.5 bg-slate-900 border border-slate-850 rounded-xl hover:border-slate-800 hover:text-white text-slate-400 transition-colors"
+                className="py-2.5 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 rounded-2xl hover:border-slate-300 hover:text-slate-900 text-slate-500 transition-colors"
               >
                 Trigger callback
               </button>
 
               <button
                 onClick={() => handleCreateTestNotification("system")}
-                className="py-2.5 bg-slate-900 border border-slate-850 rounded-xl hover:border-slate-800 hover:text-white text-slate-400 transition-colors"
+                className="py-2.5 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 rounded-2xl hover:border-slate-300 hover:text-slate-900 text-slate-500 transition-colors"
               >
                 Trigger system
               </button>

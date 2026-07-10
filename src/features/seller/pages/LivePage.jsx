@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Radio, Video, VideoOff, ShoppingBag, Eye, Send, StopCircle, Phone, PhoneOff, Mic, MicOff, Check, X } from "lucide-react";
+import { Radio, Video, VideoOff, ShoppingBag, Eye, Send, StopCircle, Phone, PhoneOff, Mic, MicOff, Check, X, MonitorUp, Maximize, Minimize, Clock } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { supabase } from "@/config/supabase";
@@ -30,6 +30,90 @@ export default function LivePage() {
   const [commentText, setCommentText] = useState("");
   const [viewers, setViewers] = useState(0);
   const [hearts, setHearts] = useState([]); // floating animations
+
+  // Stream controls & duration states
+  const [streamDuration, setStreamDuration] = useState(0);
+  const [streamMicMuted, setStreamMicMuted] = useState(false);
+  const [streamCamMuted, setStreamCamMuted] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    let interval = null;
+    if (isLive) {
+      setStreamDuration(0);
+      interval = setInterval(() => {
+        setStreamDuration((prev) => prev + 1);
+      }, 1000);
+    } else {
+      setStreamDuration(0);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isLive]);
+
+  function formatDuration(sec) {
+    const hrs = Math.floor(sec / 3600);
+    const mins = Math.floor((sec % 3600) / 60);
+    const secs = sec % 60;
+    return [
+      hrs > 0 ? String(hrs).padStart(2, "0") : null,
+      String(mins).padStart(2, "0"),
+      String(secs).padStart(2, "0"),
+    ].filter(Boolean).join(":");
+  }
+
+  function handleToggleStreamMic() {
+    if (stream) {
+      const audioTracks = stream.getAudioTracks();
+      audioTracks.forEach(track => {
+        track.enabled = streamMicMuted;
+      });
+    }
+    setStreamMicMuted(!streamMicMuted);
+    toast.success(streamMicMuted ? "Microphone enabled" : "Microphone muted");
+  }
+
+  function handleToggleStreamCam() {
+    if (stream) {
+      const videoTracks = stream.getVideoTracks();
+      videoTracks.forEach(track => {
+        track.enabled = streamCamMuted;
+      });
+    }
+    setStreamCamMuted(!streamCamMuted);
+    toast.success(streamCamMuted ? "Camera enabled" : "Camera muted");
+  }
+
+  function handleToggleStreamScreenShare() {
+    toast.error("Screen sharing placeholder - coming soon!");
+  }
+
+  function handleToggleFullscreen() {
+    const container = document.getElementById("stream-container");
+    if (!container) return;
+    if (!document.fullscreenElement) {
+      container.requestFullscreen()
+        .then(() => setIsFullscreen(true))
+        .catch((err) => {
+          console.error("Error attempting to enable fullscreen:", err);
+        });
+    } else {
+      document.exitFullscreen()
+        .then(() => setIsFullscreen(false));
+    }
+  }
+
+  // Handle fullscreen state change from browser controls
+  useEffect(() => {
+    function handleFullscreenChange() {
+      setIsFullscreen(!!document.fullscreenElement);
+    }
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
+  }, []);
 
   // Consultation states (1-on-1 Call)
   const [incomingCall, setIncomingCall] = useState(null);
@@ -690,8 +774,8 @@ export default function LivePage() {
 
   if (shopLoading) {
     return (
-      <div className="flex items-center justify-center py-20 text-slate-400">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-700 border-t-blue-500" />
+      <div className="flex items-center justify-center py-20 text-slate-500">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-200 border-t-blue-500" />
       </div>
     );
   }
@@ -699,11 +783,11 @@ export default function LivePage() {
   if (!shop) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
-        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-400">
+        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50 border border-amber-100/50 text-amber-600 font-semibold">
           ⚠️
         </div>
-        <h3 className="text-xl font-semibold text-white">No Shop Found</h3>
-        <p className="mt-2 text-slate-400 max-w-sm">
+        <h3 className="text-xl font-semibold text-slate-900">No Shop Found</h3>
+        <p className="mt-2 text-slate-500 max-w-sm">
           Please create a shop first to activate live video selling.
         </p>
       </div>
@@ -715,11 +799,11 @@ export default function LivePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white flex items-center gap-2">
+          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-2">
             <Radio className={isLive ? "text-red-500 animate-pulse" : "text-slate-400"} />
             Live Selling
           </h1>
-          <p className="mt-1 text-slate-400">Stream video, pin items, and chat with shoppers in real time.</p>
+          <p className="mt-1 text-slate-500">Stream video, pin items, and chat with shoppers in real time.</p>
         </div>
         <button
           onClick={handleToggleLive}
@@ -737,7 +821,7 @@ export default function LivePage() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Left/Middle: Live Video + Pinned Overlay */}
         <div className="lg:col-span-2 space-y-4">
-          <div className="relative aspect-video rounded-3xl border border-slate-900 bg-slate-950 overflow-hidden shadow-2xl flex items-center justify-center">
+          <div id="stream-container" className="relative aspect-video rounded-3xl border border-slate-100 bg-slate-950 overflow-hidden shadow-2xl flex items-center justify-center group/stream">
             {/* Real video preview */}
             {stream ? (
               <div className="relative w-full h-full">
@@ -746,10 +830,16 @@ export default function LivePage() {
                   autoPlay
                   playsInline
                   muted
-                  className="h-full w-full object-cover scale-x-[-1]"
+                  className={`h-full w-full object-cover scale-x-[-1] transition-opacity duration-300 ${streamCamMuted ? "opacity-0" : "opacity-100"}`}
                 />
+                {streamCamMuted && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950 text-slate-500 gap-2">
+                    <VideoOff className="h-10 w-10 text-slate-605" />
+                    <p className="text-sm font-semibold">Camera Feed Paused</p>
+                  </div>
+                )}
                 {connectedViewerStream && (
-                  <div className="absolute bottom-4 right-4 h-32 aspect-video rounded-2xl overflow-hidden border-2 border-blue-500 bg-slate-900 shadow-2xl z-20 animate-fade-in">
+                  <div className="absolute bottom-4 right-4 h-32 aspect-video rounded-2xl overflow-hidden border-2 border-blue-500 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 shadow-2xl z-20 animate-fade-in">
                     <video
                       ref={(el) => {
                         if (el) el.srcObject = connectedViewerStream;
@@ -776,12 +866,68 @@ export default function LivePage() {
                     />
                   ))}
                 </div>
-                <p className="text-xs text-blue-400 font-bold uppercase tracking-widest">Broadcasting fallbacks</p>
+                <p className="text-xs text-blue-600 font-semibold font-bold uppercase tracking-widest">Broadcasting fallbacks</p>
               </div>
             ) : (
-              <div className="flex flex-col items-center gap-2 text-slate-600">
-                <Video className="h-12 w-12" />
-                <p className="text-sm font-semibold">Camera is offline</p>
+              <div className="w-full h-full flex items-center justify-center bg-slate-950 relative overflow-hidden">
+                {/* Decorative background grid/gradients */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.06)_0%,transparent_75%)]" />
+                
+                {/* Center Setup Panel */}
+                <div className="relative z-10 bg-slate-900/85 backdrop-blur-md rounded-2xl border border-white/5 p-6 shadow-2xl flex flex-col items-center max-w-sm w-full mx-4 space-y-5 text-center">
+                  <div className="inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider rounded-full px-3 py-1 animate-pulse">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                    <span>Broadcaster Ready</span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <h3 className="text-sm font-bold text-white tracking-tight">Stream Standby</h3>
+                    <p className="text-[10px] text-slate-400 leading-normal">Configure devices and check devices status before launching.</p>
+                  </div>
+
+                  {/* Status List */}
+                  <div className="grid grid-cols-3 gap-2.5 w-full text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                    <div className="bg-white/5 border border-white/5 p-2.5 rounded-xl flex flex-col items-center gap-1.5">
+                      <Video className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>Camera Ready</span>
+                    </div>
+                    <div className="bg-white/5 border border-white/5 p-2.5 rounded-xl flex flex-col items-center gap-1.5">
+                      <Mic className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>Microphone Ready</span>
+                    </div>
+                    <div className="bg-white/5 border border-white/5 p-2.5 rounded-xl flex flex-col items-center gap-1.5">
+                      <Radio className="h-3.5 w-3.5 text-emerald-400 animate-pulse" />
+                      <span>Internet Status</span>
+                    </div>
+                  </div>
+
+                  {/* Device selector inline */}
+                  {videoDevices.length > 0 && (
+                    <div className="w-full space-y-1.5 text-left">
+                      <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Camera Source</label>
+                      <select
+                        value={selectedVideo}
+                        onChange={(e) => setSelectedVideo(e.target.value)}
+                        className="w-full rounded-xl border border-white/10 bg-slate-800/80 px-3 py-2 text-xs text-white outline-none cursor-pointer"
+                      >
+                        {videoDevices.map((d) => (
+                          <option key={d.deviceId} value={d.deviceId} className="bg-slate-900 text-white">
+                            {d.label || `Camera ${d.deviceId.slice(0, 5)}`}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Go Live Action */}
+                  <button
+                    onClick={handleToggleLive}
+                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-[0.98] py-3 text-xs font-bold text-white uppercase tracking-wider transition-all duration-150 shadow-lg shadow-blue-600/30 cursor-pointer"
+                  >
+                    <Video className="h-4 w-4" />
+                    <span>Start Stream</span>
+                  </button>
+                </div>
               </div>
             )}
 
@@ -798,34 +944,85 @@ export default function LivePage() {
               ))}
             </div>
 
-            {/* Stream Stats Overlay */}
+            {/* Active Live Stream Badges Overlay */}
             {isLive && (
-              <div className="absolute left-4 top-4 flex items-center gap-3 z-15">
-                <span className="flex items-center gap-1 rounded-full bg-red-600 px-2.5 py-0.5 text-xs font-bold text-white uppercase animate-pulse">
-                  Live
+              <div className="absolute left-4 top-4 flex items-center gap-2.5 z-20">
+                <span className="flex items-center gap-1.5 rounded-full bg-red-600 px-3 py-1 text-[10px] font-bold text-white uppercase animate-pulse shadow-md">
+                  <span className="h-1.5 w-1.5 rounded-full bg-white animate-ping" />
+                  <span>Live</span>
                 </span>
-                <span className="flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-0.5 text-xs font-bold text-slate-300">
-                  <Eye className="h-3.5 w-3.5" /> {viewers}
+                <span className="flex items-center gap-1.5 rounded-full bg-slate-900/85 backdrop-blur-sm border border-white/10 px-3 py-1 text-[10px] font-mono font-bold text-white shadow-md">
+                  <Clock className="h-3.5 w-3.5 text-red-400" />
+                  <span>{formatDuration(streamDuration)}</span>
+                </span>
+                <span className="flex items-center gap-1.5 rounded-full bg-slate-900/85 backdrop-blur-sm border border-white/10 px-3 py-1 text-[10px] font-bold text-slate-300 shadow-md">
+                  <Eye className="h-3.5 w-3.5 text-blue-400" />
+                  <span>{viewers}</span>
                 </span>
               </div>
             )}
 
+            {/* Floating Broadcaster Controls Bar */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 bg-slate-900/85 backdrop-blur-md px-5 py-3 rounded-full border border-white/10 shadow-2xl transition-all duration-350 opacity-0 translate-y-2 group-hover/stream:opacity-100 group-hover/stream:translate-y-0">
+              <button
+                onClick={handleToggleStreamMic}
+                title={streamMicMuted ? "Unmute Microphone" : "Mute Microphone"}
+                className={`flex h-9 w-9 items-center justify-center rounded-full transition-all hover:scale-105 border ${
+                  streamMicMuted
+                    ? "bg-rose-500/20 text-rose-400 border-rose-500/30 hover:bg-rose-500/30"
+                    : "bg-white/10 text-white border-white/10 hover:bg-white/20"
+                }`}
+              >
+                {streamMicMuted ? <MicOff size={16} /> : <Mic size={16} />}
+              </button>
+
+              <button
+                onClick={handleToggleStreamCam}
+                title={streamCamMuted ? "Start Camera" : "Stop Camera"}
+                className={`flex h-9 w-9 items-center justify-center rounded-full transition-all hover:scale-105 border ${
+                  streamCamMuted
+                    ? "bg-rose-500/20 text-rose-400 border-rose-500/30 hover:bg-rose-500/30"
+                    : "bg-white/10 text-white border-white/10 hover:bg-white/20"
+                }`}
+              >
+                {streamCamMuted ? <VideoOff size={16} /> : <Video size={16} />}
+              </button>
+
+              <button
+                onClick={handleToggleStreamScreenShare}
+                title="Share Screen"
+                className="flex h-9 w-9 items-center justify-center rounded-full transition-all hover:scale-105 border bg-white/10 text-white border-white/10 hover:bg-white/20"
+              >
+                <MonitorUp size={16} />
+              </button>
+
+              <div className="h-4 w-px bg-white/15 my-auto mx-1" />
+
+              <button
+                onClick={handleToggleFullscreen}
+                title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+                className="flex h-9 w-9 items-center justify-center rounded-full transition-all hover:scale-105 border bg-white/10 text-white border-white/10 hover:bg-white/20"
+              >
+                {isFullscreen ? <Minimize size={16} /> : <Maximize size={16} />}
+              </button>
+            </div>
+
             {/* Pinned Product Overlay Card */}
             {pinnedProduct && (
-              <div className="absolute bottom-4 left-4 right-4 bg-slate-900/90 border border-slate-800 backdrop-blur-md rounded-2xl p-3 flex items-center justify-between gap-4 z-15">
+              <div className="absolute bottom-4 left-4 right-4 bg-slate-900/90 border border-slate-200 backdrop-blur-md rounded-2xl p-3 flex items-center justify-between gap-4 z-15">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="h-12 w-12 rounded-xl bg-slate-800 border border-slate-700 overflow-hidden shrink-0">
+                  <div className="h-12 w-12 rounded-2xl bg-slate-50 border border-slate-200 overflow-hidden shrink-0">
                     {pinnedProduct.thumbnail_url && (
                       <img src={pinnedProduct.thumbnail_url} alt="" className="h-full w-full object-cover" />
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold text-blue-400 uppercase tracking-widest">Pinned Product</p>
-                    <p className="text-sm font-bold text-white truncate max-w-[200px]">{pinnedProduct.name}</p>
-                    <p className="text-xs text-slate-300 font-semibold">₹{Number(pinnedProduct.price).toLocaleString()}</p>
+                    <p className="text-xs font-semibold text-blue-600 uppercase tracking-widest">Pinned Product</p>
+                    <p className="text-sm font-bold text-slate-900 truncate max-w-[200px]">{pinnedProduct.name}</p>
+                    <p className="text-xs text-slate-600 font-semibold">₹{Number(pinnedProduct.price).toLocaleString()}</p>
                   </div>
                 </div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase bg-slate-800/80 px-2.5 py-1 rounded-xl">
+                <span className="text-[10px] font-bold text-slate-500 uppercase bg-slate-55/80 px-2.5 py-1 rounded-2xl">
                   Pinned Live
                 </span>
               </div>
@@ -835,24 +1032,24 @@ export default function LivePage() {
           {/* Join requests queue widget */}
           {joinRequests.length > 0 && (
             <div className="rounded-2xl border border-blue-900/40 bg-blue-950/20 p-4 space-y-3">
-              <h4 className="text-xs font-bold text-blue-400 flex items-center gap-1.5 animate-pulse">
+              <h4 className="text-xs font-bold text-blue-600 font-semibold flex items-center gap-1.5 animate-pulse">
                 🎤 Speak Requests Queue ({joinRequests.length})
               </h4>
               <div className="space-y-2">
                 {joinRequests.map((req) => (
-                  <div key={req.senderId} className="flex items-center justify-between gap-3 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 text-xs">
-                    <span className="font-semibold text-white truncate max-w-[120px]">{req.senderName}</span>
+                  <div key={req.senderId} className="flex items-center justify-between gap-3 bg-slate-900/60 p-2.5 rounded-2xl border border-slate-200 text-xs">
+                    <span className="font-semibold text-slate-900 truncate max-w-[120px]">{req.senderName}</span>
                     <div className="flex gap-1.5 shrink-0">
                       <button
                         onClick={() => handleApproveSpeak(req)}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-green-600 text-white hover:bg-green-500 transition-colors"
+                        className="flex h-7 w-7 items-center justify-center rounded-2xl bg-green-600 text-white hover:bg-green-500 transition-colors"
                         title="Approve to Speak"
                       >
                         <Check className="h-3.5 w-3.5" />
                       </button>
                       <button
                         onClick={() => handleDeclineSpeak(req)}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-850 text-slate-400 hover:text-white transition-colors"
+                        className="flex h-7 w-7 items-center justify-center rounded-2xl bg-slate-850 text-slate-500 hover:text-slate-900 transition-colors"
                         title="Dismiss Request"
                       >
                         <X className="h-3.5 w-3.5" />
@@ -864,37 +1061,22 @@ export default function LivePage() {
             </div>
           )}
 
-          {/* Device selectors */}
-          {!isLive && videoDevices.length > 1 && (
-            <div className="flex items-center gap-2 rounded-2xl border border-slate-900 bg-slate-900/20 p-4">
-              <Video className="h-4 w-4 text-slate-500" />
-              <span className="text-xs text-slate-400 font-medium">Select Camera:</span>
-              <select
-                value={selectedVideo}
-                onChange={(e) => setSelectedVideo(e.target.value)}
-                className="rounded-xl border border-slate-880 bg-slate-900 px-3 py-1.5 text-xs text-white outline-none"
-              >
-                {videoDevices.map((d) => (
-                  <option key={d.deviceId} value={d.deviceId}>{d.label || `Camera ${d.deviceId.slice(0, 5)}`}</option>
-                ))}
-              </select>
-            </div>
-          )}
+          {/* Removed duplicate selectors */}
         </div>
 
         {/* Right: Comments Chat Feed */}
-        <div className="rounded-3xl border border-slate-900 bg-slate-900/20 flex flex-col h-[400px] lg:h-auto">
+        <div className="rounded-3xl border border-slate-100 bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 flex flex-col h-[400px] lg:h-auto">
           {/* Header */}
-          <div className="border-b border-slate-900 px-5 py-4">
-            <h3 className="text-sm font-bold text-white">Live Stream Chat</h3>
+          <div className="border-b border-slate-100 px-5 py-4">
+            <h3 className="text-sm font-bold text-slate-900">Live Stream Chat</h3>
           </div>
 
           {/* Comments list */}
           <div className="flex-1 overflow-y-auto p-5 space-y-3.5 scrollbar-none">
             {comments.map((c) => (
               <div key={c.id} className="text-xs leading-relaxed">
-                <span className="font-bold text-blue-400">{c.sender}</span>
-                <span className="text-slate-300 ml-1.5">{c.text}</span>
+                <span className="font-bold text-blue-600 font-semibold">{c.sender}</span>
+                <span className="text-slate-600 ml-1.5">{c.text}</span>
               </div>
             ))}
             {comments.length === 0 && (
@@ -907,17 +1089,17 @@ export default function LivePage() {
           </div>
 
           {/* Comment sender form */}
-          <form onSubmit={handleSendComment} className="border-t border-slate-900 p-4 flex gap-2">
+          <form onSubmit={handleSendComment} className="border-t border-slate-100 p-4 flex gap-2">
             <input
               type="text"
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="Send live chat comment..."
-              className="flex-1 rounded-xl border border-slate-800 bg-slate-900 px-4 py-2 text-xs text-white outline-none focus:border-blue-500 placeholder-slate-600"
+              className="flex-1 rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 px-4 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 placeholder-slate-600"
             />
             <button
               type="submit"
-              className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white hover:bg-blue-500 transition-colors"
+              className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-600 text-white hover:bg-blue-500 transition-colors"
             >
               <Send className="h-4 w-4" />
             </button>
@@ -926,9 +1108,9 @@ export default function LivePage() {
       </div>
 
       {/* Pinned Product Selector Feed */}
-      <div className="rounded-3xl border border-slate-900 bg-slate-900/20 p-6 space-y-4">
-        <h3 className="text-base font-bold text-white flex items-center gap-1.5">
-          <ShoppingBag className="h-4 w-4 text-blue-400" />
+      <div className="rounded-3xl border border-slate-100 bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 p-6 space-y-4">
+        <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+          <ShoppingBag className="h-4 w-4 text-blue-600 font-semibold" />
           Stream Products Showcase
         </h3>
         <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
@@ -944,10 +1126,10 @@ export default function LivePage() {
                     : "border-slate-850 bg-slate-900/60 hover:border-slate-700"
                 }`}
               >
-                <div className="h-16 w-16 overflow-hidden rounded-xl bg-slate-850 border border-slate-800 mb-3 flex items-center justify-center shrink-0">
+                <div className="h-16 w-16 overflow-hidden rounded-2xl bg-slate-850 border border-slate-200 mb-3 flex items-center justify-center shrink-0">
                   {p.thumbnail_url ? <img src={p.thumbnail_url} alt="" className="h-full w-full object-cover" /> : "📦"}
                 </div>
-                <p className="line-clamp-1 text-xs font-semibold text-white w-full">{p.name}</p>
+                <p className="line-clamp-1 text-xs font-semibold text-slate-900 w-full">{p.name}</p>
                 <p className="text-[10px] text-slate-500 mt-1 font-bold">₹{Number(p.price).toLocaleString()}</p>
                 
                 <button
@@ -972,15 +1154,15 @@ export default function LivePage() {
       {/* 1-on-1 Incoming Call Dialog */}
       {incomingCall && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="w-full max-w-sm rounded-3xl border border-slate-850 bg-slate-950 p-6 shadow-2xl flex flex-col items-center text-center space-y-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-600/10 text-blue-500 animate-bounce">
+          <div className="w-full max-w-sm rounded-3xl border border-slate-100 bg-slate-50 p-6 shadow-2xl flex flex-col items-center text-center space-y-4">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 border border-blue-100/50 text-blue-500 animate-bounce">
               <Phone className="h-8 w-8" />
             </div>
             <div className="space-y-1">
-              <h3 className="text-base font-bold text-white">
+              <h3 className="text-base font-bold text-slate-900">
                 {callerDetails?.customer_name || "Incoming Consultation Call"}
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 {callerDetails 
                   ? `${callerDetails.customer_name} is requesting a 1-on-1 video call consultation.` 
                   : "A customer is requesting a 1-on-1 video call consultation."}
@@ -992,13 +1174,13 @@ export default function LivePage() {
             <div className="flex w-full gap-3">
               <button
                 onClick={handleDeclineCall}
-                className="flex-1 rounded-xl bg-slate-900 border border-slate-800 py-3 text-xs font-bold text-slate-300 hover:bg-slate-850 hover:text-white transition-colors"
+                className="flex-1 rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 py-3 text-xs font-bold text-slate-600 hover:bg-slate-850 hover:text-slate-900 transition-colors"
               >
                 Decline
               </button>
               <button
                 onClick={handleAcceptCall}
-                className="flex-1 rounded-xl bg-blue-600 py-3 text-xs font-bold text-white hover:bg-blue-500 shadow-lg shadow-blue-600/10 transition-colors"
+                className="flex-1 rounded-2xl bg-blue-600 py-3 text-xs font-bold text-white hover:bg-blue-500 shadow-lg shadow-blue-600/10 transition-colors"
               >
                 Accept
               </button>
@@ -1015,20 +1197,20 @@ export default function LivePage() {
         
         return (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in">
-            <div className="relative w-full max-w-5xl h-[85vh] rounded-3xl border border-white/10 bg-slate-950 overflow-hidden shadow-2xl flex flex-col md:flex-row">
+            <div className="relative w-full max-w-5xl h-[85vh] rounded-3xl border border-white/10 bg-slate-50 overflow-hidden shadow-2xl flex flex-col md:flex-row">
               
               {/* Left Panel: Remote Video Stream (Main Feed) */}
-              <div className="flex-1 bg-slate-950 relative flex items-center justify-center border-b md:border-b-0 md:border-r border-white/10">
+              <div className="flex-1 bg-slate-50 relative flex items-center justify-center border-b md:border-b-0 md:border-r border-white/10">
                 
                 {/* Status Badge (top-left) */}
-                <div className="absolute left-6 top-6 z-20 flex items-center gap-2.5 rounded-full bg-black/60 backdrop-blur-md px-4 py-2 text-xs font-semibold text-white border border-white/10 shadow-lg">
+                <div className="absolute left-6 top-6 z-20 flex items-center gap-2.5 rounded-full bg-black/60 backdrop-blur-md px-4 py-2 text-xs font-semibold text-slate-900 border border-white/10 shadow-lg">
                   <span className="relative flex h-2 w-2">
                     <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${consultStatusColor === "green" ? "bg-green-400" : consultStatusColor === "red" ? "bg-red-400" : "bg-amber-400"}`} />
                     <span className={`relative inline-flex rounded-full h-2 w-2 ${consultStatusColor === "green" ? "bg-green-500" : consultStatusColor === "red" ? "bg-red-500" : "bg-amber-500"}`} />
                   </span>
                   <span>{callerDetails?.customer_name || "1-on-1 Consultation"}</span>
                   {isConsultConnected && consultationDuration > 0 && (
-                    <span className="font-mono tabular-nums text-blue-400 ml-1.5 border-l border-white/20 pl-2">{formatDur(consultationDuration)}</span>
+                    <span className="font-mono tabular-nums text-blue-600 font-semibold ml-1.5 border-l border-white/20 pl-2">{formatDur(consultationDuration)}</span>
                   )}
                 </div>
 
@@ -1042,13 +1224,13 @@ export default function LivePage() {
                 ) : (
                   <div className="flex flex-col items-center gap-5 text-center p-8">
                     <div className="relative flex h-20 w-20 items-center justify-center">
-                      <div className="absolute inset-0 rounded-full bg-blue-500/10 animate-ping" style={{ animationDuration: "1.5s" }} />
-                      <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-blue-600/10 border border-blue-500/30">
-                        <Video className="h-6 w-6 text-blue-400" />
+                      <div className="absolute inset-0 rounded-full bg-blue-50 border border-blue-100/50 animate-ping" style={{ animationDuration: "1.5s" }} />
+                      <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 border border-blue-100/50 border-blue-500/30">
+                        <Video className="h-6 w-6 text-blue-600 font-semibold" />
                       </div>
                     </div>
                     <div className="space-y-1.5">
-                      <p className="text-sm font-bold text-white tracking-wide">Connecting Consultation Call...</p>
+                      <p className="text-sm font-bold text-slate-900 tracking-wide">Connecting Consultation Call...</p>
                       <p className="text-xs text-slate-500 font-medium">Establishing direct secure WebRTC connection</p>
                     </div>
                   </div>
@@ -1056,7 +1238,7 @@ export default function LivePage() {
 
                 {/* PiP — Seller's own camera (Self View) */}
                 {consultationStreamRef.current && (
-                  <div className="absolute top-6 right-6 h-28 sm:h-36 aspect-[3/4] sm:aspect-video rounded-2xl overflow-hidden border border-white/10 bg-slate-900 shadow-2xl z-20 transition-all hover:scale-105 duration-300">
+                  <div className="absolute top-6 right-6 h-28 sm:h-36 aspect-[3/4] sm:aspect-video rounded-2xl overflow-hidden border border-white/10 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 shadow-2xl z-20 hover:scale-105">
                     <video
                       ref={callLocalVideoRef}
                       autoPlay
@@ -1065,12 +1247,12 @@ export default function LivePage() {
                       className={`w-full h-full object-cover scale-x-[-1] transition-opacity duration-300 ${callCamEnabled ? "opacity-100" : "opacity-0"}`}
                     />
                     {!callCamEnabled && (
-                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 text-slate-600 gap-1.5">
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 text-slate-600 gap-1.5">
                         <VideoOff className="h-5 w-5" />
                         <span className="text-[8px] uppercase tracking-wider font-bold">Cam Off</span>
                       </div>
                     )}
-                    <div className="absolute bottom-2 left-2.5 bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded-md text-[8px] font-bold text-white/80 uppercase tracking-wide">You</div>
+                    <div className="absolute bottom-2 left-2.5 bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded-md text-[8px] font-bold text-slate-700 uppercase tracking-wide">You</div>
                   </div>
                 )}
 
@@ -1118,25 +1300,25 @@ export default function LivePage() {
               </div>
 
               {/* Right Panel: Call Center Tabbed Tools (Info, Products, Queue) */}
-              <div className="w-full md:w-80 flex flex-col bg-slate-900/40 text-xs border-t md:border-t-0 border-white/10 h-1/2 md:h-full">
+              <div className="w-full md:w-80 flex flex-col bg-slate-50/50 text-xs border-t md:border-t-0 border-slate-200 h-1/2 md:h-full">
                 
                 {/* Tab select bar */}
-                <div className="grid grid-cols-3 border-b border-white/10 text-[10px] font-bold uppercase tracking-wider text-center">
+                <div className="grid grid-cols-3 border-b border-slate-200 text-[10px] font-bold uppercase tracking-wider text-center">
                   <button 
                     onClick={() => setActiveCallTab("info")}
-                    className={`py-3 border-b-2 transition-all cursor-pointer ${activeCallTab === "info" ? "border-blue-500 text-blue-400 font-black" : "border-transparent text-slate-500 hover:text-white"}`}
+                    className={`py-3 border-b-2 transition-all cursor-pointer ${activeCallTab === "info" ? "border-blue-600 text-blue-600 font-black" : "border-transparent text-slate-500 hover:text-slate-900"}`}
                   >
                     Info
                   </button>
                   <button 
                     onClick={() => setActiveCallTab("products")}
-                    className={`py-3 border-b-2 transition-all cursor-pointer ${activeCallTab === "products" ? "border-blue-500 text-blue-400 font-black" : "border-transparent text-slate-500 hover:text-white"}`}
+                    className={`py-3 border-b-2 transition-all cursor-pointer ${activeCallTab === "products" ? "border-blue-600 text-blue-600 font-black" : "border-transparent text-slate-500 hover:text-slate-900"}`}
                   >
                     Recommend
                   </button>
                   <button 
                     onClick={() => setActiveCallTab("queue")}
-                    className={`py-3 border-b-2 transition-all cursor-pointer ${activeCallTab === "queue" ? "border-blue-500 text-blue-400 font-black" : "border-transparent text-slate-500 hover:text-white"}`}
+                    className={`py-3 border-b-2 transition-all cursor-pointer ${activeCallTab === "queue" ? "border-blue-600 text-blue-600 font-black" : "border-transparent text-slate-500 hover:text-slate-900"}`}
                   >
                     Queue
                   </button>
@@ -1149,24 +1331,24 @@ export default function LivePage() {
                   {activeCallTab === "info" && (
                     <div className="space-y-5">
                       {/* Customer Info Card */}
-                      <div className="space-y-2.5 bg-slate-950 p-4 rounded-2xl border border-white/5">
+                      <div className="space-y-2.5 bg-slate-50 p-4 rounded-2xl border border-white/5">
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Customer Details</span>
                         <div className="space-y-1">
-                          <p className="font-bold text-white text-sm">{callerDetails?.customer_name || "Guest Customer"}</p>
-                          <p className="text-slate-450 font-mono text-[10px]">{callerDetails?.customer_email || "No email provided"}</p>
+                          <p className="font-bold text-slate-900 text-sm">{callerDetails?.customer_name || "Guest Customer"}</p>
+                          <p className="text-slate-500 font-mono text-[10px]">{callerDetails?.customer_email || "No email provided"}</p>
                           <p className="text-slate-455 font-mono text-[10px]">{callerDetails?.customer_phone || "No phone provided"}</p>
                         </div>
                       </div>
 
                       {/* Quick Notes Form */}
-                      <div className="space-y-2 bg-slate-950 p-4 rounded-2xl border border-white/5">
+                      <div className="space-y-2 bg-slate-50 p-4 rounded-2xl border border-white/5">
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Quick Consultation Notes</span>
                         <textarea
                           rows={4}
                           value={callNotes}
                           onChange={(e) => setCallNotes(e.target.value)}
                           placeholder="Jot down notes during consultation..."
-                          className="w-full rounded-xl border border-white/10 bg-slate-900 p-3 text-white outline-none focus:border-blue-500 resize-none text-[11px] leading-relaxed"
+                          className="w-full rounded-2xl border border-white/10 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-3 text-slate-900 outline-none focus:border-blue-500 resize-none text-[11px] leading-relaxed"
                         />
                         <button
                           onClick={async () => {
@@ -1185,17 +1367,17 @@ export default function LivePage() {
                               toast.error("Failed to save notes to database");
                             }
                           }}
-                          className="w-full py-2 bg-blue-600 hover:bg-blue-500 rounded-xl text-white font-bold transition-all text-[10px] uppercase tracking-wider cursor-pointer"
+                          className="w-full py-2 bg-blue-600 hover:bg-blue-500 rounded-2xl text-white font-bold transition-all text-[10px] uppercase tracking-wider cursor-pointer"
                         >
                           Save Notes
                         </button>
                       </div>
 
                       {/* Transfer Call Select */}
-                      <div className="space-y-2 bg-slate-950 p-4 rounded-2xl border border-white/5">
+                      <div className="space-y-2 bg-slate-50 p-4 rounded-2xl border border-white/5">
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Transfer Consultation</span>
                         <div className="flex gap-2">
-                          <select className="flex-1 rounded-xl border border-white/10 bg-slate-900 p-2 text-white outline-none font-semibold text-[10px]">
+                          <select className="flex-1 rounded-2xl border border-white/10 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-2 text-slate-900 outline-none font-semibold text-[10px]">
                             <option value="">-- Select Active Agent --</option>
                             {agentsList.map(a => (
                               <option key={a.id} value={a.id}>{a.profiles?.full_name || "Team Member"}</option>
@@ -1203,7 +1385,7 @@ export default function LivePage() {
                           </select>
                           <button
                             onClick={() => toast.success("Transferring WebRTC peer credentials to team member...")}
-                            className="px-3 py-2 bg-slate-900 border border-white/10 hover:border-white/20 rounded-xl text-white font-bold text-[9px] uppercase tracking-wider"
+                            className="px-3 py-2 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-white/10 hover:border-white/20 rounded-2xl text-slate-900 font-bold text-[9px] uppercase tracking-wider"
                           >
                             Transfer
                           </button>
@@ -1228,11 +1410,11 @@ export default function LivePage() {
                               }`}
                             >
                               <div className="flex items-center gap-2.5">
-                                <div className="h-9 w-9 overflow-hidden rounded-lg bg-slate-900 border border-white/5 flex items-center justify-center shrink-0">
+                                <div className="h-9 w-9 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-white/5 flex items-center justify-center shrink-0">
                                   {p.thumbnail_url ? <img src={p.thumbnail_url} alt="" className="h-full w-full object-cover" /> : "📦"}
                                 </div>
                                 <div className="max-w-[120px]">
-                                  <p className="font-bold text-white truncate text-[10px]">{p.name}</p>
+                                  <p className="font-bold text-slate-900 truncate text-[10px]">{p.name}</p>
                                   <p className="text-[9px] text-slate-500 font-bold">₹{Number(p.price).toLocaleString()}</p>
                                 </div>
                               </div>
@@ -1254,7 +1436,7 @@ export default function LivePage() {
                   {activeCallTab === "queue" && (
                     <div className="space-y-4">
                       {/* Queue Card */}
-                      <div className="space-y-2 bg-slate-950 p-4 rounded-2xl border border-white/5">
+                      <div className="space-y-2 bg-slate-50 p-4 rounded-2xl border border-white/5">
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Call Queue</span>
                         <div className="py-4 text-center text-slate-600 font-bold text-[10px] uppercase">
                           No other callers in queue
@@ -1262,17 +1444,17 @@ export default function LivePage() {
                       </div>
 
                       {/* Connection Health status */}
-                      <div className="space-y-2.5 bg-slate-950 p-4 rounded-2xl border border-white/5 font-mono text-[9px]">
+                      <div className="space-y-2.5 bg-slate-50 p-4 rounded-2xl border border-slate-100 font-mono text-[9px]">
                         <span className="text-[10px] font-sans text-slate-500 font-bold uppercase tracking-wider block">Connection status</span>
                         <div className="flex justify-between">
-                          <span className="text-slate-550">WebRTC ICE state</span>
-                          <span className={`uppercase font-bold ${consultStatusColor === "green" ? "text-green-400" : "text-amber-400"}`}>
+                          <span className="text-slate-500">WebRTC ICE state</span>
+                          <span className={`uppercase font-bold ${consultStatusColor === "green" ? "text-emerald-600" : "text-amber-600"}`}>
                             {consultationIceState || "New"}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-550">Consult duration</span>
-                          <span className="text-white font-bold">{formatDur(consultationDuration)}</span>
+                          <span className="text-slate-500">Consult duration</span>
+                          <span className="text-slate-900 font-bold">{formatDur(consultationDuration)}</span>
                         </div>
                       </div>
                     </div>

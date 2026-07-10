@@ -218,20 +218,20 @@ export default function SellerAgentsPage() {
   if (shopLoading || loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-850" />
+        <div className="h-10 w-48 animate-pulse rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300" />
+        <div className="h-96 animate-pulse rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 text-white max-w-7xl relative">
+    <div className="space-y-6 text-slate-900 max-w-7xl relative">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight">Team Management</h1>
-          <p className="mt-1 text-xs text-slate-400">Invite call agents, assign service departments, toggle availability, and monitor performance.</p>
+          <p className="mt-1 text-xs text-slate-500">Invite call agents, assign service departments, toggle availability, and monitor performance.</p>
         </div>
         
         <button
@@ -241,7 +241,7 @@ export default function SellerAgentsPage() {
             setSelectedDept("Sales");
             setIsInviteOpen(true);
           }}
-          className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10 transition-all active:scale-[0.98]"
+          className="flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10 transition-all active:scale-[0.98]"
         >
           <UserPlus className="h-4 w-4" />
           <span>Invite Agent</span>
@@ -249,7 +249,7 @@ export default function SellerAgentsPage() {
       </div>
 
       {/* Utilities panel */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/20 p-4 rounded-2xl border border-slate-900">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300 p-4 rounded-2xl border-slate-100">
         
         {/* Search */}
         <div className="relative flex-1 max-w-md">
@@ -261,7 +261,7 @@ export default function SellerAgentsPage() {
             placeholder="Search team agents by name or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-850 bg-slate-950/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-850 transition-colors"
+            className="w-full rounded-2xl border border-slate-100 bg-slate-950/80 pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-500 outline-none focus:border-slate-850 transition-colors"
           />
         </div>
 
@@ -272,7 +272,7 @@ export default function SellerAgentsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-slate-350 outline-none focus:border-slate-850"
+              className="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-1.5 text-xs text-slate-350 outline-none focus:border-slate-850"
             >
               <option value="all">All States</option>
               <option value="Available">Available</option>
@@ -291,7 +291,7 @@ export default function SellerAgentsPage() {
             <select
               value={deptFilter}
               onChange={(e) => setDeptFilter(e.target.value)}
-              className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-slate-350 outline-none focus:border-slate-850"
+              className="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-1.5 text-xs text-slate-350 outline-none focus:border-slate-850"
             >
               <option value="all">All Depts</option>
               <option value="Sales">Sales</option>
@@ -304,10 +304,10 @@ export default function SellerAgentsPage() {
       </div>
 
       {/* Agents Roster Table */}
-      <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
+      <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-900 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-slate-50/50 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Agent Details</th>
                 <th className="px-6 py-4.5">Assigned Role</th>
@@ -316,7 +316,7 @@ export default function SellerAgentsPage() {
                 <th className="px-6 py-4.5 text-right">Roster Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-900 bg-transparent text-xs text-slate-300">
+            <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-600">
               {paginatedAgents.map((ag, idx) => {
                 const name = ag.profiles?.full_name || "Agent User";
                 const email = ag.profiles?.email || "";
@@ -327,15 +327,15 @@ export default function SellerAgentsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.03 }}
                     key={ag.id} 
-                    className="hover:bg-slate-900/10 transition-colors"
+                    className="hover:bg-slate-50/50 transition-colors"
                   >
                     {/* Details details */}
                     <td className="px-6 py-4 flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-full bg-slate-900 border border-slate-850 flex items-center justify-center font-bold text-slate-400">
+                      <div className="h-8 w-8 rounded-full bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 flex items-center justify-center font-bold text-slate-500">
                         {name.split(" ").map(n => n[0]).join("")}
                       </div>
                       <div>
-                        <span className="block font-bold text-white text-xs">{name}</span>
+                        <span className="block font-bold text-slate-900 text-xs">{name}</span>
                         <span className="block text-[10px] text-slate-500 font-semibold">{email}</span>
                       </div>
                     </td>
@@ -345,7 +345,7 @@ export default function SellerAgentsPage() {
                       <select
                         value={ag.role}
                         onChange={(e) => handleUpdateField(ag.id, "role", e.target.value)}
-                        className="rounded-lg border border-slate-850 bg-slate-950 px-2 py-1 text-xs outline-none text-slate-300 font-semibold"
+                        className="rounded-2xl border border-slate-100 bg-slate-50 px-2 py-1 text-xs outline-none text-slate-600 font-semibold"
                       >
                         <option value="agent">Agent</option>
                         <option value="manager">Manager</option>
@@ -357,7 +357,7 @@ export default function SellerAgentsPage() {
                       <select
                         value={ag.department}
                         onChange={(e) => handleUpdateField(ag.id, "department", e.target.value)}
-                        className="rounded-lg border border-slate-850 bg-slate-950 px-2 py-1 text-xs outline-none text-slate-300 font-semibold"
+                        className="rounded-2xl border border-slate-100 bg-slate-50 px-2 py-1 text-xs outline-none text-slate-600 font-semibold"
                       >
                         <option value="Sales">Sales</option>
                         <option value="Support">Support</option>
@@ -371,22 +371,22 @@ export default function SellerAgentsPage() {
                         value={ag.status || "Offline"}
                         onChange={(e) => handleUpdateStatus(ag.id, e.target.value)}
                         className={`rounded-lg border px-2.5 py-1 text-xs outline-none font-bold uppercase cursor-pointer ${
-                          ag.status === "Available" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/25" :
-                          ag.status === "Busy" ? "bg-rose-500/10 text-rose-400 border-rose-500/25" :
-                          ag.status === "In Call" ? "bg-purple-500/10 text-purple-400 border-purple-500/25" :
-                          ag.status === "Away" ? "bg-amber-500/10 text-amber-400 border-amber-500/25" :
-                          ag.status === "Break" ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/25" :
-                          ag.status === "Meeting" ? "bg-indigo-500/10 text-indigo-400 border-indigo-500/25" :
-                          "bg-slate-950 text-slate-400 border-slate-800"
+                          ag.status === "Available" ? "bg-emerald-50 text-emerald-700 border-emerald-250" :
+                          ag.status === "Busy" ? "bg-rose-50 text-rose-700 border-rose-250" :
+                          ag.status === "In Call" ? "bg-purple-50 text-purple-700 border-purple-250" :
+                          ag.status === "Away" ? "bg-amber-50 text-amber-700 border-amber-250" :
+                          ag.status === "Break" ? "bg-yellow-50 text-yellow-750 border-yellow-250" :
+                          ag.status === "Meeting" ? "bg-indigo-50 text-indigo-700 border-indigo-250" :
+                          "bg-slate-50 text-slate-500 border-slate-200"
                         }`}
                       >
-                        <option value="Available" className="bg-slate-950 text-emerald-400">Available</option>
-                        <option value="Busy" className="bg-slate-950 text-rose-400">Busy</option>
-                        <option value="In Call" className="bg-slate-950 text-purple-400">In Call</option>
-                        <option value="Away" className="bg-slate-950 text-amber-400">Away</option>
-                        <option value="Break" className="bg-slate-950 text-yellow-400">Break</option>
-                        <option value="Meeting" className="bg-slate-950 text-indigo-400">Meeting</option>
-                        <option value="Offline" className="bg-slate-950 text-slate-400">Offline</option>
+                        <option value="Available" className="bg-white text-emerald-700">Available</option>
+                        <option value="Busy" className="bg-white text-rose-700 font-semibold">Busy</option>
+                        <option value="In Call" className="bg-white text-purple-700 font-semibold">In Call</option>
+                        <option value="Away" className="bg-white text-amber-700 font-semibold">Away</option>
+                        <option value="Break" className="bg-white text-yellow-700">Break</option>
+                        <option value="Meeting" className="bg-white text-indigo-700 font-semibold">Meeting</option>
+                        <option value="Offline" className="bg-white text-slate-500">Offline</option>
                       </select>
                     </td>
 
@@ -394,7 +394,7 @@ export default function SellerAgentsPage() {
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => handleRemoveAgent(ag.id)}
-                        className="text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
+                        className="text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
                         title="Remove Agent"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -410,7 +410,7 @@ export default function SellerAgentsPage() {
           {filteredAgents.length === 0 && (
             <div className="py-20 text-center flex flex-col items-center">
               <Users className="h-10 w-10 text-slate-700 mb-3 animate-pulse" />
-              <p className="text-sm font-bold text-slate-400">No team agents found.</p>
+              <p className="text-sm font-bold text-slate-500">No team agents found.</p>
             </div>
           )}
         </div>
@@ -418,11 +418,11 @@ export default function SellerAgentsPage() {
 
       {/* Pagination controls */}
       {totalPages > 1 && (
-        <div className="flex justify-between items-center bg-slate-900/10 p-4 border border-slate-900 rounded-xl text-xs">
+        <div className="flex justify-between items-center bg-slate-50 p-4 border border-slate-100 rounded-2xl text-xs">
           <button
             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
-            className="px-4 py-2 border border-slate-850 rounded-lg hover:border-slate-800 disabled:opacity-50 text-slate-400 font-bold cursor-pointer"
+            className="px-4 py-2 border border-slate-100 rounded-2xl hover:border-slate-300 disabled:opacity-50 text-slate-500 font-bold cursor-pointer"
           >
             Previous
           </button>
@@ -434,7 +434,7 @@ export default function SellerAgentsPage() {
           <button
             onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 border border-slate-850 rounded-lg hover:border-slate-800 disabled:opacity-50 text-slate-400 font-bold cursor-pointer"
+            className="px-4 py-2 border border-slate-100 rounded-2xl hover:border-slate-300 disabled:opacity-50 text-slate-500 font-bold cursor-pointer"
           >
             Next
           </button>
@@ -448,13 +448,13 @@ export default function SellerAgentsPage() {
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="w-full max-w-md rounded-2xl border border-slate-900 bg-slate-950 p-6 space-y-6 shadow-2xl"
+              className="w-full max-w-md rounded-2xl border border-slate-100 bg-slate-50 p-6 space-y-6 shadow-2xl"
             >
-              <div className="flex justify-between items-center pb-3 border-b border-slate-900">
-                <h2 className="text-base font-bold text-white uppercase tracking-wider">Invite store agent</h2>
+              <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+                <h2 className="text-base font-bold text-slate-900 uppercase tracking-wider">Invite store agent</h2>
                 <button 
                   onClick={() => setIsInviteOpen(false)}
-                  className="text-slate-450 hover:text-white transition-colors cursor-pointer"
+                  className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -464,11 +464,11 @@ export default function SellerAgentsPage() {
                 
                 {/* Profile selection */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Select platform profile</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Select platform profile</label>
                   <select
                     value={selectedProfileId}
                     onChange={(e) => setSelectedProfileId(e.target.value)}
-                    className="w-full rounded-xl border border-slate-850 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500 font-semibold"
+                    className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-semibold"
                     required
                   >
                     <option value="">-- Choose User Profile --</option>
@@ -480,11 +480,11 @@ export default function SellerAgentsPage() {
 
                 {/* Team role */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Select Team role</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Select Team role</label>
                   <select
                     value={selectedRole}
                     onChange={(e) => setSelectedRole(e.target.value)}
-                    className="w-full rounded-xl border border-slate-850 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500 font-semibold"
+                    className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-semibold"
                   >
                     <option value="agent">Agent (Answer Calls only)</option>
                     <option value="manager">Manager (Full edit store catalog access)</option>
@@ -493,11 +493,11 @@ export default function SellerAgentsPage() {
 
                 {/* Department */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Service department</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Service department</label>
                   <select
                     value={selectedDept}
                     onChange={(e) => setSelectedDept(e.target.value)}
-                    className="w-full rounded-xl border border-slate-850 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500 font-semibold"
+                    className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-semibold"
                   >
                     <option value="Sales">Sales</option>
                     <option value="Support">Support</option>
@@ -505,11 +505,11 @@ export default function SellerAgentsPage() {
                   </select>
                 </div>
 
-                <div className="border-t border-slate-900 pt-4 flex gap-3 justify-end text-xs font-semibold">
+                <div className="border-t border-slate-100 pt-4 flex gap-3 justify-end text-xs font-semibold">
                   <button
                     type="button"
                     onClick={() => setIsInviteOpen(false)}
-                    className="px-4 py-2 border border-slate-850 rounded-xl text-slate-450 hover:text-white cursor-pointer"
+                    className="px-4 py-2 border border-slate-100 rounded-2xl text-slate-500 hover:text-slate-900 cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -517,7 +517,7 @@ export default function SellerAgentsPage() {
                   <button
                     type="submit"
                     disabled={submittingInvite}
-                    className="flex items-center gap-1 bg-blue-600 hover:bg-blue-550 text-white px-4 py-2 rounded-xl font-bold cursor-pointer transition-all active:scale-[0.98]"
+                    className="flex items-center gap-1 bg-blue-600 hover:bg-blue-550 text-white px-4 py-2 rounded-2xl font-bold cursor-pointer transition-all active:scale-[0.98]"
                   >
                     {submittingInvite && <Loader2 className="h-3 w-3 animate-spin" />}
                     Invite

@@ -228,11 +228,11 @@ export default function SettingsPage() {
 
   if (!shop) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center text-white">
-        <div className="h-16 w-16 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 mb-4">
+      <div className="flex flex-col items-center justify-center py-16 text-center text-slate-900">
+        <div className="h-16 w-16 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 mb-4">
           <Store className="h-8 w-8" />
         </div>
-        <h3 className="text-lg font-semibold text-slate-200">No Shop Registered</h3>
+        <h3 className="text-lg font-semibold text-slate-700">No Shop Registered</h3>
         <p className="text-sm text-slate-500 mt-1 max-w-sm">
           Please register your shop profile to manage settings.
         </p>
@@ -241,17 +241,17 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6 text-white max-w-6xl">
+    <div className="space-y-6 text-slate-900 max-w-6xl">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-extrabold tracking-tight">Console Settings</h1>
-        <p className="mt-1 text-xs text-slate-400">Manage business details, scheduling hours, security alerts, and channel toggles.</p>
+        <p className="mt-1 text-xs text-slate-500">Manage business details, scheduling hours, security alerts, and channel toggles.</p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
         
         {/* Left side: Tab navigation */}
-        <div className="w-full lg:w-64 shrink-0 flex flex-col gap-1 bg-slate-900/30 p-2 rounded-2xl border border-slate-900 text-xs font-semibold">
+        <div className="w-full lg:w-64 shrink-0 flex flex-col gap-1 bg-white shadow-sm border border-slate-100/80 p-2 rounded-2xl border-slate-100 text-xs font-semibold">
           <button
             onClick={() => setActiveTab("profile")}
             className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
@@ -324,12 +324,12 @@ export default function SettingsPage() {
         </div>
 
         {/* Right side: Tab Panels */}
-        <div className="flex-1 bg-slate-900/10 rounded-2xl border border-slate-900 p-6">
+        <div className="flex-1 bg-slate-50 rounded-2xl border border-slate-100 p-6">
           
           {/* TAB 1: BUSINESS PROFILE */}
           {activeTab === "profile" && (
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-              <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider pb-3 border-b border-slate-900">
+              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider pb-3 border-b border-slate-100">
                 Business Details
               </h3>
 
@@ -339,9 +339,9 @@ export default function SettingsPage() {
                   <input
                     type="text"
                     {...register("shop_name")}
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none focus:border-blue-500"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:border-blue-500"
                   />
-                  {errors.shop_name && <p className="text-xs text-red-400">{errors.shop_name.message}</p>}
+                  {errors.shop_name && <p className="text-xs text-red-650 font-semibold">{errors.shop_name.message}</p>}
                 </div>
 
                 <div className="space-y-2">
@@ -349,9 +349,9 @@ export default function SettingsPage() {
                   <input
                     type="email"
                     {...register("email")}
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none"
                   />
-                  {errors.email && <p className="text-xs text-red-400">{errors.email.message}</p>}
+                  {errors.email && <p className="text-xs text-red-650 font-semibold">{errors.email.message}</p>}
                 </div>
 
                 <div className="space-y-2">
@@ -359,9 +359,9 @@ export default function SettingsPage() {
                   <input
                     type="text"
                     {...register("phone")}
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none"
                   />
-                  {errors.phone && <p className="text-xs text-red-400">{errors.phone.message}</p>}
+                  {errors.phone && <p className="text-xs text-red-650 font-semibold">{errors.phone.message}</p>}
                 </div>
               </div>
 
@@ -370,26 +370,26 @@ export default function SettingsPage() {
                 <textarea
                   rows={4}
                   {...register("description")}
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none focus:border-blue-500 resize-none leading-relaxed"
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:border-blue-500 resize-none leading-relaxed"
                 />
               </div>
 
-              <h3 className="text-xs font-bold text-slate-455 uppercase tracking-wider pt-4 pb-2 border-b border-slate-900">
+              <h3 className="text-xs font-bold text-slate-455 uppercase tracking-wider pt-4 pb-2 border-b border-slate-100">
                 Address details
               </h3>
 
               <div className="grid gap-5 sm:grid-cols-3 text-xs">
                 <div className="space-y-1.5">
                   <label className="text-[10px] text-slate-500 font-bold uppercase">City</label>
-                  <input type="text" {...register("city")} className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none" />
+                  <input type="text" {...register("city")} className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-[10px] text-slate-500 font-bold uppercase">State</label>
-                  <input type="text" {...register("state")} className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none" />
+                  <input type="text" {...register("state")} className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-[10px] text-slate-500 font-bold uppercase">Country</label>
-                  <input type="text" {...register("country")} className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none" />
+                  <input type="text" {...register("country")} className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none" />
                 </div>
               </div>
 
@@ -397,7 +397,7 @@ export default function SettingsPage() {
                 <button
                   type="submit"
                   disabled={updateMutation.isPending}
-                  className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-xl font-bold text-white transition-all text-xs cursor-pointer"
+                  className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-2xl font-bold text-white transition-all text-xs cursor-pointer"
                 >
                   <Save className="h-4 w-4" /> Save Profile
                 </button>
@@ -408,7 +408,7 @@ export default function SettingsPage() {
           {/* TAB 2: BUSINESS HOURS */}
           {activeTab === "hours" && (
             <div className="space-y-5 text-xs">
-              <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider pb-3 border-b border-slate-900">
+              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider pb-3 border-b border-slate-100">
                 Operation schedules & shifts
               </h3>
 
@@ -419,7 +419,7 @@ export default function SettingsPage() {
                   value={businessHours}
                   onChange={(e) => setBusinessHours(e.target.value)}
                   placeholder="e.g. Mon-Fri: 09:00 - 18:00"
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none"
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none"
                 />
               </div>
 
@@ -430,7 +430,7 @@ export default function SettingsPage() {
                   <select
                     value={timezone}
                     onChange={(e) => setTimezone(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-slate-955 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none cursor-pointer font-semibold text-xs"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none cursor-pointer font-semibold text-xs"
                   >
                     <option value="UTC">UTC (Universal Coordinated)</option>
                     <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
@@ -448,42 +448,42 @@ export default function SettingsPage() {
                     value={holidaysText}
                     onChange={(e) => setHolidaysText(e.target.value)}
                     placeholder="e.g. 2026-07-09, 2026-12-25"
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none"
                   />
                 </div>
               </div>
 
               {/* Working Shifts */}
-              <div className="space-y-3 p-4 bg-slate-950 border border-slate-850 rounded-xl">
+              <div className="space-y-3 p-4 bg-slate-50 border border-slate-100 rounded-2xl">
                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Daily Shifts (Multiple Shifts support)</span>
                 
                 <div className="grid gap-5 sm:grid-cols-2 text-xs">
                   {/* Shift 1 */}
-                  <div className="space-y-2 border-r border-slate-900 pr-3">
-                    <span className="font-bold text-slate-400 block text-[10px]">Shift 1 (Primary)</span>
+                  <div className="space-y-2 border-r border-slate-100 pr-3">
+                    <span className="font-bold text-slate-500 block text-[10px]">Shift 1 (Primary)</span>
                     <div className="flex gap-2">
                       <div className="flex-1">
                         <label className="text-[9px] text-slate-500 block mb-1">Start Time</label>
-                        <input type="time" value={shift1Start} onChange={(e) => setShift1Start(e.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white outline-none" />
+                        <input type="time" value={shift1Start} onChange={(e) => setShift1Start(e.target.value)} className="w-full bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 rounded-2xl px-2.5 py-1.5 text-slate-900 outline-none" />
                       </div>
                       <div className="flex-1">
                         <label className="text-[9px] text-slate-500 block mb-1">End Time</label>
-                        <input type="time" value={shift1End} onChange={(e) => setShift1End(e.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white outline-none" />
+                        <input type="time" value={shift1End} onChange={(e) => setShift1End(e.target.value)} className="w-full bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 rounded-2xl px-2.5 py-1.5 text-slate-900 outline-none" />
                       </div>
                     </div>
                   </div>
 
                   {/* Shift 2 */}
                   <div className="space-y-2">
-                    <span className="font-bold text-slate-400 block text-[10px]">Shift 2 (Split Shift)</span>
+                    <span className="font-bold text-slate-500 block text-[10px]">Shift 2 (Split Shift)</span>
                     <div className="flex gap-2">
                       <div className="flex-1">
                         <label className="text-[9px] text-slate-500 block mb-1">Start Time</label>
-                        <input type="time" value={shift2Start} onChange={(e) => setShift2Start(e.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white outline-none" />
+                        <input type="time" value={shift2Start} onChange={(e) => setShift2Start(e.target.value)} className="w-full bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 rounded-2xl px-2.5 py-1.5 text-slate-900 outline-none" />
                       </div>
                       <div className="flex-1">
                         <label className="text-[9px] text-slate-500 block mb-1">End Time</label>
-                        <input type="time" value={shift2End} onChange={(e) => setShift2End(e.target.value)} className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white outline-none" />
+                        <input type="time" value={shift2End} onChange={(e) => setShift2End(e.target.value)} className="w-full bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 rounded-2xl px-2.5 py-1.5 text-slate-900 outline-none" />
                       </div>
                     </div>
                   </div>
@@ -492,7 +492,7 @@ export default function SettingsPage() {
 
               <button
                 onClick={handleSaveHours}
-                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-xl font-bold text-white text-xs cursor-pointer"
+                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-2xl font-bold text-white text-xs cursor-pointer"
               >
                 <Save className="h-4 w-4" /> Save Operations Config
               </button>
@@ -502,7 +502,7 @@ export default function SettingsPage() {
           {/* TAB 2.5: CALL ROUTING */}
           {activeTab === "routing" && (
             <div className="space-y-6 text-xs">
-              <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider pb-3 border-b border-slate-900">
+              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider pb-3 border-b border-slate-100">
                 Intelligent Call Routing
               </h3>
 
@@ -513,7 +513,7 @@ export default function SettingsPage() {
                     <select
                       value={routingRules.mode}
                       onChange={(e) => setRoutingRules({ ...routingRules, mode: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none cursor-pointer"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none cursor-pointer"
                     >
                       <option value="round_robin">Round Robin (Even Distribution)</option>
                       <option value="least_busy">Least Busy Agent</option>
@@ -523,28 +523,28 @@ export default function SettingsPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <label className="flex items-center gap-3 p-3 bg-slate-950 border border-slate-850 rounded-xl cursor-pointer">
+                    <label className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-100 rounded-2xl cursor-pointer">
                       <input 
                         type="checkbox" 
                         checked={routingRules.priority_routing}
                         onChange={(e) => setRoutingRules({ ...routingRules, priority_routing: e.target.checked })}
-                        className="h-4 w-4 rounded border-slate-800 bg-slate-900 text-blue-600 focus:ring-blue-600"
+                        className="h-4 w-4 rounded border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 text-blue-600 focus:ring-blue-600"
                       />
                       <div>
-                        <span className="font-bold text-white block">Priority Customer Routing</span>
+                        <span className="font-bold text-slate-900 block">Priority Customer Routing</span>
                         <span className="text-[10px] text-slate-500 block">Routes high-LTV VIP customers to senior agents first.</span>
                       </div>
                     </label>
 
-                    <label className="flex items-center gap-3 p-3 bg-slate-950 border border-slate-850 rounded-xl cursor-pointer">
+                    <label className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-100 rounded-2xl cursor-pointer">
                       <input 
                         type="checkbox" 
                         checked={routingRules.respect_business_hours}
                         onChange={(e) => setRoutingRules({ ...routingRules, respect_business_hours: e.target.checked })}
-                        className="h-4 w-4 rounded border-slate-800 bg-slate-900 text-blue-600 focus:ring-blue-600"
+                        className="h-4 w-4 rounded border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 text-blue-600 focus:ring-blue-600"
                       />
                       <div>
-                        <span className="font-bold text-white block">Respect Business Hours</span>
+                        <span className="font-bold text-slate-900 block">Respect Business Hours</span>
                         <span className="text-[10px] text-slate-500 block">Send calls to offline queue if outside configured hours.</span>
                       </div>
                     </label>
@@ -552,35 +552,35 @@ export default function SettingsPage() {
 
                   <button
                     onClick={handleSaveRouting}
-                    className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-xl font-bold text-white text-xs cursor-pointer w-fit"
+                    className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-2xl font-bold text-white text-xs cursor-pointer w-fit"
                   >
                     <Save className="h-4 w-4" /> Save Routing Rules
                   </button>
                 </div>
 
                 {/* Live Queue Visualizer */}
-                <div className="bg-slate-900/40 border border-slate-850 p-4 rounded-xl space-y-4">
-                  <h4 className="text-[10px] font-bold uppercase text-slate-500 tracking-wider flex items-center gap-1.5 border-b border-slate-850 pb-2">
+                <div className="bg-slate-50/50 border border-slate-100 p-4 rounded-2xl space-y-4">
+                  <h4 className="text-[10px] font-bold uppercase text-slate-500 tracking-wider flex items-center gap-1.5 border-b border-slate-100 pb-2">
                     <Users className="h-4 w-4 text-blue-500" />
                     Real-Time Queue Status
                   </h4>
                   
                   <div className="space-y-3">
-                    <div className="flex justify-between items-center p-2.5 bg-slate-950 rounded-lg border border-slate-900">
-                      <span className="text-slate-400">Customers Waiting</span>
-                      <span className="font-mono font-bold text-amber-400">{visitorsWaiting}</span>
+                    <div className="flex justify-between items-center p-2.5 bg-slate-50 rounded-2xl border border-slate-100">
+                      <span className="text-slate-500">Customers Waiting</span>
+                      <span className="font-mono font-bold text-amber-600 font-semibold">{visitorsWaiting}</span>
                     </div>
 
-                    <div className="flex justify-between items-center p-2.5 bg-slate-950 rounded-lg border border-slate-900">
-                      <span className="text-slate-400">Total Online Agents</span>
-                      <span className="font-mono font-bold text-emerald-400">
+                    <div className="flex justify-between items-center p-2.5 bg-slate-50 rounded-2xl border border-slate-100">
+                      <span className="text-slate-500">Total Online Agents</span>
+                      <span className="font-mono font-bold text-emerald-600">
                         {agents.filter(a => a.is_online).length} / {agents.length}
                       </span>
                     </div>
 
-                    <div className="flex justify-between items-center p-2.5 bg-slate-950 rounded-lg border border-slate-900">
-                      <span className="text-slate-400">Next Agent Up</span>
-                      <span className="font-bold text-white text-[10px]">
+                    <div className="flex justify-between items-center p-2.5 bg-slate-50 rounded-2xl border border-slate-100">
+                      <span className="text-slate-500">Next Agent Up</span>
+                      <span className="font-bold text-slate-900 text-[10px]">
                         {agents.filter(a => a.is_online).length > 0 
                           ? agents.filter(a => a.is_online)[Math.floor(Math.random() * agents.filter(a => a.is_online).length)]?.profiles?.full_name 
                           : "No agents online"}
@@ -596,31 +596,31 @@ export default function SettingsPage() {
           {/* TAB 3: WIDGET & BRANDING */}
           {activeTab === "widget" && (
             <div className="space-y-6 text-xs">
-              <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider pb-3 border-b border-slate-900">
+              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider pb-3 border-b border-slate-100">
                 Widget & Customizer settings
               </h3>
 
-              <div className="p-4 bg-slate-950 rounded-2xl border border-slate-850 space-y-4">
+              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-4">
                 <div className="flex justify-between items-center">
                   <div>
-                    <span className="font-bold text-white text-sm">Theme Branding</span>
+                    <span className="font-bold text-slate-900 text-sm">Theme Branding</span>
                     <p className="text-[10px] text-slate-500 mt-0.5">Widget styling is managed inside the dedicated Customizer page.</p>
                   </div>
                   
                   <span 
                     style={{ backgroundColor: shop.widget_color || "#2563eb" }}
-                    className="h-6 w-6 rounded-full border border-slate-700" 
+                    className="h-6 w-6 rounded-full border border-slate-200" 
                   />
                 </div>
 
-                <div className="flex justify-between items-center text-[11px] border-t border-slate-900 pt-3">
-                  <span className="text-slate-400">Position Alignment:</span>
-                  <span className="font-mono text-white capitalize">{shop.widget_position || "bottom-right"}</span>
+                <div className="flex justify-between items-center text-[11px] border-t border-slate-100 pt-3">
+                  <span className="text-slate-500">Position Alignment:</span>
+                  <span className="font-mono text-slate-900 capitalize">{shop.widget_position || "bottom-right"}</span>
                 </div>
 
                 <div className="flex justify-between items-center text-[11px]">
-                  <span className="text-slate-400">Consultation Calls availability:</span>
-                  <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${shop.is_online ? "bg-emerald-500/10 text-emerald-400" : "bg-slate-800 text-slate-400"}`}>
+                  <span className="text-slate-500">Consultation Calls availability:</span>
+                  <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${shop.is_online ? "bg-emerald-50 border border-emerald-100 text-emerald-700" : "bg-slate-100 border border-slate-200 text-slate-500"}`}>
                     {shop.is_online ? "Online" : "Offline"}
                   </span>
                 </div>
@@ -628,7 +628,7 @@ export default function SettingsPage() {
 
               <button
                 onClick={() => navigate("/seller/widget")}
-                className="flex items-center gap-1 bg-slate-900 border border-slate-800 hover:border-slate-700 px-4 py-2.5 rounded-xl font-bold text-white text-xs transition-all cursor-pointer"
+                className="flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 hover:border-slate-300 px-4 py-2.5 rounded-2xl font-bold text-slate-900 text-xs cursor-pointer"
               >
                 <span>Open Customizer page</span>
                 <ArrowRight className="h-4 w-4" />
@@ -639,14 +639,14 @@ export default function SettingsPage() {
           {/* TAB 4: NOTIFICATION SETTINGS */}
           {activeTab === "notifications" && (
             <div className="space-y-6 text-xs">
-              <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider pb-3 border-b border-slate-900">
+              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider pb-3 border-b border-slate-100">
                 Console Alert Channels
               </h3>
 
               <div className="space-y-4">
-                <div className="flex justify-between items-center p-3.5 bg-slate-950 rounded-xl border border-slate-850">
+                <div className="flex justify-between items-center p-3.5 bg-slate-50 rounded-2xl border border-slate-100">
                   <div>
-                    <span className="font-bold text-white">Email alerts</span>
+                    <span className="font-bold text-slate-900">Email alerts</span>
                     <p className="text-[10px] text-slate-500 mt-0.5">Receive missed consultation digests via email.</p>
                   </div>
                   <button
@@ -657,9 +657,9 @@ export default function SettingsPage() {
                   </button>
                 </div>
 
-                <div className="flex justify-between items-center p-3.5 bg-slate-950 rounded-xl border border-slate-850">
+                <div className="flex justify-between items-center p-3.5 bg-slate-50 rounded-2xl border border-slate-100">
                   <div>
-                    <span className="font-bold text-white">Browser Push warnings</span>
+                    <span className="font-bold text-slate-900">Browser Push warnings</span>
                     <p className="text-[10px] text-slate-500 mt-0.5">Allow HTML browser alerts for new WebRTC signals.</p>
                   </div>
                   <button
@@ -676,7 +676,7 @@ export default function SettingsPage() {
           {/* TAB 5: PRIVACY & SECURITY */}
           {activeTab === "security" && (
             <form onSubmit={handleChangePassword} className="space-y-5 text-xs">
-              <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider pb-3 border-b border-slate-900">
+              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider pb-3 border-b border-slate-100">
                 Privacy & Account Security
               </h3>
 
@@ -688,7 +688,7 @@ export default function SettingsPage() {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Enter new secure password..."
-                    className="w-full px-4 py-2.5 bg-slate-950 border border-slate-850 rounded-xl text-white outline-none focus:border-blue-500 font-mono"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:border-blue-500 font-mono"
                     required
                   />
                   <KeyRound className="absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
@@ -698,7 +698,7 @@ export default function SettingsPage() {
               <button
                 type="submit"
                 disabled={changingPassword}
-                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-xl font-bold text-white text-xs cursor-pointer"
+                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-2xl font-bold text-white text-xs cursor-pointer"
               >
                 {changingPassword ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 <span>Update Password</span>
@@ -709,28 +709,28 @@ export default function SettingsPage() {
           {/* TAB 6: INTEGRATIONS */}
           {activeTab === "integrations" && (
             <div className="space-y-6 text-xs">
-              <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider pb-3 border-b border-slate-900">
+              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider pb-3 border-b border-slate-100">
                 Connected App settings
               </h3>
 
-              <div className="p-4 bg-slate-950 rounded-2xl border border-slate-850 space-y-3">
+              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Shopify domain:</span>
-                  <span className="font-mono text-white text-[11px]">{shop.shopify_domain || "Not connected"}</span>
+                  <span className="text-slate-500">Shopify domain:</span>
+                  <span className="font-mono text-slate-900 text-[11px]">{shop.shopify_domain || "Not connected"}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Webhooks endpoint URL:</span>
-                  <span className="font-mono text-white text-[11px] truncate max-w-[180px]">{shop.webhook_url || "Not set"}</span>
+                  <span className="text-slate-500">Webhooks endpoint URL:</span>
+                  <span className="font-mono text-slate-900 text-[11px] truncate max-w-[180px]">{shop.webhook_url || "Not set"}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Google tracking ID:</span>
-                  <span className="font-mono text-white text-[11px]">{shop.google_analytics_id || "Not injected"}</span>
+                  <span className="text-slate-500">Google tracking ID:</span>
+                  <span className="font-mono text-slate-900 text-[11px]">{shop.google_analytics_id || "Not injected"}</span>
                 </div>
               </div>
 
               <button
                 onClick={() => navigate("/seller/integrations")}
-                className="flex items-center gap-1 bg-slate-900 border border-slate-800 hover:border-slate-700 px-4 py-2.5 rounded-xl font-bold text-white text-xs transition-all cursor-pointer"
+                className="flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 hover:border-slate-300 px-4 py-2.5 rounded-2xl font-bold text-slate-900 text-xs cursor-pointer"
               >
                 <span>Manage Integrations dashboard</span>
                 <ArrowRight className="h-4 w-4" />

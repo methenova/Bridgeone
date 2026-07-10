@@ -103,7 +103,7 @@ export default function ShopForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-2xl border border-slate-800 bg-slate-900 p-8"
+      className="rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-8"
     >
 
       {/* Shop Logo Upload */}
@@ -123,7 +123,7 @@ export default function ShopForm({
           placeholder="Shop Name"
           value={formData.shop_name}
           onChange={handleChange}
-          className="rounded-xl border border-slate-700 bg-slate-800 p-3 text-white"
+          className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-900"
         />
 
         <input
@@ -132,7 +132,7 @@ export default function ShopForm({
           placeholder="Business Email"
           value={formData.email}
           onChange={handleChange}
-          className="rounded-xl border border-slate-700 bg-slate-800 p-3 text-white"
+          className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-900"
         />
 
         <input
@@ -141,7 +141,7 @@ export default function ShopForm({
           placeholder="Phone"
           value={formData.phone}
           onChange={handleChange}
-          className="rounded-xl border border-slate-700 bg-slate-800 p-3 text-white"
+          className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-900"
         />
 
         <input
@@ -150,7 +150,7 @@ export default function ShopForm({
           placeholder="City"
           value={formData.city}
           onChange={handleChange}
-          className="rounded-xl border border-slate-700 bg-slate-800 p-3 text-white"
+          className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-900"
         />
 
         <input
@@ -159,7 +159,7 @@ export default function ShopForm({
           placeholder="State"
           value={formData.state}
           onChange={handleChange}
-          className="rounded-xl border border-slate-700 bg-slate-800 p-3 text-white"
+          className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-900"
         />
 
         <input
@@ -168,7 +168,7 @@ export default function ShopForm({
           placeholder="Country"
           value={formData.country}
           onChange={handleChange}
-          className="rounded-xl border border-slate-700 bg-slate-800 p-3 text-white"
+          className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-900"
         />
 
       </div>
@@ -179,7 +179,7 @@ export default function ShopForm({
         value={formData.description}
         onChange={handleChange}
         rows={5}
-        className="mt-6 w-full rounded-xl border border-slate-700 bg-slate-800 p-3 text-white"
+        className="mt-6 w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-900"
       />
 
       <textarea
@@ -188,7 +188,7 @@ export default function ShopForm({
         value={formData.address}
         onChange={handleChange}
         rows={3}
-        className="mt-6 w-full rounded-xl border border-slate-700 bg-slate-800 p-3 text-white"
+        className="mt-6 w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-900"
       />
 
       <input
@@ -197,13 +197,13 @@ export default function ShopForm({
         placeholder="Pincode"
         value={formData.pincode}
         onChange={handleChange}
-        className="mt-6 w-full rounded-xl border border-slate-700 bg-slate-800 p-3 text-white"
+        className="mt-6 w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-900"
       />
 
       <button
         type="submit"
         disabled={loading}
-        className="mt-8 rounded-xl bg-blue-600 px-8 py-3 font-semibold text-white transition hover:bg-blue-500 disabled:opacity-50"
+        className="mt-8 rounded-2xl bg-blue-600 px-8 py-3 font-semibold text-white transition hover:bg-blue-500 disabled:opacity-50"
       >
         {loading
           ? "Saving..."

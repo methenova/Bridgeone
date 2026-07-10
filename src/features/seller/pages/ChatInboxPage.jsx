@@ -80,26 +80,26 @@ export default function ChatInboxPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-white">Chat Inbox</h1>
-        <p className="mt-1 text-slate-400">Reply to customer queries and view message logs.</p>
+        <h1 className="text-3xl font-bold text-slate-900">Chat Inbox</h1>
+        <p className="mt-1 text-slate-500">Reply to customer queries and view message logs.</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3 border border-slate-900 rounded-3xl bg-slate-900/20 overflow-hidden h-[600px]">
+      <div className="grid gap-6 md:grid-cols-3 border border-slate-100 rounded-3xl bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 overflow-hidden h-[600px]">
         
         {/* Left: Contacts Pane */}
-        <div className="border-r border-slate-900 flex flex-col h-full bg-slate-950/20">
-          <div className="p-4 border-b border-slate-900">
+        <div className="border-r border-slate-100 flex flex-col h-full bg-slate-950/20">
+          <div className="p-4 border-b border-slate-100">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
               <input
                 type="text"
                 placeholder="Search conversations..."
-                className="w-full rounded-xl border border-slate-800 bg-slate-900 py-2 pl-9 pr-4 text-xs text-white placeholder-slate-600 outline-none"
+                className="w-full rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 py-2 pl-9 pr-4 text-xs text-slate-900 placeholder-slate-600 outline-none"
               />
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto divide-y divide-slate-900 scrollbar-none">
+          <div className="flex-1 overflow-y-auto divide-y divide-slate-100 scrollbar-none">
             {contactsLoading ? (
               <div className="p-4 text-center text-xs text-slate-500 animate-pulse">Loading contacts...</div>
             ) : contacts.length === 0 ? (
@@ -118,13 +118,13 @@ export default function ChatInboxPage() {
                       isActive ? "bg-blue-600/10 text-white" : "hover:bg-slate-900/40 text-slate-300"
                     }`}
                   >
-                    <div className="h-9 w-9 rounded-full bg-blue-600/10 text-blue-400 flex items-center justify-center shrink-0">
+                    <div className="h-9 w-9 rounded-full bg-blue-50 border border-blue-100/50 text-blue-600 font-semibold flex items-center justify-center shrink-0">
                       <User className="h-5 w-5" />
                     </div>
                     
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-baseline mb-0.5">
-                        <p className="text-xs font-bold truncate text-white">{c.user?.full_name || "Buyer"}</p>
+                        <p className="text-xs font-bold truncate text-slate-900">{c.user?.full_name || "Buyer"}</p>
                         {c.unread && (
                           <span className="h-2 w-2 rounded-full bg-blue-500 shrink-0" />
                         )}
@@ -143,12 +143,12 @@ export default function ChatInboxPage() {
           {selectedContact ? (
             <>
               {/* Active Header */}
-              <div className="flex items-center gap-3 border-b border-slate-900 px-6 py-4 bg-slate-950/40">
-                <div className="h-9 w-9 rounded-full bg-blue-600/10 text-blue-400 flex items-center justify-center">
+              <div className="flex items-center gap-3 border-b border-slate-100 px-6 py-4 bg-slate-950/40">
+                <div className="h-9 w-9 rounded-full bg-blue-50 border border-blue-100/50 text-blue-600 font-semibold flex items-center justify-center">
                   <User className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white">{selectedContact.user?.full_name || "Buyer"}</h4>
+                  <h4 className="text-xs font-bold text-slate-900">{selectedContact.user?.full_name || "Buyer"}</h4>
                   <p className="text-[10px] text-slate-500">{selectedContact.user?.email}</p>
                 </div>
               </div>
@@ -174,7 +174,7 @@ export default function ChatInboxPage() {
                         }`}>
                           {m.content && <p className="leading-relaxed">{m.content}</p>}
                           {m.image_url && (
-                            <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-950 mt-1 max-w-[200px]">
+                            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 mt-1 max-w-[200px]">
                               <img src={m.image_url} alt="" className="object-cover w-full h-auto" />
                             </div>
                           )}
@@ -190,15 +190,15 @@ export default function ChatInboxPage() {
               </div>
 
               {/* Input Form */}
-              <form onSubmit={handleSend} className="border-t border-slate-900 p-4 bg-slate-950/40 space-y-3">
+              <form onSubmit={handleSend} className="border-t border-slate-100 p-4 bg-slate-950/40 space-y-3">
                 {attachmentUrl && (
-                  <div className="relative inline-block border border-slate-800 rounded-xl overflow-hidden bg-slate-900 p-1.5 pr-8 text-xs text-slate-300">
-                    <Image className="inline h-4.5 w-4.5 text-blue-400 mr-1.5" />
+                  <div className="relative inline-block border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-1.5 pr-8 text-xs text-slate-600">
+                    <Image className="inline h-4.5 w-4.5 text-blue-600 font-semibold mr-1.5" />
                     <span>Image attachment loaded</span>
                     <button
                       type="button"
                       onClick={() => setAttachmentUrl("")}
-                      className="absolute right-1 top-1 text-slate-500 hover:text-white"
+                      className="absolute right-1 top-1 text-slate-500 hover:text-slate-900"
                     >
                       ✕
                     </button>
@@ -209,7 +209,7 @@ export default function ChatInboxPage() {
                   <button
                     type="button"
                     onClick={handleAttachImage}
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-800 text-slate-400 hover:text-white"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 text-slate-500 hover:text-slate-900"
                     title="Attach Mock Image"
                   >
                     <Paperclip className="h-4.5 w-4.5" />
@@ -220,12 +220,12 @@ export default function ChatInboxPage() {
                     value={messageText}
                     onChange={(e) => setMessageText(e.target.value)}
                     placeholder="Type a message..."
-                    className="flex-1 rounded-xl border border-slate-800 bg-slate-900 px-4 py-2.5 text-xs text-white outline-none focus:border-blue-500 placeholder-slate-600"
+                    className="flex-1 rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 px-4 py-2.5 text-xs text-slate-900 outline-none focus:border-blue-500 placeholder-slate-600"
                   />
 
                   <button
                     type="submit"
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white hover:bg-blue-500 transition-colors"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white hover:bg-blue-500 transition-colors"
                   >
                     <Send className="h-4.5 w-4.5" />
                   </button>
@@ -235,7 +235,7 @@ export default function ChatInboxPage() {
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-center text-slate-600">
               <MessageSquare className="h-12 w-12 mb-3 stroke-[1.2]" />
-              <h3 className="text-sm font-bold text-white">Select a Chat</h3>
+              <h3 className="text-sm font-bold text-slate-900">Select a Chat</h3>
               <p className="text-xs text-slate-500 mt-1">Choose a customer conversation to review query history.</p>
             </div>
           )}

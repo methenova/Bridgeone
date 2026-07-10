@@ -37,12 +37,13 @@ createRoot(document.getElementById("root")).render(
           toastOptions={{
             duration: 3000,
             style: {
-              background: "#0f172a",
-              color: "#ffffff",
-              border: "1px solid #334155",
-              borderRadius: "12px",
+              background: "#ffffff",
+              color: "#0f172a",
+              border: "1px solid #e2e8f0",
+              borderRadius: "16px",
               padding: "16px",
               fontSize: "14px",
+              boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025)",
             },
 
             success: {

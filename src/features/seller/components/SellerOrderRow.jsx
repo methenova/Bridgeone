@@ -18,20 +18,20 @@ export default function SellerOrderRow({ order, onView, onPrintInvoice }) {
 
 
   return (
-    <tr className="hover:bg-slate-800/40 transition-colors">
+    <tr className="hover:bg-slate-50/40 transition-colors">
       {/* Order ID */}
-      <td className="px-6 py-4 font-mono text-sm text-slate-300">
+      <td className="px-6 py-4 font-mono text-sm text-slate-600">
         #{order.id.slice(0, 8).toUpperCase()}
       </td>
 
       {/* Date */}
-      <td className="px-6 py-4 text-sm text-slate-400">
+      <td className="px-6 py-4 text-sm text-slate-500">
         {dateStr}
       </td>
 
       {/* Customer */}
       <td className="px-6 py-4">
-        <div className="text-sm font-medium text-white">{customerName}</div>
+        <div className="text-sm font-medium text-slate-900">{customerName}</div>
         <div className="text-xs text-slate-500">{customerEmail}</div>
       </td>
 
@@ -39,7 +39,7 @@ export default function SellerOrderRow({ order, onView, onPrintInvoice }) {
       <td className="px-6 py-4">
         {mainItem && (
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-slate-800 border border-slate-700">
+            <div className="h-8 w-8 shrink-0 overflow-hidden rounded-2xl bg-slate-50 border border-slate-200">
               {mainItem.product?.thumbnail_url ? (
                 <img
                   src={mainItem.product.thumbnail_url}
@@ -51,7 +51,7 @@ export default function SellerOrderRow({ order, onView, onPrintInvoice }) {
               )}
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm text-white max-w-[180px]">
+              <p className="truncate text-sm text-slate-900 max-w-[180px]">
                 {mainItem.product?.name}
               </p>
               <p className="text-xs text-slate-500">
@@ -64,7 +64,7 @@ export default function SellerOrderRow({ order, onView, onPrintInvoice }) {
       </td>
 
       {/* Value */}
-      <td className="px-6 py-4 text-sm font-semibold text-white">
+      <td className="px-6 py-4 text-sm font-semibold text-slate-900">
         ₹{order.shopTotal.toLocaleString()}
       </td>
 
@@ -72,7 +72,7 @@ export default function SellerOrderRow({ order, onView, onPrintInvoice }) {
       <td className="px-6 py-4">
         <div className="flex items-center gap-2">
           <ProductStatusBadge status={order.status === "pending" ? "inactive" : order.status === "cancelled" ? "inactive" : "active"} />
-          <span className="text-xs font-semibold capitalize text-slate-300">
+          <span className="text-xs font-semibold capitalize text-slate-600">
             {order.status}
           </span>
         </div>
@@ -84,14 +84,14 @@ export default function SellerOrderRow({ order, onView, onPrintInvoice }) {
           <button
             onClick={() => onView(order)}
             title="View details"
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-700 bg-slate-800 text-slate-400 hover:text-white hover:border-slate-500 transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-500 hover:text-slate-900 hover:border-slate-500 transition-colors"
           >
             <Eye className="h-4 w-4" />
           </button>
           <button
             onClick={() => onPrintInvoice(order)}
             title="Print Invoice"
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-700 bg-slate-800 text-slate-400 hover:text-white hover:border-slate-500 transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-500 hover:text-slate-900 hover:border-slate-500 transition-colors"
           >
             <Printer className="h-4 w-4" />
           </button>

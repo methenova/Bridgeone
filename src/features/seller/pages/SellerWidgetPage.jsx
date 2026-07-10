@@ -236,8 +236,8 @@ export default function SellerWidgetPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-850" />
+        <div className="h-10 w-48 animate-pulse rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300" />
+        <div className="h-96 animate-pulse rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100" />
       </div>
     );
   }
@@ -245,11 +245,11 @@ export default function SellerWidgetPage() {
   if (!shop) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
-        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-400">
+        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50 border border-amber-100/50 text-amber-600 font-semibold">
           ⚠️
         </div>
-        <h3 className="text-xl font-semibold text-white">No Shop Registered</h3>
-        <p className="mt-2 text-slate-400 max-w-sm">
+        <h3 className="text-xl font-semibold text-slate-900">No Shop Registered</h3>
+        <p className="mt-2 text-slate-500 max-w-sm">
           Please register your shop profile to configure customer widget settings.
         </p>
       </div>
@@ -257,16 +257,16 @@ export default function SellerWidgetPage() {
   }
 
   return (
-    <div className="space-y-6 text-white max-w-7xl relative">
+    <div className="space-y-6 text-slate-900 max-w-7xl relative">
       
       {/* Header with Sub-Tabs */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-900 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-4">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight">Widget Configuration</h1>
-          <p className="mt-1 text-xs text-slate-400">Customize launcher color branding, edit greeting banners, set business timings, and copy embed snippets.</p>
+          <p className="mt-1 text-xs text-slate-500">Customize launcher color branding, edit greeting banners, set business timings, and copy embed snippets.</p>
         </div>
 
-        <div className="flex gap-2 bg-slate-900/30 p-1.5 rounded-xl border border-slate-900 text-xs font-semibold self-start sm:self-auto">
+        <div className="flex gap-2 bg-white shadow-sm border border-slate-100/80 p-1.5 rounded-2xl border-slate-100 text-xs font-semibold self-start sm:self-auto">
           <button
             onClick={() => setActiveSubTab("settings")}
             className={`px-4 py-2 rounded-lg transition-all cursor-pointer ${
@@ -296,8 +296,8 @@ export default function SellerWidgetPage() {
           {/* Left 2 Cols: Form Configurator */}
           <div className="lg:col-span-2 space-y-6">
             
-            <form onSubmit={handleSaveWidgetSettings} className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-6">
-              <h3 className="text-xs font-bold text-slate-450 uppercase tracking-wider flex items-center gap-1.5 pb-4 border-b border-slate-900">
+            <form onSubmit={handleSaveWidgetSettings} className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 p-6 space-y-6">
+              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5 pb-4 border-b border-slate-100">
                 <Sliders className="h-4 w-4 text-blue-500" />
                 <span>Theme customizer</span>
               </h3>
@@ -312,13 +312,13 @@ export default function SellerWidgetPage() {
                       type="color"
                       value={widgetColor}
                       onChange={(e) => setWidgetColor(e.target.value)}
-                      className="h-10 w-16 bg-transparent border border-slate-850 rounded-xl cursor-pointer"
+                      className="h-10 w-16 bg-transparent border border-slate-100 rounded-2xl cursor-pointer"
                     />
                     <input
                       type="text"
                       value={widgetColor}
                       onChange={(e) => setWidgetColor(e.target.value)}
-                      className="flex-1 rounded-xl border border-slate-850 bg-slate-950 px-3.5 py-2 text-white outline-none focus:border-blue-500 font-mono"
+                      className="flex-1 rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2 text-slate-900 outline-none focus:border-blue-500 font-mono"
                     />
                   </div>
                 </div>
@@ -329,7 +329,7 @@ export default function SellerWidgetPage() {
                   <select
                     value={widgetPosition}
                     onChange={(e) => setWidgetPosition(e.target.value)}
-                    className="w-full rounded-xl border border-slate-850 bg-slate-950 px-3.5 py-2.5 text-white outline-none focus:border-blue-500 font-semibold"
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-semibold"
                   >
                     <option value="bottom-right">Bottom Right alignment</option>
                     <option value="bottom-left">Bottom Left alignment</option>
@@ -344,7 +344,7 @@ export default function SellerWidgetPage() {
                     value={logoUrl}
                     onChange={(e) => setLogoUrl(e.target.value)}
                     placeholder="https://bucket.merchant.com/images/widget-logo.png"
-                    className="w-full rounded-xl border border-slate-850 bg-slate-950 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                   />
                 </div>
 
@@ -355,7 +355,7 @@ export default function SellerWidgetPage() {
                     type="text"
                     value={welcomeMessage}
                     onChange={(e) => setWelcomeMessage(e.target.value)}
-                    className="w-full rounded-xl border border-slate-850 bg-slate-950 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                   />
                 </div>
 
@@ -366,14 +366,14 @@ export default function SellerWidgetPage() {
                     type="text"
                     value={businessHours}
                     onChange={(e) => setBusinessHours(e.target.value)}
-                    className="w-full rounded-xl border border-slate-850 bg-slate-950 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                   />
                 </div>
 
                 {/* Availability Switch */}
                 <div className="sm:col-span-2 space-y-2">
                   <label className="text-[10px] text-slate-500 font-bold uppercase">Accept Live Video Calls</label>
-                  <div className="flex items-center gap-3 bg-slate-950 p-4 rounded-xl border border-slate-850">
+                  <div className="flex items-center gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100">
                     <button
                       type="button"
                       onClick={() => setIsOnline(!isOnline)}
@@ -388,7 +388,7 @@ export default function SellerWidgetPage() {
                       />
                     </button>
                     <div>
-                      <span className="block font-bold text-white">
+                      <span className="block font-bold text-slate-900">
                         {isOnline ? "Status: Live Calls Enabled" : "Status: Live Calls Disabled"}
                       </span>
                       <p className="text-[10px] text-slate-500 mt-0.5">
@@ -402,11 +402,11 @@ export default function SellerWidgetPage() {
 
               </div>
 
-              <div className="border-t border-slate-900 pt-4 flex justify-end">
+              <div className="border-t border-slate-100 pt-4 flex justify-end">
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 text-white px-5 py-2.5 rounded-xl font-bold cursor-pointer transition-all active:scale-[0.98]"
+                  className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 text-white px-5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all active:scale-[0.98]"
                 >
                   {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
                   <span>Save Widget Configurations</span>
@@ -415,21 +415,21 @@ export default function SellerWidgetPage() {
             </form>
 
             {/* Copy Script Snippet */}
-            <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4">
-              <div className="flex justify-between items-center pb-4 border-b border-slate-900">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Embed Launcher Script</h3>
+            <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 p-6 space-y-4">
+              <div className="flex justify-between items-center pb-4 border-b border-slate-100">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Embed Launcher Script</h3>
                 <div className="flex gap-2">
                   <button
                     onClick={handleRotateToken}
                     disabled={rotatingToken}
-                    className="flex items-center gap-1 bg-slate-900 border border-slate-850 hover:border-slate-800 px-3 py-1.5 rounded-lg text-[9px] font-bold text-slate-450 hover:text-white uppercase transition-all cursor-pointer"
+                    className="flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 hover:border-slate-300 px-3 py-1.5 rounded-2xl text-[9px] font-bold text-slate-500 hover:text-slate-900 uppercase cursor-pointer"
                   >
                     <RefreshCw className={`h-3 w-3 ${rotatingToken ? "animate-spin" : ""}`} />
                     Rotate Key
                   </button>
                   <button
                     onClick={handleCopySnippet}
-                    className="flex items-center gap-1 bg-blue-600/10 border border-blue-500/20 px-3 py-1.5 rounded-lg text-[9px] font-bold text-blue-400 hover:text-white uppercase transition-all cursor-pointer"
+                    className="flex items-center gap-1 bg-blue-50 border border-blue-100/50 border-blue-500/20 px-3 py-1.5 rounded-2xl text-[9px] font-bold text-blue-600 font-semibold hover:text-slate-900 uppercase transition-all cursor-pointer"
                   >
                     {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                     <span>{copied ? "Copied" : "Copy snippet"}</span>
@@ -439,9 +439,9 @@ export default function SellerWidgetPage() {
 
               <div className="space-y-3 text-xs">
                 <p className="text-slate-500 leading-normal">
-                  To inject the video consult call widget, copy this code and paste it right before the closing <code className="text-blue-400 font-mono">&lt;/body&gt;</code> tag of your storefront HTML:
+                  To inject the video consult call widget, copy this code and paste it right before the closing <code className="text-blue-600 font-semibold font-mono">&lt;/body&gt;</code> tag of your storefront HTML:
                 </p>
-                <pre className="bg-slate-950 p-4 rounded-xl border border-slate-850 font-mono text-[10px] text-slate-400 overflow-x-auto select-all leading-relaxed whitespace-pre-wrap">
+                <pre className="bg-slate-50 p-4 rounded-2xl border border-slate-100 font-mono text-[10px] text-slate-500 overflow-x-auto select-all leading-relaxed whitespace-pre-wrap">
                   {snippetCode}
                 </pre>
               </div>
@@ -450,32 +450,32 @@ export default function SellerWidgetPage() {
           </div>
 
           {/* Right Col: Live Responsive simulator */}
-          <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4 flex flex-col justify-between h-auto">
+          <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 p-6 space-y-4 flex flex-col justify-between h-auto">
             <div>
               <h3 className="text-xs font-bold text-slate-455 uppercase tracking-wider">Live Preview Simulator</h3>
               <p className="text-xs text-slate-500">Real-time simulation layout styled using your settings.</p>
             </div>
 
             {/* Interactive preview box */}
-            <div className="h-96 rounded-xl border border-slate-850 bg-slate-950 flex flex-col justify-between p-4 relative overflow-hidden">
+            <div className="h-96 rounded-2xl border border-slate-100 bg-slate-50 flex flex-col justify-between p-4 relative overflow-hidden">
               
               {/* Header info */}
-              <div className="flex justify-between items-center text-[9px] text-slate-600 border-b border-slate-900 pb-2">
+              <div className="flex justify-between items-center text-[9px] text-slate-600 border-b border-slate-100 pb-2">
                 <span>Merchant site: simulator.com</span>
                 <span className="font-mono">IP: 127.0.0.1</span>
               </div>
 
               {/* Custom Welcome Message Banner */}
               <div className="flex-1 flex items-center justify-center p-4">
-                <div className="bg-slate-900 border border-slate-850 p-4 rounded-xl shadow-lg max-w-xs space-y-2 text-center">
+                <div className="bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 p-4 rounded-2xl shadow-lg max-w-xs space-y-2 text-center">
                   {logoUrl ? (
                     <img src={logoUrl} alt="Store Logo" className="h-7 w-7 rounded-full object-cover mx-auto" />
                   ) : (
-                    <div className="h-7 w-7 rounded-full bg-blue-600/10 text-blue-400 flex items-center justify-center font-bold text-xs mx-auto">
+                    <div className="h-7 w-7 rounded-full bg-blue-50 border border-blue-100/50 text-blue-600 font-semibold flex items-center justify-center font-bold text-xs mx-auto">
                       W
                     </div>
                   )}
-                  <p className="text-[10px] text-slate-300 font-bold leading-normal">{welcomeMessage}</p>
+                  <p className="text-[10px] text-slate-600 font-bold leading-normal">{welcomeMessage}</p>
                   <span className="inline-block text-[8px] text-slate-500 font-semibold">{businessHours}</span>
                 </div>
               </div>
@@ -487,12 +487,12 @@ export default function SellerWidgetPage() {
                   widgetPosition === "bottom-right" ? "right-4" : "left-4"
                 }`}
               >
-                <Video className="h-5 w-5 text-white" />
+                <Video className="h-5 w-5 text-slate-900" />
               </div>
 
             </div>
 
-            <div className="text-[9px] text-slate-500 pt-3 border-t border-slate-900 flex items-center gap-1">
+            <div className="text-[9px] text-slate-500 pt-3 border-t border-slate-100 flex items-center gap-1">
               <Info className="h-3.5 w-3.5 text-blue-500 shrink-0" />
               <span>Theme modifications auto-render inside the preview simulator.</span>
             </div>
@@ -513,45 +513,45 @@ export default function SellerWidgetPage() {
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 text-xs font-semibold">
                 
                 {/* Views */}
-                <div className="bg-slate-900/20 border border-slate-900 p-4.5 rounded-xl flex items-center justify-between">
+                <div className="bg-white shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300 border-slate-100 p-4.5 rounded-2xl flex items-center justify-between">
                   <div className="space-y-1">
                     <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Widget Views</span>
-                    <p className="text-xl font-bold text-white">{analyticsData.views}</p>
+                    <p className="text-xl font-bold text-slate-900">{analyticsData.views}</p>
                   </div>
-                  <div className="h-9 w-9 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center">
+                  <div className="h-9 w-9 rounded-2xl bg-blue-50 border border-blue-100/50 text-blue-600 font-semibold flex items-center justify-center">
                     <Eye className="h-4.5 w-4.5" />
                   </div>
                 </div>
 
                 {/* Opens */}
-                <div className="bg-slate-900/20 border border-slate-900 p-4.5 rounded-xl flex items-center justify-between">
+                <div className="bg-white shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300 border-slate-100 p-4.5 rounded-2xl flex items-center justify-between">
                   <div className="space-y-1">
                     <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Widget Opens</span>
-                    <p className="text-xl font-bold text-white">{analyticsData.opens}</p>
+                    <p className="text-xl font-bold text-slate-900">{analyticsData.opens}</p>
                   </div>
-                  <div className="h-9 w-9 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
+                  <div className="h-9 w-9 rounded-2xl bg-indigo-50 border border-indigo-100/50 text-indigo-600 font-semibold flex items-center justify-center">
                     <Activity className="h-4.5 w-4.5" />
                   </div>
                 </div>
 
                 {/* Click Rate */}
-                <div className="bg-slate-900/20 border border-slate-900 p-4.5 rounded-xl flex items-center justify-between">
+                <div className="bg-white shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300 border-slate-100 p-4.5 rounded-2xl flex items-center justify-between">
                   <div className="space-y-1">
                     <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Widget Click Rate</span>
-                    <p className="text-xl font-bold text-blue-400">{analyticsData.clickRate}%</p>
+                    <p className="text-xl font-bold text-blue-600 font-semibold">{analyticsData.clickRate}%</p>
                   </div>
-                  <div className="h-9 w-9 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center">
+                  <div className="h-9 w-9 rounded-2xl bg-blue-50 border border-blue-100/50 text-blue-600 font-semibold flex items-center justify-center">
                     <TrendingUp className="h-4.5 w-4.5" />
                   </div>
                 </div>
 
                 {/* Conversion Rate */}
-                <div className="bg-slate-900/20 border border-slate-900 p-4.5 rounded-xl flex items-center justify-between">
+                <div className="bg-white shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300 border-slate-100 p-4.5 rounded-2xl flex items-center justify-between">
                   <div className="space-y-1">
                     <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Checkout Conversion</span>
-                    <p className="text-xl font-bold text-emerald-400">{analyticsData.conversionRate}</p>
+                    <p className="text-xl font-bold text-emerald-600">{analyticsData.conversionRate}</p>
                   </div>
-                  <div className="h-9 w-9 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                  <div className="h-9 w-9 rounded-2xl bg-emerald-50 border border-emerald-100/50 text-emerald-600 font-semibold flex items-center justify-center">
                     <Sparkles className="h-4.5 w-4.5" />
                   </div>
                 </div>
@@ -562,45 +562,45 @@ export default function SellerWidgetPage() {
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 text-xs font-semibold">
                 
                 {/* Call Requests */}
-                <div className="bg-slate-900/20 border border-slate-900 p-4.5 rounded-xl flex items-center justify-between">
+                <div className="bg-white shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300 border-slate-100 p-4.5 rounded-2xl flex items-center justify-between">
                   <div className="space-y-1">
                     <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Call Requests</span>
-                    <p className="text-xl font-bold text-white">{analyticsData.callRequests}</p>
+                    <p className="text-xl font-bold text-slate-900">{analyticsData.callRequests}</p>
                   </div>
-                  <div className="h-9 w-9 rounded-lg bg-slate-800 text-slate-400 flex items-center justify-center">
+                  <div className="h-9 w-9 rounded-2xl bg-slate-50 text-slate-500 flex items-center justify-center">
                     <Video className="h-4.5 w-4.5" />
                   </div>
                 </div>
 
                 {/* Missed Calls */}
-                <div className="bg-slate-900/20 border border-slate-900 p-4.5 rounded-xl flex items-center justify-between">
+                <div className="bg-white shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300 border-slate-100 p-4.5 rounded-2xl flex items-center justify-between">
                   <div className="space-y-1">
                     <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Missed Requests</span>
-                    <p className="text-xl font-bold text-rose-400">{analyticsData.missedRequests}</p>
+                    <p className="text-xl font-bold text-rose-650 font-semibold">{analyticsData.missedRequests}</p>
                   </div>
-                  <div className="h-9 w-9 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center">
+                  <div className="h-9 w-9 rounded-2xl bg-rose-50 border border-rose-100/50 text-rose-650 font-semibold flex items-center justify-center">
                     <PhoneOff className="h-4.5 w-4.5" />
                   </div>
                 </div>
 
                 {/* Response Time */}
-                <div className="bg-slate-900/20 border border-slate-900 p-4.5 rounded-xl flex items-center justify-between">
+                <div className="bg-white shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300 border-slate-100 p-4.5 rounded-2xl flex items-center justify-between">
                   <div className="space-y-1">
                     <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Avg Response Time</span>
-                    <p className="text-xl font-bold text-amber-400 font-mono">{analyticsData.avgResponseTime}</p>
+                    <p className="text-xl font-bold text-amber-600 font-semibold font-mono">{analyticsData.avgResponseTime}</p>
                   </div>
-                  <div className="h-9 w-9 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                  <div className="h-9 w-9 rounded-2xl bg-amber-50 border border-amber-100/50 text-amber-600 font-semibold flex items-center justify-center">
                     <Clock className="h-4.5 w-4.5" />
                   </div>
                 </div>
 
                 {/* Wait Time */}
-                <div className="bg-slate-900/20 border border-slate-900 p-4.5 rounded-xl flex items-center justify-between">
+                <div className="bg-white shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300 border-slate-100 p-4.5 rounded-2xl flex items-center justify-between">
                   <div className="space-y-1">
                     <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Avg Wait Time</span>
-                    <p className="text-xl font-bold text-purple-400 font-mono">{analyticsData.avgWaitTime}</p>
+                    <p className="text-xl font-bold text-purple-650 font-semibold font-mono">{analyticsData.avgWaitTime}</p>
                   </div>
-                  <div className="h-9 w-9 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center">
+                  <div className="h-9 w-9 rounded-2xl bg-purple-50 border border-purple-100/50 text-purple-650 font-semibold flex items-center justify-center">
                     <Clock className="h-4.5 w-4.5" />
                   </div>
                 </div>
@@ -611,8 +611,8 @@ export default function SellerWidgetPage() {
               <div className="grid gap-6 lg:grid-cols-3 text-xs">
                 
                 {/* Trends Column */}
-                <div className="lg:col-span-2 rounded-2xl border border-slate-900 bg-slate-900/20 p-5 space-y-4">
-                  <h4 className="text-[10px] font-bold uppercase text-slate-500 tracking-wider pb-2 border-b border-slate-900">
+                <div className="lg:col-span-2 rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 p-5 space-y-4">
+                  <h4 className="text-[10px] font-bold uppercase text-slate-500 tracking-wider pb-2 border-b border-slate-100">
                     Call volume trends
                   </h4>
 
@@ -620,11 +620,11 @@ export default function SellerWidgetPage() {
                     {/* Daily */}
                     <div className="space-y-2">
                       <span className="text-[9px] uppercase font-bold text-slate-500">Daily breakdown</span>
-                      <div className="space-y-1 bg-slate-950 p-2.5 rounded-xl border border-slate-900">
+                      <div className="space-y-1 bg-slate-50 p-2.5 rounded-2xl border border-slate-100">
                         {analyticsData.dailyTrends.map((t, idx) => (
                           <div key={idx} className="flex justify-between font-mono text-[10px]">
                             <span className="text-slate-500">{t.label}:</span>
-                            <span className="text-white font-bold">{t.value} calls</span>
+                            <span className="text-slate-900 font-bold">{t.value} calls</span>
                           </div>
                         ))}
                         {analyticsData.dailyTrends.length === 0 && (
@@ -636,11 +636,11 @@ export default function SellerWidgetPage() {
                     {/* Weekly */}
                     <div className="space-y-2">
                       <span className="text-[9px] uppercase font-bold text-slate-500">Weekly breakdown</span>
-                      <div className="space-y-1 bg-slate-950 p-2.5 rounded-xl border border-slate-900">
+                      <div className="space-y-1 bg-slate-50 p-2.5 rounded-2xl border border-slate-100">
                         {analyticsData.weeklyTrends.map((t, idx) => (
                           <div key={idx} className="flex justify-between font-mono text-[10px]">
                             <span className="text-slate-500">{t.label}:</span>
-                            <span className="text-white font-bold">{t.value} calls</span>
+                            <span className="text-slate-900 font-bold">{t.value} calls</span>
                           </div>
                         ))}
                         {analyticsData.weeklyTrends.length === 0 && (
@@ -652,11 +652,11 @@ export default function SellerWidgetPage() {
                     {/* Monthly */}
                     <div className="space-y-2">
                       <span className="text-[9px] uppercase font-bold text-slate-500">Monthly breakdown</span>
-                      <div className="space-y-1 bg-slate-950 p-2.5 rounded-xl border border-slate-900">
+                      <div className="space-y-1 bg-slate-50 p-2.5 rounded-2xl border border-slate-100">
                         {analyticsData.monthlyTrends.map((t, idx) => (
                           <div key={idx} className="flex justify-between font-mono text-[10px]">
                             <span className="text-slate-500">{t.label}:</span>
-                            <span className="text-white font-bold">{t.value} calls</span>
+                            <span className="text-slate-900 font-bold">{t.value} calls</span>
                           </div>
                         ))}
                         {analyticsData.monthlyTrends.length === 0 && (
@@ -668,18 +668,18 @@ export default function SellerWidgetPage() {
                 </div>
 
                 {/* Top Landing Pages */}
-                <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-5 space-y-4">
-                  <h4 className="text-[10px] font-bold uppercase text-slate-500 tracking-wider pb-2 border-b border-slate-900">
+                <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 p-5 space-y-4">
+                  <h4 className="text-[10px] font-bold uppercase text-slate-500 tracking-wider pb-2 border-b border-slate-100">
                     Top Visitor Landing Pages
                   </h4>
 
                   <div className="space-y-2.5">
                     {analyticsData.landingPages.map((lp, idx) => (
-                      <div key={idx} className="flex items-center justify-between bg-slate-950 p-3 rounded-xl border border-slate-900">
-                        <span className="font-mono text-[10px] text-blue-400 truncate max-w-[160px]">
+                      <div key={idx} className="flex items-center justify-between bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                        <span className="font-mono text-[10px] text-blue-600 font-semibold truncate max-w-[160px]">
                           {lp.page}
                         </span>
-                        <span className="font-bold text-white shrink-0">
+                        <span className="font-bold text-slate-900 shrink-0">
                           {lp.count} hits
                         </span>
                       </div>

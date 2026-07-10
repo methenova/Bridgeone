@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Outlet, Navigate, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuthContext } from "@/context/AuthContext";
 import { supabase } from "@/config/supabase";
 import useSellerShop from "@/features/seller/hooks/useSellerShop";
@@ -161,8 +162,8 @@ export default function SellerLayout() {
 
   if (loading || shopLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-800 border-t-blue-500" />
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-900">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-blue-500" />
       </div>
     );
   }
@@ -172,15 +173,26 @@ export default function SellerLayout() {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
+    <div className="flex min-h-screen bg-slate-50 text-slate-800 overflow-x-hidden">
       {/* Sidebar - responsive desktop fixed / mobile sliding overlay */}
       <SellerSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="flex flex-1 flex-col min-w-0">
         <SellerTopbar onToggleSidebar={() => setSidebarOpen((prev) => !prev)} />
 
-        <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
-          <Outlet />
+        <main className="flex-1 p-6 md:p-8 overflow-y-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
+              className="w-full"
+            >
+              <Outlet />
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
     </div>

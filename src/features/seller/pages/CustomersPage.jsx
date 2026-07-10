@@ -315,10 +315,10 @@ export default function CustomersPage() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-800" />
+        <div className="h-10 w-48 animate-pulse rounded-2xl bg-slate-50" />
         <div className="grid gap-6 sm:grid-cols-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-32 animate-pulse rounded-2xl bg-slate-900" />
+            <div key={i} className="h-32 animate-pulse rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300" />
           ))}
         </div>
       </div>
@@ -326,55 +326,55 @@ export default function CustomersPage() {
   }
 
   return (
-    <div className="space-y-6 text-white max-w-7xl relative">
+    <div className="space-y-6 text-slate-900 max-w-7xl relative">
       
       {/* Header */}
       <div>
         <h1 className="text-3xl font-extrabold tracking-tight">Customer CRM</h1>
-        <p className="mt-1 text-xs text-slate-400">Track and manage customer communications timelines, checkout invoices, notes, and WebRTC calls logs.</p>
+        <p className="mt-1 text-xs text-slate-500">Track and manage customer communications timelines, checkout invoices, notes, and WebRTC calls logs.</p>
       </div>
 
       {/* Metrics Row */}
       <div className="grid gap-6 sm:grid-cols-3">
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-6 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 p-6 flex items-center justify-between">
           <div>
             <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Total CRM Contacts</span>
             <h3 className="text-2xl font-black mt-2">{stats.totalCustomers}</h3>
             <p className="text-[10px] text-slate-500 mt-1">Unique platform shoppers</p>
           </div>
-          <div className="h-10 w-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0">
+          <div className="h-10 w-10 rounded-2xl bg-blue-50 border border-blue-100/50 text-blue-600 font-semibold flex items-center justify-center shrink-0">
             <Users className="h-5 w-5" />
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-6 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 p-6 flex items-center justify-between">
           <div>
             <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Accumulated Purchases</span>
             <h3 className="text-2xl font-black mt-2">₹{stats.totalSales.toLocaleString("en-IN")}</h3>
             <p className="text-[10px] text-slate-500 mt-1">Sum of checkout totals</p>
           </div>
-          <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+          <div className="h-10 w-10 rounded-2xl bg-emerald-50 border border-emerald-100/50 text-emerald-600 font-semibold flex items-center justify-center shrink-0">
             <IndianRupee className="h-5 w-5" />
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-6 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 p-6 flex items-center justify-between">
           <div>
             <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Average Customer LTV</span>
             <h3 className="text-2xl font-black mt-2">₹{Math.round(stats.avgOrderValue).toLocaleString("en-IN")}</h3>
             <p className="text-[10px] text-slate-500 mt-1">Assisted sales flow average</p>
           </div>
-          <div className="h-10 w-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0">
+          <div className="h-10 w-10 rounded-2xl bg-purple-50 border border-purple-100/50 text-purple-650 font-semibold flex items-center justify-center shrink-0">
             <ShoppingBag className="h-5 w-5" />
           </div>
         </div>
       </div>
 
       {/* CRM Customer List */}
-      <div className="rounded-2xl border border-slate-900 bg-slate-900/30 overflow-hidden">
+      <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 overflow-hidden">
         
         {/* Filter bar */}
-        <div className="p-5 border-b border-slate-900 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/40">
+        <div className="p-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50">
           
           {/* Search inputs */}
           <div className="relative max-w-md w-full">
@@ -384,11 +384,11 @@ export default function CustomersPage() {
               placeholder="Search customers by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-850 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-2xl text-xs text-slate-700 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
             />
           </div>
 
-          <div className="flex items-center gap-4 text-xs font-bold text-slate-400 self-start md:self-auto">
+          <div className="flex items-center gap-4 text-xs font-bold text-slate-500 self-start md:self-auto">
             {/* Spent filter */}
             <div className="flex items-center gap-2">
               <ListFilter className="h-4 w-4 text-slate-500" />
@@ -396,7 +396,7 @@ export default function CustomersPage() {
               <select
                 value={spentFilter}
                 onChange={(e) => setSpentFilter(e.target.value)}
-                className="rounded-xl border border-slate-850 bg-slate-950 px-2.5 py-1 text-xs text-slate-350 outline-none"
+                className="rounded-2xl border border-slate-100 bg-slate-50 px-2.5 py-1 text-xs text-slate-350 outline-none"
               >
                 <option value="all">All value Tiers</option>
                 <option value="high">High Value (&gt; ₹5,000)</option>
@@ -411,7 +411,7 @@ export default function CustomersPage() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-900 text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-900/50">
+              <tr className="border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50">
                 <th className="px-6 py-4">Shopper Info</th>
                 <th className="px-6 py-4">Total Orders Count</th>
                 <th className="px-6 py-4">Total Value spent</th>
@@ -419,30 +419,30 @@ export default function CustomersPage() {
                 <th className="px-6 py-4 text-right">CRM Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-900 bg-transparent text-slate-300">
+            <tbody className="divide-y divide-slate-100 bg-transparent text-slate-600">
               {filteredCustomers.map((cust) => (
-                <tr key={cust.id} className="hover:bg-slate-900/10 transition-colors">
+                <tr key={cust.id} className="hover:bg-slate-50/50 transition-colors">
                   
                   {/* Info details */}
                   <td className="px-6 py-4">
                     <div>
-                      <span className="font-bold text-white block text-sm">{cust.name}</span>
+                      <span className="font-bold text-slate-900 block text-sm">{cust.name}</span>
                       <span className="text-[10px] text-slate-500 mt-0.5 block">{cust.email}</span>
                     </div>
                   </td>
 
                   {/* Orders */}
-                  <td className="px-6 py-4 font-semibold text-slate-300">
+                  <td className="px-6 py-4 font-semibold text-slate-600">
                     {cust.ordersCount} checkouts
                   </td>
 
                   {/* Spent */}
-                  <td className="px-6 py-4 font-bold text-emerald-400">
+                  <td className="px-6 py-4 font-bold text-emerald-600">
                     ₹{cust.totalSpent.toLocaleString("en-IN")}
                   </td>
 
                   {/* Date */}
-                  <td className="px-6 py-4 text-slate-400">
+                  <td className="px-6 py-4 text-slate-500">
                     {new Date(cust.lastOrderDate).toLocaleDateString("en-IN", {
                       day: "2-digit",
                       month: "short",
@@ -454,18 +454,18 @@ export default function CustomersPage() {
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2.5">
                       <button
-                        onClick={() => handleOpenCrm(cust)}
-                        className="inline-flex items-center gap-1 bg-slate-900 border border-slate-850 px-2.5 py-1.5 rounded-lg text-[10px] font-bold text-slate-350 hover:text-white uppercase transition-all"
+                          onClick={() => handleOpenCrm(cust)}
+                          className="inline-flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 px-2.5 py-1.5 rounded-2xl text-[10px] font-bold text-slate-500 hover:text-slate-900 uppercase"
                       >
-                        <UserCheck className="h-3.5 w-3.5 text-blue-400" />
+                        <UserCheck className="h-3.5 w-3.5 text-blue-600 font-semibold" />
                         CRM File
                       </button>
-                      
+
                       <button
-                        onClick={() => navigate(`/seller/chat?userId=${cust.id}`)}
-                        className="inline-flex items-center gap-1 bg-slate-900 border border-slate-850 px-2.5 py-1.5 rounded-lg text-[10px] font-bold text-slate-350 hover:text-white uppercase transition-all"
+                          onClick={() => navigate(`/seller/chat?userId=${cust.id}`)}
+                          className="inline-flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 px-2.5 py-1.5 rounded-2xl text-[10px] font-bold text-slate-500 hover:text-slate-900 uppercase"
                       >
-                        <MessageSquare className="h-3.5 w-3.5 text-emerald-400" />
+                        <MessageSquare className="h-3.5 w-3.5 text-emerald-600" />
                         Chat
                       </button>
                     </div>
@@ -486,43 +486,43 @@ export default function CustomersPage() {
         {selectedCust && (
           <div className="h-full flex flex-col justify-between">
             {/* Header info */}
-            <div className="p-6 border-b border-slate-900 flex justify-between items-start">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-start">
               <div>
-                <h2 className="text-base font-black text-white">{selectedCust.name}</h2>
+                <h2 className="text-base font-black text-slate-900">{selectedCust.name}</h2>
                 <span className="text-[10px] text-slate-500 font-mono mt-0.5 block">{selectedCust.email}</span>
                 <span className="text-[10px] text-slate-500 font-mono block">{selectedCust.phone}</span>
               </div>
               <button 
                 onClick={() => setSelectedCust(null)}
-                className="text-slate-450 hover:text-white transition-colors cursor-pointer"
+                className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             {/* TAB SELECT */}
-            <div className="grid grid-cols-4 border-b border-slate-900 text-[9px] font-bold uppercase tracking-wider text-center">
+            <div className="grid grid-cols-4 border-b border-slate-100 text-[9px] font-bold uppercase tracking-wider text-center">
               <button 
                 onClick={() => setActiveCrmTab("timeline")}
-                className={`py-3.5 border-b-2 transition-all ${activeCrmTab === "timeline" ? "border-blue-500 text-blue-400 font-black" : "border-transparent text-slate-500 hover:text-white"}`}
+                className={`py-3.5 border-b-2 transition-all ${activeCrmTab === "timeline" ? "border-blue-600 text-blue-600 font-black" : "border-transparent text-slate-500 hover:text-slate-900"}`}
               >
                 Timeline
               </button>
               <button 
                 onClick={() => setActiveCrmTab("calls")}
-                className={`py-3.5 border-b-2 transition-all ${activeCrmTab === "calls" ? "border-blue-500 text-blue-400 font-black" : "border-transparent text-slate-500 hover:text-white"}`}
+                className={`py-3.5 border-b-2 transition-all ${activeCrmTab === "calls" ? "border-blue-600 text-blue-600 font-black" : "border-transparent text-slate-500 hover:text-slate-900"}`}
               >
                 Calls
               </button>
               <button 
                 onClick={() => setActiveCrmTab("orders")}
-                className={`py-3.5 border-b-2 transition-all ${activeCrmTab === "orders" ? "border-blue-500 text-blue-400 font-black" : "border-transparent text-slate-500 hover:text-white"}`}
+                className={`py-3.5 border-b-2 transition-all ${activeCrmTab === "orders" ? "border-blue-600 text-blue-600 font-black" : "border-transparent text-slate-500 hover:text-slate-900"}`}
               >
                 Orders
               </button>
               <button 
                 onClick={() => setActiveCrmTab("notes")}
-                className={`py-3.5 border-b-2 transition-all ${activeCrmTab === "notes" ? "border-blue-500 text-blue-400 font-black" : "border-transparent text-slate-500 hover:text-white"}`}
+                className={`py-3.5 border-b-2 transition-all ${activeCrmTab === "notes" ? "border-blue-600 text-blue-600 font-black" : "border-transparent text-slate-500 hover:text-slate-900"}`}
               >
                 CRM Notes
               </button>
@@ -539,15 +539,15 @@ export default function CustomersPage() {
                       <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
                     </div>
                   ) : timelineItems.map((item, idx) => (
-                    <div key={idx} className="flex gap-3 items-start relative pb-2 border-l border-slate-900 ml-3 pl-4">
+                    <div key={idx} className="flex gap-3 items-start relative pb-2 border-l border-slate-100 ml-3 pl-4">
                       {/* Left icon wrapper */}
-                      <div className={`absolute -left-3 top-0 h-6 w-6 rounded-full bg-slate-950 border flex items-center justify-center shrink-0 ${
-                        item.type === "visit" ? "border-sky-500/30 text-sky-400" :
-                        item.type === "product_view" ? "border-amber-500/30 text-amber-400" :
-                        item.type === "call" ? "border-indigo-500/30 text-indigo-400" :
-                        item.type === "order" ? "border-emerald-500/30 text-emerald-400" :
-                        item.type === "callback" ? "border-purple-500/30 text-purple-400" :
-                        "border-slate-800 text-slate-500"
+                      <div className={`absolute -left-3 top-0 h-6 w-6 rounded-full bg-white border flex items-center justify-center shrink-0 ${
+                        item.type === "visit" ? "border-sky-200 text-sky-600" :
+                        item.type === "product_view" ? "border-amber-200 text-amber-600" :
+                        item.type === "call" ? "border-indigo-200 text-indigo-600" :
+                        item.type === "order" ? "border-emerald-200 text-emerald-600" :
+                        item.type === "callback" ? "border-purple-200 text-purple-600" :
+                        "border-slate-200 text-slate-500"
                       }`}>
                         {item.type === "visit" && <Activity className="h-3 w-3" />}
                         {item.type === "product_view" && <ShoppingBag className="h-3 w-3" />}
@@ -559,8 +559,8 @@ export default function CustomersPage() {
 
                       {/* Content block */}
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-white text-xs">{item.title}</p>
-                        <p className="text-[10px] text-slate-400 mt-0.5 leading-normal">{item.body}</p>
+                        <p className="font-bold text-slate-900 text-xs">{item.title}</p>
+                        <p className="text-[10px] text-slate-500 mt-0.5 leading-normal">{item.body}</p>
                         <span className="text-[8px] text-slate-500 mt-0.5 block font-mono">
                           {item.time.toLocaleString("en-IN")}
                         </span>
@@ -578,11 +578,11 @@ export default function CustomersPage() {
               {activeCrmTab === "calls" && (
                 <div className="space-y-3">
                   {loadingCalls ? (
-                    <div className="flex justify-center py-6 text-slate-500"><Loader2 className="h-4 w-4 animate-spin text-blue-400" /></div>
+                    <div className="flex justify-center py-6 text-slate-500"><Loader2 className="h-4 w-4 animate-spin text-blue-600 font-semibold" /></div>
                   ) : customerCalls.map(c => (
-                    <div key={c.id} className="rounded-xl border border-slate-900 bg-slate-950 p-4 space-y-2 leading-normal">
+                    <div key={c.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-4 space-y-2 leading-normal">
                       <div className="flex justify-between items-start">
-                        <h4 className="font-bold text-white text-xs">WebRTC consultation call</h4>
+                        <h4 className="font-bold text-slate-900 text-xs">WebRTC consultation call</h4>
                         <span className={`inline-flex px-1.5 py-0.5 rounded text-[8px] font-bold uppercase border ${
                           c.status === "completed" 
                             ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" 
@@ -592,7 +592,7 @@ export default function CustomersPage() {
                         </span>
                       </div>
                       <p className="text-[10px] text-slate-500 font-mono">Date: {new Date(c.created_at).toLocaleString("en-IN")}</p>
-                      <p className="text-[10px] text-slate-450 font-mono">Duration: {Math.round((c.duration || 0)/60)}m {(c.duration || 0)%60}s</p>
+                      <p className="text-[10px] text-slate-500 font-mono">Duration: {Math.round((c.duration || 0)/60)}m {(c.duration || 0)%60}s</p>
                     </div>
                   ))}
                   {!loadingCalls && customerCalls.length === 0 && (
@@ -605,9 +605,9 @@ export default function CustomersPage() {
               {activeCrmTab === "orders" && (
                 <div className="space-y-3">
                   {selectedCust.items.map((item, idx) => (
-                    <div key={idx} className="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-900">
+                    <div key={idx} className="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border border-slate-100">
                       <div>
-                        <p className="font-bold text-white text-xs">{item.product?.name || "Product"}</p>
+                        <p className="font-bold text-slate-900 text-xs">{item.product?.name || "Product"}</p>
                         <p className="text-[9px] text-slate-500 mt-0.5">Qty: {item.quantity || 1} · Qty Price: ₹{Number(item.price).toLocaleString()}</p>
                       </div>
                       <span className="font-bold text-emerald-400">₹{(Number(item.price) * Number(item.quantity || 1)).toLocaleString()}</span>
@@ -626,14 +626,14 @@ export default function CustomersPage() {
                       value={crmNotes}
                       onChange={(e) => setCrmNotes(e.target.value)}
                       placeholder="Write notes about custom size options, brand requests..."
-                      className="w-full rounded-xl border border-slate-850 bg-slate-950 p-3 text-white outline-none focus:border-blue-500 resize-none leading-relaxed text-[11px]"
+                      className="w-full rounded-2xl border border-slate-100 bg-slate-50 p-3 text-slate-900 outline-none focus:border-blue-500 resize-none leading-relaxed text-[11px]"
                     />
                   </div>
 
                   <button
                     onClick={handleSaveNotes}
                     disabled={savingNotes}
-                    className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-white font-bold transition-all text-xs flex items-center justify-center gap-1 cursor-pointer"
+                    className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 rounded-2xl text-white font-bold transition-all text-xs flex items-center justify-center gap-1 cursor-pointer"
                   >
                     {savingNotes && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                     Save Notes
@@ -644,7 +644,7 @@ export default function CustomersPage() {
             </div>
 
             {/* Bottom Schedule follow-ups panel */}
-            <div className="p-6 border-t border-slate-900 bg-slate-950 space-y-4 text-xs font-semibold">
+            <div className="p-6 border-t border-slate-100 bg-slate-50 space-y-4 text-xs font-semibold">
               
               {/* Follow-up date selection */}
               <div className="space-y-1.5">
@@ -654,7 +654,7 @@ export default function CustomersPage() {
                     type="date"
                     value={followUpDate}
                     onChange={(e) => setFollowUpDate(e.target.value)}
-                    className="flex-1 rounded-xl border border-slate-850 bg-slate-900 p-2 text-white outline-none text-xs"
+                    className="flex-1 rounded-2xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-2 text-slate-900 outline-none text-xs"
                   />
                   <button
                     onClick={() => {
@@ -662,7 +662,7 @@ export default function CustomersPage() {
                       toast.success(`Follow-up schedule created for ${followUpDate}!`);
                       setFollowUpDate("");
                     }}
-                    className="px-4 py-2 bg-slate-900 border border-slate-850 hover:border-slate-800 rounded-xl text-white text-[9px] uppercase tracking-wider cursor-pointer"
+                    className="px-4 py-2 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 hover:border-slate-300 rounded-2xl text-slate-900 text-[9px] uppercase tracking-wider cursor-pointer"
                   >
                     Schedule
                   </button>
@@ -680,7 +680,7 @@ export default function CustomersPage() {
                       toast.success(`Customer CRM file assigned successfully!`);
                     }
                   }}
-                  className="w-full rounded-xl border border-slate-850 bg-slate-900 p-2 text-white outline-none text-xs font-semibold"
+                  className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-2 text-slate-900 outline-none text-xs font-semibold"
                 >
                   <option value="">-- Assign Agent Manager --</option>
                   {agents.map(a => (

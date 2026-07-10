@@ -19,13 +19,13 @@ export default function ShopLogoUpload({
   return (
     <div className="mb-8">
 
-      <label className="mb-3 block text-lg font-semibold text-white">
+      <label className="mb-3 block text-lg font-semibold text-slate-900">
         Shop Logo
       </label>
 
       <div className="flex items-center gap-6">
 
-        <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-2xl border border-slate-700 bg-slate-800">
+        <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
 
           {preview ? (
             <img
@@ -34,7 +34,7 @@ export default function ShopLogoUpload({
               className="h-full w-full object-cover"
             />
           ) : (
-            <span className="text-slate-400">
+            <span className="text-slate-500">
               Logo
             </span>
           )}
@@ -45,7 +45,7 @@ export default function ShopLogoUpload({
           type="file"
           accept="image/*"
           onChange={handleFile}
-          className="text-white"
+          className="text-slate-900"
         />
 
       </div>

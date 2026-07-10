@@ -20,7 +20,7 @@ export default function OrderStatusTabs({ activeTab, onChange, orders = [] }) {
   };
 
   return (
-    <div className="flex border-b border-slate-800 overflow-x-auto scrollbar-none">
+    <div className="flex border-b border-slate-200 overflow-x-auto scrollbar-none">
       {STATUS_TABS.map((tab) => {
         const isActive = activeTab === tab.value;
         const count = counts[tab.value] ?? 0;
@@ -31,16 +31,16 @@ export default function OrderStatusTabs({ activeTab, onChange, orders = [] }) {
             onClick={() => onChange(tab.value)}
             className={`relative flex items-center gap-2 border-b-2 px-6 py-4 text-sm font-semibold whitespace-nowrap transition-all ${
               isActive
-                ? "border-blue-500 text-blue-400"
-                : "border-transparent text-slate-400 hover:text-white"
+                ? "border-blue-600 text-blue-600 font-bold"
+                : "border-transparent text-slate-500 hover:text-slate-900"
             }`}
           >
             {tab.label}
             <span
               className={`rounded-full px-2 py-0.5 text-xs font-bold transition-all ${
                 isActive
-                  ? "bg-blue-500/25 text-blue-400"
-                  : "bg-slate-800 text-slate-500"
+                  ? "bg-blue-50 text-blue-700"
+                  : "bg-slate-100 text-slate-600"
               }`}
             >
               {count}

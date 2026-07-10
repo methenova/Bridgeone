@@ -171,8 +171,8 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
       {/* ═══════════════════════════════════════════════════════
           SECTION: Basic Information
       ═══════════════════════════════════════════════════════ */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-        <h3 className="mb-6 text-base font-semibold text-white">
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-6">
+        <h3 className="mb-6 text-base font-semibold text-slate-900">
           Basic Information
         </h3>
 
@@ -181,7 +181,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
           {/* Product Name */}
           <div className="md:col-span-2">
             <label className={labelClass}>
-              Product Name <span className="text-red-400">*</span>
+              Product Name <span className="text-red-650 font-semibold">*</span>
             </label>
             <input
               {...register("name")}
@@ -195,7 +195,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
 
           {/* Slug */}
           <div className="md:col-span-2">
-            <label className={labelClass}>URL Slug <span className="text-red-400">*</span></label>
+            <label className={labelClass}>URL Slug <span className="text-red-650 font-semibold">*</span></label>
             <div className="flex gap-2">
               <input
                 {...register("slug")}
@@ -206,7 +206,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
                 type="button"
                 onClick={handleGenerateSlug}
                 title="Regenerate slug"
-                className="shrink-0 rounded-xl border border-slate-700 bg-slate-800 px-3 text-slate-400 transition-colors hover:border-blue-500 hover:text-blue-400"
+                className="shrink-0 rounded-2xl border border-slate-200 bg-slate-50 px-3 text-slate-500 transition-colors hover:border-blue-500 hover:text-blue-600"
               >
                 <RefreshCw className="h-4 w-4" />
               </button>
@@ -219,7 +219,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
           {/* Category */}
           <div>
             <label className={labelClass}>
-              Category <span className="text-red-400">*</span>
+              Category <span className="text-red-650 font-semibold">*</span>
             </label>
             <select
               {...register("category_id")}
@@ -243,7 +243,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
           {/* SKU */}
           <div>
             <label className={labelClass}>
-              SKU <span className="text-red-400">*</span>
+              SKU <span className="text-red-650 font-semibold">*</span>
             </label>
             <div className="flex gap-2">
               <input
@@ -255,7 +255,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
                 type="button"
                 onClick={handleGenerateSku}
                 title="Auto-generate SKU"
-                className="flex shrink-0 items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800 px-3 text-slate-400 transition-colors hover:border-blue-500 hover:text-blue-400"
+                className="flex shrink-0 items-center gap-1.5 rounded-2xl border border-slate-200 bg-slate-50 px-3 text-slate-500 transition-colors hover:border-blue-500 hover:text-blue-600"
               >
                 <Wand2 className="h-4 w-4" />
               </button>
@@ -285,8 +285,8 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
       {/* ═══════════════════════════════════════════════════════
           SECTION: Pricing & Inventory
       ═══════════════════════════════════════════════════════ */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-        <h3 className="mb-6 text-base font-semibold text-white">
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-6">
+        <h3 className="mb-6 text-base font-semibold text-slate-900">
           Pricing & Inventory
         </h3>
 
@@ -295,7 +295,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
           {/* Price */}
           <div>
             <label className={labelClass}>
-              Price (₹) <span className="text-red-400">*</span>
+              Price (₹) <span className="text-red-650 font-semibold">*</span>
             </label>
             <input
               {...register("price")}
@@ -315,7 +315,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
             <label className={labelClass}>
               Discount Price (₹)
               {discountPercent && discountPercent > 0 && (
-                <span className="ml-2 rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-400">
+                <span className="ml-2 rounded-full bg-emerald-50 border border-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
                   {discountPercent}% OFF
                 </span>
               )}
@@ -336,7 +336,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
           {/* Stock */}
           <div>
             <label className={labelClass}>
-              Stock Quantity <span className="text-red-400">*</span>
+              Stock Quantity <span className="text-red-650 font-semibold">*</span>
             </label>
             <input
               {...register("stock")}
@@ -357,8 +357,8 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
       {/* ═══════════════════════════════════════════════════════
           SECTION: Product Settings
       ═══════════════════════════════════════════════════════ */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-        <h3 className="mb-6 text-base font-semibold text-white">
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-6">
+        <h3 className="mb-6 text-base font-semibold text-slate-900">
           Product Settings
         </h3>
 
@@ -389,8 +389,8 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
                   />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-white">Active</p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-sm font-medium text-slate-900">Active</p>
+                  <p className="text-xs text-slate-500">
                     Visible to customers on the marketplace
                   </p>
                 </div>
@@ -423,8 +423,8 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
                   />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-white">Featured</p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-sm font-medium text-slate-900">Featured</p>
+                  <p className="text-xs text-slate-500">
                     Highlighted in featured product sections
                   </p>
                 </div>
@@ -439,8 +439,8 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
           SECTION: Product Images (only when editing)
       ═══════════════════════════════════════════════════════ */}
       {isEditing && (
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-          <h3 className="mb-2 text-base font-semibold text-white">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-6">
+          <h3 className="mb-2 text-base font-semibold text-slate-900">
             Product Images
           </h3>
           <p className="mb-5 text-xs text-slate-500">
@@ -460,7 +460,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
 
       {/* Note for new products */}
       {!isEditing && (
-        <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 px-4 py-3 text-sm text-blue-300">
+        <div className="rounded-2xl border border-blue-500/20 bg-blue-500/5 px-4 py-3 text-sm text-blue-300">
           💡 You can upload product images after saving the product.
         </div>
       )}
@@ -474,7 +474,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
         <button
           type="submit"
           disabled={isBusy}
-          className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-8 py-3 text-sm font-semibold text-white transition-all hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/20 disabled:cursor-not-allowed disabled:opacity-60 active:scale-95"
+          className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-3 text-sm font-semibold text-white transition-all hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/20 disabled:cursor-not-allowed disabled:opacity-60 active:scale-95"
         >
           {isBusy && <Loader2 className="h-4 w-4 animate-spin" />}
           {isEditing ? "Save Changes" : "Create Product"}

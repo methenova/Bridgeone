@@ -49,13 +49,13 @@ export default function ProductPagination({
     <div className="flex flex-wrap items-center justify-between gap-4">
       {/* Left: showing X of Y */}
       <div className="flex items-center gap-4">
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-slate-500">
           Showing{" "}
-          <span className="font-medium text-white">
+          <span className="font-medium text-slate-900">
             {from}–{to}
           </span>{" "}
           of{" "}
-          <span className="font-medium text-white">
+          <span className="font-medium text-slate-900">
             {total.toLocaleString()}
           </span>{" "}
           products
@@ -70,7 +70,7 @@ export default function ProductPagination({
               onLimitChange(Number(e.target.value));
               onPageChange(1);
             }}
-            className="rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-sm text-white outline-none focus:border-blue-500"
+            className="rounded-2xl border border-slate-200 bg-slate-50 px-2 py-1.5 text-sm text-slate-900 outline-none focus:border-blue-500"
           >
             {PAGE_SIZE_OPTIONS.map((size) => (
               <option key={size} value={size}>
@@ -88,7 +88,7 @@ export default function ProductPagination({
           <button
             onClick={() => onPageChange(page - 1)}
             disabled={page === 1}
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-700 bg-slate-800 text-slate-400 transition-colors hover:border-slate-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex h-8 w-8 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-500 transition-colors hover:border-slate-600 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -122,7 +122,7 @@ export default function ProductPagination({
           <button
             onClick={() => onPageChange(page + 1)}
             disabled={page === totalPages}
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-700 bg-slate-800 text-slate-400 transition-colors hover:border-slate-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex h-8 w-8 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-500 transition-colors hover:border-slate-600 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
