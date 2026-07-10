@@ -159,11 +159,10 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
 
   const isBusy = isSubmitting || createProduct.isPending || updateProduct.isPending;
 
-  // ── Field style ───────────────────────────────────────────────
   const fieldClass =
-    "w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20";
-  const errorClass = "mt-1.5 text-xs text-red-400";
-  const labelClass = "mb-1.5 block text-sm font-medium text-slate-300";
+    "w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-500/8 font-semibold shadow-xs hover:border-slate-300";
+  const errorClass = "mt-1.5 text-xs text-red-600 font-semibold";
+  const labelClass = "mb-1.5 block text-xs font-bold text-slate-500 uppercase tracking-wider";
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8" noValidate>
@@ -379,7 +378,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
                   />
                   <div
                     className={`h-6 w-11 rounded-full transition-colors ${
-                      field.value ? "bg-blue-600" : "bg-slate-700"
+                      field.value ? "bg-blue-600" : "bg-slate-200"
                     }`}
                   />
                   <div
@@ -413,7 +412,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
                   />
                   <div
                     className={`h-6 w-11 rounded-full transition-colors ${
-                      field.value ? "bg-amber-500" : "bg-slate-700"
+                      field.value ? "bg-amber-500" : "bg-slate-200"
                     }`}
                   />
                   <div

@@ -104,8 +104,17 @@ export default function CallbacksPage() {
 
   if (shopLoading || loading) {
     return (
-      <div className="flex h-[50vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+      <div className="space-y-6 animate-pulse">
+        <div className="flex justify-between items-center pb-4">
+          <div className="h-6 w-32 bg-slate-100 rounded-md" />
+          <div className="h-10 w-24 bg-slate-100 rounded-md" />
+        </div>
+        <div className="bg-white rounded-3xl border border-slate-100 p-5 space-y-4">
+          <div className="h-10 bg-slate-50 rounded-xl" />
+          {[...Array(4)].map((_, idx) => (
+            <div key={idx} className="h-12 bg-slate-50/50 rounded-xl" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -173,17 +182,17 @@ export default function CallbacksPage() {
                 const pending = c.status === "pending";
                 const overdue = isOverdue(c.scheduled_time, c.status);
                 return (
-                  <tr key={c.id} className="border-b border-slate-100 hover:bg-slate-900/15 text-sm text-slate-600">
+                  <tr key={c.id} className="border-b border-slate-100 hover:bg-slate-55 text-sm text-slate-600">
                     <td className="px-6 py-4.5 font-semibold text-slate-900">{c.customer_name}</td>
                     <td className="px-6 py-4.5 text-slate-500">{c.customer_email || "-"}</td>
                     <td className="px-6 py-4.5 text-slate-500">{c.customer_phone || "-"}</td>
                     <td className="px-6 py-4.5">
                       <div className="space-y-0.5">
-                        <span className={`text-xs font-semibold ${overdue ? "text-rose-400" : "text-white"}`}>
+                        <span className={`text-xs font-semibold ${overdue ? "text-rose-600 font-bold" : "text-slate-700"}`}>
                           {formatDateTime(c.scheduled_time)}
                         </span>
                         {overdue && (
-                          <p className="text-[9px] text-rose-500 uppercase font-bold tracking-wider animate-pulse">Overdue</p>
+                          <p className="text-[9px] text-rose-600 uppercase font-bold tracking-wider animate-pulse">Overdue</p>
                         )}
                       </div>
                     </td>
@@ -191,9 +200,9 @@ export default function CallbacksPage() {
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                         pending
                           ? overdue
-                            ? "bg-rose-500/10 text-rose-400 border border-rose-500/20"
-                            : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                          : "bg-green-500/10 text-green-400 border border-green-500/20"
+                            ? "bg-rose-50 border border-rose-100 text-rose-600"
+                            : "bg-amber-50 border border-amber-100 text-amber-700"
+                          : "bg-emerald-50 border border-emerald-100 text-emerald-650"
                       }`}>
                         {pending ? "Pending" : "Resolved"}
                       </span>

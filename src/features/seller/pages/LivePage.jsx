@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Radio, Video, VideoOff, ShoppingBag, Eye, Send, StopCircle, Phone, PhoneOff, Mic, MicOff, Check, X, MonitorUp, Maximize, Minimize, Clock } from "lucide-react";
+import { Radio, Video, VideoOff, ShoppingBag, Eye, Send, StopCircle, Phone, PhoneOff, Mic, MicOff, Check, X, MonitorUp, Maximize, Minimize, Clock, MessageSquare } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { supabase } from "@/config/supabase";
@@ -753,6 +753,7 @@ export default function LivePage() {
       id: Math.random().toString(),
       sender: "Shop Owner",
       text: commentText.trim(),
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
 
     channelRef.current?.send({
@@ -762,6 +763,21 @@ export default function LivePage() {
     });
 
     setCommentText("");
+  }
+
+  function handleQuickReply(text) {
+    const payload = {
+      id: Math.random().toString(),
+      sender: "Shop Owner",
+      text,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    channelRef.current?.send({
+      type: "broadcast",
+      event: "chat",
+      payload,
+    });
   }
 
   function triggerFloatingHeart() {
@@ -1065,43 +1081,88 @@ export default function LivePage() {
         </div>
 
         {/* Right: Comments Chat Feed */}
-        <div className="rounded-3xl border border-slate-100 bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 flex flex-col h-[400px] lg:h-auto">
+        <div className="rounded-3xl border border-slate-100 bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 flex flex-col h-[400px] lg:h-auto overflow-hidden">
           {/* Header */}
-          <div className="border-b border-slate-100 px-5 py-4">
-            <h3 className="text-sm font-bold text-slate-900">Live Stream Chat</h3>
+          <div className="border-b border-slate-100 px-5 py-4 bg-slate-50/50 flex items-center justify-between">
+            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
+              <span>Live Chat</span>
+            </h3>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{comments.length} messages</span>
           </div>
 
           {/* Comments list */}
-          <div className="flex-1 overflow-y-auto p-5 space-y-3.5 scrollbar-none">
-            {comments.map((c) => (
-              <div key={c.id} className="text-xs leading-relaxed">
-                <span className="font-bold text-blue-600 font-semibold">{c.sender}</span>
-                <span className="text-slate-600 ml-1.5">{c.text}</span>
-              </div>
-            ))}
+          <div className="flex-1 overflow-y-auto p-5 space-y-4 scrollbar-none bg-slate-50/30">
+            {comments.map((c) => {
+              const isMe = c.sender === "Shop Owner" || c.sender === "Seller" || c.sender === "Merchant";
+              const timeStr = c.timestamp || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+              return (
+                <div key={c.id} className={`flex flex-col ${isMe ? "items-end" : "items-start"} space-y-1`}>
+                  {/* Sender name & Time */}
+                  <div className="flex items-center gap-1.5 px-1 text-[10px] font-bold text-slate-400">
+                    <span className={isMe ? "text-blue-600" : "text-slate-500"}>{c.sender}</span>
+                    <span>·</span>
+                    <span className="font-medium text-slate-405 font-mono">{timeStr}</span>
+                  </div>
+                  
+                  {/* Message Bubble */}
+                  <div className={`max-w-[85%] rounded-2xl px-3.5 py-2 text-xs shadow-xs leading-relaxed border ${
+                    isMe 
+                      ? "bg-blue-600 text-white border-blue-500 rounded-tr-none" 
+                      : "bg-white text-slate-800 border-slate-100 rounded-tl-none"
+                  }`}>
+                    {c.text}
+                  </div>
+                </div>
+              );
+            })}
             {comments.length === 0 && (
-              <div className="h-full flex flex-col items-center justify-center text-center text-slate-600">
-                <Radio className="h-8 w-8 mb-2 stroke-[1.5]" />
-                <p className="text-xs font-semibold">Stream chat is silent</p>
-                <p className="text-[10px] text-slate-500 mt-0.5">Comments from viewers will appear here.</p>
+              <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-4">
+                <div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 border border-blue-100/50 text-blue-600">
+                  <MessageSquare className="h-6 w-6 stroke-[1.6]" />
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[8px] font-bold text-white shadow-sm shadow-blue-600/20">💬</span>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs font-bold text-slate-800">Welcome to Stream Chat</p>
+                  <p className="text-[10px] text-slate-505 max-w-[200px] leading-relaxed mx-auto">Broadcasting video is active. Comments from shoppers will stream in here.</p>
+                </div>
               </div>
             )}
           </div>
 
+          {/* Quick Replies Row */}
+          <div className="px-4 py-2 bg-slate-50/50 border-t border-slate-100 flex items-center gap-1.5 overflow-x-auto scrollbar-none whitespace-nowrap">
+            {[
+              "👋 Wave Hello", 
+              "🛍️ View Pinned", 
+              "👍 Thanks for joining!", 
+              "💬 Drop any questions!"
+            ].map((reply) => (
+              <button
+                key={reply}
+                type="button"
+                onClick={() => handleQuickReply(reply)}
+                className="text-[10px] font-semibold text-slate-600 bg-white border border-slate-150 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 rounded-full px-3 py-1.5 transition-all shrink-0 cursor-pointer"
+              >
+                {reply}
+              </button>
+            ))}
+          </div>
+
           {/* Comment sender form */}
-          <form onSubmit={handleSendComment} className="border-t border-slate-100 p-4 flex gap-2">
+          <form onSubmit={handleSendComment} className="border-t border-slate-100 p-3 bg-white flex gap-2">
             <input
               type="text"
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
-              placeholder="Send live chat comment..."
-              className="flex-1 rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 px-4 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 placeholder-slate-600"
+              placeholder="Type message to stream..."
+              className="flex-1 rounded-xl border border-slate-200 bg-white shadow-xs px-3.5 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 placeholder-slate-400"
             />
             <button
               type="submit"
-              className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-600 text-white hover:bg-blue-500 transition-colors"
+              className="flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-blue-600 hover:bg-blue-500 text-white transition-colors cursor-pointer shrink-0 shadow-sm shadow-blue-600/10"
             >
-              <Send className="h-4 w-4" />
+              <Send className="h-3.5 w-3.5" />
             </button>
           </form>
         </div>
@@ -1120,27 +1181,64 @@ export default function LivePage() {
               <div
                 key={p.id}
                 onClick={() => handlePinProduct(p)}
-                className={`cursor-pointer rounded-2xl border p-3 flex flex-col items-center text-center transition-all ${
+                className={`group relative cursor-pointer rounded-2xl border p-3 flex flex-col transition-all duration-300 ${
                   isPinned
-                    ? "border-blue-500 bg-blue-500/5 ring-1 ring-blue-500/30"
-                    : "border-slate-850 bg-slate-900/60 hover:border-slate-700"
+                    ? "border-blue-500 bg-blue-50/30 shadow-md shadow-blue-500/5 ring-1 ring-blue-500/20"
+                    : "border-slate-200 bg-white shadow-xs hover:border-slate-300 hover:shadow-md hover:translate-y-[-2px]"
                 }`}
               >
-                <div className="h-16 w-16 overflow-hidden rounded-2xl bg-slate-850 border border-slate-200 mb-3 flex items-center justify-center shrink-0">
-                  {p.thumbnail_url ? <img src={p.thumbnail_url} alt="" className="h-full w-full object-cover" /> : "📦"}
+                {/* Image Showcase Container */}
+                <div className="relative h-28 w-full overflow-hidden rounded-xl bg-slate-50 border border-slate-100 mb-3 flex items-center justify-center shrink-0">
+                  {p.thumbnail_url ? (
+                    <img 
+                      src={p.thumbnail_url} 
+                      alt="" 
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                    />
+                  ) : (
+                    <span className="text-2xl">📦</span>
+                  )}
+
+                  {/* Featured Badge Overlay */}
+                  {p.is_featured && (
+                    <span className="absolute top-1.5 left-1.5 bg-amber-500 text-white text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md shadow-sm">
+                      ★ Featured
+                    </span>
+                  )}
+
+                  {/* Stock Badge Overlay */}
+                  <span className={`absolute bottom-1.5 right-1.5 text-[8px] font-bold px-1.5 py-0.5 rounded-md shadow-xs border ${
+                    p.stock > 0 
+                      ? "bg-emerald-50 border-emerald-100 text-emerald-700" 
+                      : "bg-red-50 border-red-100 text-red-700"
+                  }`}>
+                    {p.stock > 0 ? `${p.stock} In Stock` : "Out of Stock"}
+                  </span>
                 </div>
-                <p className="line-clamp-1 text-xs font-semibold text-slate-900 w-full">{p.name}</p>
-                <p className="text-[10px] text-slate-500 mt-1 font-bold">₹{Number(p.price).toLocaleString()}</p>
+
+                {/* Details */}
+                <div className="flex-1 flex flex-col text-left space-y-1">
+                  <p className="line-clamp-1 text-xs font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{p.name}</p>
+                  
+                  {/* Price */}
+                  <div className="flex items-baseline justify-between">
+                    <p className="text-xs font-black text-slate-900">₹{Number(p.price).toLocaleString()}</p>
+                    {p.discount_price && Number(p.discount_price) > 0 && (
+                      <p className="text-[9px] text-slate-400 line-through">₹{Number(p.discount_price).toLocaleString()}</p>
+                    )}
+                  </div>
+                </div>
                 
+                {/* Action button */}
                 <button
                   onClick={(e) => { e.stopPropagation(); handlePinProduct(p); }}
-                  className={`mt-3 w-full rounded-lg py-1.5 text-[10px] font-bold transition-all ${
+                  className={`mt-3 w-full rounded-xl py-2 text-[10px] font-bold uppercase tracking-wider transition-all duration-150 cursor-pointer ${
                     isPinned
-                      ? "bg-blue-600 text-white"
-                      : "bg-slate-800 text-slate-400 hover:text-white"
+                      ? "bg-blue-600 hover:bg-blue-700 text-white shadow-sm shadow-blue-600/10"
+                      : "bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                   }`}
                 >
-                  {isPinned ? "Pinned" : "Pin Product"}
+                  {isPinned ? "Pinned Live" : "Pin Product"}
                 </button>
               </div>
             );

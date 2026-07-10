@@ -480,7 +480,7 @@ export default function CustomersPage() {
       </div>
 
       {/* CRM SLIDE-OUT DRAWER */}
-      <div className={`fixed inset-y-0 right-0 z-50 w-full max-w-md border-l border-slate-900 bg-slate-950/95 backdrop-blur-md shadow-2xl transition-transform duration-300 ease-in-out ${
+      <div className={`fixed inset-y-0 right-0 z-50 w-full max-w-md border-l border-slate-100 bg-white/95 backdrop-blur-md shadow-2xl transition-transform duration-300 ease-in-out ${
         selectedCust ? "translate-x-0" : "translate-x-full"
       }`}>
         {selectedCust && (

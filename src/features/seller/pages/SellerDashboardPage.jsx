@@ -16,7 +16,9 @@ import {
   ShoppingCart,
   X,
   Phone,
-  Bookmark
+  Bookmark,
+  Hourglass,
+  PhoneCall
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
@@ -39,6 +41,18 @@ export default function SellerDashboardPage() {
   const [totalCallsCount, setTotalCallsCount] = useState(0);
   const [recentActivities, setRecentActivities] = useState([]);
   const [onlineAgents, setOnlineAgents] = useState(0);
+
+  // Expanded premium stats states
+  const [avgCallDuration, setAvgCallDuration] = useState(0);
+  const [todaysCallsCount, setTodaysCallsCount] = useState(0);
+  const [waitingCustomers, setWaitingCustomers] = useState(0);
+
+  const formatAvgDuration = (sec) => {
+    if (!sec) return "0s";
+    const mins = Math.floor(sec / 60);
+    const secs = sec % 60;
+    return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+  };
 
   // Workflow states
   const [revenueToday, setRevenueToday] = useState(0);
@@ -164,6 +178,21 @@ export default function SellerDashboardPage() {
         const callsCount = allCalls?.length || 0;
         setTotalCallsCount(callsCount);
 
+        // Average call duration and Today's calls
+        const completedCalls = allCalls?.filter(c => c.status === "completed" && c.duration) || [];
+        const totalDuration = completedCalls.reduce((acc, c) => acc + Number(c.duration), 0);
+        const avgDuration = completedCalls.length > 0 ? Math.round(totalDuration / completedCalls.length) : 0;
+        setAvgCallDuration(avgDuration);
+
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+
+        const todayCalls = allCalls?.filter(c => {
+          const callDate = new Date(c.created_at);
+          return callDate >= todayStart;
+        }) || [];
+        setTodaysCallsCount(todayCalls.length);
+
         // 3. Callback Requests
         const { data: scheduled } = await supabase
           .from("callback_requests")
@@ -171,6 +200,7 @@ export default function SellerDashboardPage() {
           .eq("shop_id", shopId)
           .eq("status", "pending");
         setCallbacks(scheduled?.length || 0);
+        setWaitingCustomers(scheduled?.length || 0);
 
         // 4. Sales Assisted (Completed orders)
         const { data: items } = await supabase
@@ -191,8 +221,6 @@ export default function SellerDashboardPage() {
         setAvailableAgentsList(onlineAgs || []);
 
         // 4.6. Conversions Today & Revenue Today (Orders completed today)
-        const todayStart = new Date();
-        todayStart.setHours(0, 0, 0, 0);
         const { data: todayItems } = await supabase
           .from("order_items")
           .select("order_id, price, quantity, orders!inner(status, created_at)")
@@ -284,8 +312,38 @@ export default function SellerDashboardPage() {
 
   if (shopLoading || loadingStats) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center text-slate-500">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+      <div className="space-y-8 animate-pulse max-w-7xl">
+        {/* Header Banner Skeleton */}
+        <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100/80 space-y-4">
+          <div className="h-7 w-48 bg-slate-100 rounded-lg" />
+          <div className="h-4 w-96 bg-slate-100 rounded-lg" />
+        </div>
+
+        {/* 6 Stats Cards Grid Skeleton */}
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {[...Array(6)].map((_, idx) => (
+            <div key={idx} className="bg-white p-5 rounded-2xl border border-slate-100 h-28 flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="h-3 w-20 bg-slate-100/60 rounded-md" />
+                <div className="h-6 w-32 bg-slate-100/60 rounded-md" />
+              </div>
+              <div className="h-3 w-24 bg-slate-100/60 rounded-md" />
+            </div>
+          ))}
+        </div>
+
+        {/* Table Panel Skeleton */}
+        <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden space-y-4 p-5">
+          <div className="flex justify-between items-center pb-4 border-b border-slate-50">
+            <div className="h-5 w-36 bg-slate-100 rounded-md" />
+            <div className="h-4 w-24 bg-slate-100 rounded-md" />
+          </div>
+          <div className="space-y-3">
+            {[...Array(3)].map((_, idx) => (
+              <div key={idx} className="h-10 bg-slate-50/50 rounded-xl" />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -327,8 +385,9 @@ export default function SellerDashboardPage() {
           </div>
         </div>
 
-        {/* 4 Premium KPI Cards */}
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {/* 6 Premium KPI Cards */}
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Card 1: Revenue Today */}
           <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.008)] hover:shadow-[0_12px_30px_rgb(0,0,0,0.04)] hover:translate-y-[-2px] transition-all duration-300 flex items-center justify-between group cursor-pointer">
             <div className="space-y-1.5">
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Revenue Today</span>
@@ -343,48 +402,78 @@ export default function SellerDashboardPage() {
             </div>
           </div>
 
+          {/* Card 2: Today's Calls */}
+          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.008)] hover:shadow-[0_12px_30px_rgb(0,0,0,0.04)] hover:translate-y-[-2px] transition-all duration-300 flex items-center justify-between group cursor-pointer">
+            <div className="space-y-1.5">
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Today's Calls</span>
+              <p className="text-2xl font-black text-slate-900 tracking-tight">{todaysCallsCount}</p>
+              <span className="text-[9px] bg-blue-50 border border-blue-100/50 text-blue-700 rounded-full px-2 py-0.5 font-bold inline-flex items-center gap-1">
+                <PhoneCall size={10} />
+                <span>calls completed</span>
+              </span>
+            </div>
+            <div className="h-11 w-11 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 border border-blue-100/30">
+              <PhoneCall size={18} strokeWidth={2.2} />
+            </div>
+          </div>
+
+          {/* Card 3: Visitors */}
           <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.008)] hover:shadow-[0_12px_30px_rgb(0,0,0,0.04)] hover:translate-y-[-2px] transition-all duration-300 flex items-center justify-between group cursor-pointer">
             <div className="space-y-1.5">
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Visitors</span>
               <p className="text-2xl font-black text-slate-900 tracking-tight">{activeVisitors}</p>
-              <span className="text-[9px] bg-blue-50 border border-blue-100/50 text-blue-700 rounded-full px-2 py-0.5 font-bold inline-flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-blue-550 animate-pulse" />
+              <span className="text-[9px] bg-indigo-50 border border-indigo-100/50 text-indigo-700 rounded-full px-2 py-0.5 font-bold inline-flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-indigo-550 animate-pulse" />
                 <span>live on store</span>
               </span>
             </div>
-            <div className="h-11 w-11 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 border border-blue-100/30">
+            <div className="h-11 w-11 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 border border-indigo-100/30">
               <Users size={18} strokeWidth={2.2} />
             </div>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.008)] hover:shadow-[0_12px_30px_rgb(0,0,0,0.04)] hover:translate-y-[-2px] transition-all duration-300 flex items-center justify-between group cursor-pointer">
-            <div className="space-y-1.5">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Live Calls</span>
-              <p className="text-2xl font-black text-slate-900 tracking-tight">{liveCalls}</p>
-              <span className={`text-[9px] border rounded-full px-2 py-0.5 font-bold inline-block ${
-                liveCalls > 0 
-                  ? "bg-amber-50 border-amber-100 text-amber-700" 
-                  : "bg-slate-50 border-slate-200 text-slate-500"
-              }`}>
-                {liveCalls > 0 ? "active sessions" : "consultations queue"}
-              </span>
-            </div>
-            <div className="h-11 w-11 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 border border-amber-100/30">
-              <Video size={18} strokeWidth={2.2} />
-            </div>
-          </div>
-
+          {/* Card 4: Conversion Rate */}
           <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.008)] hover:shadow-[0_12px_30px_rgb(0,0,0,0.04)] hover:translate-y-[-2px] transition-all duration-300 flex items-center justify-between group cursor-pointer">
             <div className="space-y-1.5">
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Conversion Rate</span>
               <p className="text-2xl font-black text-slate-900 tracking-tight">{conversionRate}</p>
-              <span className="text-[9px] bg-indigo-50 border border-indigo-100/50 text-indigo-700 rounded-full px-2 py-0.5 font-bold inline-flex items-center gap-1">
-                <Clock size={10} />
-                <span>consult conversions</span>
+              <span className="text-[9px] bg-violet-50 border border-violet-100/50 text-violet-700 rounded-full px-2 py-0.5 font-bold inline-flex items-center gap-1">
+                <Percent size={10} />
+                <span>assisted checkouts</span>
               </span>
             </div>
-            <div className="h-11 w-11 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 border border-indigo-100/30">
+            <div className="h-11 w-11 bg-violet-50 text-violet-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 border border-violet-100/30">
               <Percent size={18} strokeWidth={2.2} />
+            </div>
+          </div>
+
+          {/* Card 5: Average Call Duration */}
+          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.008)] hover:shadow-[0_12px_30px_rgb(0,0,0,0.04)] hover:translate-y-[-2px] transition-all duration-300 flex items-center justify-between group cursor-pointer">
+            <div className="space-y-1.5">
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Avg Call Duration</span>
+              <p className="text-2xl font-black text-slate-900 tracking-tight">{formatAvgDuration(avgCallDuration)}</p>
+              <span className="text-[9px] bg-amber-50 border border-amber-100/50 text-amber-700 rounded-full px-2 py-0.5 font-bold inline-flex items-center gap-1">
+                <Clock size={10} />
+                <span>average session</span>
+              </span>
+            </div>
+            <div className="h-11 w-11 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 border border-amber-100/30">
+              <Clock size={18} strokeWidth={2.2} />
+            </div>
+          </div>
+
+          {/* Card 6: Waiting Customers */}
+          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.008)] hover:shadow-[0_12px_30px_rgb(0,0,0,0.04)] hover:translate-y-[-2px] transition-all duration-300 flex items-center justify-between group cursor-pointer">
+            <div className="space-y-1.5">
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Waiting Customers</span>
+              <p className="text-2xl font-black text-slate-900 tracking-tight">{waitingCustomers}</p>
+              <span className="text-[9px] bg-rose-50 border border-rose-100/50 text-rose-700 rounded-full px-2 py-0.5 font-bold inline-flex items-center gap-1">
+                <Hourglass size={10} />
+                <span>callbacks pending</span>
+              </span>
+            </div>
+            <div className="h-11 w-11 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 border border-rose-100/30">
+              <Hourglass size={18} strokeWidth={2.2} />
             </div>
           </div>
         </div>
@@ -462,8 +551,14 @@ export default function SellerDashboardPage() {
 
               {visitorSessions.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="py-10 text-center text-slate-500 font-bold">
-                    No active website visitors found.
+                  <td colSpan={5} className="py-12 text-center text-slate-500">
+                    <div className="flex flex-col items-center justify-center space-y-2">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-slate-400">
+                        <Users className="h-5 w-5" />
+                      </div>
+                      <p className="text-xs font-bold text-slate-700">No Active Website Visitors</p>
+                      <p className="text-[10px] text-slate-400 max-w-[240px] leading-normal mx-auto">When shoppers browse your online storefront widget, they will appear here in real-time.</p>
+                    </div>
                   </td>
                 </tr>
               )}
@@ -495,9 +590,14 @@ export default function SellerDashboardPage() {
                 </div>
               ))}
               {recentActivities.length === 0 && (
-                <div className="py-10 text-center flex flex-col items-center">
-                  <Video className="h-8 w-8 text-slate-400 mb-2" />
-                  <p className="text-[10px] text-slate-500 font-bold">No calling sessions tracked today.</p>
+                <div className="py-10 text-center flex flex-col items-center justify-center space-y-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-slate-400">
+                    <Activity className="h-5 w-5" />
+                  </div>
+                  <div className="space-y-0.5">
+                    <p className="text-xs font-bold text-slate-700">No Activity Logs Found</p>
+                    <p className="text-[10px] text-slate-400 max-w-[200px] leading-normal mx-auto">Completed call consults and dashboard actions will be logged here.</p>
+                  </div>
                 </div>
               )}
             </div>
@@ -522,7 +622,13 @@ export default function SellerDashboardPage() {
                 </div>
               ))}
               {availableAgentsList.length === 0 && (
-                <p className="text-slate-500 italic block text-center py-4 col-span-2">No available agents online.</p>
+                <div className="py-6 text-center flex flex-col items-center justify-center col-span-2 space-y-2">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-slate-400">
+                    <UserCheck className="h-5 w-5" />
+                  </div>
+                  <p className="text-[10px] font-bold text-slate-750">No Team Agents Online</p>
+                  <p className="text-[9px] text-slate-400 leading-normal">Invite agents under settings to start accepting caller requests.</p>
+                </div>
               )}
             </div>
           </div>
@@ -542,7 +648,13 @@ export default function SellerDashboardPage() {
                 </div>
               ))}
               {topSharedProducts.length === 0 && (
-                <p className="text-slate-500 italic">No products shared in recent calls.</p>
+                <div className="py-6 text-center flex flex-col items-center justify-center space-y-2">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-slate-400">
+                    <ShoppingCart className="h-5 w-5" />
+                  </div>
+                  <p className="text-[10px] font-bold text-slate-750">No Shared Products</p>
+                  <p className="text-[9px] text-slate-400 leading-normal">Catalog items shared during caller consults appear here.</p>
+                </div>
               )}
             </div>
           </div>
@@ -564,7 +676,13 @@ export default function SellerDashboardPage() {
                 </div>
               ))}
               {followUpCustomers.length === 0 && (
-                <p className="text-slate-500 italic">Follow-up queue is clear.</p>
+                <div className="py-6 text-center flex flex-col items-center justify-center space-y-2">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 border border-emerald-100/50 text-emerald-600">
+                    <UserCheck className="h-5 w-5" />
+                  </div>
+                  <p className="text-[10px] font-bold text-emerald-800">Follow-up Queue Clear</p>
+                  <p className="text-[9px] text-slate-400 leading-normal">All pending consult call-backs have been processed.</p>
+                </div>
               )}
             </div>
           </div>
@@ -627,7 +745,7 @@ export default function SellerDashboardPage() {
                     </span>
                   ))}
                   {(selectedVisitor.viewed_products || []).length === 0 && (
-                    <span className="text-slate-500 text-[10px] font-bold">No product catalogs viewed during this session.</span>
+                    <span className="text-slate-500 text-[10px] font-bold block bg-white/50 border border-slate-100/50 px-3 py-1.5 rounded-xl w-full">No products viewed in this session.</span>
                   )}
                 </div>
               </div>
@@ -652,7 +770,7 @@ export default function SellerDashboardPage() {
                     </div>
                   ))}
                   {!loadingVisitorCalls && visitorCalls.length === 0 && (
-                    <span className="text-slate-500 text-[10px] font-bold block">No calls history registered for this profile.</span>
+                    <span className="text-slate-500 text-[10px] font-bold block bg-white/50 border border-slate-100/50 px-3 py-2 rounded-xl text-center w-full">No call logs registered for this shopper.</span>
                   )}
                 </div>
               </div>

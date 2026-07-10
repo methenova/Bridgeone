@@ -109,8 +109,8 @@ export default function ProductPagination({
                 className={cn(
                   "flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition-colors",
                   num === page
-                    ? "bg-blue-600 text-white"
-                    : "border border-slate-700 bg-slate-800 text-slate-400 hover:border-slate-600 hover:text-white"
+                    ? "bg-blue-600 text-white shadow-sm"
+                    : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 )}
               >
                 {num}

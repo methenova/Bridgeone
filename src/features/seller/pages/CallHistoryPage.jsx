@@ -147,8 +147,17 @@ export default function CallHistoryPage() {
 
   if (shopLoading || loading) {
     return (
-      <div className="flex h-[50vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+      <div className="space-y-6 animate-pulse">
+        <div className="flex justify-between items-center pb-4">
+          <div className="h-6 w-32 bg-slate-100 rounded-md" />
+          <div className="h-10 w-24 bg-slate-100 rounded-md" />
+        </div>
+        <div className="bg-white rounded-3xl border border-slate-100 p-5 space-y-4">
+          <div className="h-10 bg-slate-50 rounded-xl" />
+          {[...Array(4)].map((_, idx) => (
+            <div key={idx} className="h-12 bg-slate-50/50 rounded-xl" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -241,7 +250,7 @@ export default function CallHistoryPage() {
                   <tr 
                     key={call.id} 
                     onClick={() => handleOpenDetails(call)}
-                    className="border-b border-slate-100 hover:bg-slate-900/20 text-sm text-slate-350 cursor-pointer transition-colors"
+                    className="border-b border-slate-100 hover:bg-slate-50 text-sm text-slate-600 cursor-pointer transition-colors"
                   >
                     <td className="px-6 py-4.5 font-semibold text-slate-900">{call.customer_name}</td>
                     <td className="px-6 py-4.5 text-slate-500">{call.customer_email || "-"}</td>
@@ -251,8 +260,8 @@ export default function CallHistoryPage() {
                     <td className="px-6 py-4.5">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                         isMissed
-                          ? "bg-rose-500/10 text-rose-400 border border-rose-500/20"
-                          : "bg-green-500/10 text-green-400 border border-green-500/20"
+                          ? "bg-rose-500/10 text-rose-450 border border-rose-500/20"
+                          : "bg-green-500/10 text-green-500 border border-green-500/20"
                       }`}>
                         {isMissed ? "Missed" : "Completed"}
                       </span>
@@ -264,7 +273,7 @@ export default function CallHistoryPage() {
           </table>
 
           {/* CALL DETAILS SLIDE OUT DRAWER */}
-          <div className={`fixed inset-y-0 right-0 z-50 w-full max-w-md border-l border-slate-900 bg-slate-950/95 backdrop-blur-md shadow-2xl transition-transform duration-300 ease-in-out ${
+          <div className={`fixed inset-y-0 right-0 z-50 w-full max-w-md border-l border-slate-100 bg-white/95 backdrop-blur-md shadow-2xl transition-transform duration-300 ease-in-out ${
             selectedCall ? "translate-x-0" : "translate-x-full"
           }`}>
             {selectedCall && (

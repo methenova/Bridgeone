@@ -261,7 +261,7 @@ export default function SellerAgentsPage() {
             placeholder="Search team agents by name or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-2xl border border-slate-100 bg-slate-950/80 pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-500 outline-none focus:border-slate-850 transition-colors"
+            className="w-full rounded-2xl border border-slate-200 bg-white pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/8 transition-colors"
           />
         </div>
 
@@ -272,7 +272,7 @@ export default function SellerAgentsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-1.5 text-xs text-slate-350 outline-none focus:border-slate-850"
+              className="rounded-2xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-blue-500"
             >
               <option value="all">All States</option>
               <option value="Available">Available</option>

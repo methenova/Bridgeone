@@ -32,7 +32,30 @@ export default function SellerNotificationsPage() {
   const [inAppEnabled, setInAppEnabled] = useState(true);
   const [emailEnabled, setEmailEnabled] = useState(true);
   const [pushEnabled, setPushEnabled] = useState(false);
+  const formatRelativeTime = (isoString) => {
+    try {
+      const now = new Date();
+      const date = new Date(isoString);
+      const diffMs = now - date;
+      const diffSecs = Math.floor(diffMs / 1000);
+      const diffMins = Math.floor(diffSecs / 60);
+      const diffHours = Math.floor(diffMins / 60);
+      const diffDays = Math.floor(diffHours / 24);
 
+      if (diffSecs < 60) return "Just now";
+      if (diffMins < 60) return `${diffMins}m ago`;
+      if (diffHours < 24) return `${diffHours}h ago`;
+      if (diffDays === 1) return "Yesterday";
+      if (diffDays < 7) return `${diffDays}d ago`;
+
+      return date.toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short"
+      });
+    } catch (err) {
+      return "";
+    }
+  };
   // Load notifications from database
   async function loadNotifications() {
     if (!shopId) return;
@@ -190,11 +213,11 @@ export default function SellerNotificationsPage() {
           </div>
 
           {/* Notifications feed */}
-          <div className="space-y-3">
+          <div className="space-y-3.5">
             <AnimatePresence>
               {filteredNotifications.map((n, idx) => {
-                const isCall = n.type === "incoming_call" || n.type === "missed_call";
                 const isCallback = n.type === "callback_reminder";
+                const isUnread = !n.is_read;
                 
                 return (
                   <motion.div
@@ -203,21 +226,21 @@ export default function SellerNotificationsPage() {
                     exit={{ opacity: 0 }}
                     transition={{ delay: idx * 0.02 }}
                     key={n.id}
-                    className={`rounded-2xl border p-4.5 flex gap-4 items-start transition-all hover:shadow-sm ${
-                      n.is_read 
-                        ? "border-slate-100 bg-slate-50/50 opacity-75" 
-                        : "border-slate-100 bg-white shadow-sm ring-1 ring-slate-100/50"
+                    className={`rounded-2xl border p-4.5 flex gap-4 items-start transition-all duration-200 hover:shadow-md hover:translate-x-[2px] ${
+                      isUnread 
+                        ? "border-slate-200 border-l-4 border-l-blue-600 bg-white shadow-sm" 
+                        : "border-slate-100 bg-slate-50/25 opacity-70"
                     }`}
                   >
                     {/* Icon */}
-                    <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 border ${
+                    <div className={`h-8.5 w-8.5 rounded-xl flex items-center justify-center shrink-0 border shadow-xs ${
                       n.type === "incoming_call" 
-                        ? "bg-blue-50 border-blue-100/50 text-blue-600" 
+                        ? "bg-blue-50 border-blue-100 text-blue-600" 
                         : n.type === "missed_call" 
-                        ? "bg-rose-50 border-rose-100/50 text-rose-600"
+                        ? "bg-rose-50 border-rose-100 text-rose-600"
                         : isCallback 
-                        ? "bg-emerald-50 border-emerald-100/50 text-emerald-600"
-                        : "bg-indigo-50 border-indigo-100/50 text-indigo-600"
+                        ? "bg-amber-50 border-amber-100 text-amber-600"
+                        : "bg-indigo-50 border-indigo-100 text-indigo-600"
                     }`}>
                       {n.type === "incoming_call" ? (
                         <PhoneCall className="h-4 w-4" />
@@ -231,26 +254,26 @@ export default function SellerNotificationsPage() {
                     </div>
 
                     {/* Details content */}
-                    <div className="flex-1 space-y-1 text-xs">
-                      <div className="flex justify-between items-start">
-                        <span className="font-bold text-slate-900 block">{n.title}</span>
-                        <span className="text-[9px] text-slate-500 font-mono">
-                          {new Date(n.created_at).toLocaleDateString("en-IN", {
-                            day: "2-digit",
-                            month: "short",
-                            hour: "2-digit",
-                            minute: "2-digit"
-                          })}
+                    <div className="flex-1 space-y-1 text-xs text-left">
+                      <div className="flex justify-between items-baseline gap-2">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-bold text-slate-900 block">{n.title}</span>
+                          {isUnread && (
+                            <span className="h-1.5 w-1.5 rounded-full bg-blue-600 animate-pulse" />
+                          )}
+                        </div>
+                        <span className="text-[9px] text-slate-400 font-bold font-mono whitespace-nowrap">
+                          {formatRelativeTime(n.created_at)}
                         </span>
                       </div>
                       <p className="text-slate-500 leading-relaxed text-[11px]">{n.message}</p>
                     </div>
 
                     {/* Actions */}
-                    {!n.is_read && (
+                    {isUnread && (
                       <button
                         onClick={() => handleMarkRead(n.id)}
-                        className="h-7 w-7 rounded-2xl border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-500 hover:text-slate-900 transition-colors"
+                        className="h-7 w-7 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50/20 transition-all shadow-xs cursor-pointer shrink-0"
                         title="Mark as Read"
                       >
                         <Check className="h-3.5 w-3.5" />
@@ -262,10 +285,15 @@ export default function SellerNotificationsPage() {
             </AnimatePresence>
 
             {filteredNotifications.length === 0 && (
-              <div className="py-20 text-center flex flex-col items-center border border-slate-100 rounded-2xl bg-slate-50">
-                <Bell className="h-10 w-10 text-slate-700 mb-3 animate-pulse" />
-                <p className="text-sm font-bold text-slate-500">All caught up!</p>
-                <p className="text-[10px] text-slate-500 mt-0.5">No notifications found under this category.</p>
+              <div className="py-20 text-center flex flex-col items-center justify-center border border-slate-100 rounded-3xl bg-white shadow-xs p-6 space-y-4">
+                <div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 border border-blue-100 text-blue-600 shadow-xs">
+                  <Bell className="h-6 w-6 stroke-[1.6]" />
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[8px] font-black text-white shadow-xs">✓</span>
+                </div>
+                <div className="space-y-1.5">
+                  <p className="text-xs font-bold text-slate-800">Inbox is All Clear</p>
+                  <p className="text-[10px] text-slate-405 max-w-[200px] leading-relaxed mx-auto">No notification alerts found under this tab. You are completely caught up!</p>
+                </div>
               </div>
             )}
           </div>

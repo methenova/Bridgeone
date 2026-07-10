@@ -129,3 +129,183 @@
     @apply font-sans;
     }
 }
+
+/* Premium Unified Button System Overrides */
+button {
+  border-radius: 1.125rem !important; /* Enforces premium 18px rounded corners */
+  font-weight: 700 !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button:active {
+  transform: scale(0.97) !important;
+}
+
+/* Blue Primary Button Styling Rules */
+button.bg-blue-600,
+button.bg-blue-500,
+button[class*="bg-blue-600"],
+button[class*="bg-blue-500"],
+button[class*="bg-primary"] {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08), 0 1px 2px rgba(37, 99, 235, 0.05) !important;
+}
+
+button.bg-blue-600:hover,
+button.bg-blue-500:hover,
+button[class*="bg-blue-600"]:hover,
+button[class*="bg-blue-500"]:hover {
+  background-color: #1d4ed8 !important;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.16) !important;
+  transform: translateY(-1px) !important;
+}
+
+button.bg-blue-600:disabled,
+button.bg-blue-500:disabled,
+button[class*="bg-blue-600"]:disabled,
+button[class*="bg-blue-500"]:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Red/Destructive Button Exceptions */
+button.bg-red-600,
+button.bg-red-500,
+button[class*="bg-red-"] {
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.08) !important;
+}
+
+button.bg-red-600:hover,
+button.bg-red-500:hover,
+button[class*="bg-red-"]:hover {
+  background-color: #b91c1c !important;
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.16) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Slate Secondary/Border Button Styling Rules */
+button.bg-white,
+button.bg-slate-50,
+button.bg-slate-100,
+button.bg-slate-800,
+button.bg-slate-900,
+button.border-slate-255,
+button.border-slate-200,
+button.border-slate-100,
+button[class*="bg-slate-50"],
+button[class*="bg-slate-100"],
+button[class*="bg-slate-800"],
+button[class*="bg-slate-900"],
+button[class*="border-slate-"] {
+  background-color: #ffffff !important;
+  color: #475569 !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+}
+
+button.bg-white:hover,
+button.bg-slate-50:hover,
+button.bg-slate-100:hover,
+button.bg-slate-800:hover,
+button.bg-slate-900:hover,
+button[class*="bg-slate-55"]:hover,
+button[class*="bg-slate-100"]:hover,
+button[class*="bg-slate-800"]:hover,
+button[class*="bg-slate-900"]:hover {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+}
+
+button.bg-white:disabled,
+button.bg-slate-50:disabled,
+button.bg-slate-100:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Premium Unified Data Tables Redesign */
+.table-container,
+div:has(> table) {
+  border-radius: 1.125rem !important; /* 18px rounded table container */
+  border: 1px solid #e2e8f0 !important;
+  background-color: #ffffff !important;
+  overflow: hidden !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
+table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  width: 100% !important;
+}
+
+/* Header Cells (Sticky, soft light styling) */
+thead th,
+table th {
+  background-color: #f8fafc !important; /* light slate top header */
+  color: #475569 !important; /* slate-600 */
+  font-weight: 750 !important;
+  font-size: 0.6875rem !important; /* text-[11px] */
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 0.875rem 1.5rem !important; /* px-6 py-3.5 equivalent */
+  border-bottom: 1px solid #e2e8f0 !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10 !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+/* Body Cells (Improved spacing, border line separators) */
+tbody td,
+table td {
+  padding: 1rem 1.5rem !important; /* px-6 py-4 equivalent */
+  font-size: 0.75rem !important; /* text-xs */
+  color: #334155 !important; /* slate-750 */
+  border-bottom: 1px solid #f1f5f9 !important;
+  background-color: transparent !important;
+  transition: background-color 0.15s ease-in-out !important;
+}
+
+/* Row hover elevation & Zebra coloring */
+tbody tr,
+table tr {
+  background-color: #ffffff !important;
+}
+
+tbody tr:nth-child(even),
+table tr:nth-child(even) {
+  background-color: rgba(248, 250, 252, 0.4) !important; /* zebra row background */
+}
+
+tbody tr:hover td,
+table tr:hover td {
+  background-color: #f8fafc !important; /* hover state */
+}
+
+/* Rounded corners for the container overflow check */
+table tr:first-child th:first-child {
+  border-top-left-radius: 1.125rem !important;
+}
+table tr:first-child th:last-child {
+  border-top-right-radius: 1.125rem !important;
+}
+table tr:last-child td:first-child {
+  border-bottom-left-radius: 1.125rem !important;
+}
+table tr:last-child td:last-child {
+  border-bottom-right-radius: 1.125rem !important;
+}

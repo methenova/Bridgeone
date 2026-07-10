@@ -64,8 +64,17 @@ export default function OrdersPage() {
 
   if (shopLoading) {
     return (
-      <div className="flex items-center justify-center py-20 text-slate-500">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-200 border-t-blue-500" />
+      <div className="space-y-6 animate-pulse">
+        <div className="flex justify-between items-center pb-4">
+          <div className="h-6 w-32 bg-slate-100 rounded-md" />
+          <div className="h-10 w-24 bg-slate-100 rounded-md" />
+        </div>
+        <div className="bg-white rounded-3xl border border-slate-100 p-5 space-y-4">
+          <div className="h-10 bg-slate-50 rounded-xl" />
+          {[...Array(4)].map((_, idx) => (
+            <div key={idx} className="h-12 bg-slate-50/50 rounded-xl" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -131,12 +140,12 @@ export default function OrdersPage() {
           </p>
         </div>
       ) : (
-        <div className={`overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 transition-opacity ${
+        <div className={`overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition-opacity ${
           isFetching && !isLoading ? "opacity-75" : ""
         }`}>
           <div className="overflow-x-auto">
             <table className="min-w-full text-left">
-              <thead className="border-b border-slate-200 bg-slate-950/60 text-slate-600 text-sm font-semibold">
+              <thead>
                 <tr>
                   <th className="px-6 py-4">Order ID</th>
                   <th className="px-6 py-4">Date</th>

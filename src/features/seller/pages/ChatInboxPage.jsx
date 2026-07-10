@@ -87,25 +87,25 @@ export default function ChatInboxPage() {
       <div className="grid gap-6 md:grid-cols-3 border border-slate-100 rounded-3xl bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 overflow-hidden h-[600px]">
         
         {/* Left: Contacts Pane */}
-        <div className="border-r border-slate-100 flex flex-col h-full bg-slate-950/20">
-          <div className="p-4 border-b border-slate-100">
+        <div className="border-r border-slate-100 flex flex-col h-full bg-slate-50/20">
+          <div className="p-4 border-b border-slate-100 bg-white">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
               <input
                 type="text"
                 placeholder="Search conversations..."
-                className="w-full rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 py-2 pl-9 pr-4 text-xs text-slate-900 placeholder-slate-600 outline-none"
+                className="w-full rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 py-2 pl-9 pr-4 text-xs text-slate-900 placeholder-slate-400 outline-none"
               />
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto divide-y divide-slate-100 scrollbar-none">
+          <div className="flex-1 overflow-y-auto divide-y divide-slate-50 scrollbar-none bg-white">
             {contactsLoading ? (
               <div className="p-4 text-center text-xs text-slate-500 animate-pulse">Loading contacts...</div>
             ) : contacts.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20 text-center text-slate-600">
+              <div className="flex flex-col items-center justify-center py-20 text-center text-slate-650">
                 <MessageSquare className="h-8 w-8 mb-2 stroke-[1.5]" />
-                <p className="text-xs">No active chats.</p>
+                <p className="text-xs font-semibold text-slate-700">No active chats.</p>
               </div>
             ) : (
               contacts.map((c) => {
@@ -114,17 +114,19 @@ export default function ChatInboxPage() {
                   <div
                     key={c.id}
                     onClick={() => setSelectedContact(c)}
-                    className={`p-4 flex items-center gap-3 cursor-pointer transition-colors ${
-                      isActive ? "bg-blue-600/10 text-white" : "hover:bg-slate-900/40 text-slate-300"
+                    className={`p-4 flex items-center gap-3 cursor-pointer transition-colors border-b border-slate-50 ${
+                      isActive 
+                        ? "bg-blue-50/40 text-blue-600 border-l-4 border-l-blue-600 font-bold" 
+                        : "hover:bg-slate-50/60 text-slate-600"
                     }`}
                   >
-                    <div className="h-9 w-9 rounded-full bg-blue-50 border border-blue-100/50 text-blue-600 font-semibold flex items-center justify-center shrink-0">
+                    <div className="h-9 w-9 rounded-full bg-blue-50 border border-blue-100 text-blue-600 font-semibold flex items-center justify-center shrink-0">
                       <User className="h-5 w-5" />
                     </div>
                     
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 text-left">
                       <div className="flex justify-between items-baseline mb-0.5">
-                        <p className="text-xs font-bold truncate text-slate-900">{c.user?.full_name || "Buyer"}</p>
+                        <p className={`text-xs font-bold truncate ${isActive ? "text-blue-700" : "text-slate-900"}`}>{c.user?.full_name || "Buyer"}</p>
                         {c.unread && (
                           <span className="h-2 w-2 rounded-full bg-blue-500 shrink-0" />
                         )}
@@ -139,46 +141,46 @@ export default function ChatInboxPage() {
         </div>
 
         {/* Right: Messages Pane */}
-        <div className="md:col-span-2 flex flex-col h-full bg-slate-950/10">
+        <div className="md:col-span-2 flex flex-col h-full bg-white">
           {selectedContact ? (
             <>
               {/* Active Header */}
-              <div className="flex items-center gap-3 border-b border-slate-100 px-6 py-4 bg-slate-950/40">
-                <div className="h-9 w-9 rounded-full bg-blue-50 border border-blue-100/50 text-blue-600 font-semibold flex items-center justify-center">
+              <div className="flex items-center gap-3 border-b border-slate-100 px-6 py-4 bg-slate-50/30">
+                <div className="h-9 w-9 rounded-full bg-blue-50 border border-blue-100 text-blue-600 font-semibold flex items-center justify-center">
                   <User className="h-5 w-5" />
                 </div>
-                <div>
+                <div className="text-left">
                   <h4 className="text-xs font-bold text-slate-900">{selectedContact.user?.full_name || "Buyer"}</h4>
-                  <p className="text-[10px] text-slate-500">{selectedContact.user?.email}</p>
+                  <p className="text-[10px] text-slate-400 font-bold">{selectedContact.user?.email}</p>
                 </div>
               </div>
 
               {/* Feed */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-none">
+              <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-none bg-slate-50/20">
                 {messagesLoading ? (
                   <div className="text-center text-xs text-slate-500 animate-pulse">Loading message history...</div>
                 ) : messages.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-center text-slate-600">
+                  <div className="h-full flex flex-col items-center justify-center text-center text-slate-650">
                     <MessageSquare className="h-8 w-8 mb-2 stroke-[1.5]" />
-                    <p className="text-xs">Send a message to start the conversation.</p>
+                    <p className="text-xs font-semibold text-slate-700">Send a message to start the conversation.</p>
                   </div>
                 ) : (
                   messages.map((m) => {
                     const isOwn = m.sender_id === userId;
                     return (
                       <div key={m.id} className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
-                        <div className={`max-w-[70%] rounded-2xl p-3.5 space-y-2 text-xs ${
+                        <div className={`max-w-[70%] rounded-2xl p-3.5 space-y-2 text-xs text-left shadow-xs ${
                           isOwn
                             ? "bg-blue-600 text-white rounded-tr-none"
-                            : "bg-slate-900 text-slate-200 rounded-tl-none border border-slate-850"
+                            : "bg-slate-100 text-slate-800 rounded-tl-none border border-slate-200/50"
                         }`}>
-                          {m.content && <p className="leading-relaxed">{m.content}</p>}
+                          {m.content && <p className="leading-relaxed font-semibold">{m.content}</p>}
                           {m.image_url && (
                             <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 mt-1 max-w-[200px]">
                               <img src={m.image_url} alt="" className="object-cover w-full h-auto" />
                             </div>
                           )}
-                          <span className={`block text-[9px] text-right mt-1 ${isOwn ? "text-blue-200" : "text-slate-500"}`}>
+                          <span className={`block text-[9px] text-right mt-1 ${isOwn ? "text-blue-200 font-bold" : "text-slate-400 font-bold"}`}>
                             {new Date(m.created_at).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
                           </span>
                         </div>
@@ -190,9 +192,9 @@ export default function ChatInboxPage() {
               </div>
 
               {/* Input Form */}
-              <form onSubmit={handleSend} className="border-t border-slate-100 p-4 bg-slate-950/40 space-y-3">
+              <form onSubmit={handleSend} className="border-t border-slate-100 p-4 bg-slate-50/40 space-y-3">
                 {attachmentUrl && (
-                  <div className="relative inline-block border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-1.5 pr-8 text-xs text-slate-600">
+                  <div className="relative inline-block border border-slate-250 rounded-2xl overflow-hidden bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-1.5 pr-8 text-xs text-slate-600">
                     <Image className="inline h-4.5 w-4.5 text-blue-600 font-semibold mr-1.5" />
                     <span>Image attachment loaded</span>
                     <button

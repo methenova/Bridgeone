@@ -122,7 +122,7 @@ export default function ProductList({
                     if (el) el.indeterminate = someSelected;
                   }}
                   onChange={handleSelectAll}
-                  className="h-4 w-4 rounded border-slate-600 bg-slate-700 accent-blue-600"
+                  className="h-4 w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500 accent-blue-600"
                 />
               </th>
 
@@ -212,7 +212,7 @@ export default function ProductList({
                       type="checkbox"
                       checked={isSelected}
                       onChange={(e) => handleSelectOne(product.id, e.target.checked)}
-                      className="h-4 w-4 rounded border-slate-600 bg-slate-700 accent-blue-600"
+                      className="h-4 w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500 accent-blue-600"
                     />
                   </td>
 

@@ -504,8 +504,13 @@ export default function SellerWidgetPage() {
       {activeSubTab === "analytics" && (
         <div className="space-y-6">
           {loadingAnalytics ? (
-            <div className="flex h-64 items-center justify-center">
-              <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 animate-pulse">
+              {[...Array(4)].map((_, idx) => (
+                <div key={idx} className="bg-white p-5 rounded-2xl border border-slate-100 h-24 flex flex-col justify-between">
+                  <div className="h-3 w-16 bg-slate-100 rounded-md" />
+                  <div className="h-6 w-24 bg-slate-100 rounded-md" />
+                </div>
+              ))}
             </div>
           ) : (
             <>

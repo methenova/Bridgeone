@@ -115,90 +115,121 @@ export default function ShopForm({
 
       {/* Form Fields */}
 
+      {/* Form Fields */}
+
       <div className="mt-8 grid gap-6 md:grid-cols-2">
 
-        <input
-          type="text"
-          name="shop_name"
-          placeholder="Shop Name"
-          value={formData.shop_name}
-          onChange={handleChange}
-          className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-900"
-        />
+        <div className="space-y-1.5">
+          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Shop Name *</label>
+          <input
+            type="text"
+            name="shop_name"
+            placeholder="e.g. Acme Apparel"
+            value={formData.shop_name}
+            onChange={handleChange}
+            required
+            className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/8 font-semibold shadow-xs"
+          />
+        </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Business Email"
-          value={formData.email}
-          onChange={handleChange}
-          className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-900"
-        />
+        <div className="space-y-1.5">
+          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Business Email *</label>
+          <input
+            type="email"
+            name="email"
+            placeholder="e.g. contact@acme.com"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/8 font-semibold shadow-xs"
+          />
+        </div>
 
-        <input
-          type="text"
-          name="phone"
-          placeholder="Phone"
-          value={formData.phone}
-          onChange={handleChange}
-          className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-900"
-        />
+        <div className="space-y-1.5">
+          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Phone Number</label>
+          <input
+            type="text"
+            name="phone"
+            placeholder="e.g. +91 9876543210"
+            value={formData.phone}
+            onChange={handleChange}
+            className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/8 font-semibold shadow-xs"
+          />
+        </div>
 
-        <input
-          type="text"
-          name="city"
-          placeholder="City"
-          value={formData.city}
-          onChange={handleChange}
-          className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-900"
-        />
+        <div className="space-y-1.5">
+          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">City</label>
+          <input
+            type="text"
+            name="city"
+            placeholder="e.g. Mumbai"
+            value={formData.city}
+            onChange={handleChange}
+            className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/8 font-semibold shadow-xs"
+          />
+        </div>
 
-        <input
-          type="text"
-          name="state"
-          placeholder="State"
-          value={formData.state}
-          onChange={handleChange}
-          className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-900"
-        />
+        <div className="space-y-1.5">
+          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">State</label>
+          <input
+            type="text"
+            name="state"
+            placeholder="e.g. Maharashtra"
+            value={formData.state}
+            onChange={handleChange}
+            className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/8 font-semibold shadow-xs"
+          />
+        </div>
 
-        <input
-          type="text"
-          name="country"
-          placeholder="Country"
-          value={formData.country}
-          onChange={handleChange}
-          className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-900"
-        />
+        <div className="space-y-1.5">
+          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Country</label>
+          <input
+            type="text"
+            name="country"
+            placeholder="e.g. India"
+            value={formData.country}
+            onChange={handleChange}
+            className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/8 font-semibold shadow-xs"
+          />
+        </div>
 
       </div>
 
-      <textarea
-        name="description"
-        placeholder="Shop Description"
-        value={formData.description}
-        onChange={handleChange}
-        rows={5}
-        className="mt-6 w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-900"
-      />
+      <div className="mt-6 space-y-1.5">
+        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Shop Description</label>
+        <textarea
+          name="description"
+          placeholder="Describe your brand and product collections to customers..."
+          value={formData.description}
+          onChange={handleChange}
+          rows={4}
+          className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/8 font-semibold shadow-xs"
+        />
+      </div>
 
-      <textarea
-        name="address"
-        placeholder="Complete Address"
-        value={formData.address}
-        onChange={handleChange}
-        rows={3}
-        className="mt-6 w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-900"
-      />
+      <div className="mt-6 space-y-1.5">
+        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Complete Address</label>
+        <textarea
+          name="address"
+          placeholder="Shop physical address..."
+          value={formData.address}
+          onChange={handleChange}
+          rows={3}
+          className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/8 font-semibold shadow-xs"
+        />
+      </div>
 
-      <input
-        type="text"
-        name="pincode"
-        placeholder="Pincode"
-        value={formData.pincode}
-        onChange={handleChange}
-        className="mt-6 w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-900"
-      />
+      <div className="mt-6 space-y-1.5">
+        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Pincode</label>
+        <input
+          type="text"
+          name="pincode"
+          placeholder="e.g. 400001"
+          value={formData.pincode}
+          onChange={handleChange}
+          className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/8 font-semibold shadow-xs"
+        />
+      </div>
 
       <button
         type="submit"
