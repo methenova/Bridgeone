@@ -85,10 +85,14 @@ export function AuthProvider({ children }) {
   }
 
   async function logout() {
-    await logoutUser();
-
-    setUser(null);
-    setProfile(null);
+    try {
+      await logoutUser();
+    } catch (err) {
+      console.error("Error signing out:", err);
+    } finally {
+      setUser(null);
+      setProfile(null);
+    }
   }
 
   return (
