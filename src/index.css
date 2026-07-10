@@ -72,7 +72,7 @@
     --chart-3: oklch(0.769 0.188 70); /* Amber */
     --chart-4: oklch(0.609 0.126 14.5); /* Rose */
     --chart-5: oklch(0.488 0.243 264.4); /* Indigo */
-    --radius: 1.125rem; /* 18px */
+    --radius: 0.5rem; /* 8px - modern professional Stripe/Linear radius scale */
     --sidebar: oklch(1 0 0);
     --sidebar-foreground: oklch(0.145 0.018 240);
     --sidebar-primary: oklch(0.585 0.233 253);
@@ -132,7 +132,7 @@
 
 /* Premium Unified Button System Overrides */
 button {
-  border-radius: 1.125rem !important; /* Enforces premium 18px rounded corners */
+  border-radius: 0.5rem !important; /* Enforces premium 8px rounded corners */
   font-weight: 700 !important;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
   cursor: pointer;
@@ -239,7 +239,7 @@ button.bg-slate-100:disabled {
 /* Premium Unified Data Tables Redesign */
 .table-container,
 div:has(> table) {
-  border-radius: 1.125rem !important; /* 18px rounded table container */
+  border-radius: 0.5rem !important; /* 8px rounded table container */
   border: 1px solid #e2e8f0 !important;
   background-color: #ffffff !important;
   overflow: hidden !important;
@@ -298,14 +298,14 @@ table tr:hover td {
 
 /* Rounded corners for the container overflow check */
 table tr:first-child th:first-child {
-  border-top-left-radius: 1.125rem !important;
+  border-top-left-radius: 0.5rem !important;
 }
 table tr:first-child th:last-child {
-  border-top-right-radius: 1.125rem !important;
+  border-top-right-radius: 0.5rem !important;
 }
 table tr:last-child td:first-child {
-  border-bottom-left-radius: 1.125rem !important;
+  border-bottom-left-radius: 0.5rem !important;
 }
 table tr:last-child td:last-child {
-  border-bottom-right-radius: 1.125rem !important;
+  border-bottom-right-radius: 0.5rem !important;
 }
