@@ -160,7 +160,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
   const isBusy = isSubmitting || createProduct.isPending || updateProduct.isPending;
 
   const fieldClass =
-    "w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-500/8 font-semibold shadow-xs hover:border-slate-300";
+    "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-500/8 font-semibold shadow-xs hover:border-slate-300";
   const errorClass = "mt-1.5 text-xs text-red-600 font-semibold";
   const labelClass = "mb-1.5 block text-xs font-bold text-slate-500 uppercase tracking-wider";
 
