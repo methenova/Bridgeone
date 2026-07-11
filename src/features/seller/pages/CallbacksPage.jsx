@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 
 import { supabase } from "@/config/supabase";
 import useSellerShop from "../hooks/useSellerShop";
+import { motion } from "framer-motion";
 
 export default function CallbacksPage() {
   const { shop, loading: shopLoading } = useSellerShop();
@@ -164,68 +165,76 @@ export default function CallbacksPage() {
       </div>
 
       {/* Callback Queue Card */}
-      <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 overflow-hidden">
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] uppercase font-bold text-slate-500 tracking-wider hover:bg-slate-50/50 transition-colors group">
-                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Customer</th>
-                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Email</th>
-                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Phone</th>
-                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Scheduled Date & Time</th>
-                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Status</th>
-                <th className="text-right px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Actions</th>
+          <table className="min-w-full text-left border-collapse">
+            <thead className="sticky top-0 z-10 border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+              <tr>
+                <th className="px-6 py-5 align-middle">Customer</th>
+                <th className="px-6 py-5 align-middle">Email</th>
+                <th className="px-6 py-5 align-middle">Phone</th>
+                <th className="px-6 py-5 align-middle">Scheduled Date & Time</th>
+                <th className="px-6 py-5 align-middle">Status</th>
+                <th className="px-6 py-5 align-middle text-right">Actions</th>
               </tr>
             </thead>
-            <tbody>
-              {callbacks.map((c) => {
+            <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
+              {callbacks.map((c, idx) => {
                 const pending = c.status === "pending";
                 const overdue = isOverdue(c.scheduled_time, c.status);
                 return (
-                  <tr key={c.id} className="border-b border-slate-100 hover:bg-slate-55 text-sm text-slate-600">
-                    <td className="py-4.5 font-semibold text-slate-900 px-6 py-5 align-middle">{c.customer_name}</td>
-                    <td className="py-4.5 text-slate-500 px-6 py-5 align-middle">{c.customer_email || "-"}</td>
-                    <td className="py-4.5 text-slate-500 px-6 py-5 align-middle">{c.customer_phone || "-"}</td>
-                    <td className="py-4.5 px-6 py-5 align-middle">
+                  <motion.tr 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.02 }}
+                    key={c.id} 
+                    className="hover:bg-slate-50/50 transition-colors group"
+                  >
+                    <td className="px-6 py-5 align-middle font-bold text-slate-900 text-sm">{c.customer_name}</td>
+                    <td className="px-6 py-5 align-middle font-mono text-[10px] text-slate-500">{c.customer_email || "-"}</td>
+                    <td className="px-6 py-5 align-middle font-mono text-[10px] text-slate-500">{c.customer_phone || "-"}</td>
+                    <td className="px-6 py-5 align-middle font-medium text-slate-500">
                       <div className="space-y-0.5">
-                        <span className={`text-xs font-semibold ${overdue ? "text-rose-600 font-bold" : "text-slate-700"}`}>
+                        <span className={`text-xs font-medium ${overdue ? "text-rose-600 font-bold" : "text-slate-700"}`}>
                           {formatDateTime(c.scheduled_time)}
                         </span>
                         {overdue && (
-                          <p className="text-[9px] text-rose-600 uppercase font-bold tracking-wider animate-pulse">Overdue</p>
+                          <p className="text-[9px] text-rose-600 uppercase font-bold tracking-wider animate-pulse mt-0.5">Overdue</p>
                         )}
                       </div>
                     </td>
-                    <td className="py-4.5 px-6 py-5 align-middle">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                    <td className="px-6 py-5 align-middle">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border ${
                         pending
                           ? overdue
-                            ? "bg-rose-50 border border-rose-100 text-rose-600"
-                            : "bg-amber-50 border border-amber-100 text-amber-700"
-                          : "bg-emerald-50 border border-emerald-100 text-emerald-650"
+                            ? "bg-rose-500/10 text-rose-500 border-rose-500/20"
+                            : "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                          : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
                       }`}>
                         {pending ? "Pending" : "Resolved"}
                       </span>
                     </td>
-                    <td className="py-4.5 text-right px-6 py-5 align-middle">
-                      <div className="flex items-center justify-end gap-2">
+                    <td className="px-6 py-5 align-middle text-right">
+                      <div className="flex items-center justify-end gap-2.5">
                         {pending && (
                           <button
-                            onClick={() => handleResolve(c.id)} className="flex items-center gap-1 px-3 py-1.5 rounded-2xl text-xs font-semibold bg-emerald-50 border border-emerald-100/50 text-emerald-600 hover:bg-green-500/20 border-green-500/20 transition-all cursor-pointer"
+                            onClick={() => handleResolve(c.id)} 
+                            title="Resolve"
+                            className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:ring-offset-1 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-300 cursor-pointer"
                           >
-                            <CheckCircle2 className="h-3.5 w-3.5" />
-                            Resolve
+                            <CheckCircle2 className="h-4 w-4" />
                           </button>
                         )}
                         <button
-                          onClick={() => handleDelete(c.id)} className="p-2 rounded-2xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all cursor-pointer"
+                          onClick={() => handleDelete(c.id)} 
                           title="Delete Request"
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-rose-500/40 focus:ring-offset-1 text-slate-500 hover:bg-rose-50 hover:border-rose-300 hover:text-rose-600 cursor-pointer"
                         >
-                          <Trash2 className="h-3.5 w-3.5" />
+                          <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
                     </td>
-                  </tr>
+                  </motion.tr>
                 );
               })}
             </tbody>

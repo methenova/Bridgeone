@@ -18,28 +18,28 @@ export default function SellerOrderRow({ order, onView, onPrintInvoice }) {
 
 
   return (
-    <tr className="hover:bg-slate-50/40 transition-colors">
+    <tr className="hover:bg-slate-50/50 transition-colors group">
       {/* Order ID */}
-      <td className="px-6 py-4 font-mono text-sm text-slate-600">
+      <td className="px-6 py-5 align-middle font-mono text-sm font-bold text-slate-600">
         #{order.id.slice(0, 8).toUpperCase()}
       </td>
 
       {/* Date */}
-      <td className="px-6 py-4 text-sm text-slate-500">
+      <td className="px-6 py-5 align-middle text-sm text-slate-500 font-medium">
         {dateStr}
       </td>
 
       {/* Customer */}
-      <td className="px-6 py-4">
-        <div className="text-sm font-medium text-slate-900">{customerName}</div>
-        <div className="text-xs text-slate-500">{customerEmail}</div>
+      <td className="px-6 py-5 align-middle">
+        <div className="text-sm font-bold text-slate-900">{customerName}</div>
+        <div className="text-[10px] font-mono text-slate-500 mt-0.5">{customerEmail}</div>
       </td>
 
       {/* Items Summary */}
-      <td className="px-6 py-4">
+      <td className="px-6 py-5 align-middle">
         {mainItem && (
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 shrink-0 overflow-hidden rounded-2xl bg-slate-50 border border-slate-200">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-white border border-slate-200">
               {mainItem.product?.thumbnail_url ? (
                 <img
                   src={mainItem.product.thumbnail_url}
@@ -51,10 +51,10 @@ export default function SellerOrderRow({ order, onView, onPrintInvoice }) {
               )}
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm text-slate-900 max-w-[180px]">
+              <p className="truncate text-sm font-bold text-slate-900 max-w-[180px]">
                 {mainItem.product?.name}
               </p>
-              <p className="text-xs text-slate-500">
+              <p className="text-[10px] text-slate-500 font-mono mt-0.5">
                 Qty: {mainItem.quantity}
                 {countOtherItems > 0 && ` (+${countOtherItems} more)`}
               </p>
@@ -64,34 +64,34 @@ export default function SellerOrderRow({ order, onView, onPrintInvoice }) {
       </td>
 
       {/* Value */}
-      <td className="px-6 py-4 text-sm font-semibold text-slate-900">
+      <td className="px-6 py-5 align-middle text-sm font-bold text-slate-900">
         ₹{order.shopTotal.toLocaleString()}
       </td>
 
       {/* Status */}
-      <td className="px-6 py-4">
+      <td className="px-6 py-5 align-middle">
         <div className="flex items-center gap-2">
           <ProductStatusBadge status={order.status === "pending" ? "inactive" : order.status === "cancelled" ? "inactive" : "active"} />
-          <span className="text-xs font-semibold capitalize text-slate-600">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600">
             {order.status}
           </span>
         </div>
       </td>
 
       {/* Actions */}
-      <td className="px-6 py-4 text-right">
-        <div className="flex justify-end gap-2">
+      <td className="px-6 py-5 align-middle text-right">
+        <div className="flex items-center justify-end gap-2.5">
           <button
             onClick={() => onView(order)}
             title="View details"
-            className="flex h-8 w-8 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-500 hover:text-slate-900 hover:border-slate-500 transition-colors"
+            className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1 text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 cursor-pointer"
           >
             <Eye className="h-4 w-4" />
           </button>
           <button
             onClick={() => onPrintInvoice(order)}
             title="Print Invoice"
-            className="flex h-8 w-8 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-500 hover:text-slate-900 hover:border-slate-500 transition-colors"
+            className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1 text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 cursor-pointer"
           >
             <Printer className="h-4 w-4" />
           </button>

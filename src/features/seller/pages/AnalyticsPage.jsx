@@ -333,17 +333,17 @@ export default function AnalyticsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Business Analytics</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Business Analytics</h1>
           <p className="mt-1 text-xs text-slate-500">Calculate shopper conversion trends, call center telemetry, and agent team performance.</p>
         </div>
 
         {/* Date Filter & Export Row */}
         <div className="flex items-center gap-3 self-start sm:self-auto">
-          <div className="flex items-center gap-2 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 px-3 py-1.5 rounded-2xl text-xs">
+          <div className="flex items-center gap-2 bg-white shadow-sm border border-slate-200 px-3 py-1.5 rounded-xl text-xs text-slate-700">
             <Calendar className="h-3.5 w-3.5 text-slate-500" />
             <select
               value={dateRange}
-              onChange={(e) => setDateRange(e.target.value)} className="bg-transparent text-slate-900 outline-none font-bold"
+              onChange={(e) => setDateRange(e.target.value)} className="bg-transparent border-none outline-none text-xs font-bold text-slate-700 cursor-pointer"
             >
               <option value="7">Last 7 Days</option>
               <option value="30">Last 30 Days</option>
@@ -352,7 +352,7 @@ export default function AnalyticsPage() {
           </div>
 
           <button
-            onClick={handleExportCSV} className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-4 py-2 rounded-2xl text-xs font-bold text-white transition-all cursor-pointer hover:bg-blue-500 active:scale-[0.98] shadow-lg shadow-blue-500/10"
+            onClick={handleExportCSV} className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-500 transition-all cursor-pointer shadow-lg shadow-blue-500/20 active:scale-95"
           >
             <Download className="h-3.5 w-3.5" />
             <span>Export CSV</span>
@@ -364,46 +364,50 @@ export default function AnalyticsPage() {
       <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
         
         {/* Sales */}
-        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 p-4.5 flex items-center justify-between">
-          <div className="space-y-1">
-            <p className="text-[10px] text-slate-500 font-bold uppercase">Total Revenue</p>
-            <p className="text-xl font-bold text-slate-900">₹{metrics.revenue.toLocaleString()}</p>
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
+          <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+            <span>Total Revenue</span>
+            <BadgeDollarSign className="h-4.5 w-4.5 text-blue-400" />
           </div>
-          <div className="h-9 w-9 rounded-2xl bg-blue-50 border border-blue-100/50 text-blue-600 font-semibold flex items-center justify-center shrink-0">
-            <BadgeDollarSign className="h-4.5 w-4.5" />
+          <div>
+            <p className="text-2xl font-extrabold tracking-tight text-slate-900">₹{metrics.revenue.toLocaleString()}</p>
+            <p className="text-[10px] text-slate-500 mt-1">Total revenue generated from orders</p>
           </div>
         </div>
 
         {/* Assisted Sales */}
-        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 p-4.5 flex items-center justify-between">
-          <div className="space-y-1">
-            <p className="text-[10px] text-slate-500 font-bold uppercase">Assisted Sales</p>
-            <p className="text-xl font-bold text-slate-900">₹{callStats.salesFromCalls.toLocaleString()}</p>
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
+          <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+            <span>Assisted Sales</span>
+            <ShoppingBag className="h-4.5 w-4.5 text-emerald-400" />
           </div>
-          <div className="h-9 w-9 rounded-2xl bg-emerald-50 border border-emerald-100/50 text-emerald-600 font-semibold flex items-center justify-center shrink-0">
-            <ShoppingBag className="h-4.5 w-4.5" />
+          <div>
+            <p className="text-2xl font-extrabold tracking-tight text-slate-900">₹{callStats.salesFromCalls.toLocaleString()}</p>
+            <p className="text-[10px] text-slate-500 mt-1">Revenue influenced by calls</p>
           </div>
         </div>
 
         {/* Conversion Rate */}
-        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 p-4.5 flex items-center justify-between">
-          <div className="space-y-1">
-            <p className="text-[10px] text-slate-500 font-bold uppercase">Call Conversion</p>
-            <p className="text-xl font-bold text-indigo-600 font-semibold">{callStats.conversionRate}%</p>
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
+          <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+            <span>Call Conversion</span>
+            <TrendingUp className="h-4.5 w-4.5 text-indigo-400" />
           </div>
-          <div className="h-9 w-9 rounded-2xl bg-indigo-50 border border-indigo-100/50 text-indigo-600 font-semibold flex items-center justify-center shrink-0">
-            <TrendingUp className="h-4.5 w-4.5" />
+          <div>
+            <p className="text-2xl font-extrabold tracking-tight text-slate-900">{callStats.conversionRate}%</p>
+            <p className="text-[10px] text-slate-500 mt-1">Orders generated per call</p>
           </div>
         </div>
 
         {/* Orders count */}
-        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 p-4.5 flex items-center justify-between">
-          <div className="space-y-1">
-            <p className="text-[10px] text-slate-500 font-bold uppercase">Total Orders</p>
-            <p className="text-xl font-bold text-slate-900">{metrics.totalOrdersCount}</p>
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
+          <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+            <span>Total Orders</span>
+            <Package className="h-4.5 w-4.5 text-purple-400" />
           </div>
-          <div className="h-9 w-9 rounded-2xl bg-purple-50 border border-purple-100/50 text-purple-650 font-semibold flex items-center justify-center shrink-0">
-            <Package className="h-4.5 w-4.5" />
+          <div>
+            <p className="text-2xl font-extrabold tracking-tight text-slate-900">{metrics.totalOrdersCount}</p>
+            <p className="text-[10px] text-slate-500 mt-1">Total completed checkouts</p>
           </div>
         </div>
 
@@ -417,21 +421,41 @@ export default function AnalyticsPage() {
         </h2>
         
         <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
-          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-            <span className="text-[9px] text-slate-500 uppercase font-bold">Total Calls</span>
-            <p className="text-lg font-bold text-slate-900 mt-1">{callStats.total}</p>
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
+            <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+              <span>Total Calls</span>
+              <Video className="h-4.5 w-4.5 text-slate-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-extrabold tracking-tight text-slate-900">{callStats.total}</p>
+            </div>
           </div>
-          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-            <span className="text-[9px] text-emerald-600 uppercase font-bold">Connected calls</span>
-            <p className="text-lg font-bold text-emerald-600 font-semibold mt-1">{callStats.connected}</p>
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
+            <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+              <span>Connected calls</span>
+              <PhoneCall className="h-4.5 w-4.5 text-emerald-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-extrabold tracking-tight text-emerald-600">{callStats.connected}</p>
+            </div>
           </div>
-          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-            <span className="text-[9px] text-red-600 uppercase font-bold">Missed calls</span>
-            <p className="text-lg font-bold text-red-650 mt-1">{callStats.missed}</p>
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
+            <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+              <span>Missed calls</span>
+              <PhoneMissed className="h-4.5 w-4.5 text-red-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-extrabold tracking-tight text-red-500">{callStats.missed}</p>
+            </div>
           </div>
-          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-            <span className="text-[9px] text-slate-500 uppercase font-bold">Avg Session Duration</span>
-            <p className="text-lg font-bold text-slate-900 mt-1">{formatDuration(callStats.avgDuration)}</p>
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
+            <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+              <span>Avg Duration</span>
+              <Clock className="h-4.5 w-4.5 text-slate-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-extrabold tracking-tight text-slate-900">{formatDuration(callStats.avgDuration)}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -439,14 +463,14 @@ export default function AnalyticsPage() {
       {/* Charts Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Sales Over Time */}
-        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 p-6 space-y-4">
-          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Weekly Revenue Analytics</h3>
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-6 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
+          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Weekly Revenue Analytics</h3>
           <LineChartSVG data={salesOverTime} />
         </div>
 
         {/* Category Portions */}
-        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 p-6 space-y-4">
-          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Product Categories Share</h3>
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-6 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
+          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Product Categories Share</h3>
           <DonutChartSVG data={salesByCategory} />
         </div>
       </div>
@@ -455,8 +479,8 @@ export default function AnalyticsPage() {
       <div className="grid gap-6 md:grid-cols-2">
         
         {/* Products */}
-        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 p-6 space-y-4">
-          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-slate-100">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-6 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
+          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500 flex items-center gap-1.5 pb-2 border-b border-slate-100">
             <Award className="h-4 w-4 text-amber-500" />
             <span>Top Performing Products</span>
           </h3>
@@ -465,7 +489,7 @@ export default function AnalyticsPage() {
             {topProducts.map((p, idx) => (
               <div key={idx} className="flex items-center justify-between py-3.5 first:pt-0 last:pb-0">
                 <div className="flex items-center gap-3">
-                  <div className="h-9 w-9 shrink-0 overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 flex items-center justify-center font-bold">
+                  <div className="h-7 w-7 rounded-lg overflow-hidden border border-slate-200 bg-white shadow-sm flex items-center justify-center font-bold">
                     {p.thumbnail ? <img src={p.thumbnail} alt="" className="h-full w-full object-cover" /> : "📦"}
                   </div>
                   <div>
@@ -473,7 +497,7 @@ export default function AnalyticsPage() {
                     <p className="text-[10px] text-slate-500 mt-0.5">{p.quantity} units checked out</p>
                   </div>
                 </div>
-                <span className="font-bold text-slate-900">₹{p.revenue.toLocaleString()}</span>
+                <span className="font-extrabold text-indigo-400">₹{p.revenue.toLocaleString()}</span>
               </div>
             ))}
             {topProducts.length === 0 && (
@@ -483,8 +507,8 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Agents Leaderboard */}
-        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 p-6 space-y-4">
-          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-slate-100">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-6 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
+          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500 flex items-center gap-1.5 pb-2 border-b border-slate-100">
             <Award className="h-4 w-4 text-blue-500" />
             <span>Agent Performance Leaderboard</span>
           </h3>
@@ -498,12 +522,12 @@ export default function AnalyticsPage() {
                     <p className="text-[10px] text-slate-500 capitalize mt-0.5">{ag.department} · {ag.role}</p>
                   </div>
                   <div className="text-right">
-                    <span className="font-bold text-emerald-600 text-sm">₹{ag.revenue.toLocaleString()}</span>
-                    <span className="text-[9px] text-slate-500 block uppercase tracking-wider font-bold">Revenue</span>
+                    <span className="font-extrabold text-indigo-400">₹{ag.revenue.toLocaleString()}</span>
+                    <span className="text-[9px] text-slate-550 mt-0.5 block">Revenue</span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-4 gap-2 mt-2.5 bg-slate-50 p-2.5 rounded-2xl border border-slate-100 text-[10px] font-mono">
+                <div className="grid grid-cols-4 gap-2 mt-2.5 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-[10px] font-mono">
                   <div>
                     <span className="text-slate-500 block text-[9px] uppercase font-bold tracking-wider font-sans">Answered</span>
                     <span className="text-slate-900 font-bold">{ag.callsHandled}</span>

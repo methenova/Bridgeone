@@ -160,9 +160,9 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
   const isBusy = isSubmitting || createProduct.isPending || updateProduct.isPending;
 
   const fieldClass =
-    "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-500/8 font-semibold shadow-xs hover:border-slate-300";
+    "w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500";
   const errorClass = "mt-1.5 text-xs text-red-600 font-semibold";
-  const labelClass = "mb-1.5 block text-xs font-bold text-slate-500 uppercase tracking-wider";
+  const labelClass = "text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5";
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8" noValidate>
@@ -170,15 +170,15 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
       {/* ═══════════════════════════════════════════════════════
           SECTION: Basic Information
       ═══════════════════════════════════════════════════════ */}
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-6">
-        <h3 className="mb-6 text-base font-semibold text-slate-900">
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 md:p-8 space-y-6">
+        <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500 flex items-center gap-2 pb-3 border-b border-slate-100">
           Basic Information
         </h3>
 
         <div className="grid gap-5 md:grid-cols-2">
 
           {/* Product Name */}
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 space-y-1.5">
             <label className={labelClass}>
               Product Name <span className="text-red-650 font-semibold">*</span>
             </label>
@@ -193,7 +193,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
           </div>
 
           {/* Slug */}
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 space-y-1.5">
             <label className={labelClass}>URL Slug <span className="text-red-650 font-semibold">*</span></label>
             <div className="flex gap-2">
               <input
@@ -216,7 +216,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
           </div>
 
           {/* Category */}
-          <div>
+          <div className="space-y-1.5">
             <label className={labelClass}>
               Category <span className="text-red-650 font-semibold">*</span>
             </label>
@@ -240,7 +240,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
           </div>
 
           {/* SKU */}
-          <div>
+          <div className="space-y-1.5">
             <label className={labelClass}>
               SKU <span className="text-red-650 font-semibold">*</span>
             </label>
@@ -265,7 +265,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
           </div>
 
           {/* Description */}
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 space-y-1.5">
             <label className={labelClass}>Description</label>
             <textarea
               {...register("description")}
@@ -284,15 +284,15 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
       {/* ═══════════════════════════════════════════════════════
           SECTION: Pricing & Inventory
       ═══════════════════════════════════════════════════════ */}
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-6">
-        <h3 className="mb-6 text-base font-semibold text-slate-900">
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 md:p-8 space-y-6">
+        <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500 flex items-center gap-2 pb-3 border-b border-slate-100">
           Pricing & Inventory
         </h3>
 
         <div className="grid gap-5 md:grid-cols-3">
 
           {/* Price */}
-          <div>
+          <div className="space-y-1.5">
             <label className={labelClass}>
               Price (₹) <span className="text-red-650 font-semibold">*</span>
             </label>
@@ -310,7 +310,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
           </div>
 
           {/* Discount Price */}
-          <div>
+          <div className="space-y-1.5">
             <label className={labelClass}>
               Discount Price (₹)
               {discountPercent && discountPercent > 0 && (
@@ -333,7 +333,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
           </div>
 
           {/* Stock */}
-          <div>
+          <div className="space-y-1.5">
             <label className={labelClass}>
               Stock Quantity <span className="text-red-650 font-semibold">*</span>
             </label>
@@ -356,8 +356,8 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
       {/* ═══════════════════════════════════════════════════════
           SECTION: Product Settings
       ═══════════════════════════════════════════════════════ */}
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-6">
-        <h3 className="mb-6 text-base font-semibold text-slate-900">
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 md:p-8 space-y-6">
+        <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500 flex items-center gap-2 pb-3 border-b border-slate-100">
           Product Settings
         </h3>
 
@@ -438,8 +438,8 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
           SECTION: Product Images (only when editing)
       ═══════════════════════════════════════════════════════ */}
       {isEditing && (
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-6">
-          <h3 className="mb-2 text-base font-semibold text-slate-900">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 md:p-8 space-y-6">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500 flex items-center gap-2 pb-3 border-b border-slate-100">
             Product Images
           </h3>
           <p className="mb-5 text-xs text-slate-500">
@@ -465,7 +465,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
       )}
 
       {/* ── Submit ────────────────────────────────────────────── */}
-      <div className="flex items-center justify-end gap-3 pb-2">
+      <div className="border-t border-slate-100 pt-5 flex items-center justify-end gap-3 pb-2">
         {isEditing && isDirty && (
           <span className="text-xs text-slate-500">Unsaved changes</span>
         )}
@@ -473,7 +473,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
         <button
           type="submit"
           disabled={isBusy}
-          className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-3 text-sm font-semibold text-white transition-all hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/20 disabled:cursor-not-allowed disabled:opacity-60 active:scale-95"
+          className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isBusy && <Loader2 className="h-4 w-4 animate-spin" />}
           {isEditing ? "Save Changes" : "Create Product"}

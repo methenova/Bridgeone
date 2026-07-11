@@ -815,18 +815,18 @@ export default function LivePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
             <Radio className={isLive ? "text-red-500 animate-pulse" : "text-slate-500"} />
             Live Selling
           </h1>
-          <p className="mt-1 text-slate-500">Stream video, pin items, and chat with shoppers in real time.</p>
+          <p className="mt-1.5 text-xs text-slate-500 font-semibold tracking-wide">Stream video, pin items, and chat with shoppers in real time.</p>
         </div>
         <button
           onClick={handleToggleLive}
-          className={`flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all active:scale-[0.98] ${
+          className={`flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-bold transition-all shadow-lg active:scale-95 ${
             isLive
-              ? "bg-red-600 text-white hover:bg-red-500 shadow-lg shadow-red-600/10"
-              : "bg-blue-600 text-white hover:bg-blue-500 shadow-lg shadow-blue-600/10"
+              ? "bg-red-600 text-white hover:bg-red-500 shadow-red-600/20"
+              : "bg-blue-600 text-white hover:bg-blue-500 shadow-blue-600/20"
           }`}
         >
           {isLive ? <StopCircle className="h-4 w-4" /> : <Video className="h-4 w-4" />}
@@ -837,7 +837,7 @@ export default function LivePage() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Left/Middle: Live Video + Pinned Overlay */}
         <div className="lg:col-span-2 space-y-4">
-          <div id="stream-container" className="relative aspect-video rounded-3xl border border-slate-100 bg-slate-50 overflow-hidden shadow-2xl flex items-center justify-center group/stream">
+          <div id="stream-container" className="relative aspect-video rounded-2xl border border-slate-200 bg-slate-900 overflow-hidden shadow-xl flex items-center justify-center group/stream ring-1 ring-slate-200">
             {/* Real video preview */}
             {stream ? (
               <div className="relative w-full h-full">
@@ -883,12 +883,12 @@ export default function LivePage() {
                 <p className="text-xs text-blue-600 font-semibold font-bold uppercase tracking-widest">Broadcasting fallbacks</p>
               </div>
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-slate-50 relative overflow-hidden">
+              <div className="w-full h-full flex items-center justify-center bg-slate-900 relative overflow-hidden">
                 {/* Decorative background grid/gradients */}
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.06)_0%,transparent_75%)]" />
                 
                 {/* Center Setup Panel */}
-                <div className="relative z-10 bg-white/80 shadow-sm backdrop-blur-md rounded-2xl border border-white/5 p-6 shadow-2xl flex flex-col items-center max-w-sm w-full mx-4 space-y-5 text-center">
+                <div className="relative z-10 bg-white shadow-xl rounded-2xl border border-slate-200 p-8 flex flex-col items-center max-w-sm w-full mx-4 space-y-6 text-center">
                   <div className="inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider rounded-full px-3 py-1 animate-pulse">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                     <span>Broadcaster Ready</span>
@@ -901,15 +901,15 @@ export default function LivePage() {
 
                   {/* Status List */}
                   <div className="grid grid-cols-3 gap-2.5 w-full text-[9px] font-bold uppercase tracking-wider text-slate-500">
-                    <div className="bg-white/5 border border-white/5 p-2.5 rounded-xl flex flex-col items-center gap-1.5">
+                    <div className="bg-slate-50 border border-slate-100 p-3 rounded-xl flex flex-col items-center gap-2">
                       <Video className="h-3.5 w-3.5 text-emerald-400" />
                       <span>Camera Ready</span>
                     </div>
-                    <div className="bg-white/5 border border-white/5 p-2.5 rounded-xl flex flex-col items-center gap-1.5">
+                    <div className="bg-slate-50 border border-slate-100 p-3 rounded-xl flex flex-col items-center gap-2">
                       <Mic className="h-3.5 w-3.5 text-emerald-400" />
                       <span>Microphone Ready</span>
                     </div>
-                    <div className="bg-white/5 border border-white/5 p-2.5 rounded-xl flex flex-col items-center gap-1.5">
+                    <div className="bg-slate-50 border border-slate-100 p-3 rounded-xl flex flex-col items-center gap-2">
                       <Radio className="h-3.5 w-3.5 text-emerald-400 animate-pulse" />
                       <span>Internet Status</span>
                     </div>
@@ -962,11 +962,11 @@ export default function LivePage() {
                   <span className="h-1.5 w-1.5 rounded-full bg-white animate-ping" />
                   <span>Live</span>
                 </span>
-                <span className="flex items-center gap-1.5 rounded-full bg-white/80 shadow-sm backdrop-blur-sm border border-white/10 px-3 py-1 text-[10px] font-mono font-bold text-slate-900 shadow-md">
+                <span className="flex items-center gap-1.5 rounded-full bg-white/95 shadow-sm backdrop-blur-sm border border-slate-200 px-3 py-1 text-[10px] font-mono font-bold text-slate-900">
                   <Clock className="h-3.5 w-3.5 text-red-400" />
                   <span>{formatDuration(streamDuration)}</span>
                 </span>
-                <span className="flex items-center gap-1.5 rounded-full bg-white/80 shadow-sm backdrop-blur-sm border border-white/10 px-3 py-1 text-[10px] font-bold text-slate-700 shadow-md">
+                <span className="flex items-center gap-1.5 rounded-full bg-white/95 shadow-sm backdrop-blur-sm border border-slate-200 px-3 py-1 text-[10px] font-bold text-slate-700">
                   <Eye className="h-3.5 w-3.5 text-blue-400" />
                   <span>{viewers}</span>
                 </span>
@@ -974,7 +974,7 @@ export default function LivePage() {
             )}
 
             {/* Floating Broadcaster Controls Bar */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 bg-white/80 shadow-sm backdrop-blur-md px-5 py-3 rounded-full border border-white/10 shadow-2xl transition-all duration-350 opacity-0 translate-y-2 group-hover/stream:opacity-100 group-hover/stream:translate-y-0">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3.5 bg-white/90 shadow-2xl backdrop-blur-md px-6 py-3 rounded-full border border-white/20 transition-all duration-300 opacity-0 translate-y-4 group-hover/stream:opacity-100 group-hover/stream:translate-y-0">
               <button
                 onClick={handleToggleStreamMic}
                 title={streamMicMuted ? "Unmute Microphone" : "Mute Microphone"}
@@ -1072,7 +1072,7 @@ export default function LivePage() {
         </div>
 
         {/* Right: Comments Chat Feed */}
-        <div className="rounded-3xl border border-slate-100 bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 flex flex-col h-[400px] lg:h-auto overflow-hidden">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm flex flex-col h-[400px] lg:h-auto overflow-hidden">
           {/* Header */}
           <div className="border-b border-slate-100 px-5 py-4 bg-slate-50/50 flex items-center justify-between">
             <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
@@ -1157,8 +1157,8 @@ export default function LivePage() {
       </div>
 
       {/* Pinned Product Selector Feed */}
-      <div className="rounded-3xl border border-slate-100 bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 p-6 space-y-4">
-        <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 md:p-8 space-y-6">
+        <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2 pb-3 border-b border-slate-100">
           <ShoppingBag className="h-4 w-4 text-blue-600 font-semibold" />
           Stream Products Showcase
         </h3>
@@ -1171,8 +1171,8 @@ export default function LivePage() {
                 onClick={() => handlePinProduct(p)}
                 className={`group relative cursor-pointer rounded-2xl border p-3 flex flex-col transition-all duration-300 ${
                   isPinned
-                    ? "border-blue-500 bg-blue-50/30 shadow-md shadow-blue-500/5 ring-1 ring-blue-500/20"
-                    : "border-slate-200 bg-white shadow-xs hover:border-slate-300 hover:shadow-md hover:translate-y-[-2px]"
+                    ? "border-blue-500 bg-blue-50 shadow-sm ring-1 ring-blue-500/20"
+                    : "border-slate-200 bg-white shadow-sm hover:border-slate-300 hover:shadow-md transition-all"
                 }`}
               >
                 {/* Image Showcase Container */}
@@ -1239,7 +1239,7 @@ export default function LivePage() {
       {/* 1-on-1 Incoming Call Dialog */}
       {incomingCall && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="w-full max-w-sm rounded-3xl border border-slate-100 bg-slate-50 p-6 shadow-2xl flex flex-col items-center text-center space-y-4">
+          <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 shadow-2xl flex flex-col items-center text-center space-y-6">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 border border-blue-100/50 text-blue-500 animate-bounce">
               <Phone className="h-8 w-8" />
             </div>
@@ -1258,12 +1258,12 @@ export default function LivePage() {
             </div>
             <div className="flex w-full gap-3">
               <button
-                onClick={handleDeclineCall} className="flex-1 rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 py-3 text-xs font-bold text-slate-600 hover:bg-slate-850 hover:text-slate-900 transition-colors"
+                onClick={handleDeclineCall} className="flex-1 rounded-xl bg-white shadow-sm border border-slate-200 py-3 text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all"
               >
                 Decline
               </button>
               <button
-                onClick={handleAcceptCall} className="flex-1 rounded-2xl bg-blue-600 py-3 text-xs font-bold text-white hover:bg-blue-500 shadow-lg shadow-blue-600/10 transition-colors transition-all active:scale-[0.98] shadow-blue-500/10"
+                onClick={handleAcceptCall} className="flex-1 rounded-xl bg-blue-600 py-3 text-xs font-bold text-white hover:bg-blue-500 shadow-lg shadow-blue-600/20 transition-all active:scale-95"
               >
                 Accept
               </button>
@@ -1280,7 +1280,7 @@ export default function LivePage() {
         
         return (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in">
-            <div className="relative w-full max-w-5xl h-[85vh] rounded-3xl border border-white/10 bg-slate-50 overflow-hidden shadow-2xl flex flex-col md:flex-row">
+            <div className="relative w-full max-w-5xl h-[85vh] rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-2xl flex flex-col md:flex-row">
               
               {/* Left Panel: Remote Video Stream (Main Feed) */}
               <div className="flex-1 bg-slate-50 relative flex items-center justify-center border-b md:border-b-0 md:border-r border-white/10">
@@ -1381,7 +1381,7 @@ export default function LivePage() {
               </div>
 
               {/* Right Panel: Call Center Tabbed Tools (Info, Products, Queue) */}
-              <div className="w-full md:w-80 flex flex-col bg-slate-50/50 text-xs border-t md:border-t-0 border-slate-200 h-1/2 md:h-full">
+              <div className="w-full md:w-[22rem] flex flex-col bg-slate-50 text-xs border-t md:border-t-0 border-l border-slate-200 h-1/2 md:h-full">
                 
                 {/* Tab select bar */}
                 <div className="grid grid-cols-3 border-b border-slate-200 text-[10px] font-bold uppercase tracking-wider text-center">
@@ -1412,7 +1412,7 @@ export default function LivePage() {
                   {activeCallTab === "info" && (
                     <div className="space-y-5">
                       {/* Customer Info Card */}
-                      <div className="space-y-2.5 bg-slate-50 p-4 rounded-2xl border border-white/5">
+                      <div className="space-y-2.5 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Customer Details</span>
                         <div className="space-y-1">
                           <p className="font-bold text-slate-900 text-sm">{callerDetails?.customer_name || "Guest Customer"}</p>
@@ -1422,13 +1422,13 @@ export default function LivePage() {
                       </div>
 
                       {/* Quick Notes Form */}
-                      <div className="space-y-2 bg-slate-50 p-4 rounded-2xl border border-white/5">
+                      <div className="space-y-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Quick Consultation Notes</span>
                         <textarea
                           rows={4}
                           value={callNotes}
                           onChange={(e) => setCallNotes(e.target.value)}
-                          placeholder="Jot down notes during consultation..." className="w-full rounded-2xl border border-white/10 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-3 text-slate-900 outline-none focus:border-blue-500 resize-none text-[11px] leading-relaxed"
+                          placeholder="Jot down notes during consultation..." className="w-full rounded-xl border border-slate-200 bg-white p-3 text-slate-900 outline-none focus:border-blue-500 resize-none text-xs leading-relaxed"
                         />
                         <button
                           onClick={async () => {
@@ -1446,24 +1446,24 @@ export default function LivePage() {
                             } catch (err) {
                               toast.error("Failed to save notes to database");
                             }
-                          }} className="w-full py-2 bg-blue-600 hover:bg-blue-500 rounded-2xl text-white font-bold transition-all text-[10px] uppercase tracking-wider cursor-pointer"
+                          }} className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-white font-bold transition-all text-[10px] uppercase tracking-wider cursor-pointer shadow-lg shadow-blue-500/10"
                         >
                           Save Notes
                         </button>
                       </div>
 
                       {/* Transfer Call Select */}
-                      <div className="space-y-2 bg-slate-50 p-4 rounded-2xl border border-white/5">
+                      <div className="space-y-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Transfer Consultation</span>
                         <div className="flex gap-2">
-                          <select className="flex-1 rounded-2xl border border-white/10 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-2 text-slate-900 outline-none font-semibold text-[10px] focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500">
+                          <select className="flex-1 rounded-xl border border-slate-200 bg-white p-2.5 text-slate-900 outline-none font-semibold text-xs focus:border-blue-500">
                             <option value="">-- Select Active Agent --</option>
                             {agentsList.map(a => (
                               <option key={a.id} value={a.id}>{a.profiles?.full_name || "Team Member"}</option>
                             ))}
                           </select>
                           <button
-                            onClick={() => toast.success("Transferring WebRTC peer credentials to team member...")} className="px-3 py-2 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-white/10 hover:border-white/20 rounded-2xl text-slate-900 font-bold text-[9px] uppercase tracking-wider"
+                            onClick={() => toast.success("Transferring WebRTC peer credentials to team member...")} className="px-4 py-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl text-slate-900 font-bold text-[10px] uppercase tracking-wider shadow-sm cursor-pointer"
                           >
                             Transfer
                           </button>
@@ -1514,7 +1514,7 @@ export default function LivePage() {
                   {activeCallTab === "queue" && (
                     <div className="space-y-4">
                       {/* Queue Card */}
-                      <div className="space-y-2 bg-slate-50 p-4 rounded-2xl border border-white/5">
+                      <div className="space-y-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Call Queue</span>
                         <div className="py-4 text-center text-slate-600 font-bold text-[10px] uppercase">
                           No other callers in queue
@@ -1522,7 +1522,7 @@ export default function LivePage() {
                       </div>
 
                       {/* Connection Health status */}
-                      <div className="space-y-2.5 bg-slate-50 p-4 rounded-2xl border border-slate-100 font-mono text-[9px]">
+                      <div className="space-y-2.5 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm font-mono text-xs">
                         <span className="text-[10px] font-sans text-slate-500 font-bold uppercase tracking-wider block">Connection status</span>
                         <div className="flex justify-between">
                           <span className="text-slate-500">WebRTC ICE state</span>

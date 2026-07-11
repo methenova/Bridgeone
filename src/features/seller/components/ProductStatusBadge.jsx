@@ -3,23 +3,23 @@ import { cn } from "@/lib/utils";
 const STATUS_CONFIG = {
   active: {
     label: "Active",
-    className: "bg-emerald-50 text-emerald-700 border border-emerald-100",
+    className: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
   },
   inactive: {
     label: "Inactive",
-    className: "bg-slate-100 text-slate-600 border border-slate-200",
+    className: "bg-slate-500/10 text-slate-500 border-slate-500/20",
   },
   featured: {
     label: "Featured",
-    className: "bg-amber-50 text-amber-700 border border-amber-100",
+    className: "bg-amber-500/10 text-amber-400 border-amber-500/20",
   },
   "low-stock": {
     label: "Low Stock",
-    className: "bg-orange-50 text-orange-700 border border-orange-100",
+    className: "bg-orange-500/10 text-orange-400 border-orange-500/20",
   },
   "out-of-stock": {
     label: "Out of Stock",
-    className: "bg-red-50 text-red-700 border border-red-100",
+    className: "bg-red-500/10 text-red-400 border-red-500/20",
   },
 };
 
@@ -35,7 +35,7 @@ export default function ProductStatusBadge({ status, className }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider border",
         config.className,
         className
       )}

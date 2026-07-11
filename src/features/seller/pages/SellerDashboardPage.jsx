@@ -570,8 +570,8 @@ export default function SellerDashboardPage() {
       </div>
         
       {/* Real-Time Live Visitor Tracking Table Panel */}
-      <div className="rounded-2xl border border-slate-100 bg-white shadow-sm overflow-hidden">
-        <div className="p-5 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+        <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
           <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
             <Eye className="h-4 w-4 text-blue-500 animate-pulse" />
             <span>Real-Time Website Visitors tracking</span>
@@ -580,61 +580,65 @@ export default function SellerDashboardPage() {
         </div>
 
         <div className="overflow-x-auto text-xs">
-          <table className="w-full border-collapse text-left">
-            <thead>
-              <tr className="border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 hover:bg-slate-50/50 transition-colors group">
-                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Visitor/User details</th>
-                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Active Page</th>
-                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Time on Site</th>
-                <th className="font-mono px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Cart status</th>
-                <th className="text-right px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Consult Status</th>
+          <table className="min-w-full text-left border-collapse">
+            <thead className="sticky top-0 z-10 border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+              <tr>
+                <th className="px-6 py-5 align-middle">Visitor/User details</th>
+                <th className="px-6 py-5 align-middle">Active Page</th>
+                <th className="px-6 py-5 align-middle">Time on Site</th>
+                <th className="px-6 py-5 align-middle font-mono">Cart status</th>
+                <th className="px-6 py-5 align-middle text-right">Consult Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 bg-transparent text-slate-600">
-              {visitorSessions.map((v) => {
+            <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
+              {visitorSessions.map((v, idx) => {
                 const name = v.profiles?.full_name || `Visitor (${v.visitor_id})`;
                 const formattedTime = `${Math.floor(v.time_on_site / 60)}m ${v.time_on_site % 60}s`;
 
                 return (
-                  <tr 
+                  <motion.tr 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.02 }}
                     key={v.id} 
-                    onClick={() => setSelectedVisitor(v)} className="hover:bg-slate-50/60 transition-colors cursor-pointer"
+                    onClick={() => setSelectedVisitor(v)} 
+                    className="hover:bg-slate-50/50 transition-colors group cursor-pointer"
                   >
-                    <td className="py-3.5 flex items-center gap-2 px-6 py-5 align-middle">
+                    <td className="px-6 py-5 align-middle flex items-center gap-2">
                       <div className="h-6 w-6 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center font-bold text-slate-500 text-[10px]">
                         {name[0]}
                       </div>
                       <span className="font-bold text-slate-900">{name}</span>
                     </td>
                     
-                    <td className="py-3.5 font-mono text-[11px] text-blue-600 px-6 py-5 align-middle">
+                    <td className="px-6 py-5 align-middle font-mono text-[11px] text-blue-600">
                       {v.current_page}
                     </td>
 
-                    <td className="py-3.5 text-slate-500 px-6 py-5 align-middle">
+                    <td className="px-6 py-5 align-middle text-slate-500">
                       {formattedTime}
                     </td>
 
-                    <td className="py-3.5 font-mono text-[10px] text-slate-500 px-6 py-5 align-middle">
+                    <td className="px-6 py-5 align-middle font-mono text-[10px] text-slate-500">
                       {v.cart_status}
                     </td>
 
-                    <td className="py-3.5 text-right px-6 py-5 align-middle">
+                    <td className="px-6 py-5 align-middle text-right">
                       {v.is_in_video_call ? (
-                        <span className="px-2.5 py-1 rounded bg-emerald-50 text-emerald-600 font-bold uppercase text-[8px] border border-emerald-100">
+                        <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
                           In Live Call
                         </span>
                       ) : v.is_waiting_assistance ? (
-                        <span className="px-2.5 py-1 rounded bg-amber-50 text-amber-600 font-bold uppercase text-[8px] animate-pulse border border-amber-100">
+                        <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider border bg-amber-500/10 text-amber-400 border-amber-500/20 animate-pulse">
                           Waiting Help
                         </span>
                       ) : (
-                        <span className="px-2.5 py-1 rounded bg-slate-50 text-slate-500 uppercase text-[8px] border border-slate-100">
+                        <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider border bg-slate-500/10 text-slate-500 border-slate-500/20">
                           Browsing
                         </span>
                       )}
                     </td>
-                  </tr>
+                  </motion.tr>
                 );
               })}
 

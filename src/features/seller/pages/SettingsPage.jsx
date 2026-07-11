@@ -223,11 +223,11 @@ export default function SettingsPage() {
       <div className="space-y-6 animate-pulse max-w-4xl">
         <div className="h-6 w-32 bg-slate-100 rounded-md" />
         <div className="bg-white rounded-3xl border border-slate-100 p-6 space-y-6">
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <div className="h-3.5 w-24 bg-slate-100 rounded-md" />
             <div className="h-10 bg-slate-50 rounded-xl" />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <div className="h-3.5 w-24 bg-slate-100 rounded-md" />
             <div className="h-24 bg-slate-50 rounded-xl" />
           </div>
@@ -334,75 +334,75 @@ export default function SettingsPage() {
         </div>
 
         {/* Right side: Tab Panels */}
-        <div className="flex-1 bg-slate-50 rounded-2xl border border-slate-100 p-6">
+        <div className="flex-1 rounded-2xl border border-slate-200 bg-white shadow-sm p-6 md:p-8 space-y-6">
           
           {/* TAB 1: BUSINESS PROFILE */}
           {activeTab === "profile" && (
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider pb-3 border-b border-slate-100">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500 flex items-center gap-2 pb-3 border-b border-slate-100">
                 Business Details
               </h3>
 
               <div className="grid gap-5 sm:grid-cols-2 text-xs">
-                <div className="space-y-2">
-                  <label className="text-[10px] text-slate-500 font-bold uppercase">Shop Name</label>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">Shop Name</label>
                   <input
                     type="text"
-                    {...register("shop_name")} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all"
+                    {...register("shop_name")} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                   />
                   {errors.shop_name && <p className="text-xs text-red-650 font-semibold">{errors.shop_name.message}</p>}
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-[10px] text-slate-500 font-bold uppercase">Shop Email</label>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">Shop Email</label>
                   <input
                     type="email"
-                    {...register("email")} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all"
+                    {...register("email")} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                   />
                   {errors.email && <p className="text-xs text-red-650 font-semibold">{errors.email.message}</p>}
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-[10px] text-slate-500 font-bold uppercase">Shop Contact Phone</label>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">Shop Contact Phone</label>
                   <input
                     type="text"
-                    {...register("phone")} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all"
+                    {...register("phone")} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                   />
                   {errors.phone && <p className="text-xs text-red-650 font-semibold">{errors.phone.message}</p>}
                 </div>
               </div>
 
               <div className="space-y-2 text-xs">
-                <label className="text-[10px] text-slate-500 font-bold uppercase">Shop Description</label>
+                <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">Shop Description</label>
                 <textarea
                   rows={4}
-                  {...register("description")} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:border-blue-500 resize-none leading-relaxed"
+                  {...register("description")} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500 resize-none leading-relaxed"
                 />
               </div>
 
-              <h3 className="text-xs font-bold text-slate-455 uppercase tracking-wider pt-4 pb-2 border-b border-slate-100">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500 flex items-center gap-2 pt-4 pb-3 border-b border-slate-100">
                 Address details
               </h3>
 
               <div className="grid gap-5 sm:grid-cols-3 text-xs">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] text-slate-500 font-bold uppercase">City</label>
-                  <input type="text" {...register("city")} className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all" />
+                  <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">City</label>
+                  <input type="text" {...register("city")} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] text-slate-500 font-bold uppercase">State</label>
-                  <input type="text" {...register("state")} className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all" />
+                  <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">State</label>
+                  <input type="text" {...register("state")} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] text-slate-500 font-bold uppercase">Country</label>
-                  <input type="text" {...register("country")} className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all" />
+                  <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">Country</label>
+                  <input type="text" {...register("country")} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500" />
                 </div>
               </div>
 
-              <div className="flex justify-end pt-3">
+              <div className="border-t border-slate-100 pt-5 flex justify-end">
                 <button
                   type="submit"
-                  disabled={updateMutation.isPending} className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-2xl font-bold text-white transition-all text-xs cursor-pointer hover:bg-blue-500 active:scale-[0.98] shadow-lg shadow-blue-500/10"
+                  disabled={updateMutation.isPending} className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10"
                 >
                   <Save className="h-4 w-4" /> Save Profile
                 </button>
@@ -413,27 +413,27 @@ export default function SettingsPage() {
           {/* TAB 2: BUSINESS HOURS */}
           {activeTab === "hours" && (
             <div className="space-y-5 text-xs">
-              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider pb-3 border-b border-slate-100">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500 flex items-center gap-2 pb-3 border-b border-slate-100">
                 Operation schedules & shifts
               </h3>
 
-              <div className="space-y-2">
-                <label className="text-[10px] text-slate-500 font-bold uppercase">Weekly Business Hours Slot</label>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">Weekly Business Hours Slot</label>
                 <input
                   type="text"
                   value={businessHours}
                   onChange={(e) => setBusinessHours(e.target.value)}
-                  placeholder="e.g. Mon-Fri: 09:00 - 18:00" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none"
+                  placeholder="e.g. Mon-Fri: 09:00 - 18:00" className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                 />
               </div>
 
               <div className="grid gap-5 sm:grid-cols-2">
                 {/* Timezone selection */}
-                <div className="space-y-2">
-                  <label className="text-[10px] text-slate-500 font-bold uppercase">Business Time Zone</label>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">Business Time Zone</label>
                   <select
                     value={timezone}
-                    onChange={(e) => setTimezone(e.target.value)} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none cursor-pointer font-semibold text-xs"
+                    onChange={(e) => setTimezone(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500 cursor-pointer font-semibold text-xs"
                   >
                     <option value="UTC">UTC (Universal Coordinated)</option>
                     <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
@@ -444,13 +444,13 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Public Holidays list */}
-                <div className="space-y-2">
-                  <label className="text-[10px] text-slate-500 font-bold uppercase">Public Holidays (Comma separated YYYY-MM-DD)</label>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">Public Holidays (Comma separated YYYY-MM-DD)</label>
                   <input
                     type="text"
                     value={holidaysText}
                     onChange={(e) => setHolidaysText(e.target.value)}
-                    placeholder="e.g. 2026-07-09, 2026-12-25" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none"
+                    placeholder="e.g. 2026-07-09, 2026-12-25" className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                   />
                 </div>
               </div>
@@ -466,26 +466,26 @@ export default function SettingsPage() {
                     <div className="flex gap-2">
                       <div className="flex-1">
                         <label className="text-[9px] text-slate-500 block mb-1">Start Time</label>
-                        <input type="time" value={shift1Start} onChange={(e) => setShift1Start(e.target.value)} className="w-full bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 rounded-2xl px-2.5 py-1.5 text-slate-900 outline-none" />
+                        <input type="time" value={shift1Start} onChange={(e) => setShift1Start(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500" />
                       </div>
                       <div className="flex-1">
                         <label className="text-[9px] text-slate-500 block mb-1">End Time</label>
-                        <input type="time" value={shift1End} onChange={(e) => setShift1End(e.target.value)} className="w-full bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 rounded-2xl px-2.5 py-1.5 text-slate-900 outline-none" />
+                        <input type="time" value={shift1End} onChange={(e) => setShift1End(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500" />
                       </div>
                     </div>
                   </div>
 
                   {/* Shift 2 */}
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <span className="font-bold text-slate-500 block text-[10px]">Shift 2 (Split Shift)</span>
                     <div className="flex gap-2">
                       <div className="flex-1">
                         <label className="text-[9px] text-slate-500 block mb-1">Start Time</label>
-                        <input type="time" value={shift2Start} onChange={(e) => setShift2Start(e.target.value)} className="w-full bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 rounded-2xl px-2.5 py-1.5 text-slate-900 outline-none" />
+                        <input type="time" value={shift2Start} onChange={(e) => setShift2Start(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500" />
                       </div>
                       <div className="flex-1">
                         <label className="text-[9px] text-slate-500 block mb-1">End Time</label>
-                        <input type="time" value={shift2End} onChange={(e) => setShift2End(e.target.value)} className="w-full bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 rounded-2xl px-2.5 py-1.5 text-slate-900 outline-none" />
+                        <input type="time" value={shift2End} onChange={(e) => setShift2End(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500" />
                       </div>
                     </div>
                   </div>
@@ -493,7 +493,7 @@ export default function SettingsPage() {
               </div>
 
               <button
-                onClick={handleSaveHours} className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-2xl font-bold text-white text-xs cursor-pointer hover:bg-blue-500 transition-all active:scale-[0.98] shadow-lg shadow-blue-500/10"
+                onClick={handleSaveHours} className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10"
               >
                 <Save className="h-4 w-4" /> Save Operations Config
               </button>
@@ -503,17 +503,17 @@ export default function SettingsPage() {
           {/* TAB 2.5: CALL ROUTING */}
           {activeTab === "routing" && (
             <div className="space-y-6 text-xs">
-              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider pb-3 border-b border-slate-100">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500 flex items-center gap-2 pb-3 border-b border-slate-100">
                 Intelligent Call Routing
               </h3>
 
               <div className="grid lg:grid-cols-2 gap-6">
                 <div className="space-y-5">
-                  <div className="space-y-2">
-                    <label className="text-[10px] text-slate-500 font-bold uppercase">Routing Mode Algorithm</label>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">Routing Mode Algorithm</label>
                     <select
                       value={routingRules.mode}
-                      onChange={(e) => setRoutingRules({ ...routingRules, mode: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none cursor-pointer"
+                      onChange={(e) => setRoutingRules({ ...routingRules, mode: e.target.value })} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500 cursor-pointer"
                     >
                       <option value="round_robin">Round Robin (Even Distribution)</option>
                       <option value="least_busy">Least Busy Agent</option>
@@ -549,7 +549,7 @@ export default function SettingsPage() {
                   </div>
 
                   <button
-                    onClick={handleSaveRouting} className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-2xl font-bold text-white text-xs cursor-pointer w-fit hover:bg-blue-500 transition-all active:scale-[0.98] shadow-lg shadow-blue-500/10"
+                    onClick={handleSaveRouting} className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10 w-fit"
                   >
                     <Save className="h-4 w-4" /> Save Routing Rules
                   </button>
@@ -593,7 +593,7 @@ export default function SettingsPage() {
           {/* TAB 3: WIDGET & BRANDING */}
           {activeTab === "widget" && (
             <div className="space-y-6 text-xs">
-              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider pb-3 border-b border-slate-100">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500 flex items-center gap-2 pb-3 border-b border-slate-100">
                 Widget & Customizer settings
               </h3>
 
@@ -634,7 +634,7 @@ export default function SettingsPage() {
           {/* TAB 4: NOTIFICATION SETTINGS */}
           {activeTab === "notifications" && (
             <div className="space-y-6 text-xs">
-              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider pb-3 border-b border-slate-100">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500 flex items-center gap-2 pb-3 border-b border-slate-100">
                 Console Alert Channels
               </h3>
 
@@ -671,18 +671,18 @@ export default function SettingsPage() {
           {/* TAB 5: PRIVACY & SECURITY */}
           {activeTab === "security" && (
             <form onSubmit={handleChangePassword} className="space-y-5 text-xs">
-              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider pb-3 border-b border-slate-100">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500 flex items-center gap-2 pb-3 border-b border-slate-100">
                 Privacy & Account Security
               </h3>
 
-              <div className="space-y-2">
-                <label className="text-[10px] text-slate-500 font-bold uppercase">Change Account Password</label>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">Change Account Password</label>
                 <div className="relative">
                   <input
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Enter new secure password..." className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:border-blue-500 font-mono"
+                    placeholder="Enter new secure password..." className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-mono"
                     required
                   />
                   <KeyRound className="absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
@@ -691,7 +691,7 @@ export default function SettingsPage() {
 
               <button
                 type="submit"
-                disabled={changingPassword} className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-2xl font-bold text-white text-xs cursor-pointer hover:bg-blue-500 transition-all active:scale-[0.98] shadow-lg shadow-blue-500/10"
+                disabled={changingPassword} className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10"
               >
                 {changingPassword ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 <span>Update Password</span>
@@ -702,7 +702,7 @@ export default function SettingsPage() {
           {/* TAB 6: INTEGRATIONS */}
           {activeTab === "integrations" && (
             <div className="space-y-6 text-xs">
-              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider pb-3 border-b border-slate-100">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500 flex items-center gap-2 pb-3 border-b border-slate-100">
                 Connected App settings
               </h3>
 

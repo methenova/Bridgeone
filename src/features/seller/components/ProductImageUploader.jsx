@@ -178,9 +178,9 @@ export default function ProductImageUploader({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-slate-600">
+        <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">
           Product Images
-          <span className="ml-2 text-xs text-slate-500">
+          <span className="text-xs font-normal text-slate-400 normal-case">
             ({allImages.length}/{MAX_FILES})
           </span>
         </label>
@@ -234,10 +234,10 @@ export default function ProductImageUploader({
            </div>
 
           <div>
-            <p className="text-sm font-medium text-slate-600">
+            <p className="text-xs font-bold text-slate-700">
               {isDragging ? "Drop images here" : "Drag & drop images"}
             </p>
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-[10px] font-bold text-slate-500 uppercase">
               or click to browse · up to {MAX_FILES - allImages.length} more
             </p>
           </div>

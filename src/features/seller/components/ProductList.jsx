@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { Pencil, Trash2, Star, ToggleLeft, ToggleRight, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { motion } from "framer-motion";
 
 import { useDeleteProduct, useUpdateProduct } from "../hooks/useProducts";
 import ProductStatusBadge from "./ProductStatusBadge";
@@ -105,16 +106,16 @@ export default function ProductList({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       <div className="overflow-x-auto">
-        <table className="min-w-full">
+        <table className="min-w-full text-left border-collapse">
 
           {/* ── Header ──────────────────────────────────────── */}
-          <thead className="border-b border-slate-200 bg-slate-50">
+          <thead className="sticky top-0 z-10 border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
             <tr>
 
               {/* Checkbox */}
-              <th className="w-12 px-4 py-4 text-left">
+              <th className="w-12 px-6 py-5 align-middle">
                 <input
                   type="checkbox"
                   checked={allSelected}
@@ -127,10 +128,10 @@ export default function ProductList({
               </th>
 
               {/* Product */}
-              <th className="px-4 py-4 text-left">
+              <th className="px-6 py-5 align-middle">
                 <button
                   onClick={() => handleSort("name")}
-                  className="flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-slate-900"
+                  className="flex items-center gap-1.5 font-bold hover:text-slate-900 uppercase tracking-wider"
                 >
                   Product
                   <SortIcon field="name" />
@@ -138,15 +139,15 @@ export default function ProductList({
               </th>
 
               {/* Category */}
-              <th className="px-4 py-4 text-left text-sm font-semibold text-slate-600">
+              <th className="px-6 py-5 align-middle font-bold uppercase tracking-wider">
                 Category
               </th>
 
               {/* Price */}
-              <th className="px-4 py-4 text-left">
+              <th className="px-6 py-5 align-middle">
                 <button
                   onClick={() => handleSort("price")}
-                  className="flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-slate-900"
+                  className="flex items-center gap-1.5 font-bold hover:text-slate-900 uppercase tracking-wider"
                 >
                   Price
                   <SortIcon field="price" />
@@ -154,10 +155,10 @@ export default function ProductList({
               </th>
 
               {/* Stock */}
-              <th className="px-4 py-4 text-left">
+              <th className="px-6 py-5 align-middle">
                 <button
                   onClick={() => handleSort("stock")}
-                  className="flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-slate-900"
+                  className="flex items-center gap-1.5 font-bold hover:text-slate-900 uppercase tracking-wider"
                 >
                   Stock
                   <SortIcon field="stock" />
@@ -165,12 +166,12 @@ export default function ProductList({
               </th>
 
               {/* Status */}
-              <th className="px-4 py-4 text-left text-sm font-semibold text-slate-600">
+              <th className="px-6 py-5 align-middle font-bold uppercase tracking-wider">
                 Status
               </th>
 
               {/* Actions */}
-              <th className="px-4 py-4 text-right text-sm font-semibold text-slate-600">
+              <th className="px-6 py-5 align-middle text-right font-bold uppercase tracking-wider">
                 Actions
               </th>
 
@@ -178,8 +179,8 @@ export default function ProductList({
           </thead>
 
           {/* ── Body ────────────────────────────────────────── */}
-          <tbody className="divide-y divide-slate-200">
-            {sortedProducts.map((product) => {
+          <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
+            {sortedProducts.map((product, idx) => {
               const isSelected = selectedIds.includes(product.id);
               const isDeleting =
                 deleteProduct.isPending &&
@@ -197,17 +198,18 @@ export default function ProductList({
                 product.product_images?.[0]?.url;
 
               return (
-                <tr
+                <motion.tr
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.02 }}
                   key={product.id}
-                  className={`transition-colors ${
-                    isSelected
-                      ? "bg-blue-600/5"
-                      : "hover:bg-slate-100/50"
+                  className={`hover:bg-slate-50/50 transition-colors group ${
+                    isSelected ? "bg-blue-600/5" : ""
                   } ${isDeleting ? "opacity-50" : ""}`}
                 >
 
                   {/* Checkbox */}
-                  <td className="px-4 py-4">
+                  <td className="px-6 py-5 align-middle">
                     <input
                       type="checkbox"
                       checked={isSelected}
@@ -217,9 +219,9 @@ export default function ProductList({
                   </td>
 
                   {/* Product image + name */}
-                  <td className="px-4 py-4">
+                  <td className="px-6 py-5 align-middle">
                     <div className="flex items-center gap-3">
-                      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
+                      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-white">
                         {thumbnail ? (
                           <img
                             src={thumbnail}
@@ -228,29 +230,29 @@ export default function ProductList({
                             loading="lazy"
                           />
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center text-slate-600">
-                            <span className="text-xl">📦</span>
+                          <div className="flex h-full w-full items-center justify-center font-bold text-slate-500">
+                            <span>📦</span>
                           </div>
                         )}
                         {/* Image count badge */}
                         {product.product_images?.length > 0 && (
-                          <div className="absolute bottom-0 right-0 rounded-tl-md bg-slate-50/80 px-1 text-[10px] text-slate-600">
+                          <div className="absolute bottom-0 right-0 rounded-tl-md bg-white/80 px-1 text-[10px] text-slate-600">
                             {product.product_images.length}
                           </div>
                         )}
                       </div>
 
                       <div className="min-w-0">
-                        <p className="truncate font-medium text-slate-900">
+                        <p className="truncate font-bold text-slate-900 text-sm max-w-[180px]">
                           {product.name}
                         </p>
-                        <p className="mt-0.5 text-xs text-slate-500">
-                          {product.sku}
+                        <p className="mt-0.5 text-[10px] text-slate-500 font-mono">
+                          SKU: {product.sku}
                         </p>
                         {(product.featured || product.is_featured) && (
                           <div className="mt-1 flex items-center gap-1 text-amber-600 font-semibold">
                             <Star className="h-3 w-3 fill-amber-400" />
-                            <span className="text-[10px] font-medium">Featured</span>
+                            <span className="text-[10px] font-bold uppercase tracking-wider">Featured</span>
                           </div>
                         )}
                       </div>
@@ -258,24 +260,24 @@ export default function ProductList({
                   </td>
 
                   {/* Category */}
-                  <td className="px-4 py-4 text-sm text-slate-500">
-                    {product.categories?.name || "—"}
+                  <td className="px-6 py-5 align-middle text-slate-500 font-medium">
+                    {product.categories?.name || "Uncategorized"}
                   </td>
 
                   {/* Price */}
-                  <td className="px-4 py-4">
+                  <td className="px-6 py-5 align-middle font-bold text-slate-900">
                     <div className="space-y-0.5">
                       {product.discount_price ? (
                         <>
-                          <p className="font-semibold text-slate-900">
+                          <p>
                             ₹{Number(product.discount_price).toLocaleString()}
                           </p>
-                          <p className="text-xs text-slate-500 line-through">
+                          <p className="text-[10px] text-slate-400 line-through font-normal">
                             ₹{Number(product.price).toLocaleString()}
                           </p>
                         </>
                       ) : (
-                        <p className="font-semibold text-slate-900">
+                        <p>
                           ₹{Number(product.price).toLocaleString()}
                         </p>
                       )}
@@ -283,12 +285,12 @@ export default function ProductList({
                   </td>
 
                   {/* Stock */}
-                  <td className="px-4 py-4">
+                  <td className="px-6 py-5 align-middle">
                     <InventoryBadge stock={product.stock} />
                   </td>
 
                   {/* Status */}
-                  <td className="px-4 py-4">
+                  <td className="px-6 py-5 align-middle">
                     <div className="flex items-center gap-2">
                       <ProductStatusBadge
                         status={product.is_active ? "active" : "inactive"}
@@ -298,42 +300,42 @@ export default function ProductList({
                         onClick={() => handleToggleStatus(product)}
                         disabled={isTogglingStatus}
                         title={product.is_active ? "Deactivate" : "Activate"}
-                        className="text-slate-500 transition-colors hover:text-slate-900 disabled:opacity-50"
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white shadow-sm/40 text-slate-650 hover:text-slate-500 hover:border-slate-300 transition-all disabled:opacity-50 cursor-pointer"
                       >
                         {product.is_active ? (
                           <ToggleRight className="h-5 w-5 text-emerald-500" />
                         ) : (
-                          <ToggleLeft className="h-5 w-5" />
+                          <ToggleLeft className="h-5 w-5 text-slate-700" />
                         )}
                       </button>
                     </div>
                   </td>
 
                   {/* Actions */}
-                  <td className="px-4 py-4">
-                    <div className="flex items-center justify-end gap-2">
+                  <td className="px-6 py-5 align-middle text-right">
+                    <div className="flex items-center justify-end gap-2.5">
 
                       <button
                         onClick={() => onEdit(product)}
                         title="Edit product"
-                        className="flex h-8 w-8 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-500 transition-all hover:border-blue-500 hover:bg-blue-550/10 hover:text-blue-600"
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white shadow-sm/40 text-slate-650 hover:text-slate-500 hover:border-slate-300 transition-all cursor-pointer"
                       >
-                        <Pencil className="h-3.5 w-3.5" />
+                        <Pencil className="h-4 w-4" />
                       </button>
 
                       <button
                         onClick={() => handleDelete(product)}
                         disabled={isDeleting}
                         title="Delete product"
-                        className="flex h-8 w-8 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-slate-500 transition-all hover:border-red-500 hover:bg-red-550/10 hover:text-red-600 disabled:opacity-50"
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white shadow-sm/40 text-red-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-all disabled:opacity-50 cursor-pointer"
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
+                        <Trash2 className="h-4 w-4" />
                       </button>
 
                     </div>
                   </td>
 
-                </tr>
+                </motion.tr>
               );
             })}
           </tbody>

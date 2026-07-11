@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 
 import { supabase } from "@/config/supabase";
 import useSellerShop from "../hooks/useSellerShop";
+import { motion } from "framer-motion";
 
 export default function CallHistoryPage() {
   const { shop, loading: shopLoading } = useSellerShop();
@@ -229,42 +230,46 @@ export default function CallHistoryPage() {
       </div>
 
       {/* Logs Table Card */}
-      <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 overflow-hidden">
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] uppercase font-bold text-slate-500 tracking-wider hover:bg-slate-50/50 transition-colors group">
-                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Customer</th>
-                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Email</th>
-                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Phone</th>
-                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Date & Time</th>
-                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Duration</th>
-                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Status</th>
+          <table className="min-w-full text-left border-collapse">
+            <thead className="sticky top-0 z-10 border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+              <tr>
+                <th className="px-6 py-5 align-middle">Customer</th>
+                <th className="px-6 py-5 align-middle">Email</th>
+                <th className="px-6 py-5 align-middle">Phone</th>
+                <th className="px-6 py-5 align-middle">Date & Time</th>
+                <th className="px-6 py-5 align-middle">Duration</th>
+                <th className="px-6 py-5 align-middle">Status</th>
               </tr>
             </thead>
-            <tbody>
-              {calls.map((call) => {
+            <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
+              {calls.map((call, idx) => {
                 const isMissed = call.status === "missed" || !call.duration;
                 return (
-                  <tr 
+                  <motion.tr 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.02 }}
                     key={call.id} 
-                    onClick={() => handleOpenDetails(call)} className="border-b border-slate-100 hover:bg-slate-50 text-sm text-slate-600 cursor-pointer transition-colors"
+                    onClick={() => handleOpenDetails(call)} 
+                    className="hover:bg-slate-50/50 transition-colors cursor-pointer group"
                   >
-                    <td className="py-4.5 font-semibold text-slate-900 px-6 py-5 align-middle">{call.customer_name}</td>
-                    <td className="py-4.5 text-slate-500 px-6 py-5 align-middle">{call.customer_email || "-"}</td>
-                    <td className="py-4.5 text-slate-500 px-6 py-5 align-middle">{call.customer_phone || "-"}</td>
-                    <td className="py-4.5 text-xs text-slate-500 font-medium px-6 py-5 align-middle">{formatDateTime(call.created_at)}</td>
-                    <td className="py-4.5 font-mono text-xs px-6 py-5 align-middle">{formatDuration(call.duration)}</td>
-                    <td className="py-4.5 px-6 py-5 align-middle">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                    <td className="px-6 py-5 align-middle font-bold text-slate-900 text-sm">{call.customer_name}</td>
+                    <td className="px-6 py-5 align-middle font-mono text-[10px] text-slate-500">{call.customer_email || "-"}</td>
+                    <td className="px-6 py-5 align-middle font-mono text-[10px] text-slate-500">{call.customer_phone || "-"}</td>
+                    <td className="px-6 py-5 align-middle font-medium text-slate-500">{formatDateTime(call.created_at)}</td>
+                    <td className="px-6 py-5 align-middle font-mono font-bold text-slate-600">{formatDuration(call.duration)}</td>
+                    <td className="px-6 py-5 align-middle">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border ${
                         isMissed
-                          ? "bg-rose-500/10 text-rose-450 border border-rose-500/20"
-                          : "bg-green-500/10 text-green-500 border border-green-500/20"
+                          ? "bg-rose-500/10 text-rose-450 border-rose-500/20"
+                          : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
                       }`}>
                         {isMissed ? "Missed" : "Completed"}
                       </span>
                     </td>
-                  </tr>
+                  </motion.tr>
                 );
               })}
             </tbody>

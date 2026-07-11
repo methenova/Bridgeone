@@ -118,7 +118,8 @@ export default function OrdersPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by Order ID, customer, product..." className="w-full rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 py-2.5 pl-9 pr-4 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500"
+            placeholder="Search by Order ID, customer, product..." 
+            className="w-full rounded-2xl border border-slate-200 bg-white pl-9 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-slate-200 shadow-sm transition-colors"
           />
         </div>
       </div>
@@ -139,23 +140,23 @@ export default function OrdersPage() {
           </p>
         </div>
       ) : (
-        <div className={`overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition-opacity ${
+        <div className={`overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-opacity ${
           isFetching && !isLoading ? "opacity-75" : ""
         }`}>
           <div className="overflow-x-auto">
-            <table className="min-w-full text-left">
-              <thead>
+            <table className="min-w-full text-left border-collapse">
+              <thead className="sticky top-0 z-10 border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
                 <tr>
-                  <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Order ID</th>
-                  <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Date</th>
-                  <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Customer</th>
-                  <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Products</th>
-                  <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Value</th>
-                  <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Status</th>
-                  <th className="text-right px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Actions</th>
+                  <th className="px-6 py-5 align-middle">Order ID</th>
+                  <th className="px-6 py-5 align-middle">Date</th>
+                  <th className="px-6 py-5 align-middle">Customer</th>
+                  <th className="px-6 py-5 align-middle">Products</th>
+                  <th className="px-6 py-5 align-middle">Value</th>
+                  <th className="px-6 py-5 align-middle">Status</th>
+                  <th className="px-6 py-5 align-middle text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 bg-white shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300">
+              <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
                 {filteredOrders.map((order) => (
                   <SellerOrderRow
                     key={order.id}

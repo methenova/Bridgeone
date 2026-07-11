@@ -220,14 +220,14 @@ export default function ProductsPage() {
       {/* ── Page Header ──────────────────────────────────────── */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Products</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900">Products</h1>
           <p className="mt-1 text-slate-500">
             Manage your product catalog · {shop.name}
           </p>
         </div>
 
         <button
-          onClick={openAddDrawer} className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/20 active:scale-95 active:scale-[0.98] shadow-lg shadow-blue-500/10"
+          onClick={openAddDrawer} className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white transition-all hover:bg-blue-500 shadow-lg shadow-blue-500/20 active:scale-95"
         >
           <Plus className="h-4 w-4" />
           Add Product

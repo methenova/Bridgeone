@@ -23,6 +23,7 @@ import toast from "react-hot-toast";
 import { supabase } from "@/config/supabase";
 import useSellerShop from "../hooks/useSellerShop";
 import { getSellerOrderItems } from "../services/order.service";
+import { motion } from "framer-motion";
 
 export default function CustomersPage() {
   const navigate = useNavigate();
@@ -371,10 +372,10 @@ export default function CustomersPage() {
       </div>
 
       {/* CRM Customer List */}
-      <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 overflow-hidden">
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         
         {/* Filter bar */}
-        <div className="p-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50">
+        <div className="p-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white">
           
           {/* Search inputs */}
           <div className="relative max-w-md w-full">
@@ -383,7 +384,8 @@ export default function CustomersPage() {
               type="text"
               placeholder="Search customers by name or email..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-2xl text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
+              onChange={(e) => setSearchTerm(e.target.value)} 
+              className="w-full rounded-xl border border-slate-200 bg-white/80 pl-10 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-slate-200 transition-colors"
             />
           </div>
 
@@ -391,10 +393,11 @@ export default function CustomersPage() {
             {/* Spent filter */}
             <div className="flex items-center gap-2">
               <ListFilter className="h-4 w-4 text-slate-500" />
-              <span>Spent tier:</span>
+              <span className="text-[10px] text-slate-550 uppercase font-bold tracking-wider">Spent tier:</span>
               <select
                 value={spentFilter}
-                onChange={(e) => setSpentFilter(e.target.value)} className="rounded-2xl border border-slate-100 bg-slate-50 px-2.5 py-1 text-xs text-slate-350 outline-none"
+                onChange={(e) => setSpentFilter(e.target.value)} 
+                className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
               >
                 <option value="all">All value Tiers</option>
                 <option value="high">High Value (&gt; ₹5,000)</option>
@@ -407,40 +410,46 @@ export default function CustomersPage() {
 
         {/* Customer Database Table */}
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-left text-xs">
-            <thead>
-              <tr className="border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 hover:bg-slate-50/50 transition-colors group">
-                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Shopper Info</th>
-                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Total Orders Count</th>
-                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Total Value spent</th>
-                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Last Checkout Date</th>
-                <th className="text-right px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">CRM Actions</th>
+          <table className="min-w-full text-left border-collapse">
+            <thead className="sticky top-0 z-10 border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+              <tr>
+                <th className="px-6 py-5 align-middle">Shopper Info</th>
+                <th className="px-6 py-5 align-middle">Total Orders Count</th>
+                <th className="px-6 py-5 align-middle">Total Value spent</th>
+                <th className="px-6 py-5 align-middle">Last Checkout Date</th>
+                <th className="px-6 py-5 align-middle text-right">CRM Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 bg-transparent text-slate-600">
-              {filteredCustomers.map((cust) => (
-                <tr key={cust.id} className="hover:bg-slate-50/50 hover:bg-slate-50/50 transition-colors group">
+            <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
+              {filteredCustomers.map((cust, idx) => (
+                <motion.tr 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.02 }}
+                  key={cust.id} 
+                  className="hover:bg-slate-50/50 transition-colors group"
+                >
                   
                   {/* Info details */}
                   <td className="px-6 py-5 align-middle">
                     <div>
                       <span className="font-bold text-slate-900 block text-sm">{cust.name}</span>
-                      <span className="text-[10px] text-slate-500 mt-0.5 block">{cust.email}</span>
+                      <span className="text-[10px] text-slate-500 mt-0.5 block font-mono">{cust.email}</span>
                     </div>
                   </td>
 
                   {/* Orders */}
-                  <td className="font-semibold text-slate-600 px-6 py-5 align-middle">
+                  <td className="px-6 py-5 align-middle text-sm font-bold text-slate-600">
                     {cust.ordersCount} checkouts
                   </td>
 
                   {/* Spent */}
-                  <td className="font-bold text-emerald-600 px-6 py-5 align-middle">
+                  <td className="px-6 py-5 align-middle text-sm font-bold text-emerald-600">
                     ₹{cust.totalSpent.toLocaleString("en-IN")}
                   </td>
 
                   {/* Date */}
-                  <td className="text-slate-500 px-6 py-5 align-middle">
+                  <td className="px-6 py-5 align-middle font-medium text-slate-500">
                     {new Date(cust.lastOrderDate).toLocaleDateString("en-IN", {
                       day: "2-digit",
                       month: "short",
@@ -449,25 +458,27 @@ export default function CustomersPage() {
                   </td>
 
                   {/* CRM details trigger */}
-                  <td className="text-right px-6 py-5 align-middle">
-                    <div className="flex justify-end gap-2.5">
+                  <td className="px-6 py-5 align-middle text-right">
+                    <div className="flex items-center justify-end gap-2.5">
                       <button
-                          onClick={() => handleOpenCrm(cust)} className="inline-flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 px-2.5 py-1.5 rounded-2xl text-[10px] font-bold text-slate-500 hover:text-slate-900 uppercase"
+                          onClick={() => handleOpenCrm(cust)} 
+                          title="CRM File"
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1 text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 cursor-pointer"
                       >
-                        <UserCheck className="h-3.5 w-3.5 text-blue-600 font-semibold" />
-                        CRM File
+                        <UserCheck className="h-4 w-4" />
                       </button>
 
                       <button
-                          onClick={() => navigate(`/seller/chat?userId=${cust.id}`)} className="inline-flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 px-2.5 py-1.5 rounded-2xl text-[10px] font-bold text-slate-500 hover:text-slate-900 uppercase"
+                          onClick={() => navigate(`/seller/chat?userId=${cust.id}`)} 
+                          title="Chat"
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1 text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 cursor-pointer"
                       >
-                        <MessageSquare className="h-3.5 w-3.5 text-emerald-600" />
-                        Chat
+                        <MessageSquare className="h-4 w-4" />
                       </button>
                     </div>
                   </td>
 
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
           </table>
