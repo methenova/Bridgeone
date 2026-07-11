@@ -6,8 +6,8 @@ import ProtectedRoute from "@/components/common/ProtectedRoute";
 // Loadable utility wrapper
 const Loadable = (Component) => (
   <Suspense fallback={
-    <div className="min-h-screen flex items-center justify-center bg-slate-950 text-slate-400">
-      <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-700 border-t-blue-500" />
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-600">
+      <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-blue-600" />
     </div>
   }>
     <Component />
