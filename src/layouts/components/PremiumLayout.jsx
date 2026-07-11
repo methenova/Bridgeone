@@ -15,6 +15,7 @@ export default function PremiumLayout({
   baseRoute = "/admin",
   marketplaceRoute = "/"
 }) {
+  const handleLogout = onLogout;
   const navigate = useNavigate();
   const location = useLocation();
 
