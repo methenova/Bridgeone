@@ -4,6 +4,8 @@ import {
   Menu, X, LogOut, ChevronDown, Search, Zap, ChevronLeft, ChevronRight, Settings, Bell, ZapOff
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { supabase } from "@/config/supabase";
+import toast from "react-hot-toast";
 
 export default function PremiumLayout({ 
   menuItems = [], 
