@@ -268,9 +268,11 @@ table tr:last-child td:last-child {
 }
 
 .admin-theme .admin-card,
+.admin-theme .rounded-3xl,
+.admin-theme .rounded-\[24px\],
+.admin-theme .rounded-2xl,
 .admin-theme .rounded-xl,
-.admin-theme .rounded-xl,
-.admin-theme .rounded-xl,
+.admin-theme .rounded-lg,
 .admin-theme .rounded-\[8px\] {
   border-radius: 0.5rem !important;
 }
