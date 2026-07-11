@@ -45,7 +45,7 @@ export default function AdminSubscriptionsPage() {
         setLoadingInvoices(true);
         const { data } = await supabase
           .from("orders")
-          .select("*, shops(shop_name)")
+          .select("*, order_items(shops(shop_name))")
           .eq("status", "completed")
           .order("created_at", { ascending: false });
         
@@ -119,7 +119,7 @@ export default function AdminSubscriptionsPage() {
   // Filter invoices list
   const filteredInvoices = useMemo(() => {
     return invoices.filter(inv => {
-      const shopName = inv.shops?.shop_name || "";
+      const shopName = inv.order_items?.[0]?.shops?.shop_name || "";
       const matchesSearch = 
         shopName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         inv.id.toLowerCase().includes(searchQuery.toLowerCase());
@@ -274,7 +274,7 @@ export default function AdminSubscriptionsPage() {
               {filteredInvoices.map((inv) => (
                 <div key={inv.id} className="flex justify-between items-center py-3">
                   <div>
-                    <p className="font-bold text-white text-xs">{inv.shops?.shop_name || "Platform Merchant"}</p>
+                    <p className="font-bold text-white text-xs">{inv.order_items?.[0]?.shops?.shop_name || "Platform Merchant"}</p>
                     <p className="text-[10px] text-slate-500 font-mono mt-0.5">Inv: #{inv.id.slice(0, 8).toUpperCase()}</p>
                   </div>
                   <div className="text-right">

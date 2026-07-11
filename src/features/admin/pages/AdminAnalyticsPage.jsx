@@ -84,7 +84,7 @@ export default function AdminAnalyticsPage() {
 
         // Add revenue to leaderboard map
         const { data: orderShopInfo } = await supabase
-          .from("orders")
+          .from("order_items")
           .select("shop_id, total, shops(shop_name)");
         
         orderShopInfo?.forEach(o => {

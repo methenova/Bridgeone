@@ -126,7 +126,7 @@ export default function AdminDashboardPage() {
         // 5. Fetch Recent Payments (Orders completed)
         const { data: orders } = await supabase
           .from("orders")
-          .select("*, shops(shop_name)")
+          .select("*")
           .order("created_at", { ascending: false })
           .limit(5);
         setRecentPayments(orders || []);
