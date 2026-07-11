@@ -81,8 +81,8 @@
   /* Rose */
   --chart-5: oklch(0.488 0.243 264.4);
   /* Indigo */
-  --radius: 0.25rem;
-  /* 5.6px - modern professional Stripe/Linear radius scale */
+  --radius: 25px;
+  /* 25px border radius */
   --sidebar: oklch(1 0 0);
   --sidebar-foreground: oklch(0.145 0.018 240);
   --sidebar-primary: oklch(0.585 0.233 253);
@@ -255,9 +255,8 @@ table tr:last-child td:last-child {
   border-bottom-right-radius: 0.5rem !important;
 }
 
-/* Premium Admin Theme Scope */
 .admin-theme {
-  --radius: 1rem; /* 16px */
+  --radius: 25px;
   background-color: #f8fafc; /* bg-slate-50 */
   color: #0f172a; /* text-slate-900 */
 }
