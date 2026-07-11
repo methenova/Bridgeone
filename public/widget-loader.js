@@ -70,10 +70,10 @@
       .b1-widget-launcher:active {
         transform: scale(0.95);
       }
-      .b1-widget-launcher-right {
+      .b1-widget-launcher-bottom-right {
         right: 24px;
       }
-      .b1-widget-launcher-left {
+      .b1-widget-launcher-bottom-left {
         left: 24px;
       }
       .b1-widget-indicator {
@@ -108,11 +108,11 @@
         transform: translateY(20px);
         opacity: 0;
       }
-      .b1-widget-container-right {
+      .b1-widget-container-bottom-right {
         right: 24px;
         transform-origin: bottom right;
       }
-      .b1-widget-container-left {
+      .b1-widget-container-bottom-left {
         left: 24px;
         transform-origin: bottom left;
       }
