@@ -97,46 +97,46 @@ export default function AdminNotificationsPage() {
               <div className="grid grid-cols-3 gap-3">
                 
                 {/* Banner */}
-                <Button
+                <button
                   type="button"
                   onClick={() => setChannel("banner")}
                   className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer ${
                     channel === "banner" 
-                      ? "bg-indigo-500/10 border-indigo-500/30 text-indigo-400 font-bold" 
-                      : "bg-slate-50 border-slate-200 text-slate-500 hover:border-slate-200"
+                      ? "bg-indigo-50 border-indigo-500/30 text-indigo-600 font-bold" 
+                      : "bg-slate-50 border-slate-200 text-slate-500 hover:border-slate-300 hover:bg-white"
                   }`}
                 >
                   <Bell className="h-4 w-4 mb-1" />
                   <span>In-App Banner</span>
-                </Button>
+                </button>
 
                 {/* Email */}
-                <Button
+                <button
                   type="button"
                   onClick={() => setChannel("email")}
                   className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer ${
                     channel === "email" 
-                      ? "bg-indigo-500/10 border-indigo-500/30 text-indigo-400 font-bold" 
-                      : "bg-slate-50 border-slate-200 text-slate-500 hover:border-slate-200"
+                      ? "bg-indigo-50 border-indigo-500/30 text-indigo-600 font-bold" 
+                      : "bg-slate-50 border-slate-200 text-slate-500 hover:border-slate-300 hover:bg-white"
                   }`}
                 >
                   <Mail className="h-4 w-4 mb-1" />
                   <span>Email Broadcast</span>
-                </Button>
+                </button>
 
                 {/* Mobile push */}
-                <Button
+                <button
                   type="button"
                   onClick={() => setChannel("push")}
                   className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer ${
                     channel === "push" 
-                      ? "bg-indigo-500/10 border-indigo-500/30 text-indigo-400 font-bold" 
-                      : "bg-slate-50 border-slate-200 text-slate-500 hover:border-slate-200"
+                      ? "bg-indigo-50 border-indigo-500/30 text-indigo-600 font-bold" 
+                      : "bg-slate-50 border-slate-200 text-slate-500 hover:border-slate-300 hover:bg-white"
                   }`}
                 >
                   <Smartphone className="h-4 w-4 mb-1" />
                   <span>Mobile Push</span>
-                </Button>
+                </button>
 
               </div>
             </div>
