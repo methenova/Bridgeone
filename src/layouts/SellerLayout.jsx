@@ -4,6 +4,7 @@ import { useAuthContext } from "@/context/AuthContext";
 import { supabase } from "@/config/supabase";
 import useSellerShop from "@/features/seller/hooks/useSellerShop";
 import PremiumLayout from "./components/PremiumLayout";
+import toast from "react-hot-toast";
 import {
   LayoutDashboard,
   Video,
@@ -139,12 +140,51 @@ export default function SellerLayout() {
       )
       .subscribe();
 
+    // Subscription D: Table video_rooms (Incoming Video Calls Global Popup)
+    const callsSub = supabase.channel(`global-calls-insert-${shopId}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "video_rooms", filter: `shop_id=eq.${shopId}` },
+        (payload) => {
+          const room = payload.new;
+          if (room.status !== "live") return;
+          
+          sound.play().catch(() => {});
+
+          if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+            new Notification("Incoming Video Call", {
+              body: `Incoming call in room: ${room.room_code}`,
+              icon: "/favicon.ico"
+            });
+          }
+
+          // Don't show toast if we are already on the Live page, as it handles its own full-screen modal
+          if (window.location.pathname === "/seller/live") return;
+
+          toast((t) => (
+            <div className="flex flex-col gap-2 p-1 min-w-[200px]">
+              <div className="font-bold text-sm text-slate-900">Incoming Video Call!</div>
+              <div className="text-xs text-slate-500">A customer is requesting a live consultation.</div>
+              <div className="flex gap-2 mt-2">
+                <button onClick={() => toast.dismiss(t.id)} className="flex-1 px-3 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Dismiss</button>
+                <button onClick={() => {
+                  toast.dismiss(t.id);
+                  navigate("/seller/live");
+                }} className="flex-1 px-3 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg shadow-sm shadow-emerald-500/20 transition-all active:scale-95">Answer Call</button>
+              </div>
+            </div>
+          ), { duration: 20000, id: `call-${room.id}`, position: "top-center" });
+        }
+      )
+      .subscribe();
+
     return () => {
       supabase.removeChannel(notifSub);
       supabase.removeChannel(msgSub);
       supabase.removeChannel(agentSub);
+      supabase.removeChannel(callsSub);
     };
-  }, [shopId, profile?.id]);
+  }, [shopId, profile?.id, navigate]);
 
   // 3. Auto-mark related notifications as read when opening respective paths
   useEffect(() => {
