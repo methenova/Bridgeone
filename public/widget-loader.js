@@ -15,7 +15,7 @@
   const hostUrl = scriptEl ? new URL(scriptEl.src).origin : "http://localhost:5173";
 
   // Fetch shop config from Supabase REST API
-  const fetchUrl = `${SUPABASE_URL}/rest/v1/shops?select=name,widget_color,widget_position,is_online&id=eq.${config.shopId}`;
+  const fetchUrl = `${SUPABASE_URL}/rest/v1/shops?select=shop_name,widget_color,widget_position,is_online&id=eq.${config.shopId}`;
 
   fetch(fetchUrl, {
     method: "GET",
