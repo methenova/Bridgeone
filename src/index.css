@@ -81,7 +81,7 @@
   /* Rose */
   --chart-5: oklch(0.488 0.243 264.4);
   /* Indigo */
-  --radius: 0.5rem;
+  --radius: 0.375rem;
   /* 8px base border radius */
   --sidebar: oklch(1 0 0);
   --sidebar-foreground: oklch(0.145 0.018 240);
@@ -169,7 +169,7 @@
 /* Premium Unified Data Tables Redesign */
 .table-container,
 div:has(> table) {
-  border-radius: 0.5rem !important;
+  border-radius: 0.375rem !important;
   /* 8px rounded table container */
   border: 1px solid #e2e8f0 !important;
   background-color: #ffffff !important;
@@ -239,23 +239,23 @@ table tr:hover td {
 
 /* Rounded corners for the container overflow check */
 table tr:first-child th:first-child {
-  border-top-left-radius: 0.5rem !important;
+  border-top-left-radius: 0.375rem !important;
 }
 
 table tr:first-child th:last-child {
-  border-top-right-radius: 0.5rem !important;
+  border-top-right-radius: 0.375rem !important;
 }
 
 table tr:last-child td:first-child {
-  border-bottom-left-radius: 0.5rem !important;
+  border-bottom-left-radius: 0.375rem !important;
 }
 
 table tr:last-child td:last-child {
-  border-bottom-right-radius: 0.5rem !important;
+  border-bottom-right-radius: 0.375rem !important;
 }
 
 .admin-theme {
-  --radius: 0.5rem;
+  --radius: 0.375rem;
   background-color: #f8fafc;
   /* bg-slate-50 */
   color: #0f172a;
@@ -263,13 +263,13 @@ table tr:last-child td:last-child {
 }
 
 .admin-theme button {
-  border-radius: 0.5rem !important;
+  border-radius: 0.375rem !important;
   /* Keep buttons standard 8px */
 }
 
 .admin-theme .admin-card,
 .admin-theme .rounded-2xl {
-  border-radius: 0.5rem !important;
+  border-radius: 0.375rem !important;
 }
 
 .admin-theme .admin-card {
@@ -281,7 +281,7 @@ table tr:last-child td:last-child {
 .admin-theme table,
 .admin-theme .table-container,
 .admin-theme div:has(> table) {
-  border-radius: 0.5rem !important;
+  border-radius: 0.375rem !important;
   /* 12px for tables */
 }
 
