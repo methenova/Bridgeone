@@ -135,7 +135,7 @@ export default function AdminAnalyticsPage() {
     return (
       <div className="space-y-6">
         <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-850" />
+        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-200" />
       </div>
     );
   }
@@ -146,13 +146,13 @@ export default function AdminAnalyticsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Platform Analytics</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Platform Analytics</h1>
           <p className="mt-1 text-xs text-slate-400">Deep-dive call metrics, monthly active integrations, and platform commission flows.</p>
         </div>
         
         {/* Date Filter & Export Row */}
         <div className="flex items-center gap-3 self-start">
-          <div className="flex items-center gap-2 bg-slate-900 border border-slate-850 px-3 py-1.5 rounded-xl text-xs text-slate-300">
+          <div className="flex items-center gap-2 bg-slate-900 border border-slate-200 px-3 py-1.5 rounded-xl text-xs text-slate-300">
             <Calendar className="h-3.5 w-3.5 text-indigo-400" />
             <select
               value={timeRange}
@@ -166,21 +166,21 @@ export default function AdminAnalyticsPage() {
             </select>
           </div>
 
-          <button
+          <Button
             onClick={handleExportReport}
             className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-500 transition-all cursor-pointer shadow-lg shadow-blue-500/10 active:scale-[0.98]"
           >
             <Download className="h-3.5 w-3.5" />
             <span>Export CSV</span>
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Analytics scorecard row */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         
         {/* Call Counts */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/40 p-6 space-y-4 hover:border-slate-800 transition-colors">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
           <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
             <span>Platform Consultations</span>
             <Video className="h-4.5 w-4.5 text-blue-400" />
@@ -192,7 +192,7 @@ export default function AdminAnalyticsPage() {
         </div>
 
         {/* Avg call duration */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/40 p-6 space-y-4 hover:border-slate-800 transition-colors">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
           <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
             <span>Avg Call Length</span>
             <Clock className="h-4.5 w-4.5 text-indigo-400" />
@@ -204,7 +204,7 @@ export default function AdminAnalyticsPage() {
         </div>
 
         {/* Conversion rate */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/40 p-6 space-y-4 hover:border-slate-800 transition-colors">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
           <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
             <span>Widget Conversion Rate</span>
             <Activity className="h-4.5 w-4.5 text-emerald-400" />
@@ -216,7 +216,7 @@ export default function AdminAnalyticsPage() {
         </div>
 
         {/* Revenue commission */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/40 p-6 space-y-4 hover:border-slate-800 transition-colors">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
           <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
             <span>Platform Commissions</span>
             <DollarSign className="h-4.5 w-4.5 text-amber-400" />
@@ -229,7 +229,7 @@ export default function AdminAnalyticsPage() {
 
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-3">
         
         {/* Left 2 Cols: Growth graphics */}
         <div className="lg:col-span-2 rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-6">
@@ -285,9 +285,9 @@ export default function AdminAnalyticsPage() {
 
           <div className="space-y-4">
             {leaderboard.map((item, idx) => (
-              <div key={item.name} className="flex justify-between items-center text-xs pb-3 border-b border-slate-900/50 last:border-b-0 last:pb-0">
+              <div key={item.name} className="flex justify-between items-center text-xs pb-3 border-b border-slate-100/50 last:border-b-0 last:pb-0">
                 <div className="flex items-center gap-3">
-                  <div className="h-7 w-7 rounded-lg bg-slate-900 border border-slate-850 flex items-center justify-center font-bold text-slate-400 text-[11px]">
+                  <div className="h-7 w-7 rounded-lg bg-slate-900 border border-slate-200 flex items-center justify-center font-bold text-slate-400 text-[11px]">
                     #{idx + 1}
                   </div>
                   <div>

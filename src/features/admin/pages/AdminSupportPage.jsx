@@ -134,22 +134,22 @@ export default function AdminSupportPage() {
     return (
       <div className="space-y-6">
         <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-850" />
+        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-200" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 text-white max-w-7xl relative">
+    <div className="space-y-4 md:space-y-6 text-white max-w-7xl relative">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Support Desk</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Support Desk</h1>
           <p className="mt-1 text-xs text-slate-400">Review client-submitted issues, address system bugs, and respond to feature requests.</p>
         </div>
         
-        <button
+        <Button
           onClick={() => {
             setFormTitle("");
             setFormDesc("");
@@ -160,7 +160,7 @@ export default function AdminSupportPage() {
         >
           <Plus className="h-4 w-4" />
           <span>Add Ticket</span>
-        </button>
+        </Button>
       </div>
 
       {/* Utilities bar */}
@@ -176,7 +176,7 @@ export default function AdminSupportPage() {
             placeholder="Search by ticket title or description..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-850 bg-slate-950/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-850 transition-colors"
+            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-200 transition-colors"
           />
         </div>
 
@@ -187,7 +187,7 @@ export default function AdminSupportPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-slate-350 outline-none focus:border-slate-850"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
             >
               <option value="all">All Statuses</option>
               <option value="open">Open</option>
@@ -202,7 +202,7 @@ export default function AdminSupportPage() {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-slate-355 outline-none focus:border-slate-850"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
             >
               <option value="all">All Types</option>
               <option value="bug">Bugs</option>
@@ -218,7 +218,7 @@ export default function AdminSupportPage() {
       <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-900 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Ticket details</th>
                 <th className="px-6 py-4.5">Vertical Type</th>
@@ -243,7 +243,7 @@ export default function AdminSupportPage() {
                     <td className="px-6 py-4 max-w-md">
                       <div>
                         <span className="font-bold text-white block text-sm">{t.title}</span>
-                        <span className="text-[10px] text-slate-450 mt-1 block leading-normal line-clamp-2">
+                        <span className="text-[10px] text-slate-500 mt-1 block leading-normal line-clamp-2">
                           {t.description}
                         </span>
                       </div>
@@ -270,7 +270,7 @@ export default function AdminSupportPage() {
                       <select
                         value={t.status}
                         onChange={(e) => handleStatusChange(t.id, e.target.value)}
-                        className="rounded-lg border border-slate-850 bg-slate-950 px-2 py-1 text-xs outline-none text-slate-300 font-semibold"
+                        className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs outline-none text-slate-300 font-semibold"
                       >
                         <option value="open">Open</option>
                         <option value="resolved">Resolved</option>
@@ -283,13 +283,13 @@ export default function AdminSupportPage() {
 
                     {/* Action buttons */}
                     <td className="px-6 py-4 text-right">
-                      <button
+                      <Button
                         onClick={() => handleDeleteTicket(t.id)}
                         className="text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
                         title="Delete Ticket"
                       >
                         <Trash2 className="h-4 w-4" />
-                      </button>
+                      </Button>
                     </td>
                   </motion.tr>
                 );
@@ -309,55 +309,56 @@ export default function AdminSupportPage() {
       {/* CREATE MODAL */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="w-full max-w-md rounded-2xl border border-slate-900 bg-slate-950 p-6 space-y-6 shadow-2xl"
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-md max-w-[calc(100vw-2rem)] rounded-2xl border border-slate-200 bg-white p-6 space-y-6 shadow-xl shadow-slate-200/50"
             >
-              <div className="flex justify-between items-center pb-3 border-b border-slate-900">
-                <h2 className="text-base font-bold text-white uppercase tracking-wider">Log Ticket</h2>
-                <button 
+              <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+                <h2 className="text-base font-bold text-slate-900 tracking-tight">Log Ticket</h2>
+                <Button 
                   onClick={() => setIsOpen(false)}
-                  className="text-slate-455 hover:text-white transition-colors"
+                  className="text-slate-500 hover:text-white transition-colors"
                 >
                   <X className="h-5 w-5" />
-                </button>
+                </Button>
               </div>
 
               <form onSubmit={handleSubmitTicket} className="space-y-4 text-xs">
                 
                 {/* Title */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase">Ticket Title</label>
+                  <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wide">Ticket Title</label>
                   <input
                     type="text"
                     value={formTitle}
                     onChange={(e) => setFormTitle(e.target.value)}
-                    className="w-full rounded-xl border border-slate-850 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
                     placeholder="e.g. Call logs fail to render"
                   />
                 </div>
 
                 {/* Description */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase">Issue Description</label>
+                  <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wide">Issue Description</label>
                   <textarea
                     value={formDesc}
                     onChange={(e) => setFormDesc(e.target.value)}
                     rows={4}
-                    className="w-full rounded-xl border border-slate-850 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500 resize-none"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500 resize-none"
                     placeholder="Provide details about the issue..."
                   />
                 </div>
 
                 {/* Type select */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase">Ticket Category</label>
+                  <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wide">Ticket Category</label>
                   <select
                     value={formType}
                     onChange={(e) => setFormType(e.target.value)}
-                    className="w-full rounded-xl border border-slate-855 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500 font-semibold"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500 font-semibold"
                   >
                     <option value="bug">System Bug Log</option>
                     <option value="feature">Feature Request Option</option>
@@ -365,22 +366,22 @@ export default function AdminSupportPage() {
                   </select>
                 </div>
 
-                <div className="border-t border-slate-900 pt-4 flex gap-3 justify-end text-xs font-semibold">
-                  <button
+                <div className="border-t border-slate-100 pt-4 flex gap-3 justify-end text-xs font-semibold">
+                  <Button
                     type="button"
                     onClick={() => setIsOpen(false)}
-                    className="px-4 py-2 border border-slate-855 rounded-xl text-slate-450 hover:text-white cursor-pointer"
+                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-white cursor-pointer"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
                     disabled={submitting}
                     className="flex items-center gap-1 bg-blue-600 hover:bg-blue-550 text-white px-4 py-2 rounded-xl font-bold cursor-pointer transition-all active:scale-[0.98]"
                   >
                     {submitting && <Loader2 className="h-3 w-3 animate-spin" />}
                     Log Ticket
-                  </button>
+                  </Button>
                 </div>
 
               </form>

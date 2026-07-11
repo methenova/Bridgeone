@@ -137,16 +137,16 @@ export default function AdminCallsPage() {
   }
 
   return (
-    <div className="space-y-8 text-white max-w-7xl">
+    <div className="space-y-6 md:space-y-8 text-white max-w-7xl">
       
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-extrabold tracking-tight">Live Calls</h1>
+        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Live Calls</h1>
         <p className="mt-1 text-xs text-slate-400">Moderate ongoing consulting calls, track offline bookings, and view video log history.</p>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-4 max-w-4xl">
+      <div className="grid gap-3 md:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 max-w-4xl">
         {/* Active Calls */}
         <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
           <div className="space-y-1">
@@ -193,31 +193,31 @@ export default function AdminCallsPage() {
       </div>
 
       {/* Tabs Switcher */}
-      <div className="flex border-b border-slate-900 gap-6">
-        <button
+      <div className="flex border-b border-slate-100 gap-6">
+        <Button
           onClick={() => { setActiveTab("live"); setSearchQuery(""); setStatusFilter("all"); }}
           className={`pb-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
             activeTab === "live" ? "border-blue-500 text-white" : "border-transparent text-slate-500 hover:text-slate-300"
           }`}
         >
           Live Sessions ({stats.activeRooms})
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => { setActiveTab("callbacks"); setSearchQuery(""); setStatusFilter("all"); }}
           className={`pb-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
             activeTab === "callbacks" ? "border-blue-500 text-white" : "border-transparent text-slate-500 hover:text-slate-300"
           }`}
         >
           Scheduled Callbacks ({stats.totalCallbacks})
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => { setActiveTab("logs"); setSearchQuery(""); setStatusFilter("all"); }}
           className={`pb-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
             activeTab === "logs" ? "border-blue-500 text-white" : "border-transparent text-slate-500 hover:text-slate-300"
           }`}
         >
           Audit Logs ({stats.totalCalls})
-        </button>
+        </Button>
       </div>
 
       {/* ── TAB 1: LIVE SESSIONS ──────────────────────── */}
@@ -236,7 +236,7 @@ export default function AdminCallsPage() {
                   key={room.id}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="rounded-2xl border border-slate-900 bg-slate-900/30 p-5 flex flex-col justify-between space-y-4 hover:border-slate-800 transition-colors"
+                  className="rounded-2xl border border-slate-900 bg-slate-900/30 p-5 flex flex-col justify-between space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200"
                 >
                   <div className="flex items-start justify-between">
                     <div className="space-y-1">
@@ -247,21 +247,21 @@ export default function AdminCallsPage() {
                       <h3 className="text-sm font-extrabold text-white block pt-2">{room.shops?.shop_name || "Merchant Store"}</h3>
                       <p className="text-[9px] text-slate-500 font-mono">Room: {room.room_code}</p>
                     </div>
-                    <div className="h-9 w-9 rounded-xl bg-slate-950 border border-slate-850 flex items-center justify-center shrink-0 text-slate-500">
+                    <div className="h-9 w-9 rounded-xl bg-slate-950 border border-slate-200 flex items-center justify-center shrink-0 text-slate-500">
                       <Store className="h-4.5 w-4.5" />
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between border-t border-slate-900 pt-3 text-[10px]">
+                  <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-[10px]">
                     <div className="text-slate-500 font-medium">
                       Seller: <span className="text-slate-300 font-bold">{room.profiles?.full_name || "Online Host"}</span>
                     </div>
-                    <button
+                    <Button
                       onClick={() => handleTerminateSession(room.id, room.room_code)}
                       className="flex items-center gap-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 px-2.5 py-1 rounded-xl text-[10px] font-bold border border-red-500/20 transition-all cursor-pointer"
                     >
                       <ZapOff className="h-3 w-3" /> Terminate
-                    </button>
+                    </Button>
                   </div>
                 </motion.div>
               ))}
@@ -283,7 +283,7 @@ export default function AdminCallsPage() {
                 placeholder="Search callbacks by name, email, or store..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-xl border border-slate-850 bg-slate-950/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-800 transition-colors"
+                className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-800 transition-colors"
               />
             </div>
 
@@ -292,7 +292,7 @@ export default function AdminCallsPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
+                className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
               >
                 <option value="all">All Bookings</option>
                 <option value="pending">Pending</option>
@@ -305,7 +305,7 @@ export default function AdminCallsPage() {
           <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
             <div className="overflow-x-auto">
               <table className="min-w-full text-left border-collapse">
-                <thead className="border-b border-slate-900 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+                <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
                   <tr>
                     <th className="px-6 py-4.5">Client Contact</th>
                     <th className="px-6 py-4.5">Storefront Target</th>
@@ -334,7 +334,7 @@ export default function AdminCallsPage() {
                       >
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-950 border border-slate-850 text-slate-450 shrink-0 font-bold">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-950 border border-slate-200 text-slate-500 shrink-0 font-bold">
                               {(cb.customer_name || "G").charAt(0).toUpperCase()}
                             </div>
                             <div>
@@ -360,7 +360,7 @@ export default function AdminCallsPage() {
                             value={cb.status || "pending"}
                             onChange={(e) => handleCallbackStatus(cb.id, e.target.value)}
                             disabled={updateCallback.isPending}
-                            className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-white outline-none focus:border-blue-500 disabled:opacity-50 font-bold transition-all"
+                            className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-white outline-none focus:border-blue-500 disabled:opacity-50 font-bold transition-all"
                           >
                             {CALLBACK_STATUSES.map((stat) => (
                               <option key={stat.value} value={stat.value}>{stat.label}</option>
@@ -369,13 +369,13 @@ export default function AdminCallsPage() {
                         </td>
 
                         <td className="px-6 py-4 text-right">
-                          <button
+                          <Button
                             onClick={() => handleDeleteCallback(cb.id)}
                             disabled={deleteCallbackReq.isPending}
                             className="text-slate-500 hover:text-red-400 transition-colors disabled:opacity-50 cursor-pointer"
                           >
                             <Trash2 className="h-4.5 w-4.5" />
-                          </button>
+                          </Button>
                         </td>
                       </motion.tr>
                     );
@@ -407,7 +407,7 @@ export default function AdminCallsPage() {
                 placeholder="Search call logs by name, email, or store..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-xl border border-slate-850 bg-slate-950/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-800 transition-colors"
+                className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-800 transition-colors"
               />
             </div>
 
@@ -416,7 +416,7 @@ export default function AdminCallsPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
+                className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
               >
                 <option value="all">All Logs</option>
                 <option value="completed">Completed</option>
@@ -430,7 +430,7 @@ export default function AdminCallsPage() {
           <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
             <div className="overflow-x-auto">
               <table className="min-w-full text-left border-collapse">
-                <thead className="border-b border-slate-900 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+                <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
                   <tr>
                     <th className="px-6 py-4.5">Caller / Customer</th>
                     <th className="px-6 py-4.5">Target Store</th>
@@ -460,7 +460,7 @@ export default function AdminCallsPage() {
                       >
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-950 border border-slate-850 text-slate-400 shrink-0">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-950 border border-slate-200 text-slate-400 shrink-0">
                               <User className="h-4 w-4" />
                             </div>
                             <div>
@@ -481,7 +481,7 @@ export default function AdminCallsPage() {
                           {formatDuration(c.duration)}
                         </td>
 
-                        <td className="px-6 py-4 text-slate-450 font-medium">
+                        <td className="px-6 py-4 text-slate-500 font-medium">
                           {callDate}
                         </td>
 
@@ -498,13 +498,13 @@ export default function AdminCallsPage() {
                         </td>
 
                         <td className="px-6 py-4 text-right">
-                          <button
+                          <Button
                             onClick={() => handleDeleteLog(c.id)}
                             disabled={deleteCall.isPending}
                             className="text-slate-500 hover:text-red-400 transition-colors disabled:opacity-50 cursor-pointer"
                           >
                             <Trash2 className="h-4.5 w-4.5" />
-                          </button>
+                          </Button>
                         </td>
                       </motion.tr>
                     );

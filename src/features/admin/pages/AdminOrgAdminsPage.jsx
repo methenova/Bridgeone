@@ -150,27 +150,27 @@ export default function AdminOrgAdminsPage() {
     return (
       <div className="space-y-6">
         <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-850" />
+        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-200" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 text-white max-w-7xl relative">
+    <div className="space-y-4 md:space-y-6 text-white max-w-7xl relative">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Organization Admins</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Organization Admins</h1>
           <p className="mt-1 text-xs text-slate-400">Promote system users, audit merchant profile states, and map storefront ownerships.</p>
         </div>
-        <button
+        <Button
           onClick={handleOpenPromote}
           className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10 transition-all active:scale-[0.98]"
         >
           <Plus className="h-4 w-4" />
           <span>Promote Org Admin</span>
-        </button>
+        </Button>
       </div>
 
       {/* Filter and Search */}
@@ -184,7 +184,7 @@ export default function AdminOrgAdminsPage() {
             placeholder="Search by admin name or email address..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-850 bg-slate-950/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-850 transition-colors"
+            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-200 transition-colors"
           />
         </div>
       </div>
@@ -193,7 +193,7 @@ export default function AdminOrgAdminsPage() {
       <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-900 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Administrator</th>
                 <th className="px-6 py-4.5">Associated Shop / Org</th>
@@ -221,7 +221,7 @@ export default function AdminOrgAdminsPage() {
                     {/* Admin profile info */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="h-9 w-9 rounded-xl border border-slate-850 bg-slate-950 flex items-center justify-center shrink-0">
+                        <div className="h-9 w-9 rounded-xl border border-slate-200 bg-white flex items-center justify-center shrink-0">
                           <Users className="h-4 w-4 text-indigo-400" />
                         </div>
                         <div>
@@ -248,12 +248,12 @@ export default function AdminOrgAdminsPage() {
 
                     {/* Action buttons */}
                     <td className="px-6 py-4 text-right">
-                      <button
+                      <Button
                         onClick={() => handleOpenLink(admin)}
                         className="text-blue-450 hover:text-white transition-colors bg-blue-500/10 px-3 py-1.5 rounded-xl border border-blue-500/20 text-[10px] font-bold uppercase tracking-wider cursor-pointer"
                       >
                         Map Shop
-                      </button>
+                      </Button>
                     </td>
                   </motion.tr>
                 );
@@ -273,24 +273,25 @@ export default function AdminOrgAdminsPage() {
       {/* PROMOTE MODAL */}
       <AnimatePresence>
         {isPromoteOpen && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="w-full max-w-md rounded-2xl border border-slate-900 bg-slate-955 bg-slate-950 p-6 space-y-6 shadow-2xl"
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-md max-w-[calc(100vw-2rem)] rounded-2xl border border-slate-200 bg-white p-6 space-y-6 shadow-xl shadow-slate-200/50"
             >
               <div>
-                <h2 className="text-base font-bold text-white uppercase tracking-wider">Promote User to Admin</h2>
+                <h2 className="text-base font-bold text-slate-900 tracking-tight">Promote User to Admin</h2>
                 <p className="text-[10px] text-slate-500 mt-1">Upgrade an existing customer profile to a merchant/seller account.</p>
               </div>
 
               <form onSubmit={handlePromoteUser} className="space-y-4 text-xs">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-450 uppercase">Select Platform Customer</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Select Platform Customer</label>
                   <select
                     value={promoteUserId}
                     onChange={(e) => setPromoteUserId(e.target.value)}
-                    className="w-full rounded-xl border border-slate-850 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
                   >
                     {eligibleUsers.map(u => (
                       <option key={u.id} value={u.id}>{u.full_name} ({u.email})</option>
@@ -301,22 +302,22 @@ export default function AdminOrgAdminsPage() {
                   </select>
                 </div>
 
-                <div className="border-t border-slate-900 pt-4 flex gap-3 justify-end text-xs">
-                  <button
+                <div className="border-t border-slate-100 pt-4 flex gap-3 justify-end text-xs">
+                  <Button
                     type="button"
                     onClick={() => setIsPromoteOpen(false)}
-                    className="px-4 py-2 border border-slate-850 rounded-xl text-slate-400 hover:text-white cursor-pointer"
+                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-400 hover:text-white cursor-pointer"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
                     disabled={submitting}
                     className="flex items-center gap-1 bg-blue-600 hover:bg-blue-550 text-white px-4 py-2 rounded-xl font-bold cursor-pointer transition-all active:scale-[0.98]"
                   >
                     {submitting && <Loader2 className="h-3 w-3 animate-spin" />}
                     Promote Role
-                  </button>
+                  </Button>
                 </div>
               </form>
             </motion.div>
@@ -327,24 +328,25 @@ export default function AdminOrgAdminsPage() {
       {/* LINK/MAP SHOP MODAL */}
       <AnimatePresence>
         {isLinkOpen && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="w-full max-w-md rounded-2xl border border-slate-900 bg-slate-950 p-6 space-y-6 shadow-2xl"
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-md max-w-[calc(100vw-2rem)] rounded-2xl border border-slate-200 bg-white p-6 space-y-6 shadow-xl shadow-slate-200/50"
             >
               <div>
-                <h2 className="text-base font-bold text-white uppercase tracking-wider">Map Organization Ownership</h2>
+                <h2 className="text-base font-bold text-slate-900 tracking-tight">Map Organization Ownership</h2>
                 <p className="text-[10px] text-slate-500 mt-1">Assign the shop ownership properties for "{selectedAdmin?.full_name}".</p>
               </div>
 
               <form onSubmit={handleLinkShop} className="space-y-4 text-xs">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-450 uppercase">Select Target Shop</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase">Select Target Shop</label>
                   <select
                     value={linkShopId}
                     onChange={(e) => setLinkShopId(e.target.value)}
-                    className="w-full rounded-xl border border-slate-850 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
                   >
                     <option value="">Unlinked (No Store)</option>
                     {shops.map(s => (
@@ -353,22 +355,22 @@ export default function AdminOrgAdminsPage() {
                   </select>
                 </div>
 
-                <div className="border-t border-slate-900 pt-4 flex gap-3 justify-end text-xs">
-                  <button
+                <div className="border-t border-slate-100 pt-4 flex gap-3 justify-end text-xs">
+                  <Button
                     type="button"
                     onClick={() => setIsLinkOpen(false)}
-                    className="px-4 py-2 border border-slate-850 rounded-xl text-slate-400 hover:text-white cursor-pointer"
+                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-400 hover:text-white cursor-pointer"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
                     disabled={submitting}
                     className="flex items-center gap-1 bg-blue-600 hover:bg-blue-550 text-white px-4 py-2 rounded-xl font-bold cursor-pointer transition-all active:scale-[0.98]"
                   >
                     {submitting && <Loader2 className="h-3 w-3 animate-spin" />}
                     Confirm Linkage
-                  </button>
+                  </Button>
                 </div>
               </form>
             </motion.div>

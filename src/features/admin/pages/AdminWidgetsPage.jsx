@@ -104,17 +104,17 @@ export default function AdminWidgetsPage() {
     return (
       <div className="space-y-6">
         <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-850" />
+        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-200" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 text-white max-w-7xl relative">
+    <div className="space-y-4 md:space-y-6 text-white max-w-7xl relative">
       
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-extrabold tracking-tight">Widget Management</h1>
+        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Widget Management</h1>
         <p className="mt-1 text-xs text-slate-400">View script integrations status, copy launcher embed codes, and rotate API security tokens.</p>
       </div>
 
@@ -145,7 +145,7 @@ export default function AdminWidgetsPage() {
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Widgets Offline</p>
             <p className="text-xl font-bold tracking-tight text-slate-400">{stats.offline}</p>
           </div>
-          <div className="h-9 w-9 rounded-xl bg-slate-800 text-slate-450 flex items-center justify-center shrink-0">
+          <div className="h-9 w-9 rounded-xl bg-slate-800 text-slate-500 flex items-center justify-center shrink-0">
             <Sliders className="h-4.5 w-4.5 text-slate-400" />
           </div>
         </div>
@@ -162,7 +162,7 @@ export default function AdminWidgetsPage() {
             placeholder="Search by store name or API Key..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-850 bg-slate-950/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-850 transition-colors"
+            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-200 transition-colors"
           />
         </div>
 
@@ -171,7 +171,7 @@ export default function AdminWidgetsPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-slate-350 outline-none focus:border-slate-850"
+            className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
           >
             <option value="all">All Statuses</option>
             <option value="online">Online</option>
@@ -184,7 +184,7 @@ export default function AdminWidgetsPage() {
       <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-900 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Widget Name</th>
                 <th className="px-6 py-4.5">Organization</th>
@@ -226,7 +226,7 @@ export default function AdminWidgetsPage() {
                       <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider border ${
                         s.is_online
                           ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                          : "bg-slate-800 text-slate-450 border-slate-800"
+                          : "bg-slate-800 text-slate-500 border-slate-800"
                       }`}>
                         {s.is_online ? "Active" : "Disabled"}
                       </span>
@@ -237,9 +237,9 @@ export default function AdminWidgetsPage() {
                       <div className="flex items-center justify-end gap-3.5">
                         
                         {/* Toggle active status */}
-                        <button
+                        <Button
                           onClick={() => handleToggleWidget(s)}
-                          className="text-slate-450 hover:text-white transition-colors cursor-pointer"
+                          className="text-slate-500 hover:text-white transition-colors cursor-pointer"
                           title="Toggle Status"
                         >
                           {s.is_online ? (
@@ -247,24 +247,24 @@ export default function AdminWidgetsPage() {
                           ) : (
                             <ToggleLeft className="h-6 w-6 text-slate-700" />
                           )}
-                        </button>
+                        </Button>
 
                         {/* View Embed Code */}
-                        <button
+                        <Button
                           onClick={() => setSelectedShop(s)}
-                          className="text-slate-450 hover:text-indigo-400 transition-colors cursor-pointer flex items-center gap-1 bg-slate-900 border border-slate-850 px-2.5 py-1 rounded-lg hover:border-slate-800 text-[10px] font-bold uppercase tracking-wider"
+                          className="text-slate-500 hover:text-indigo-400 transition-colors cursor-pointer flex items-center gap-1 bg-slate-900 border border-slate-200 px-2.5 py-1 rounded-lg hover:border-slate-800 text-[10px] font-bold uppercase tracking-wider"
                         >
                           <Eye className="h-3 w-3" /> Snippet
-                        </button>
+                        </Button>
 
                         {/* Rotate Security API Key */}
-                        <button
+                        <Button
                           onClick={() => handleRegenerateKey(s.shop_name)}
-                          className="text-slate-450 hover:text-white transition-colors cursor-pointer"
+                          className="text-slate-500 hover:text-white transition-colors cursor-pointer"
                           title="Rotate API Key Token"
                         >
                           <RefreshCw className="h-3.5 w-3.5" />
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </motion.tr>
@@ -285,23 +285,24 @@ export default function AdminWidgetsPage() {
       {/* SNIPPET MODAL */}
       <AnimatePresence>
         {selectedShop && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="w-full max-w-lg rounded-2xl border border-slate-900 bg-slate-950 p-6 space-y-6 shadow-2xl"
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-lg max-w-[calc(100vw-2rem)] rounded-2xl border border-slate-200 bg-white p-6 space-y-6 shadow-xl shadow-slate-200/50"
             >
-              <div className="flex justify-between items-center pb-3 border-b border-slate-900">
+              <div className="flex justify-between items-center pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <Code className="h-5 w-5 text-indigo-400" />
-                  <h2 className="text-base font-bold text-white uppercase tracking-wider">Embed Code Installation</h2>
+                  <h2 className="text-base font-bold text-slate-900 tracking-tight">Embed Code Installation</h2>
                 </div>
-                <button 
+                <Button 
                   onClick={() => setSelectedShop(null)}
                   className="text-slate-400 hover:text-white transition-colors cursor-pointer"
                 >
                   <X className="h-5 w-5" />
-                </button>
+                </Button>
               </div>
 
               <div className="space-y-4 text-xs">
@@ -310,7 +311,7 @@ export default function AdminWidgetsPage() {
                 </p>
 
                 <div className="relative">
-                  <pre className="bg-slate-900 p-4 rounded-xl border border-slate-850 font-mono text-[10px] text-slate-300 overflow-x-auto select-all leading-relaxed whitespace-pre-wrap">
+                  <pre className="bg-slate-50 p-4 rounded-xl border border-slate-200 font-mono text-[10px] text-slate-300 overflow-x-auto select-all leading-relaxed whitespace-pre-wrap">
                     {`<!-- BridgeOne Live Video Widget Embed -->
 <script>
   window.BridgeOneConfig = {
@@ -320,22 +321,22 @@ export default function AdminWidgetsPage() {
 <script src="${window.location.origin}/widget-loader.js" async></script>`}
                   </pre>
                   
-                  <button
+                  <Button
                     onClick={() => handleCopySnippet(selectedShop.id)}
-                    className="absolute top-3 right-3 text-slate-450 hover:text-white transition-colors cursor-pointer bg-slate-950 p-1.5 rounded-lg border border-slate-850"
+                    className="absolute top-3 right-3 text-slate-500 hover:text-white transition-colors cursor-pointer bg-slate-950 p-1.5 rounded-lg border border-slate-200"
                   >
                     {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
-                  </button>
+                  </Button>
                 </div>
               </div>
 
-              <div className="border-t border-slate-900 pt-4 flex justify-end text-xs">
-                <button
+              <div className="border-t border-slate-100 pt-4 flex justify-end text-xs">
+                <Button
                   onClick={() => setSelectedShop(null)}
                   className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-white font-bold cursor-pointer transition-all active:scale-[0.98]"
                 >
                   Finished
-                </button>
+                </Button>
               </div>
             </motion.div>
           </div>

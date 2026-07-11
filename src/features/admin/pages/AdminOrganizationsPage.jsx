@@ -282,29 +282,28 @@ export default function AdminOrganizationsPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <ProductSkeleton rows={6} />
+      <div className="space-y-6 max-w-7xl">
+        <AdminTableSkeleton rows={8} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 text-white max-w-7xl relative">
+    <div className="space-y-4 md:space-y-6 text-white max-w-7xl relative">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Organizations</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Organizations</h1>
           <p className="mt-1 text-xs text-slate-400">Moderate tenant subscriptions, toggle API integration permissions, and view active usages.</p>
         </div>
-        <button
+        <Button
           onClick={handleOpenCreate}
           className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10 transition-all active:scale-[0.98]"
         >
           <Plus className="h-4 w-4" />
           <span>Create Organization</span>
-        </button>
+        </Button>
       </div>
 
       {/* Aggregate Stats Cards */}
@@ -353,7 +352,7 @@ export default function AdminOrganizationsPage() {
             placeholder="Search by store name, admin profile name, or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-850 bg-slate-950/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-850 transition-colors"
+            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-200 transition-colors"
           />
         </div>
 
@@ -364,7 +363,7 @@ export default function AdminOrganizationsPage() {
             <select
               value={planFilter}
               onChange={(e) => setPlanFilter(e.target.value)}
-              className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-850"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-200"
             >
               <option value="all">All Plans</option>
               <option value="free">Free Plan</option>
@@ -379,7 +378,7 @@ export default function AdminOrganizationsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-850"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-200"
             >
               <option value="all">All Statuses</option>
               <option value="approved">Approved</option>
@@ -394,7 +393,7 @@ export default function AdminOrganizationsPage() {
       <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-900 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Organization / brand</th>
                 <th className="px-6 py-4.5">Admin Profile</th>
@@ -422,7 +421,7 @@ export default function AdminOrganizationsPage() {
                       <div className="flex items-center gap-3">
                         <div 
                           onClick={() => handleOpenDetails(s)}
-                          className="h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-slate-850 bg-slate-950 flex items-center justify-center cursor-pointer hover:border-blue-500 transition-colors"
+                          className="h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-white flex items-center justify-center cursor-pointer hover:border-blue-500 transition-colors"
                         >
                           {s.logo_url ? (
                             <img src={s.logo_url} alt="" className="h-full w-full object-cover" />
@@ -456,7 +455,7 @@ export default function AdminOrganizationsPage() {
                         value={s.plan_name || "free"}
                         onChange={(e) => handlePlanChange(s.id, e.target.value)}
                         disabled={updatePlan.isPending}
-                        className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-white outline-none focus:border-blue-500 disabled:opacity-50 font-bold transition-all"
+                        className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-white outline-none focus:border-blue-500 disabled:opacity-50 font-bold transition-all"
                       >
                         {PLANS.map((plan) => (
                           <option key={plan.value} value={plan.value}>{plan.label}</option>
@@ -479,7 +478,7 @@ export default function AdminOrganizationsPage() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-3.5">
                         {/* Suspend Status */}
-                        <button
+                        <Button
                           onClick={() => handleToggleActive(s)}
                           disabled={toggleStatus.isPending}
                           className="text-slate-400 hover:text-white transition-colors cursor-pointer"
@@ -489,25 +488,25 @@ export default function AdminOrganizationsPage() {
                           ) : (
                             <ToggleLeft className="h-6 w-6 text-slate-700" />
                           )}
-                        </button>
+                        </Button>
 
                         {/* Edit details */}
-                        <button
+                        <Button
                           onClick={() => handleOpenEdit(s)}
-                          className="text-slate-450 hover:text-white transition-colors cursor-pointer"
+                          className="text-slate-500 hover:text-white transition-colors cursor-pointer"
                           title="Edit Details"
                         >
                           <Edit3 className="h-4 w-4" />
-                        </button>
+                        </Button>
 
                         {/* Permanent Delete */}
-                        <button
+                        <Button
                           onClick={() => handleDeleteShop(s.id, s.shop_name)}
-                          className="text-slate-450 hover:text-red-400 transition-colors cursor-pointer"
+                          className="text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
                           title="Delete Organization"
                         >
                           <Trash2 className="h-4 w-4" />
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </motion.tr>
@@ -529,35 +528,35 @@ export default function AdminOrganizationsPage() {
       {/* DETAILS DRAWER MODAL */}
       <AnimatePresence>
         {selectedShop && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex justify-end">
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex justify-end">
             <motion.div 
               initial={{ opacity: 0, x: 200 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 200 }}
-              className="w-full max-w-md h-full bg-slate-950 border-l border-slate-900 p-6 flex flex-col justify-between overflow-y-auto space-y-6 shadow-2xl"
+              className="w-full max-w-md h-full bg-white border-l border-slate-200 p-6 flex flex-col justify-between overflow-y-auto space-y-6 shadow-xl shadow-slate-200/50"
             >
               <div className="space-y-6">
-                <div className="flex justify-between items-center pb-4 border-b border-slate-900">
+                <div className="flex justify-between items-center pb-4 border-b border-slate-100">
                   <div className="flex items-center gap-2">
                     <Building className="h-5 w-5 text-indigo-400" />
-                    <h2 className="text-base font-bold text-white uppercase tracking-wider">Tenant Overview</h2>
+                    <h2 className="text-base font-bold text-slate-900 tracking-tight">Tenant Overview</h2>
                   </div>
-                  <button 
+                  <Button 
                     onClick={() => setSelectedShop(null)}
                     className="text-slate-400 hover:text-white transition-colors cursor-pointer"
                   >
                     <X className="h-5 w-5" />
-                  </button>
+                  </Button>
                 </div>
 
                 {/* Main Details */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-xl border border-slate-800 bg-slate-900 flex items-center justify-center">
+                    <div className="h-12 w-12 rounded-xl border border-slate-200 bg-slate-900 flex items-center justify-center">
                       {selectedShop.logo_url ? <img src={selectedShop.logo_url} alt="" className="h-full w-full object-cover" /> : "🏪"}
                     </div>
                     <div>
-                      <h3 className="font-extrabold text-white text-base">{selectedShop.shop_name}</h3>
+                      <h3 className="font-extrabold text-slate-900 text-base">{selectedShop.shop_name}</h3>
                       <p className="text-[10px] text-slate-500 font-mono">ID: {selectedShop.id}</p>
                     </div>
                   </div>
@@ -616,27 +615,27 @@ export default function AdminOrganizationsPage() {
                 {/* Widget Info */}
                 <div className="space-y-3">
                   <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400">Widget Configuration</h4>
-                  <div className="bg-slate-900/20 p-4 rounded-xl border border-slate-900 space-y-2 text-xs text-slate-350">
+                  <div className="bg-slate-900/20 p-4 rounded-xl border border-slate-900 space-y-2 text-xs text-slate-700">
                     <p>Widget Color: <span className="font-bold text-white uppercase">{selectedShop.widget_color || "#2563eb"}</span></p>
                     <p>Widget Position: <span className="font-bold text-white capitalize">{selectedShop.widget_position || "bottom-right"}</span></p>
-                    <p>Widget Token API Key: <span className="font-mono text-slate-450 font-bold block bg-slate-950 p-2 mt-1 rounded text-[10px] select-all">{selectedShop.id}</span></p>
+                    <p>Widget Token API Key: <span className="font-mono text-slate-500 font-bold block bg-slate-950 p-2 mt-1 rounded text-[10px] select-all">{selectedShop.id}</span></p>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-900 flex justify-end gap-3 text-xs">
-                <button 
+              <div className="pt-4 border-t border-slate-100 flex justify-end gap-3 text-xs">
+                <Button 
                   onClick={() => handleOpenEdit(selectedShop)}
-                  className="px-4 py-2 border border-slate-850 rounded-xl text-slate-300 hover:text-white cursor-pointer"
+                  className="px-4 py-2 border border-slate-200 rounded-xl text-slate-300 hover:text-white cursor-pointer"
                 >
                   Edit Shop details
-                </button>
-                <button 
+                </Button>
+                <Button 
                   onClick={() => setSelectedShop(null)}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-xl text-white font-bold cursor-pointer"
                 >
                   Close Drawer
-                </button>
+                </Button>
               </div>
             </motion.div>
           </div>
@@ -646,21 +645,22 @@ export default function AdminOrganizationsPage() {
       {/* CREATE MODAL */}
       <AnimatePresence>
         {isCreateOpen && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="w-full max-w-lg rounded-2xl border border-slate-900 bg-slate-955 bg-slate-950 p-6 space-y-6 shadow-2xl overflow-y-auto max-h-[90vh]"
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-lg max-w-[calc(100vw-2rem)] rounded-2xl border border-slate-200 bg-white p-6 space-y-6 shadow-xl shadow-slate-200/50 overflow-y-auto max-h-[90vh]"
             >
               <div>
-                <h2 className="text-base font-bold text-white uppercase tracking-wider">Create Organization</h2>
+                <h2 className="text-base font-bold text-slate-900 tracking-tight">Create Organization</h2>
                 <p className="text-[10px] text-slate-500 mt-1">Deploy a new tenant instance directly on the platform.</p>
               </div>
 
               <form onSubmit={handleCreateShop} className="space-y-4 text-xs">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-450 uppercase">Shop Name</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">Shop Name</label>
                     <input
                       type="text"
                       value={formShopName}
@@ -668,57 +668,57 @@ export default function AdminOrganizationsPage() {
                         setFormShopName(e.target.value);
                         setFormSlug(e.target.value.toLowerCase().replace(/\s+/g, "-"));
                       }}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
                       placeholder="Nike India"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-455 uppercase">Slug URL</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">Slug URL</label>
                     <input
                       type="text"
                       value={formSlug}
                       onChange={(e) => setFormSlug(e.target.value)}
-                      className="w-full rounded-xl border border-slate-855 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
                     />
                   </div>
 
                   <div className="space-y-1.5 sm:col-span-2">
-                    <label className="text-[10px] font-bold text-slate-455 uppercase">Description</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">Description</label>
                     <textarea
                       value={formDesc}
                       onChange={(e) => setFormDesc(e.target.value)}
                       rows={3}
-                      className="w-full rounded-xl border border-slate-855 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500 resize-none"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500 resize-none"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-455 uppercase">Shop Email</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">Shop Email</label>
                     <input
                       type="email"
                       value={formEmail}
                       onChange={(e) => setFormEmail(e.target.value)}
-                      className="w-full rounded-xl border border-slate-855 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-455 uppercase">Shop Phone</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">Shop Phone</label>
                     <input
                       type="text"
                       value={formPhone}
                       onChange={(e) => setFormPhone(e.target.value)}
-                      className="w-full rounded-xl border border-slate-855 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-455 uppercase">Merchant Owner</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">Merchant Owner</label>
                     <select
                       value={formOwnerId}
                       onChange={(e) => setFormOwnerId(e.target.value)}
-                      className="w-full rounded-xl border border-slate-855 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
                     >
                       {availableSellers.map(s => (
                         <option key={s.id} value={s.id}>{s.full_name} ({s.email})</option>
@@ -730,11 +730,11 @@ export default function AdminOrganizationsPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-455 uppercase">Category / Vertical</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">Category / Vertical</label>
                     <select
                       value={formCatId}
                       onChange={(e) => setFormCatId(e.target.value)}
-                      className="w-full rounded-xl border border-slate-855 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
                     >
                       {categories.map(c => (
                         <option key={c.id} value={c.id}>{c.name}</option>
@@ -743,22 +743,22 @@ export default function AdminOrganizationsPage() {
                   </div>
                 </div>
 
-                <div className="border-t border-slate-900 pt-4 flex gap-3 justify-end text-xs">
-                  <button
+                <div className="border-t border-slate-100 pt-4 flex gap-3 justify-end text-xs">
+                  <Button
                     type="button"
                     onClick={() => setIsCreateOpen(false)}
-                    className="px-4 py-2 border border-slate-855 rounded-xl text-slate-450 hover:text-white cursor-pointer"
+                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-white cursor-pointer"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
                     disabled={submittingForm}
                     className="flex items-center gap-1 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl font-bold cursor-pointer"
                   >
                     {submittingForm && <Loader2 className="h-3 w-3 animate-spin" />}
                     Confirm Deploy
-                  </button>
+                  </Button>
                 </div>
               </form>
             </motion.div>
@@ -769,85 +769,86 @@ export default function AdminOrganizationsPage() {
       {/* EDIT MODAL */}
       <AnimatePresence>
         {isEditOpen && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="w-full max-w-lg rounded-2xl border border-slate-900 bg-slate-950 p-6 space-y-6 shadow-2xl overflow-y-auto max-h-[90vh]"
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-lg max-w-[calc(100vw-2rem)] rounded-2xl border border-slate-200 bg-white p-6 space-y-6 shadow-xl shadow-slate-200/50 overflow-y-auto max-h-[90vh]"
             >
               <div>
-                <h2 className="text-base font-bold text-white uppercase tracking-wider">Edit Organization</h2>
+                <h2 className="text-base font-bold text-slate-900 tracking-tight">Edit Organization</h2>
                 <p className="text-[10px] text-slate-500 mt-1">Modify tenant meta configuration parameters.</p>
               </div>
 
               <form onSubmit={handleEditShop} className="space-y-4 text-xs">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-450 uppercase">Shop Name</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">Shop Name</label>
                     <input
                       type="text"
                       value={formShopName}
                       onChange={(e) => setFormShopName(e.target.value)}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-450 uppercase">Slug URL</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">Slug URL</label>
                     <input
                       type="text"
                       value={formSlug}
                       onChange={(e) => setFormSlug(e.target.value)}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
                     />
                   </div>
 
                   <div className="space-y-1.5 sm:col-span-2">
-                    <label className="text-[10px] font-bold text-slate-450 uppercase">Description</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">Description</label>
                     <textarea
                       value={formDesc}
                       onChange={(e) => setFormDesc(e.target.value)}
                       rows={3}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500 resize-none"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500 resize-none"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-450 uppercase">Shop Email</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">Shop Email</label>
                     <input
                       type="email"
                       value={formEmail}
                       onChange={(e) => setFormEmail(e.target.value)}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-450 uppercase">Shop Phone</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">Shop Phone</label>
                     <input
                       type="text"
                       value={formPhone}
                       onChange={(e) => setFormPhone(e.target.value)}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-450 uppercase">City</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">City</label>
                     <input
                       type="text"
                       value={formCity}
                       onChange={(e) => setFormCity(e.target.value)}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-slate-455 uppercase">Category / Vertical</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">Category / Vertical</label>
                     <select
                       value={formCatId}
                       onChange={(e) => setFormCatId(e.target.value)}
-                      className="w-full rounded-xl border border-slate-855 bg-slate-900 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
                     >
                       {categories.map(c => (
                         <option key={c.id} value={c.id}>{c.name}</option>
@@ -856,22 +857,22 @@ export default function AdminOrganizationsPage() {
                   </div>
                 </div>
 
-                <div className="border-t border-slate-900 pt-4 flex gap-3 justify-end text-xs">
-                  <button
+                <div className="border-t border-slate-100 pt-4 flex gap-3 justify-end text-xs">
+                  <Button
                     type="button"
                     onClick={() => setIsEditOpen(false)}
-                    className="px-4 py-2 border border-slate-855 rounded-xl text-slate-450 hover:text-white cursor-pointer"
+                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-white cursor-pointer"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
                     disabled={submittingForm}
                     className="flex items-center gap-1 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl font-bold cursor-pointer"
                   >
                     {submittingForm && <Loader2 className="h-3 w-3 animate-spin" />}
                     Save Details
-                  </button>
+                  </Button>
                 </div>
               </form>
             </motion.div>

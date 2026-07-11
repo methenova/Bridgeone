@@ -71,19 +71,18 @@ export default function AdminShopsPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <ProductSkeleton rows={6} />
+      <div className="space-y-6 max-w-7xl">
+        <AdminTableSkeleton rows={8} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 text-white max-w-7xl">
+    <div className="space-y-4 md:space-y-6 text-white max-w-7xl">
       
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-extrabold tracking-tight">Shops</h1>
+        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Shops</h1>
         <p className="mt-1 text-xs text-slate-400">Moderate vendor listings, adjust subscription levels, and view approval statuses.</p>
       </div>
 
@@ -136,7 +135,7 @@ export default function AdminShopsPage() {
             placeholder="Search by store, owner name, or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-850 bg-slate-950/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-800 transition-colors"
+            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-800 transition-colors"
           />
         </div>
 
@@ -148,7 +147,7 @@ export default function AdminShopsPage() {
             <select
               value={planFilter}
               onChange={(e) => setPlanFilter(e.target.value)}
-              className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
             >
               <option value="all">All Plans</option>
               <option value="free">Free Plan</option>
@@ -163,7 +162,7 @@ export default function AdminShopsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
             >
               <option value="all">All Statuses</option>
               <option value="approved">Approved</option>
@@ -178,7 +177,7 @@ export default function AdminShopsPage() {
       <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-900 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Store / Brand</th>
                 <th className="px-6 py-4.5">Merchant / Owner</th>
@@ -205,7 +204,7 @@ export default function AdminShopsPage() {
                     {/* Brand Info */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-slate-850 bg-slate-950 flex items-center justify-center">
+                        <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-white flex items-center justify-center">
                           {s.logo_url ? (
                             <img src={s.logo_url} alt="" className="h-full w-full object-cover" />
                           ) : (
@@ -238,7 +237,7 @@ export default function AdminShopsPage() {
                         value={s.plan_name || "free"}
                         onChange={(e) => handlePlanChange(s.id, e.target.value)}
                         disabled={updatePlan.isPending}
-                        className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-white outline-none focus:border-blue-500 disabled:opacity-50 font-bold transition-all"
+                        className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-white outline-none focus:border-blue-500 disabled:opacity-50 font-bold transition-all"
                       >
                         {PLANS.map((plan) => (
                           <option key={plan.value} value={plan.value}>{plan.label}</option>
@@ -267,7 +266,7 @@ export default function AdminShopsPage() {
 
                     {/* Verification Status Toggle Button */}
                     <td className="px-6 py-4 text-right">
-                      <button
+                      <Button
                         onClick={() => handleToggleActive(s)}
                         disabled={toggleStatus.isPending}
                         title={isApproved ? "Suspend Shop Access" : "Approve Shop Access"}
@@ -278,7 +277,7 @@ export default function AdminShopsPage() {
                         ) : (
                           <ToggleLeft className="h-6 w-6 text-slate-700" />
                         )}
-                      </button>
+                      </Button>
                     </td>
                   </motion.tr>
                 );

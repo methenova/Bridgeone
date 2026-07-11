@@ -121,8 +121,8 @@ export default function AdminLayout() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-slate-400">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-800 border-t-blue-500" />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 text-slate-600">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-blue-600" />
         <span className="mt-3 text-xs uppercase tracking-widest font-bold">Verifying Access...</span>
       </div>
     );
@@ -146,17 +146,17 @@ export default function AdminLayout() {
   });
 
   return (
-    <div className="flex min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-blue-600/30 selection:text-blue-200">
+    <div className="admin-theme flex min-h-screen font-sans bg-slate-50 text-slate-900 selection:bg-blue-600/30 selection:text-blue-200 p-4 gap-4">
       
       {/* ── Left Sidebar (Desktop) ────────────────────── */}
       <aside 
-        className={`hidden shrink-0 flex-col border-r border-slate-900 bg-slate-950 transition-all duration-300 md:flex ${
+        className={`hidden shrink-0 flex-col rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 md:flex overflow-hidden relative ${
           sidebarCollapsed ? "w-[68px]" : "w-64"
         }`}
       >
         
         {/* Workspace Logo & Switcher */}
-        <div className="flex h-16 items-center justify-between border-b border-slate-900 px-4 relative shrink-0">
+        <div className="flex h-16 items-center justify-between border-b border-slate-100 px-4 relative shrink-0">
           <div className="flex items-center gap-3 overflow-hidden">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 font-black text-white shrink-0 shadow-lg shadow-blue-500/10">
               B
@@ -164,10 +164,10 @@ export default function AdminLayout() {
             {!sidebarCollapsed && (
               <button 
                 onClick={() => setWorkspaceOpen(!workspaceOpen)}
-                className="flex items-center gap-1.5 text-sm font-bold text-white text-left truncate group"
+                className="flex items-center gap-1.5 text-sm font-bold text-slate-900 text-left truncate group"
               >
                 <span className="truncate">{workspace}</span>
-                <ChevronDown className="h-3.5 w-3.5 text-slate-500 group-hover:text-white transition-colors shrink-0" />
+                <ChevronDown className="h-3.5 w-3.5 text-slate-500 group-hover:text-slate-900 transition-colors shrink-0" />
               </button>
             )}
           </div>
@@ -175,7 +175,7 @@ export default function AdminLayout() {
           {!sidebarCollapsed && (
             <button 
               onClick={() => setSidebarCollapsed(true)}
-              className="h-7 w-7 flex items-center justify-center rounded-lg border border-slate-900 hover:border-slate-800 bg-slate-900/40 hover:bg-slate-900 text-slate-400 hover:text-white transition-colors"
+              className="h-7 w-7 flex items-center justify-center rounded-lg border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-900 transition-colors"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -191,18 +191,18 @@ export default function AdminLayout() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute left-4 right-4 top-14 rounded-xl border border-slate-850 bg-slate-900 p-1.5 shadow-2xl z-30 space-y-1"
+                  className="absolute left-4 right-4 top-14 rounded-xl border border-slate-200 bg-white p-1.5 shadow-2xl z-30 space-y-1"
                 >
                   <button 
                     onClick={() => { setWorkspace("BridgeOne HQ"); setWorkspaceOpen(false); }}
-                    className="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold hover:bg-slate-800 flex items-center justify-between"
+                    className="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold hover:bg-slate-50 flex items-center justify-between"
                   >
                     <span>BridgeOne HQ</span>
                     {workspace === "BridgeOne HQ" && <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />}
                   </button>
                   <button 
                     onClick={() => { setWorkspace("BridgeOne Sandbox"); setWorkspaceOpen(false); }}
-                    className="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold hover:bg-slate-800 flex items-center justify-between"
+                    className="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold hover:bg-slate-50 flex items-center justify-between"
                   >
                     <span>BridgeOne Sandbox</span>
                     {workspace === "BridgeOne Sandbox" && <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />}
@@ -218,7 +218,7 @@ export default function AdminLayout() {
           <div className="py-4 flex justify-center shrink-0">
             <button 
               onClick={() => setSidebarCollapsed(false)}
-              className="h-8 w-8 flex items-center justify-center rounded-xl bg-slate-900/60 border border-slate-800 text-slate-400 hover:text-white transition-all hover:scale-105 active:scale-95"
+              className="h-8 w-8 flex items-center justify-center rounded-xl bg-white border border-slate-200 shadow-sm text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-all hover:scale-105 active:scale-95"
             >
               <ChevronRight className="h-4.5 w-4.5" />
             </button>
@@ -234,45 +234,59 @@ export default function AdminLayout() {
               end={item.path === "/admin"}
               title={sidebarCollapsed ? item.title : undefined}
               className={({ isActive }) =>
-                `flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-semibold transition-all relative ${
+                `flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-all duration-200 relative group overflow-hidden ${
                   isActive
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/10"
-                    : "text-slate-400 hover:bg-slate-900/50 hover:text-white"
+                    ? "bg-blue-50 text-blue-700 font-bold shadow-sm"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 }`
               }
             >
-              <item.icon className="h-4.5 w-4.5 shrink-0" />
-              {!sidebarCollapsed && <span className="truncate flex-1">{item.title}</span>}
-              {!sidebarCollapsed && item.badge && (
-                <span className="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-sm shrink-0">
-                  {item.badge}
-                </span>
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <motion.div 
+                      layoutId="active-nav-indicator"
+                      className="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full"
+                    />
+                  )}
+                  <item.icon className={`h-4.5 w-4.5 shrink-0 transition-transform duration-200 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
+                  {!sidebarCollapsed && (
+                    <span className="truncate flex-1 transition-transform duration-200 group-hover:translate-x-0.5">
+                      {item.title}
+                    </span>
+                  )}
+                  {!sidebarCollapsed && item.badge && (
+                    <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700 shadow-sm shrink-0">
+                      {item.badge}
+                    </span>
+                  )}
+                </>
               )}
             </NavLink>
           ))}
         </nav>
 
         {/* Settings & Bottom Profile Summary */}
-        <div className="border-t border-slate-900 p-3 shrink-0 space-y-2">
+        <div className="border-t border-slate-100 p-3 shrink-0 space-y-2 bg-slate-50/50">
           
           {/* Quick Settings (Collapsed Icon or Full Text) */}
           <Link 
             to="/admin/settings"
-            className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-400 hover:bg-slate-900 hover:text-white transition-colors"
+            className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
           >
             <Settings className="h-4 w-4 shrink-0" />
             {!sidebarCollapsed && <span>Preferences</span>}
           </Link>
 
           {/* User Widget */}
-          <div className="flex items-center justify-between bg-slate-900/40 border border-slate-900 rounded-2xl p-2 overflow-hidden">
+          <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-2xl p-2 overflow-hidden">
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-xl bg-blue-600 font-extrabold text-[11px] text-white">
                 {(profile?.full_name || "A").charAt(0).toUpperCase()}
               </div>
               {!sidebarCollapsed && (
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-white truncate leading-none">
+                  <p className="text-xs font-bold text-slate-900 truncate leading-none">
                     {profile?.full_name || "Administrator"}
                   </p>
                   <p className="text-[9px] text-slate-500 truncate mt-0.5 leading-none">
@@ -286,7 +300,7 @@ export default function AdminLayout() {
               <button 
                 onClick={handleLogout}
                 title="Logout"
-                className="h-7 w-7 flex items-center justify-center rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-400 transition-colors"
+                className="h-7 w-7 flex items-center justify-center rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-600 transition-colors"
               >
                 <LogOut className="h-3.5 w-3.5" />
               </button>
@@ -305,7 +319,7 @@ export default function AdminLayout() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+              className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm md:hidden"
               onClick={() => setMobileSidebarOpen(false)}
             />
             <motion.aside 
@@ -313,16 +327,16 @@ export default function AdminLayout() {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "tween", duration: 0.25 }}
-              className="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-slate-900 bg-slate-950 p-4 md:hidden"
+              className="fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-slate-200 bg-white shadow-xl shadow-slate-200/50 p-4 md:hidden"
             >
               <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 font-bold text-white shadow-lg">B</div>
-                  <span className="font-extrabold text-white text-sm">BridgeOne Admin</span>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 font-bold text-slate-900 shadow-lg">B</div>
+                  <span className="font-extrabold text-slate-900 text-sm">BridgeOne Admin</span>
                 </div>
                 <button
                   onClick={() => setMobileSidebarOpen(false)}
-                  className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-900 text-slate-400 hover:text-white"
+                  className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-colors"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -339,14 +353,14 @@ export default function AdminLayout() {
                       `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all ${
                         isActive
                           ? "bg-blue-600 text-white"
-                          : "text-slate-400 hover:bg-slate-900/60 hover:text-white"
+                          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                       }`
                     }
                   >
                     <item.icon className="h-4.5 w-4.5" />
                     <span className="flex-1">{item.title}</span>
                     {item.badge && (
-                      <span className="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                      <span className="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700 border border-blue-200">
                         {item.badge}
                       </span>
                     )}
@@ -354,7 +368,7 @@ export default function AdminLayout() {
                 ))}
               </nav>
 
-              <div className="border-t border-slate-900 pt-4">
+              <div className="border-t border-slate-200 pt-4">
                 <button 
                   onClick={handleLogout}
                   className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-red-400 hover:bg-red-500/10 transition-colors"
@@ -369,29 +383,29 @@ export default function AdminLayout() {
       </AnimatePresence>
 
       {/* ── Right Content ────────────────────────────── */}
-      <div className="flex flex-1 flex-col min-w-0">
+      <div className="flex flex-1 flex-col min-w-0 rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         
         {/* Sticky Header Bar */}
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-900 bg-slate-950 px-6 backdrop-blur-md sticky top-0 z-30">
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-100 bg-white/80 backdrop-blur-lg px-6 sticky top-0 z-30 transition-all">
           
           {/* Breadcrumbs & Title */}
           <div className="flex items-center gap-4 min-w-0">
             <button
               onClick={() => setMobileSidebarOpen(true)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-900 bg-slate-950 text-slate-400 hover:text-white md:hidden transition-colors"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white shadow-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 md:hidden transition-colors"
             >
               <Menu className="h-5 w-5" />
             </button>
             
             {/* Breadcrumb Navigator */}
-            <div className="hidden md:flex items-center gap-1.5 text-[11px] font-semibold text-slate-500">
-              <Link to="/admin" className="hover:text-white transition-colors">Admin</Link>
+            <div className="hidden md:flex items-center gap-2 text-sm font-medium text-slate-500">
+              <Link to="/admin" className="hover:text-slate-900 transition-colors">Admin</Link>
               {breadcrumbs.map((crumb, idx) => (
-                <div key={crumb.path} className="flex items-center gap-1.5">
-                  <span className="text-slate-700">/</span>
+                <div key={crumb.path} className="flex items-center gap-2">
+                  <span className="text-slate-300">/</span>
                   <Link 
                     to={crumb.path} 
-                    className={`transition-colors ${idx === breadcrumbs.length - 1 ? "text-slate-300 font-bold" : "hover:text-white"}`}
+                    className={`transition-colors ${idx === breadcrumbs.length - 1 ? "text-slate-900 font-semibold" : "hover:text-slate-900"}`}
                   >
                     {crumb.title}
                   </Link>
@@ -401,43 +415,52 @@ export default function AdminLayout() {
           </div>
 
           {/* Quick Actions & Connections */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             
-            {/* Realtime Status Indicator */}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/60 border border-slate-900 text-[10px] font-bold text-slate-400 tracking-wider">
-              <span className="relative flex h-1.5 w-1.5 shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
-              </span>
-              <span className="hidden sm:inline">Supabase Connected</span>
-              <span className="sm:hidden">Live</span>
-            </div>
-
-            {/* Global search launcher */}
+            {/* Stripe-style Search Bar */}
             <button 
               onClick={() => setCommandPaletteOpen(true)}
-              className="flex h-9 items-center gap-2.5 rounded-xl border border-slate-900 bg-slate-950 px-3.5 text-xs text-slate-500 hover:text-slate-300 hover:border-slate-800 hover:bg-slate-900/20 transition-all select-none"
+              className="hidden sm:flex h-9 w-64 items-center justify-between rounded-xl border border-slate-200/60 bg-slate-50 px-3 text-sm text-slate-500 hover:text-slate-900 hover:border-slate-300 hover:bg-white hover:shadow-sm transition-all group"
             >
-              <Search className="h-3.5 w-3.5 shrink-0" />
-              <span className="hidden sm:inline">Search...</span>
-              <kbd className="hidden sm:inline-flex h-5 items-center gap-0.5 rounded bg-slate-900 border border-slate-850 px-1.5 font-mono text-[9px] font-bold text-slate-650">
-                <span>Ctrl</span><span>K</span>
+              <div className="flex items-center gap-2">
+                <Search className="h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
+                <span>Search...</span>
+              </div>
+              <kbd className="inline-flex h-5 items-center gap-0.5 rounded border border-slate-200 bg-white px-1.5 font-sans text-[10px] font-bold text-slate-400 shadow-sm">
+                <span>Ctrl K</span>
               </kbd>
+            </button>
+            
+            {/* Mobile Search Icon */}
+            <button 
+              onClick={() => setCommandPaletteOpen(true)}
+              className="flex sm:hidden h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+            >
+              <Search className="h-4.5 w-4.5" />
+            </button>
+
+            {/* Divider */}
+            <div className="h-6 w-px bg-slate-200 mx-1 hidden sm:block" />
+            
+            {/* Notification Bell */}
+            <button className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+              <Bell className="h-4.5 w-4.5" />
+              <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-blue-600 border-2 border-white" />
             </button>
 
             {/* Profile Dropdown */}
             <div className="relative">
               <button
                 onClick={() => setDropdownOpen((v) => !v)}
-                className="flex items-center gap-2 rounded-xl border border-slate-900 bg-slate-900/40 px-2.5 py-1.5 text-xs font-bold text-slate-300 hover:border-slate-800 hover:text-white transition-colors"
+                className="flex items-center gap-2 rounded-full border border-slate-200 bg-white p-1 pr-3 text-xs font-semibold text-slate-700 hover:border-slate-300 hover:shadow-sm transition-all"
               >
-                <div className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-lg bg-blue-600 font-extrabold text-[10px] text-white shrink-0">
+                <div className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 font-extrabold text-[11px] text-white shadow-sm shrink-0">
                   {(profile?.full_name || "A").charAt(0).toUpperCase()}
                 </div>
                 <span className="max-w-[100px] truncate hidden sm:inline">
                   {profile?.full_name || "Administrator"}
                 </span>
-                <ChevronDown className="h-3 w-3 text-slate-500 shrink-0" />
+                <ChevronDown className="h-3 w-3 text-slate-400 shrink-0" />
               </button>
 
               <AnimatePresence>
@@ -445,30 +468,45 @@ export default function AdminLayout() {
                   <>
                     <div className="fixed inset-0 z-10" onClick={() => setDropdownOpen(false)} />
                     <motion.div 
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 8 }}
-                      transition={{ duration: 0.12 }}
-                      className="absolute right-0 top-full mt-2 w-48 overflow-hidden rounded-2xl border border-slate-850 bg-slate-900 shadow-2xl z-20"
+                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                      transition={{ duration: 0.15, ease: "easeOut" }}
+                      className="absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-200/50 z-20"
                     >
-                      <div className="px-4 py-2 border-b border-slate-850 text-[9px] font-bold text-slate-500 uppercase tracking-wider">
-                        My Account
+                      <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/50">
+                        <p className="text-sm font-bold text-slate-900 truncate">{profile?.full_name || "Administrator"}</p>
+                        <p className="text-[11px] text-slate-500 truncate font-medium mt-0.5">{profile?.email || "admin@bridgeone.com"}</p>
                       </div>
-                      <Link
-                        to="/"
-                        onClick={() => setDropdownOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
-                      >
-                        <Zap className="h-3.5 w-3.5 text-blue-400 shrink-0" />
-                        Go to Marketplace
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="flex w-full items-center gap-2 px-4 py-2.5 text-xs font-semibold text-red-400 hover:bg-red-500/10 border-t border-slate-850 transition-colors"
-                      >
-                        <LogOut className="h-3.5 w-3.5 shrink-0" />
-                        Log Out
-                      </button>
+                      
+                      <div className="p-1.5">
+                        <Link
+                          to="/admin/settings"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                        >
+                          <Settings className="h-4 w-4 text-slate-400 shrink-0" />
+                          Preferences
+                        </Link>
+                        <Link
+                          to="/"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                        >
+                          <Zap className="h-4 w-4 text-blue-500 shrink-0" />
+                          Marketplace View
+                        </Link>
+                      </div>
+                      
+                      <div className="p-1.5 border-t border-slate-100">
+                        <button
+                          onClick={handleLogout}
+                          className="flex w-full items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors"
+                        >
+                          <LogOut className="h-4 w-4 shrink-0" />
+                          Sign Out
+                        </button>
+                      </div>
                     </motion.div>
                   </>
                 )}
@@ -476,12 +514,18 @@ export default function AdminLayout() {
             </div>
 
           </div>
-
         </header>
 
         {/* Body View */}
-        <main className="flex-1 p-6 md:p-8 overflow-y-auto bg-slate-950">
-          <Outlet />
+        <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto bg-slate-50/30">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
+            <Outlet />
+          </motion.div>
         </main>
 
       </div>
@@ -489,16 +533,16 @@ export default function AdminLayout() {
       {/* ── Command Palette (Modal Dialog) ──────────────────────── */}
       <AnimatePresence>
         {commandPaletteOpen && (
-          <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4 bg-black/70 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4 bg-slate-900/40 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.15 }}
-              className="relative w-full max-w-lg rounded-2xl border border-slate-850 bg-slate-900 shadow-2xl overflow-hidden flex flex-col max-h-[400px]"
+              className="relative w-full max-w-lg rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden flex flex-col max-h-[400px]"
             >
               {/* Search bar header */}
-              <div className="flex items-center gap-3 border-b border-slate-850 px-4 py-3">
+              <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-3">
                 <Search className="h-4.5 w-4.5 text-slate-500" />
                 <input
                   autoFocus
@@ -507,9 +551,9 @@ export default function AdminLayout() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={handleCommandKeyDown}
-                  className="flex-1 bg-transparent text-sm text-white placeholder-slate-500 outline-none"
+                  className="flex-1 bg-transparent text-sm text-slate-900 placeholder-slate-400 outline-none"
                 />
-                <kbd className="inline-flex items-center gap-0.5 rounded bg-slate-950 border border-slate-800 px-1.5 font-mono text-[9px] text-slate-500">
+                <kbd className="inline-flex items-center gap-0.5 rounded bg-slate-50 border border-slate-800 px-1.5 font-mono text-[9px] text-slate-500">
                   <span>esc</span>
                 </kbd>
               </div>
@@ -529,7 +573,7 @@ export default function AdminLayout() {
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold cursor-pointer transition-colors ${
                         isSelected 
                           ? "bg-blue-600 text-white" 
-                          : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                       }`}
                     >
                       <option.icon className="h-4.5 w-4.5 shrink-0" />
@@ -552,7 +596,7 @@ export default function AdminLayout() {
               </div>
 
               {/* Footer hint */}
-              <div className="border-t border-slate-850 px-4 py-2.5 bg-slate-950/40 text-[9px] font-semibold text-slate-500 flex items-center justify-between">
+              <div className="border-t border-slate-100 px-4 py-2.5 bg-slate-50/40 text-[9px] font-semibold text-slate-500 flex items-center justify-between">
                 <span className="flex items-center gap-2">
                   <span>↑↓ Nav</span>
                   <span>↵ Select</span>

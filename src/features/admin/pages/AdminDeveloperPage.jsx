@@ -85,46 +85,46 @@ export default function AdminDeveloperPage() {
       
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-extrabold tracking-tight">Developer Center</h1>
+        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Developer Center</h1>
         <p className="mt-1 text-xs text-slate-400">Configure real-time event webhooks, rotate API integration tokens, and view client variables.</p>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1.5 p-1 bg-slate-900 border border-slate-800/80 rounded-2xl self-start max-w-sm">
-        <button
+      <div className="flex gap-1.5 p-1 bg-slate-900 border border-slate-200/80 rounded-2xl self-start max-w-sm">
+        <Button
           onClick={() => setActiveTab("webhooks")}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-            activeTab === "webhooks" ? "bg-blue-600 text-white" : "text-slate-450 hover:text-white"
+            activeTab === "webhooks" ? "bg-blue-600 text-white" : "text-slate-500 hover:text-white"
           }`}
         >
           <Send className="h-3.5 w-3.5" />
           Webhooks
-        </button>
+        </Button>
         
-        <button
+        <Button
           onClick={() => setActiveTab("api")}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-            activeTab === "api" ? "bg-blue-600 text-white" : "text-slate-450 hover:text-white"
+            activeTab === "api" ? "bg-blue-600 text-white" : "text-slate-500 hover:text-white"
           }`}
         >
           <Key className="h-3.5 w-3.5" />
           API Keys
-        </button>
+        </Button>
 
-        <button
+        <Button
           onClick={() => setActiveTab("env")}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-            activeTab === "env" ? "bg-blue-600 text-white" : "text-slate-455 hover:text-white"
+            activeTab === "env" ? "bg-blue-600 text-white" : "text-slate-500 hover:text-white"
           }`}
         >
           <Cpu className="h-3.5 w-3.5" />
           Environment
-        </button>
+        </Button>
       </div>
 
       {/* Tab content 1: Webhooks */}
       {activeTab === "webhooks" && (
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-3">
           {/* Webhook form and list */}
           <div className="lg:col-span-2 space-y-6">
             
@@ -141,16 +141,16 @@ export default function AdminDeveloperPage() {
                   placeholder="https://api.yourdomain.com/webhooks"
                   value={newUrl}
                   onChange={(e) => setNewUrl(e.target.value)}
-                  className="flex-1 rounded-xl border border-slate-850 bg-slate-950 px-4 py-2.5 outline-none text-white focus:border-blue-500 transition-colors"
+                  className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 outline-none text-white focus:border-blue-500 transition-colors"
                   required
                 />
-                <button
+                <Button
                   type="submit"
                   disabled={submittingWebhook}
                   className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-550 text-white font-bold cursor-pointer transition-all disabled:opacity-50"
                 >
                   Register
-                </button>
+                </Button>
               </form>
             </div>
 
@@ -160,7 +160,7 @@ export default function AdminDeveloperPage() {
               
               <div className="space-y-4">
                 {webhooks.map(wh => (
-                  <div key={wh.id} className="rounded-xl border border-slate-900 bg-slate-950 p-4 space-y-3">
+                  <div key={wh.id} className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
                     <div className="flex justify-between items-start">
                       <div>
                         <p className="font-mono text-slate-200 text-xs font-bold truncate max-w-md">{wh.url}</p>
@@ -172,19 +172,19 @@ export default function AdminDeveloperPage() {
                           {wh.status}
                         </span>
                         
-                        <button
+                        <Button
                           onClick={() => handleDeleteWebhook(wh.id)}
                           className="text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
                           title="Unregister Webhook"
                         >
                           <Trash2 className="h-4 w-4" />
-                        </button>
+                        </Button>
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-1.5 pt-2.5 border-t border-slate-900">
+                    <div className="flex flex-wrap gap-1.5 pt-2.5 border-t border-slate-100">
                       {wh.events.map(ev => (
-                        <span key={ev} className="px-2 py-0.5 rounded bg-slate-900 border border-slate-850 text-[9px] font-mono font-bold text-slate-400">
+                        <span key={ev} className="px-2 py-0.5 rounded bg-slate-900 border border-slate-200 text-[9px] font-mono font-bold text-slate-400">
                           {ev}
                         </span>
                       ))}
@@ -205,7 +205,7 @@ export default function AdminDeveloperPage() {
 
             <div className="space-y-3 text-xs">
               {deliveryLogs.map(log => (
-                <div key={log.id} className="flex justify-between items-center p-3 rounded-lg border border-slate-900 bg-slate-950 leading-normal">
+                <div key={log.id} className="flex justify-between items-center p-3 rounded-lg border border-slate-200 bg-white leading-normal">
                   <div>
                     <p className="font-bold text-white text-xs">{log.event}</p>
                     <p className="text-[9px] text-slate-500 font-mono mt-0.5 truncate max-w-[150px]">{log.url}</p>
@@ -233,13 +233,13 @@ export default function AdminDeveloperPage() {
               <h3 className="text-sm font-bold text-white uppercase tracking-wider text-[10px] text-slate-400">Developer Platform Keys</h3>
               <p className="text-xs text-slate-500">Manage client connection authentication tokens securely.</p>
             </div>
-            <button
+            <Button
               onClick={() => toast.success("New developer API key generated successfully!")}
               className="flex items-center gap-1 bg-blue-600 hover:bg-blue-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold cursor-pointer"
             >
               <Plus className="h-4 w-4" />
               <span>Generate New Key</span>
-            </button>
+            </Button>
           </div>
 
           <div className="divide-y divide-slate-900">
@@ -251,12 +251,12 @@ export default function AdminDeveloperPage() {
                     <code className="text-[10px] font-mono text-slate-400 bg-slate-950 p-2 rounded block">
                       {key.token}
                     </code>
-                    <button
+                    <Button
                       onClick={() => handleCopyText(key.token)}
-                      className="text-slate-450 hover:text-white transition-colors bg-slate-900 border border-slate-850 p-1.5 rounded-lg cursor-pointer"
+                      className="text-slate-500 hover:text-white transition-colors bg-slate-900 border border-slate-200 p-1.5 rounded-lg cursor-pointer"
                     >
                       <Copy className="h-3.5 w-3.5" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
 

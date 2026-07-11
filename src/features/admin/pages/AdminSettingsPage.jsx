@@ -132,7 +132,7 @@ export default function AdminSettingsPage() {
     return (
       <div className="space-y-6">
         <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-850" />
+        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-200" />
       </div>
     );
   }
@@ -142,67 +142,67 @@ export default function AdminSettingsPage() {
       
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-extrabold tracking-tight">Platform Configurations</h1>
+        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Platform Configurations</h1>
         <p className="mt-1 text-xs text-slate-400">Configure global app settings, video TURN channels, SMTP servers, and subscription tiers.</p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-4">
+      <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-4">
         
         {/* Left Column: Tab Selectors */}
-        <div className="space-y-2 flex flex-col p-2 bg-slate-900/50 border border-slate-900 rounded-2xl self-start h-auto">
-          <button
+        <div className="space-y-2 flex flex-col p-2 bg-slate-50 border border-slate-900 rounded-2xl self-start h-auto">
+          <Button
             onClick={() => setActiveTab("general")}
             className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === "general" ? "bg-blue-600 text-white" : "text-slate-450 hover:text-white"
+              activeTab === "general" ? "bg-blue-600 text-white" : "text-slate-500 hover:text-white"
             }`}
           >
             General & Subscriptions
-          </button>
+          </Button>
           
-          <button
+          <Button
             onClick={() => setActiveTab("smtp")}
             className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === "smtp" ? "bg-blue-600 text-white" : "text-slate-450 hover:text-white"
+              activeTab === "smtp" ? "bg-blue-600 text-white" : "text-slate-500 hover:text-white"
             }`}
           >
             SMTP / Email Settings
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={() => setActiveTab("branding")}
             className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === "branding" ? "bg-blue-600 text-white" : "text-slate-450 hover:text-white"
+              activeTab === "branding" ? "bg-blue-600 text-white" : "text-slate-500 hover:text-white"
             }`}
           >
             Branding & Logos
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={() => setActiveTab("video")}
             className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === "video" ? "bg-blue-600 text-white" : "text-slate-455 hover:text-white"
+              activeTab === "video" ? "bg-blue-600 text-white" : "text-slate-500 hover:text-white"
             }`}
           >
             STUN / TURN Server
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={() => setActiveTab("security")}
             className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === "security" ? "bg-blue-600 text-white" : "text-slate-455 hover:text-white"
+              activeTab === "security" ? "bg-blue-600 text-white" : "text-slate-500 hover:text-white"
             }`}
           >
             Security & RBAC
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={() => setActiveTab("maintenance")}
             className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === "maintenance" ? "bg-blue-600 text-white" : "text-slate-455 hover:text-white"
+              activeTab === "maintenance" ? "bg-blue-600 text-white" : "text-slate-500 hover:text-white"
             }`}
           >
             Maintenance Mode
-          </button>
+          </Button>
         </div>
 
         {/* Right 3 Cols: Form Telemetries */}
@@ -231,7 +231,7 @@ export default function AdminSettingsPage() {
                         step="0.1"
                         value={platformFee}
                         onChange={(e) => setPlatformFee(e.target.value)}
-                        className="w-full rounded-xl border border-slate-850 bg-slate-950 px-4 py-2.5 text-white outline-none focus:border-blue-500"
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-white outline-none focus:border-blue-500"
                       />
                     </div>
 
@@ -245,7 +245,7 @@ export default function AdminSettingsPage() {
                         type="number"
                         value={minPayout}
                         onChange={(e) => setMinPayout(e.target.value)}
-                        className="w-full rounded-xl border border-slate-850 bg-slate-950 px-4 py-2.5 text-white outline-none focus:border-blue-500"
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-white outline-none focus:border-blue-500"
                       />
                     </div>
 
@@ -259,7 +259,7 @@ export default function AdminSettingsPage() {
                         type="email"
                         value={supportEmail}
                         onChange={(e) => setSupportEmail(e.target.value)}
-                        className="w-full rounded-xl border border-slate-850 bg-slate-950 px-4 py-2.5 text-white outline-none focus:border-blue-500"
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-white outline-none focus:border-blue-500"
                       />
                     </div>
 
@@ -272,21 +272,21 @@ export default function AdminSettingsPage() {
                         rows={4}
                         value={terms}
                         onChange={(e) => setTerms(e.target.value)}
-                        className="w-full rounded-xl border border-slate-850 bg-slate-950 px-4 py-2.5 text-white outline-none focus:border-blue-500 resize-none leading-relaxed"
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-white outline-none focus:border-blue-500 resize-none leading-relaxed"
                       />
                     </div>
 
                   </div>
 
-                  <div className="border-t border-slate-900 pt-5 flex justify-end">
-                    <button
+                  <div className="border-t border-slate-100 pt-5 flex justify-end">
+                    <Button
                       type="submit"
                       disabled={updateSettings.isPending}
                       className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10"
                     >
                       {updateSettings.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                       <span>Save General Configurations</span>
-                    </button>
+                    </Button>
                   </div>
                 </form>
               </div>
@@ -296,21 +296,21 @@ export default function AdminSettingsPage() {
                 <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">SaaS Subscription Limit Editor</h3>
                 <div className="grid gap-4 sm:grid-cols-3">
                   {plans.map((plan) => (
-                    <div key={plan.id} className="rounded-xl border border-slate-900 bg-slate-950 p-4 space-y-3">
+                    <div key={plan.id} className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
                       <div>
                         <h4 className="text-[10px] font-bold text-slate-500 uppercase">{plan.display_name}</h4>
                         <p className="text-sm font-black text-white mt-0.5">₹{plan.price}/mo</p>
                       </div>
-                      <div className="text-[10px] text-slate-450 border-t border-slate-900 pt-2 space-y-1">
+                      <div className="text-[10px] text-slate-500 border-t border-slate-100 pt-2 space-y-1">
                         <p>Call Limit: <span className="text-white font-bold">{plan.call_limit === -1 ? "Unlimited" : plan.call_limit}</span></p>
                         <p>Commission: <span className="text-white font-bold">{plan.commission_rate}%</span></p>
                       </div>
-                      <button
+                      <Button
                         onClick={() => handleStartEditPlan(plan)}
                         className="w-full text-center py-1.5 bg-blue-500/10 text-blue-400 hover:text-white border border-blue-500/20 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer"
                       >
                         Configure Limits
-                      </button>
+                      </Button>
                     </div>
                   ))}
                 </div>
@@ -334,7 +334,7 @@ export default function AdminSettingsPage() {
                       type="text"
                       value={smtpHost}
                       onChange={(e) => setSmtpHost(e.target.value)}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-950 px-4 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-white outline-none focus:border-blue-500"
                     />
                   </div>
 
@@ -344,7 +344,7 @@ export default function AdminSettingsPage() {
                       type="text"
                       value={smtpPort}
                       onChange={(e) => setSmtpPort(e.target.value)}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-950 px-4 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-white outline-none focus:border-blue-500"
                     />
                   </div>
 
@@ -354,7 +354,7 @@ export default function AdminSettingsPage() {
                       type="text"
                       value={smtpUser}
                       onChange={(e) => setSmtpUser(e.target.value)}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-950 px-4 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-white outline-none focus:border-blue-500"
                     />
                   </div>
 
@@ -364,19 +364,19 @@ export default function AdminSettingsPage() {
                       type="password"
                       value={smtpPass}
                       onChange={(e) => setSmtpPass(e.target.value)}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-950 px-4 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-white outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>
 
-                <div className="border-t border-slate-900 pt-5 flex justify-end">
-                  <button
+                <div className="border-t border-slate-100 pt-5 flex justify-end">
+                  <Button
                     type="submit"
                     className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-550 cursor-pointer shadow-lg shadow-blue-500/10"
                   >
                     <ShieldCheck className="h-4 w-4" />
                     <span>Save Mail Configurations</span>
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>
@@ -398,7 +398,7 @@ export default function AdminSettingsPage() {
                       type="text"
                       value={appName}
                       onChange={(e) => setAppName(e.target.value)}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-950 px-4 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-white outline-none focus:border-blue-500"
                     />
                   </div>
 
@@ -408,7 +408,7 @@ export default function AdminSettingsPage() {
                       type="color"
                       value={brandColor}
                       onChange={(e) => setBrandColor(e.target.value)}
-                      className="w-full h-10 rounded-xl border border-slate-850 bg-slate-950 p-1 cursor-pointer outline-none focus:border-blue-500"
+                      className="w-full h-10 rounded-xl border border-slate-200 bg-white p-1 cursor-pointer outline-none focus:border-blue-500"
                     />
                   </div>
 
@@ -419,19 +419,19 @@ export default function AdminSettingsPage() {
                       value={logoUrl}
                       onChange={(e) => setLogoUrl(e.target.value)}
                       placeholder="https://bucket.bridgeone.com/logos/main.png"
-                      className="w-full rounded-xl border border-slate-850 bg-slate-950 px-4 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-white outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>
 
-                <div className="border-t border-slate-900 pt-5 flex justify-end">
-                  <button
+                <div className="border-t border-slate-100 pt-5 flex justify-end">
+                  <Button
                     type="submit"
                     className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-550 cursor-pointer shadow-lg shadow-blue-500/10"
                   >
                     <ShieldCheck className="h-4 w-4" />
                     <span>Save Branding Configurations</span>
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>
@@ -453,7 +453,7 @@ export default function AdminSettingsPage() {
                       type="text"
                       value={stunServer}
                       onChange={(e) => setStunServer(e.target.value)}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-950 px-4 py-2.5 text-white outline-none focus:border-blue-500 font-mono"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-white outline-none focus:border-blue-500 font-mono"
                     />
                   </div>
 
@@ -463,7 +463,7 @@ export default function AdminSettingsPage() {
                       type="text"
                       value={turnServer}
                       onChange={(e) => setTurnServer(e.target.value)}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-950 px-4 py-2.5 text-white outline-none focus:border-blue-500 font-mono"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-white outline-none focus:border-blue-500 font-mono"
                     />
                   </div>
 
@@ -473,7 +473,7 @@ export default function AdminSettingsPage() {
                       type="text"
                       value={turnUser}
                       onChange={(e) => setTurnUser(e.target.value)}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-950 px-4 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-white outline-none focus:border-blue-500"
                     />
                   </div>
 
@@ -483,19 +483,19 @@ export default function AdminSettingsPage() {
                       type="password"
                       value={turnSecret}
                       onChange={(e) => setTurnSecret(e.target.value)}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-950 px-4 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-white outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>
 
-                <div className="border-t border-slate-900 pt-5 flex justify-end">
-                  <button
+                <div className="border-t border-slate-100 pt-5 flex justify-end">
+                  <Button
                     type="submit"
                     className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-550 cursor-pointer shadow-lg shadow-blue-500/10"
                   >
                     <ShieldCheck className="h-4 w-4" />
                     <span>Save Signal Settings</span>
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>
@@ -517,7 +517,7 @@ export default function AdminSettingsPage() {
                       type="number"
                       value={minPassLen}
                       onChange={(e) => setMinPassLen(e.target.value)}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-950 px-4 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-white outline-none focus:border-blue-500"
                     />
                   </div>
 
@@ -527,31 +527,31 @@ export default function AdminSettingsPage() {
                       type="number"
                       value={sessionTimeout}
                       onChange={(e) => setSessionTimeout(e.target.value)}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-950 px-4 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-white outline-none focus:border-blue-500"
                     />
                   </div>
 
                   <div className="sm:col-span-2 space-y-1.5">
-                    <label className="flex items-center gap-2 text-slate-350 cursor-pointer font-semibold">
+                    <label className="flex items-center gap-2 text-slate-700 cursor-pointer font-semibold">
                       <input
                         type="checkbox"
                         checked={mfaEnabled}
                         onChange={(e) => setMfaEnabled(e.target.checked)}
-                        className="rounded border-slate-850 bg-slate-950 text-blue-600 h-4 w-4 focus:ring-blue-550"
+                        className="rounded border-slate-200 bg-slate-950 text-blue-600 h-4 w-4 focus:ring-blue-550"
                       />
                       <span>Enforce Two-Factor Authentication (MFA Ready)</span>
                     </label>
                   </div>
                 </div>
 
-                <div className="border-t border-slate-900 pt-5 flex justify-end">
-                  <button
+                <div className="border-t border-slate-100 pt-5 flex justify-end">
+                  <Button
                     type="submit"
                     className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-550 cursor-pointer shadow-lg shadow-blue-500/10"
                   >
                     <ShieldCheck className="h-4 w-4" />
                     <span>Save Security Rules</span>
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>
@@ -572,7 +572,7 @@ export default function AdminSettingsPage() {
                       type="checkbox"
                       checked={maintenanceMode}
                       onChange={(e) => setMaintenanceMode(e.target.checked)}
-                      className="rounded border-slate-850 bg-slate-950 text-blue-600 h-4.5 w-4.5 focus:ring-blue-550"
+                      className="rounded border-slate-200 bg-slate-950 text-blue-600 h-4.5 w-4.5 focus:ring-blue-550"
                     />
                     <span className="text-red-400">Trigger Maintenance Mode (Go offline)</span>
                   </label>
@@ -583,19 +583,19 @@ export default function AdminSettingsPage() {
                       rows={4}
                       value={maintenanceNotice}
                       onChange={(e) => setMaintenanceNotice(e.target.value)}
-                      className="w-full rounded-xl border border-slate-850 bg-slate-955 bg-slate-950 px-4 py-2.5 text-white outline-none focus:border-blue-500 resize-none leading-relaxed"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-955 bg-slate-950 px-4 py-2.5 text-white outline-none focus:border-blue-500 resize-none leading-relaxed"
                     />
                   </div>
                 </div>
 
-                <div className="border-t border-slate-900 pt-5 flex justify-end">
-                  <button
+                <div className="border-t border-slate-100 pt-5 flex justify-end">
+                  <Button
                     type="submit"
                     className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-555 cursor-pointer shadow-lg shadow-blue-500/10"
                   >
                     <ShieldCheck className="h-4 w-4" />
                     <span>Apply Maintenance mode</span>
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>
@@ -607,14 +607,15 @@ export default function AdminSettingsPage() {
 
       {/* Editing Plan Modal Backdrop */}
       {editingPlanId && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-md rounded-2xl border border-slate-900 bg-slate-950 p-6 space-y-6 shadow-2xl"
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-md max-w-[calc(100vw-2rem)] rounded-2xl border border-slate-200 bg-white p-6 space-y-6 shadow-xl shadow-slate-200/50"
           >
             <div>
-              <h2 className="text-base font-bold text-white uppercase tracking-wider">
+              <h2 className="text-base font-bold text-slate-900 tracking-tight">
                 Configure {plans.find(p => p.id === editingPlanId)?.display_name}
               </h2>
               <p className="text-[10px] text-slate-500 mt-1">Update plan pricing thresholds and usage limits dynamically.</p>
@@ -624,7 +625,7 @@ export default function AdminSettingsPage() {
               
               {/* Monthly Price */}
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wide tracking-wider flex items-center gap-1.5">
                   <DollarSign className="h-3 w-3 text-indigo-400" />
                   <span>Monthly Price (₹)</span>
                 </label>
@@ -632,13 +633,13 @@ export default function AdminSettingsPage() {
                   type="number"
                   value={editPrice}
                   onChange={(e) => setEditPrice(e.target.value)}
-                  className="w-full rounded-xl border border-slate-850 bg-slate-900 px-3.5 py-2 text-white outline-none focus:border-blue-500"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-white outline-none focus:border-blue-500"
                 />
               </div>
 
               {/* Call Limit */}
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wide tracking-wider flex items-center gap-1.5">
                   <Sliders className="h-3 w-3 text-indigo-400" />
                   <span>Monthly Consultation Call Limit</span>
                 </label>
@@ -649,7 +650,7 @@ export default function AdminSettingsPage() {
                       type="checkbox"
                       checked={editUnlimitedCalls}
                       onChange={(e) => setEditUnlimitedCalls(e.target.checked)}
-                      className="rounded border-slate-850 bg-slate-900 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                      className="rounded border-slate-200 bg-slate-900 text-blue-600 focus:ring-blue-500 h-4 w-4"
                     />
                     <span>Unlimited Sessions</span>
                   </label>
@@ -660,14 +661,14 @@ export default function AdminSettingsPage() {
                     type="number"
                     value={editCallLimit}
                     onChange={(e) => setEditCallLimit(e.target.value)}
-                    className="w-full rounded-xl border border-slate-850 bg-slate-900 px-3.5 py-2 text-white outline-none focus:border-blue-500"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-white outline-none focus:border-blue-500"
                   />
                 )}
               </div>
 
               {/* Commission rate */}
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wide tracking-wider flex items-center gap-1.5">
                   <Percent className="h-3 w-3 text-indigo-400" />
                   <span>Transaction Commission Fee (%)</span>
                 </label>
@@ -676,26 +677,26 @@ export default function AdminSettingsPage() {
                   step="0.1"
                   value={editCommission}
                   onChange={(e) => setEditCommission(e.target.value)}
-                  className="w-full rounded-xl border border-slate-850 bg-slate-900 px-3.5 py-2 text-white outline-none focus:border-blue-500"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-white outline-none focus:border-blue-500"
                 />
               </div>
 
-              <div className="border-t border-slate-900 pt-4 flex gap-3 justify-end text-xs font-semibold">
-                <button
+              <div className="border-t border-slate-100 pt-4 flex gap-3 justify-end text-xs font-semibold">
+                <Button
                   type="button"
                   onClick={() => setEditingPlanId(null)}
-                  className="px-4 py-2 border border-slate-850 rounded-xl text-slate-450 hover:text-white cursor-pointer"
+                  className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-white cursor-pointer"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
                   disabled={updatePlan.isPending}
                   className="flex items-center gap-1 bg-blue-600 hover:bg-blue-505 text-white px-4 py-2 rounded-xl font-bold cursor-pointer transition-all shadow-lg shadow-blue-500/10"
                 >
                   {updatePlan.isPending && <Loader2 className="h-3 w-3 animate-spin" />}
                   Save Configurations
-                </button>
+                </Button>
               </div>
 
             </form>

@@ -56,30 +56,30 @@ export default function AdminSystemHealthPage() {
   ];
 
   return (
-    <div className="space-y-6 text-white max-w-7xl relative">
+    <div className="space-y-4 md:space-y-6 text-white max-w-7xl relative">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">System Infrastructure Health</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">System Infrastructure Health</h1>
           <p className="mt-1 text-xs text-slate-400">Monitor active WebRTC channels, memory capacities, STUN servers, and database telemetry.</p>
         </div>
 
-        <button
+        <Button
           onClick={handleTriggerRefresh}
           disabled={refreshing}
-          className="flex items-center gap-2 rounded-xl bg-slate-900 border border-slate-850 hover:border-slate-800 px-4 py-2.5 text-xs font-bold text-slate-350 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-50"
+          className="flex items-center gap-2 rounded-xl bg-slate-900 border border-slate-200 hover:border-slate-800 px-4 py-2.5 text-xs font-bold text-slate-700 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-50"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
           <span>Refresh Telemetry</span>
-        </button>
+        </Button>
       </div>
 
       {/* Scorecards */}
       <div className="grid gap-6 sm:grid-cols-3">
         
         {/* CPU */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/40 p-6 space-y-4">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
           <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
             <span>CPU Core Load</span>
             <Cpu className="h-4.5 w-4.5 text-blue-400" />
@@ -100,7 +100,7 @@ export default function AdminSystemHealthPage() {
         </div>
 
         {/* Memory */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/40 p-6 space-y-4">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
           <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
             <span>Memory Utilisation</span>
             <HardDrive className="h-4.5 w-4.5 text-indigo-400" />
@@ -119,7 +119,7 @@ export default function AdminSystemHealthPage() {
         </div>
 
         {/* Latency */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/40 p-6 space-y-4">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
           <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
             <span>Database Ping latency</span>
             <Database className="h-4.5 w-4.5 text-emerald-400" />
@@ -139,7 +139,7 @@ export default function AdminSystemHealthPage() {
 
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-3">
         
         {/* Left 2 Cols: Platform Services status list */}
         <div className="lg:col-span-2 rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4">
@@ -152,8 +152,8 @@ export default function AdminSystemHealthPage() {
             {services.map(ser => (
               <div key={ser.name} className="flex justify-between items-center py-4 first:pt-0 last:pb-0">
                 <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-slate-900 border border-slate-850 flex items-center justify-center shrink-0">
-                    <Server className="h-4 w-4 text-slate-450" />
+                  <div className="h-8 w-8 rounded-lg bg-slate-900 border border-slate-200 flex items-center justify-center shrink-0">
+                    <Server className="h-4 w-4 text-slate-500" />
                   </div>
                   <div>
                     <p className="font-bold text-white text-xs">{ser.name}</p>
@@ -181,7 +181,7 @@ export default function AdminSystemHealthPage() {
 
           <div className="space-y-3 font-mono text-[9px] text-slate-400 bg-slate-950 p-4 rounded-xl border border-slate-900 h-56 overflow-y-auto leading-normal">
             {errorLogs.map((log, idx) => (
-              <div key={idx} className="pb-2.5 border-b border-slate-900/80 last:border-0 last:pb-0 space-y-0.5">
+              <div key={idx} className="pb-2.5 border-b border-slate-100/80 last:border-0 last:pb-0 space-y-0.5">
                 <div className="flex justify-between text-slate-500">
                   <span>[{log.time}] {log.source}</span>
                   <span className={`uppercase font-bold ${
@@ -193,7 +193,7 @@ export default function AdminSystemHealthPage() {
             ))}
           </div>
 
-          <div className="text-[9px] text-slate-500 pt-3 border-t border-slate-900">
+          <div className="text-[9px] text-slate-500 pt-3 border-t border-slate-100">
             For critical database diagnostic triggers, visit Developer endpoints webhooks.
           </div>
         </div>

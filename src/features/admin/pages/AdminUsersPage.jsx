@@ -55,24 +55,23 @@ export default function AdminUsersPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <ProductSkeleton rows={6} />
+      <div className="space-y-6 max-w-7xl">
+        <AdminTableSkeleton rows={8} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 text-white max-w-7xl">
+    <div className="space-y-4 md:space-y-6 text-white max-w-7xl">
       
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-extrabold tracking-tight">Users</h1>
+        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Users</h1>
         <p className="mt-1 text-xs text-slate-400">Manage, moderate, and adjust platform user roles and system privileges.</p>
       </div>
 
       {/* Aggregate Stats Cards */}
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-4 max-w-4xl">
+      <div className="grid gap-3 md:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 max-w-4xl">
         {/* Total Users */}
         <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
           <div className="space-y-1">
@@ -131,7 +130,7 @@ export default function AdminUsersPage() {
             placeholder="Search by user name or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-850 bg-slate-950/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-800 transition-colors"
+            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-800 transition-colors"
           />
         </div>
 
@@ -141,7 +140,7 @@ export default function AdminUsersPage() {
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
+            className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
           >
             <option value="all">All Roles</option>
             <option value="customer">Customer</option>
@@ -156,7 +155,7 @@ export default function AdminUsersPage() {
       <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-900 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Account Profile</th>
                 <th className="px-6 py-4.5">Email Address</th>
@@ -198,7 +197,7 @@ export default function AdminUsersPage() {
                     </td>
 
                     {/* Email */}
-                    <td className="px-6 py-4 text-slate-350 font-medium">
+                    <td className="px-6 py-4 text-slate-700 font-medium">
                       {u.email || "—"}
                     </td>
 
@@ -209,7 +208,7 @@ export default function AdminUsersPage() {
                           ? "bg-red-500/10 text-red-400 border-red-500/20"
                           : userRole === "seller"
                           ? "bg-blue-500/10 text-blue-400 border-blue-500/20"
-                          : "bg-slate-800 text-slate-450 border border-slate-700/60"
+                          : "bg-slate-800 text-slate-500 border border-slate-700/60"
                       }`}>
                         {userRole}
                       </span>
@@ -226,7 +225,7 @@ export default function AdminUsersPage() {
                         value={userRole}
                         onChange={(e) => handleRoleChange(u.id, e.target.value)}
                         disabled={updateRole.isPending}
-                        className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-white outline-none focus:border-blue-500 disabled:opacity-50 font-bold transition-all"
+                        className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-white outline-none focus:border-blue-500 disabled:opacity-50 font-bold transition-all"
                       >
                         {ROLES.map((role) => (
                           <option key={role.value} value={role.value}>{role.label}</option>

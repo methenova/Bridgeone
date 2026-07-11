@@ -386,99 +386,189 @@ export default function SellerDashboardPage() {
         </div>
 
         {/* 6 Premium KPI Cards */}
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-8">
+          
           {/* Card 1: Revenue Today */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.008)] hover:shadow-[0_12px_30px_rgb(0,0,0,0.04)] hover:translate-y-[-2px] transition-all duration-300 flex items-center justify-between group cursor-pointer">
-            <div className="space-y-1.5">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Revenue Today</span>
-              <p className="text-2xl font-black text-slate-900 tracking-tight">₹{revenueToday.toLocaleString()}</p>
-              <span className="text-[9px] bg-emerald-50 border border-emerald-100/50 text-emerald-700 rounded-full px-2 py-0.5 font-bold inline-flex items-center gap-1">
-                <TrendingUp size={10} />
-                <span>assisted sales</span>
-              </span>
+          <div className="bg-white p-6 rounded-[24px] border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-50 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="relative z-10 flex justify-between items-start mb-4">
+              <div className="space-y-1.5">
+                <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Revenue Today</span>
+                <p className="text-3xl font-extrabold text-slate-900 tracking-tight">₹{revenueToday.toLocaleString()}</p>
+              </div>
+              <div className="h-12 w-12 bg-emerald-50/80 text-emerald-600 rounded-2xl flex items-center justify-center shrink-0 border border-emerald-100/50 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <IndianRupee size={20} strokeWidth={2.2} />
+              </div>
             </div>
-            <div className="h-11 w-11 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 border border-emerald-100/30">
-              <IndianRupee size={18} strokeWidth={2.2} />
+            {/* Sparkline & Trend */}
+            <div className="relative z-10 mt-auto pt-4 border-t border-slate-100 flex items-end justify-between">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-600">
+                  <TrendingUp size={12} strokeWidth={3} />
+                  <span>+14.2%</span>
+                </div>
+                <span className="text-[10px] font-medium text-slate-400">vs yesterday</span>
+              </div>
+              {/* Mini SVG Sparkline */}
+              <div className="h-8 w-20">
+                <svg viewBox="0 0 100 30" className="w-full h-full overflow-visible">
+                  <path d="M0,25 C20,20 30,30 50,15 C70,0 80,10 100,5" fill="none" stroke="#059669" strokeWidth="2.5" strokeLinecap="round" className="drop-shadow-sm" />
+                </svg>
+              </div>
             </div>
           </div>
 
           {/* Card 2: Today's Calls */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.008)] hover:shadow-[0_12px_30px_rgb(0,0,0,0.04)] hover:translate-y-[-2px] transition-all duration-300 flex items-center justify-between group cursor-pointer">
-            <div className="space-y-1.5">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Today's Calls</span>
-              <p className="text-2xl font-black text-slate-900 tracking-tight">{todaysCallsCount}</p>
-              <span className="text-[9px] bg-blue-50 border border-blue-100/50 text-blue-700 rounded-full px-2 py-0.5 font-bold inline-flex items-center gap-1">
-                <PhoneCall size={10} />
-                <span>calls completed</span>
-              </span>
+          <div className="bg-white p-6 rounded-[24px] border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="relative z-10 flex justify-between items-start mb-4">
+              <div className="space-y-1.5">
+                <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Today's Calls</span>
+                <p className="text-3xl font-extrabold text-slate-900 tracking-tight">{todaysCallsCount}</p>
+              </div>
+              <div className="h-12 w-12 bg-blue-50/80 text-blue-600 rounded-2xl flex items-center justify-center shrink-0 border border-blue-100/50 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <PhoneCall size={20} strokeWidth={2.2} />
+              </div>
             </div>
-            <div className="h-11 w-11 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 border border-blue-100/30">
-              <PhoneCall size={18} strokeWidth={2.2} />
+            {/* Sparkline & Trend */}
+            <div className="relative z-10 mt-auto pt-4 border-t border-slate-100 flex items-end justify-between">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1 text-[11px] font-bold text-blue-600">
+                  <TrendingUp size={12} strokeWidth={3} />
+                  <span>+8.4%</span>
+                </div>
+                <span className="text-[10px] font-medium text-slate-400">vs yesterday</span>
+              </div>
+              <div className="h-8 w-20">
+                <svg viewBox="0 0 100 30" className="w-full h-full overflow-visible">
+                  <path d="M0,20 L20,25 L40,15 L60,18 L80,5 L100,8" fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-sm" />
+                </svg>
+              </div>
             </div>
           </div>
 
           {/* Card 3: Visitors */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.008)] hover:shadow-[0_12px_30px_rgb(0,0,0,0.04)] hover:translate-y-[-2px] transition-all duration-300 flex items-center justify-between group cursor-pointer">
-            <div className="space-y-1.5">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Visitors</span>
-              <p className="text-2xl font-black text-slate-900 tracking-tight">{activeVisitors}</p>
-              <span className="text-[9px] bg-indigo-50 border border-indigo-100/50 text-indigo-700 rounded-full px-2 py-0.5 font-bold inline-flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-indigo-550 animate-pulse" />
-                <span>live on store</span>
-              </span>
+          <div className="bg-white p-6 rounded-[24px] border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-50 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="relative z-10 flex justify-between items-start mb-4">
+              <div className="space-y-1.5">
+                <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Live Visitors</span>
+                <div className="flex items-center gap-3">
+                  <p className="text-3xl font-extrabold text-slate-900 tracking-tight">{activeVisitors}</p>
+                  <span className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse mt-1" />
+                </div>
+              </div>
+              <div className="h-12 w-12 bg-indigo-50/80 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0 border border-indigo-100/50 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <Users size={20} strokeWidth={2.2} />
+              </div>
             </div>
-            <div className="h-11 w-11 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 border border-indigo-100/30">
-              <Users size={18} strokeWidth={2.2} />
+            {/* Sparkline & Trend */}
+            <div className="relative z-10 mt-auto pt-4 border-t border-slate-100 flex items-end justify-between">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1 text-[11px] font-bold text-slate-500">
+                  <span>Steady Traffic</span>
+                </div>
+                <span className="text-[10px] font-medium text-slate-400">Currently browsing</span>
+              </div>
+              <div className="h-8 w-20 flex items-end justify-between gap-1">
+                {[40, 60, 45, 80, 50, 70, 90, 65].map((h, i) => (
+                  <div key={i} className="w-1.5 bg-indigo-200 rounded-t-sm" style={{ height: `${h}%` }}></div>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Card 4: Conversion Rate */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.008)] hover:shadow-[0_12px_30px_rgb(0,0,0,0.04)] hover:translate-y-[-2px] transition-all duration-300 flex items-center justify-between group cursor-pointer">
-            <div className="space-y-1.5">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Conversion Rate</span>
-              <p className="text-2xl font-black text-slate-900 tracking-tight">{conversionRate}</p>
-              <span className="text-[9px] bg-violet-50 border border-violet-100/50 text-violet-700 rounded-full px-2 py-0.5 font-bold inline-flex items-center gap-1">
-                <Percent size={10} />
-                <span>assisted checkouts</span>
-              </span>
+          <div className="bg-white p-6 rounded-[24px] border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-violet-50 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="relative z-10 flex justify-between items-start mb-4">
+              <div className="space-y-1.5">
+                <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Conversion Rate</span>
+                <p className="text-3xl font-extrabold text-slate-900 tracking-tight">{conversionRate}</p>
+              </div>
+              <div className="h-12 w-12 bg-violet-50/80 text-violet-600 rounded-2xl flex items-center justify-center shrink-0 border border-violet-100/50 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <Percent size={20} strokeWidth={2.2} />
+              </div>
             </div>
-            <div className="h-11 w-11 bg-violet-50 text-violet-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 border border-violet-100/30">
-              <Percent size={18} strokeWidth={2.2} />
+            {/* Sparkline & Trend */}
+            <div className="relative z-10 mt-auto pt-4 border-t border-slate-100 flex items-end justify-between">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1 text-[11px] font-bold text-violet-600">
+                  <TrendingUp size={12} strokeWidth={3} />
+                  <span>+2.1%</span>
+                </div>
+                <span className="text-[10px] font-medium text-slate-400">vs last week</span>
+              </div>
+              <div className="h-8 w-20">
+                <svg viewBox="0 0 100 30" className="w-full h-full overflow-visible">
+                  <path d="M0,25 Q25,25 50,15 T100,5" fill="none" stroke="#7c3aed" strokeWidth="2.5" strokeLinecap="round" className="drop-shadow-sm" />
+                </svg>
+              </div>
             </div>
           </div>
 
           {/* Card 5: Average Call Duration */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.008)] hover:shadow-[0_12px_30px_rgb(0,0,0,0.04)] hover:translate-y-[-2px] transition-all duration-300 flex items-center justify-between group cursor-pointer">
-            <div className="space-y-1.5">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Avg Call Duration</span>
-              <p className="text-2xl font-black text-slate-900 tracking-tight">{formatAvgDuration(avgCallDuration)}</p>
-              <span className="text-[9px] bg-amber-50 border border-amber-100/50 text-amber-700 rounded-full px-2 py-0.5 font-bold inline-flex items-center gap-1">
-                <Clock size={10} />
-                <span>average session</span>
-              </span>
+          <div className="bg-white p-6 rounded-[24px] border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-50 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="relative z-10 flex justify-between items-start mb-4">
+              <div className="space-y-1.5">
+                <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Call Duration</span>
+                <p className="text-3xl font-extrabold text-slate-900 tracking-tight">{formatAvgDuration(avgCallDuration)}</p>
+              </div>
+              <div className="h-12 w-12 bg-amber-50/80 text-amber-600 rounded-2xl flex items-center justify-center shrink-0 border border-amber-100/50 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <Clock size={20} strokeWidth={2.2} />
+              </div>
             </div>
-            <div className="h-11 w-11 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 border border-amber-100/30">
-              <Clock size={18} strokeWidth={2.2} />
+            {/* Sparkline & Trend */}
+            <div className="relative z-10 mt-auto pt-4 border-t border-slate-100 flex items-end justify-between">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-600">
+                  <TrendingUp size={12} strokeWidth={3} />
+                  <span>+15s</span>
+                </div>
+                <span className="text-[10px] font-medium text-slate-400">vs yesterday</span>
+              </div>
+              <div className="h-8 w-20 flex items-end justify-between gap-1">
+                {[60, 50, 70, 80, 55, 85, 75, 90].map((h, i) => (
+                  <div key={i} className="w-1.5 bg-amber-300/50 rounded-t-sm" style={{ height: `${h}%` }}></div>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Card 6: Waiting Customers */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.008)] hover:shadow-[0_12px_30px_rgb(0,0,0,0.04)] hover:translate-y-[-2px] transition-all duration-300 flex items-center justify-between group cursor-pointer">
-            <div className="space-y-1.5">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Waiting Customers</span>
-              <p className="text-2xl font-black text-slate-900 tracking-tight">{waitingCustomers}</p>
-              <span className="text-[9px] bg-rose-50 border border-rose-100/50 text-rose-700 rounded-full px-2 py-0.5 font-bold inline-flex items-center gap-1">
-                <Hourglass size={10} />
-                <span>callbacks pending</span>
-              </span>
+          <div className="bg-white p-6 rounded-[24px] border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-rose-50 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="relative z-10 flex justify-between items-start mb-4">
+              <div className="space-y-1.5">
+                <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Pending Callbacks</span>
+                <p className="text-3xl font-extrabold text-slate-900 tracking-tight">{waitingCustomers}</p>
+              </div>
+              <div className="h-12 w-12 bg-rose-50/80 text-rose-600 rounded-2xl flex items-center justify-center shrink-0 border border-rose-100/50 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <Hourglass size={20} strokeWidth={2.2} />
+              </div>
             </div>
-            <div className="h-11 w-11 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 border border-rose-100/30">
-              <Hourglass size={18} strokeWidth={2.2} />
+            {/* Sparkline & Trend */}
+            <div className="relative z-10 mt-auto pt-4 border-t border-slate-100 flex items-end justify-between">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1 text-[11px] font-bold text-rose-600">
+                  {/* Warning if high callbacks pending */}
+                  <span className="inline-flex items-center gap-1">
+                    {waitingCustomers > 5 ? 'High Volume' : 'Manageable'}
+                  </span>
+                </div>
+                <span className="text-[10px] font-medium text-slate-400">queued for agents</span>
+              </div>
+              <div className="h-8 w-20">
+                <svg viewBox="0 0 100 30" className="w-full h-full overflow-visible">
+                  <path d="M0,5 C30,5 40,25 60,25 C80,25 90,15 100,10" fill="none" stroke="#e11d48" strokeWidth="2.5" strokeLinecap="round" className="drop-shadow-sm" />
+                </svg>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
+        
       {/* Real-Time Live Visitor Tracking Table Panel */}
       <div className="rounded-2xl border border-slate-100 bg-white shadow-sm overflow-hidden">
         <div className="p-5 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">

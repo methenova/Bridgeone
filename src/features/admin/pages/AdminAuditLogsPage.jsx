@@ -82,28 +82,28 @@ export default function AdminAuditLogsPage() {
     return (
       <div className="space-y-6">
         <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-850" />
+        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-200" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 text-white max-w-7xl relative">
+    <div className="space-y-4 md:space-y-6 text-white max-w-7xl relative">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Security Audit Logs</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Security Audit Logs</h1>
           <p className="mt-1 text-xs text-slate-400">Track and inspect Super Admin actions, role changes, and tenant modification details.</p>
         </div>
 
-        <button
+        <Button
           onClick={handleClearAll}
           className="flex items-center gap-2 rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-2.5 text-xs font-bold text-red-400 hover:bg-red-500/20 cursor-pointer transition-all active:scale-[0.98]"
         >
           <Trash2 className="h-4 w-4" />
           <span>Clear Logs History</span>
-        </button>
+        </Button>
       </div>
 
       {/* Utilities bar */}
@@ -119,7 +119,7 @@ export default function AdminAuditLogsPage() {
             placeholder="Search by action, module, or admin..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-850 bg-slate-950/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-850 transition-colors"
+            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-200 transition-colors"
           />
         </div>
 
@@ -130,7 +130,7 @@ export default function AdminAuditLogsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-slate-350 outline-none focus:border-slate-850"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
             >
               <option value="all">All States</option>
               <option value="success">Success</option>
@@ -144,7 +144,7 @@ export default function AdminAuditLogsPage() {
             <select
               value={moduleFilter}
               onChange={(e) => setModuleFilter(e.target.value)}
-              className="rounded-xl border border-slate-850 bg-slate-955 bg-slate-950 px-3 py-1.5 text-xs text-slate-355 outline-none focus:border-slate-855"
+              className="rounded-xl border border-slate-200 bg-slate-955 bg-slate-950 px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
             >
               <option value="all">All Modules</option>
               <option value="Users">Users</option>
@@ -162,7 +162,7 @@ export default function AdminAuditLogsPage() {
       <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-900 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Administrator / Actor</th>
                 <th className="px-6 py-4.5">Audit Action details</th>

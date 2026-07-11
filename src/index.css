@@ -142,112 +142,30 @@
   }
 }
 
-/* Premium Unified Button System Overrides */
-button {
-  border-radius: 0.5rem !important;
-  /* Enforces premium 8px rounded corners */
-  font-weight: 700 !important;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+@layer utilities {
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
 }
 
-button:active {
-  transform: scale(0.97) !important;
-}
 
-/* Blue Primary Button Styling Rules */
-button.bg-blue-600,
-button.bg-blue-500,
-button[class*="bg-blue-600"],
-button[class*="bg-blue-500"],
-button[class*="bg-primary"] {
-  background-color: #2563eb !important;
-  color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08), 0 1px 2px rgba(37, 99, 235, 0.05) !important;
-}
 
-button.bg-blue-600:hover,
-button.bg-blue-500:hover,
-button[class*="bg-blue-600"]:hover,
-button[class*="bg-blue-500"]:hover {
-  background-color: #1d4ed8 !important;
-  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.16) !important;
-  transform: translateY(-1px) !important;
-}
-
-button.bg-blue-600:disabled,
-button.bg-blue-500:disabled,
-button[class*="bg-blue-600"]:disabled,
-button[class*="bg-blue-500"]:disabled {
-  opacity: 0.5 !important;
-  cursor: not-allowed !important;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-/* Red/Destructive Button Exceptions */
-button.bg-red-600,
-button.bg-red-500,
-button[class*="bg-red-"] {
-  background-color: #dc2626 !important;
-  color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.08) !important;
-}
-
-button.bg-red-600:hover,
-button.bg-red-500:hover,
-button[class*="bg-red-"]:hover {
-  background-color: #b91c1c !important;
-  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.16) !important;
-  transform: translateY(-1px) !important;
-}
-
-/* Slate Secondary/Border Button Styling Rules */
-button.bg-white,
-button.bg-slate-50,
-button.bg-slate-100,
-button.bg-slate-800,
-button.bg-slate-900,
-button.border-slate-255,
-button.border-slate-200,
-button.border-slate-100,
-button[class*="bg-slate-50"],
-button[class*="bg-slate-100"],
-button[class*="bg-slate-800"],
-button[class*="bg-slate-900"],
-button[class*="border-slate-"] {
-  background-color: #ffffff !important;
-  color: #475569 !important;
-  border: 1px solid #e2e8f0 !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02) !important;
-}
-
-button.bg-white:hover,
-button.bg-slate-50:hover,
-button.bg-slate-100:hover,
-button.bg-slate-800:hover,
-button.bg-slate-900:hover,
-button[class*="bg-slate-55"]:hover,
-button[class*="bg-slate-100"]:hover,
-button[class*="bg-slate-800"]:hover,
-button[class*="bg-slate-900"]:hover {
-  background-color: #f8fafc !important;
-  color: #0f172a !important;
-  border-color: #cbd5e1 !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
-}
-
-button.bg-white:disabled,
-button.bg-slate-50:disabled,
-button.bg-slate-100:disabled {
-  opacity: 0.5 !important;
-  cursor: not-allowed !important;
-  transform: none !important;
-  box-shadow: none !important;
-}
 
 /* Premium Unified Data Tables Redesign */
 .table-container,
@@ -264,6 +182,7 @@ table {
   border-collapse: separate !important;
   border-spacing: 0 !important;
   width: 100% !important;
+  min-width: 700px;
 }
 
 /* Header Cells (Sticky, soft light styling) */
@@ -334,4 +253,145 @@ table tr:last-child td:first-child {
 
 table tr:last-child td:last-child {
   border-bottom-right-radius: 0.5rem !important;
+}
+
+/* Premium Admin Theme Scope */
+.admin-theme {
+  --radius: 1rem; /* 16px */
+  background-color: #f8fafc; /* bg-slate-50 */
+  color: #0f172a; /* text-slate-900 */
+}
+
+.admin-theme button {
+  border-radius: 0.5rem !important; /* Keep buttons standard 8px */
+}
+
+.admin-theme .admin-card {
+  border-radius: var(--radius);
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.admin-theme table,
+.admin-theme .table-container,
+.admin-theme div:has(> table) {
+  border-radius: 0.75rem !important; /* 12px for tables */
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Premium Micro-Interactions System (150–250ms)
+   ═══════════════════════════════════════════════════════════ */
+
+/* Card Lift on Hover — applies to all rounded bordered cards */
+.admin-theme .hover-lift {
+  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 200ms ease;
+}
+.admin-theme .hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.06),
+              0 4px 10px -4px rgba(0, 0, 0, 0.04);
+  border-color: #cbd5e1; /* slate-300 */
+}
+
+/* Table Row Hover — smooth background transition */
+tbody tr {
+  transition: background-color 150ms ease !important;
+}
+
+/* Focus Ring Animation — smooth transition on form elements */
+.admin-theme input,
+.admin-theme select,
+.admin-theme textarea {
+  transition: border-color 200ms ease,
+              box-shadow 200ms ease,
+              background-color 150ms ease;
+}
+
+/* Link Underline Slide */
+.admin-theme a {
+  transition: color 150ms ease;
+}
+
+/* Badge Pulse — for "Live" type badges */
+@keyframes badge-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.badge-live {
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+
+/* Smooth Page Enter Animation utility */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.page-enter {
+  animation: page-enter 200ms ease-out;
+}
+
+/* Staggered fade-in for lists and grids */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 250ms ease-out both;
+}
+
+/* Toast slide-in from right */
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.toast-enter {
+  animation: toast-slide-in 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dropdown scale-in */
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+.dropdown-enter {
+  animation: dropdown-in 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Subtle skeleton shimmer refinement */
+@keyframes skeleton-wave {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Interactive icon scale on parent hover */
+.group:hover .group-hover-icon {
+  transform: scale(1.1);
+  transition: transform 200ms ease;
 }

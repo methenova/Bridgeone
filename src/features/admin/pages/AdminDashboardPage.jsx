@@ -175,32 +175,33 @@ export default function AdminDashboardPage() {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-32 animate-pulse rounded-2xl bg-slate-900 border border-slate-850" />
-          ))}
+      <div className="space-y-6 max-w-7xl">
+        <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          <AdminCardSkeleton />
+          <AdminCardSkeleton />
+          <AdminCardSkeleton />
+          <AdminCardSkeleton />
         </div>
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="h-96 lg:col-span-2 animate-pulse rounded-2xl bg-slate-900 border border-slate-850" />
-          <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-850" />
+        <div className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-3">
+          <div className="lg:col-span-2"><AdminChartSkeleton /></div>
+          <div><AdminChartSkeleton /></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 text-white max-w-7xl">
+    <div className="space-y-6 md:space-y-8 text-white max-w-7xl">
       
       {/* Upper Welcome Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Platform Dashboard</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Platform Dashboard</h1>
           <p className="mt-1 text-xs text-slate-400">Multi-tenant operational health and global usage analytics.</p>
         </div>
         
         {/* Pulsing server connectivity status */}
-        <div className="flex items-center gap-2 self-start bg-slate-900/60 border border-slate-850 px-4 py-2 rounded-xl text-xs font-bold text-slate-300">
+        <div className="flex items-center gap-2 self-start bg-white border border-slate-200 px-4 py-2 rounded-xl text-xs font-bold text-slate-300">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
@@ -210,10 +211,10 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Dynamic Key Counters Grid */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         
         {/* Total Organizations */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/40 p-6 flex flex-col justify-between hover:border-slate-800 transition-colors">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
           <div className="flex justify-between items-start">
             <div className="space-y-1">
               <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Organizations</p>
@@ -223,14 +224,14 @@ export default function AdminDashboardPage() {
               <Store className="h-5 w-5" />
             </div>
           </div>
-          <div className="flex gap-3 text-[10px] text-slate-500 font-medium mt-4 border-t border-slate-900 pt-3">
-            <span>Active: <strong className="text-slate-355">{activeOrgs}</strong></span>
-            <span>Suspended: <strong className="text-slate-355">{suspendedOrgs}</strong></span>
+          <div className="flex gap-3 text-[10px] text-slate-500 font-medium mt-4 border-t border-slate-100 pt-3">
+            <span>Active: <strong className="text-slate-700">{activeOrgs}</strong></span>
+            <span>Suspended: <strong className="text-slate-700">{suspendedOrgs}</strong></span>
           </div>
         </div>
 
         {/* User Roles */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/40 p-6 flex flex-col justify-between hover:border-slate-800 transition-colors">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
           <div className="flex justify-between items-start">
             <div className="space-y-1">
               <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Tenant Admins & Agents</p>
@@ -240,14 +241,14 @@ export default function AdminDashboardPage() {
               <Users className="h-5 w-5" />
             </div>
           </div>
-          <div className="flex gap-3 text-[10px] text-slate-500 font-medium mt-4 border-t border-slate-900 pt-3">
-            <span>Org Admins: <strong className="text-slate-355">{totalAdmins}</strong></span>
-            <span>Agents: <strong className="text-slate-355">{totalAgents}</strong></span>
+          <div className="flex gap-3 text-[10px] text-slate-500 font-medium mt-4 border-t border-slate-100 pt-3">
+            <span>Org Admins: <strong className="text-slate-700">{totalAdmins}</strong></span>
+            <span>Agents: <strong className="text-slate-700">{totalAgents}</strong></span>
           </div>
         </div>
 
         {/* Widgets / Live Calls */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/40 p-6 flex flex-col justify-between hover:border-slate-800 transition-colors">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
           <div className="flex justify-between items-start">
             <div className="space-y-1">
               <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Real-time Video Rooms</p>
@@ -257,14 +258,14 @@ export default function AdminDashboardPage() {
               <Video className="h-5 w-5" />
             </div>
           </div>
-          <div className="flex gap-3 text-[10px] text-slate-500 font-medium mt-4 border-t border-slate-900 pt-3">
-            <span>Active Widgets: <strong className="text-slate-355">{activeWidgets}</strong></span>
-            <span>Today Calls: <strong className="text-slate-355">{callsToday}</strong></span>
+          <div className="flex gap-3 text-[10px] text-slate-500 font-medium mt-4 border-t border-slate-100 pt-3">
+            <span>Active Widgets: <strong className="text-slate-700">{activeWidgets}</strong></span>
+            <span>Today Calls: <strong className="text-slate-700">{callsToday}</strong></span>
           </div>
         </div>
 
         {/* Financial Flow */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/40 p-6 flex flex-col justify-between hover:border-slate-800 transition-colors">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
           <div className="flex justify-between items-start">
             <div className="space-y-1">
               <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Platform Revenue</p>
@@ -274,16 +275,16 @@ export default function AdminDashboardPage() {
               <DollarSign className="h-5 w-5" />
             </div>
           </div>
-          <div className="flex gap-3 text-[10px] text-slate-500 font-medium mt-4 border-t border-slate-900 pt-3">
-            <span>Subscriptions: <strong className="text-slate-355">{activeSubs} active</strong></span>
-            <span>Calls Month: <strong className="text-slate-355">{monthlyCalls}</strong></span>
+          <div className="flex gap-3 text-[10px] text-slate-500 font-medium mt-4 border-t border-slate-100 pt-3">
+            <span>Subscriptions: <strong className="text-slate-700">{activeSubs} active</strong></span>
+            <span>Calls Month: <strong className="text-slate-700">{monthlyCalls}</strong></span>
           </div>
         </div>
 
       </div>
 
       {/* Main Charts & Quick Action Section */}
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-3">
         
         {/* Sales Performance Graph */}
         <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4 lg:col-span-2">
@@ -343,22 +344,22 @@ export default function AdminDashboardPage() {
 
           <div className="space-y-3">
             {/* Terminate active rooms */}
-            <button
+            <Button
               onClick={handleForceKillAll}
               disabled={terminatingAll}
-              className="w-full flex items-center justify-between px-4 py-3 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-all rounded-xl text-left cursor-pointer group animate-fade-in"
+              className="w-full flex items-center justify-between px-4 py-3 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-all rounded-xl text-left cursor-pointer group animate-fade-in hover:-translate-y-0.5 transition-all duration-200"
             >
               <div>
                 <p className="text-xs font-bold text-red-400">Force-Kill Active Video Rooms</p>
                 <p className="text-[10px] text-slate-500 mt-0.5">Disconnects active peer rooms</p>
               </div>
               <AlertTriangle className="h-4 w-4 text-red-400 group-hover:scale-110 transition-transform" />
-            </button>
+            </Button>
 
             {/* Broadcast announcements link */}
             <Link
               to="/admin/notifications"
-              className="w-full flex items-center justify-between px-4 py-3 bg-slate-900/80 border border-slate-850 hover:border-slate-800 transition-all rounded-xl text-left cursor-pointer group"
+              className="w-full flex items-center justify-between px-4 py-3 bg-white border border-slate-200 hover:border-slate-800 transition-all rounded-xl text-left cursor-pointer group hover:-translate-y-0.5 transition-all duration-200"
             >
               <div>
                 <p className="text-xs font-bold text-slate-200">Send Global Announcement</p>
@@ -370,7 +371,7 @@ export default function AdminDashboardPage() {
             {/* Platform limits settings link */}
             <Link
               to="/admin/settings"
-              className="w-full flex items-center justify-between px-4 py-3 bg-slate-900/80 border border-slate-850 hover:border-slate-800 transition-all rounded-xl text-left cursor-pointer group"
+              className="w-full flex items-center justify-between px-4 py-3 bg-white border border-slate-200 hover:border-slate-800 transition-all rounded-xl text-left cursor-pointer group hover:-translate-y-0.5 transition-all duration-200"
             >
               <div>
                 <p className="text-xs font-bold text-slate-200">Adjust Dynamic SaaS Limits</p>
@@ -380,7 +381,7 @@ export default function AdminDashboardPage() {
             </Link>
           </div>
 
-          <div className="text-[10px] text-slate-500 leading-normal border-t border-slate-900 pt-3">
+          <div className="text-[10px] text-slate-500 leading-normal border-t border-slate-100 pt-3">
             All modifications trigger instant log audits inside the system logging table.
           </div>
         </div>
@@ -412,7 +413,7 @@ export default function AdminDashboardPage() {
                 <div>
                   <p className="font-bold text-white text-xs">{shop.shop_name}</p>
                   <p className="text-[10px] text-slate-500 mt-0.5 font-mono">
-                    Tier: <span className="uppercase text-slate-350 font-bold">{shop.plan_name || "free"}</span>
+                    Tier: <span className="uppercase text-slate-700 font-bold">{shop.plan_name || "free"}</span>
                   </p>
                 </div>
                 <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
@@ -455,7 +456,7 @@ export default function AdminDashboardPage() {
                 <div>
                   <p className="font-bold text-white text-xs">{log.customer_name || "Guest User"}</p>
                   <p className="text-[10px] text-slate-500 mt-0.5">
-                    called <span className="text-slate-350 font-semibold">{log.shops?.shop_name || "Merchant"}</span>
+                    called <span className="text-slate-700 font-semibold">{log.shops?.shop_name || "Merchant"}</span>
                   </p>
                 </div>
                 <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
@@ -487,9 +488,9 @@ export default function AdminDashboardPage() {
             {systemHealth.map((health) => {
               const HealthIcon = health.icon;
               return (
-                <div key={health.name} className="flex items-center justify-between text-xs border-b border-slate-900/50 pb-2.5 last:border-b-0 last:pb-0">
+                <div key={health.name} className="flex items-center justify-between text-xs border-b border-slate-100/50 pb-2.5 last:border-b-0 last:pb-0">
                   <div className="flex items-center gap-2">
-                    <div className="h-7 w-7 rounded-lg bg-slate-900 border border-slate-850 flex items-center justify-center text-slate-450">
+                    <div className="h-7 w-7 rounded-lg bg-slate-900 border border-slate-200 flex items-center justify-center text-slate-500">
                       <HealthIcon className="h-3.5 w-3.5" />
                     </div>
                     <div>

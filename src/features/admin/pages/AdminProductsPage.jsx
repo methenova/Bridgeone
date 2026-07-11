@@ -73,19 +73,18 @@ export default function AdminProductsPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <ProductSkeleton rows={6} />
+      <div className="space-y-6 max-w-7xl">
+        <AdminTableSkeleton rows={8} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 text-white max-w-7xl">
+    <div className="space-y-4 md:space-y-6 text-white max-w-7xl">
       
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-extrabold tracking-tight">Products</h1>
+        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Products</h1>
         <p className="mt-1 text-xs text-slate-400">Manage, feature, and audit active product listings across the live commerce marketplace.</p>
       </div>
 
@@ -138,7 +137,7 @@ export default function AdminProductsPage() {
             placeholder="Search by product name, shop, or SKU..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-850 bg-slate-950/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-800 transition-colors"
+            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-800 transition-colors"
           />
         </div>
 
@@ -150,7 +149,7 @@ export default function AdminProductsPage() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
             >
               <option value="all">All Categories</option>
               {categoriesList.map((cat) => (
@@ -165,7 +164,7 @@ export default function AdminProductsPage() {
             <select
               value={featuredFilter}
               onChange={(e) => setFeaturedFilter(e.target.value)}
-              className="rounded-xl border border-slate-850 bg-slate-950 px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
             >
               <option value="all">All Items</option>
               <option value="featured">Featured Only</option>
@@ -180,7 +179,7 @@ export default function AdminProductsPage() {
       <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-900 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Product</th>
                 <th className="px-6 py-4.5">Merchant Shop</th>
@@ -205,7 +204,7 @@ export default function AdminProductsPage() {
                     {/* Thumbnail + SKU */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-slate-850 bg-slate-950 flex items-center justify-center font-bold text-slate-500">
+                        <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-white flex items-center justify-center font-bold text-slate-500">
                           {p.thumbnail_url ? (
                             <img src={p.thumbnail_url} alt="" className="h-full w-full object-cover" />
                           ) : (
@@ -232,24 +231,24 @@ export default function AdminProductsPage() {
                     </td>
 
                     {/* Price */}
-                    <td className="px-6 py-4 font-bold text-white">
+                    <td className="px-6 py-4 font-bold text-slate-900">
                       ₹{displayPrice.toLocaleString()}
                     </td>
 
                     {/* Featured Star Toggle */}
                     <td className="px-6 py-4 text-center">
-                      <button
+                      <Button
                         onClick={() => handleToggleFeatured(p)}
                         disabled={toggleFeatured.isPending}
                         title={p.featured ? "Remove from Featured" : "Make Featured"}
                         className={`inline-flex h-8 w-8 items-center justify-center rounded-lg border transition-all cursor-pointer ${
                           p.featured
                             ? "border-amber-500/30 bg-amber-500/10 text-amber-400"
-                            : "border-slate-850 bg-slate-900/40 text-slate-650 hover:text-slate-400 hover:border-slate-800"
+                            : "border-slate-200 bg-slate-900/40 text-slate-650 hover:text-slate-400 hover:border-slate-800"
                         }`}
                       >
                         <Star className={`h-4 w-4 ${p.featured ? "fill-amber-400" : ""}`} />
-                      </button>
+                      </Button>
                     </td>
 
                     {/* Active Status Badge */}
@@ -265,7 +264,7 @@ export default function AdminProductsPage() {
 
                     {/* Active Toggle Switch */}
                     <td className="px-6 py-4 text-right">
-                      <button
+                      <Button
                         onClick={() => handleToggleActive(p)}
                         disabled={toggleActive.isPending}
                         title={p.is_active ? "Deactivate Product" : "Activate Product"}
@@ -276,7 +275,7 @@ export default function AdminProductsPage() {
                         ) : (
                           <ToggleLeft className="h-6 w-6 text-slate-700" />
                         )}
-                      </button>
+                      </Button>
                     </td>
 
                   </motion.tr>
