@@ -281,7 +281,7 @@ table tr:last-child td:last-child {
 .admin-theme table,
 .admin-theme .table-container,
 .admin-theme div:has(> table) {
-  border-radius: 0.75rem !important;
+  border-radius: 0.5rem !important;
   /* 12px for tables */
 }
 
