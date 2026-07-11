@@ -267,7 +267,7 @@ table tr:last-child td:last-child {
 
 .admin-theme .admin-card,
 .admin-theme .rounded-2xl {
-  border-radius: 25px !important;
+  border-radius: 1rem !important;
 }
 
 .admin-theme .admin-card {
