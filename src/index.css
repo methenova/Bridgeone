@@ -144,12 +144,10 @@
 
 @layer utilities {
   .animate-shimmer {
-    background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.4) 50%,
-      rgba(255, 255, 255, 0) 100%
-    );
+    background: linear-gradient(90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.4) 50%,
+        rgba(255, 255, 255, 0) 100%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite linear;
   }
@@ -158,6 +156,7 @@
     0% {
       background-position: 200% 0;
     }
+
     100% {
       background-position: -200% 0;
     }
@@ -257,17 +256,20 @@ table tr:last-child td:last-child {
 
 .admin-theme {
   --radius: 0.5rem;
-  background-color: #f8fafc; /* bg-slate-50 */
-  color: #0f172a; /* text-slate-900 */
+  background-color: #f8fafc;
+  /* bg-slate-50 */
+  color: #0f172a;
+  /* text-slate-900 */
 }
 
 .admin-theme button {
-  border-radius: 0.5rem !important; /* Keep buttons standard 8px */
+  border-radius: 0.5rem !important;
+  /* Keep buttons standard 8px */
 }
 
 .admin-theme .admin-card,
 .admin-theme .rounded-2xl {
-  border-radius: 1rem !important;
+  border-radius: 0.5rem !important;
 }
 
 .admin-theme .admin-card {
@@ -279,7 +281,8 @@ table tr:last-child td:last-child {
 .admin-theme table,
 .admin-theme .table-container,
 .admin-theme div:has(> table) {
-  border-radius: 0.75rem !important; /* 12px for tables */
+  border-radius: 0.75rem !important;
+  /* 12px for tables */
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -289,14 +292,16 @@ table tr:last-child td:last-child {
 /* Card Lift on Hover — applies to all rounded bordered cards */
 .admin-theme .hover-lift {
   transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1),
-              border-color 200ms ease;
+    box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 200ms ease;
 }
+
 .admin-theme .hover-lift:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.06),
-              0 4px 10px -4px rgba(0, 0, 0, 0.04);
-  border-color: #cbd5e1; /* slate-300 */
+    0 4px 10px -4px rgba(0, 0, 0, 0.04);
+  border-color: #cbd5e1;
+  /* slate-300 */
 }
 
 /* Table Row Hover — smooth background transition */
@@ -309,8 +314,8 @@ tbody tr {
 .admin-theme select,
 .admin-theme textarea {
   transition: border-color 200ms ease,
-              box-shadow 200ms ease,
-              background-color 150ms ease;
+    box-shadow 200ms ease,
+    background-color 150ms ease;
 }
 
 /* Link Underline Slide */
@@ -320,9 +325,17 @@ tbody tr {
 
 /* Badge Pulse — for "Live" type badges */
 @keyframes badge-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
 }
+
 .badge-live {
   animation: badge-pulse 2s ease-in-out infinite;
 }
@@ -333,11 +346,13 @@ tbody tr {
     opacity: 0;
     transform: translateY(6px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
+
 .page-enter {
   animation: page-enter 200ms ease-out;
 }
@@ -348,11 +363,13 @@ tbody tr {
     opacity: 0;
     transform: translateY(8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
+
 .animate-fade-in-up {
   animation: fade-in-up 250ms ease-out both;
 }
@@ -363,11 +380,13 @@ tbody tr {
     opacity: 0;
     transform: translateX(100%);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
   }
 }
+
 .toast-enter {
   animation: toast-slide-in 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -378,19 +397,26 @@ tbody tr {
     opacity: 0;
     transform: scale(0.95) translateY(-4px);
   }
+
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
   }
 }
+
 .dropdown-enter {
   animation: dropdown-in 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Subtle skeleton shimmer refinement */
 @keyframes skeleton-wave {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 /* Interactive icon scale on parent hover */
