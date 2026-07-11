@@ -63,12 +63,12 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="space-y-4 md:space-y-6 text-white max-w-7xl">
+    <div className="space-y-4 md:space-y-6 text-slate-900 max-w-7xl">
       
       {/* Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Users</h1>
-        <p className="mt-1 text-xs text-slate-400">Manage, moderate, and adjust platform user roles and system privileges.</p>
+        <p className="mt-1 text-xs text-slate-500">Manage, moderate, and adjust platform user roles and system privileges.</p>
       </div>
 
       {/* Aggregate Stats Cards */}
@@ -110,9 +110,9 @@ export default function AdminUsersPage() {
         <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Customers</p>
-            <p className="text-xl font-bold tracking-tight text-slate-300">{stats.customers}</p>
+            <p className="text-xl font-bold tracking-tight text-slate-700">{stats.customers}</p>
           </div>
-          <div className="h-9 w-9 rounded-xl bg-slate-500/10 text-slate-400 flex items-center justify-center shrink-0">
+          <div className="h-9 w-9 rounded-xl bg-slate-500/10 text-slate-500 flex items-center justify-center shrink-0">
             <User className="h-4.5 w-4.5" />
           </div>
         </div>
@@ -141,7 +141,7 @@ export default function AdminUsersPage() {
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
+            className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-800"
           >
             <option value="all">All Roles</option>
             <option value="customer">Customer</option>
@@ -156,7 +156,7 @@ export default function AdminUsersPage() {
       <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Account Profile</th>
                 <th className="px-6 py-4.5">Email Address</th>
@@ -165,7 +165,7 @@ export default function AdminUsersPage() {
                 <th className="px-6 py-4.5 text-right">System Privilege Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-900 bg-transparent text-xs text-slate-300">
+            <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
               {filteredUsers.map((u, idx) => {
                 const joinDate = new Date(u.created_at).toLocaleDateString(undefined, {
                   year: "numeric",
@@ -189,7 +189,7 @@ export default function AdminUsersPage() {
                           {(u.full_name || "U").charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <span className="font-bold text-white block text-sm">{u.full_name || "—"}</span>
+                          <span className="font-bold text-slate-900 block text-sm">{u.full_name || "—"}</span>
                           <span className="text-[10px] text-slate-500 font-mono mt-0.5 block">
                             ID: #{u.id.slice(0, 8).toUpperCase()}
                           </span>
@@ -216,7 +216,7 @@ export default function AdminUsersPage() {
                     </td>
 
                     {/* Registration Date */}
-                    <td className="px-6 py-4 text-slate-400 font-medium">
+                    <td className="px-6 py-4 text-slate-500 font-medium">
                       {joinDate}
                     </td>
 
@@ -243,7 +243,7 @@ export default function AdminUsersPage() {
           {filteredUsers.length === 0 && (
             <div className="py-20 text-center flex flex-col items-center">
               <Users className="h-10 w-10 text-slate-700 mb-3 animate-pulse" />
-              <p className="text-sm font-bold text-slate-400">No Users Registered</p>
+              <p className="text-sm font-bold text-slate-500">No Users Registered</p>
               <p className="text-xs text-slate-500 mt-1">Platform user accounts will list here.</p>
             </div>
           )}

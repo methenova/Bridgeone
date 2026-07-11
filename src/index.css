@@ -81,8 +81,8 @@
   /* Rose */
   --chart-5: oklch(0.488 0.243 264.4);
   /* Indigo */
-  --radius: 25px;
-  /* 25px border radius */
+  --radius: 0.5rem;
+  /* 8px base border radius */
   --sidebar: oklch(1 0 0);
   --sidebar-foreground: oklch(0.145 0.018 240);
   --sidebar-primary: oklch(0.585 0.233 253);
@@ -256,7 +256,7 @@ table tr:last-child td:last-child {
 }
 
 .admin-theme {
-  --radius: 25px;
+  --radius: 0.5rem;
   background-color: #f8fafc; /* bg-slate-50 */
   color: #0f172a; /* text-slate-900 */
 }
@@ -265,8 +265,12 @@ table tr:last-child td:last-child {
   border-radius: 0.5rem !important; /* Keep buttons standard 8px */
 }
 
+.admin-theme .admin-card,
+.admin-theme .rounded-2xl {
+  border-radius: 25px !important;
+}
+
 .admin-theme .admin-card {
-  border-radius: var(--radius);
   background-color: #ffffff;
   border: 1px solid #e2e8f0;
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);

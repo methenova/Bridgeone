@@ -23,7 +23,7 @@ export default function AdminOrdersPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-slate-900">Orders</h1>
-        <p className="mt-1 text-slate-400">View and track all platform checkouts.</p>
+        <p className="mt-1 text-slate-500">View and track all platform checkouts.</p>
       </div>
 
       {/* Search query */}
@@ -49,7 +49,7 @@ export default function AdminOrdersPage() {
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
           <div className="overflow-x-auto">
             <table className="min-w-full text-left">
-              <thead className="border-b border-slate-800 bg-slate-950/60 text-slate-300 text-sm font-semibold">
+              <thead className="border-b border-slate-800 bg-slate-950/60 text-slate-700 text-sm font-semibold">
                 <tr>
                   <th className="px-6 py-4">Order ID</th>
                   <th className="px-6 py-4">Customer</th>
@@ -71,16 +71,16 @@ export default function AdminOrdersPage() {
 
                   return (
                     <tr key={o.id} className="hover:bg-slate-800/20 transition-colors">
-                      <td className="px-6 py-4 font-mono text-xs font-semibold text-slate-400">
+                      <td className="px-6 py-4 font-mono text-xs font-semibold text-slate-500">
                         #{o.id.slice(0, 8).toUpperCase()}
                       </td>
                       <td className="px-6 py-4 font-medium text-white">
                         {customerName}
                       </td>
-                      <td className="px-6 py-4 text-slate-400">
+                      <td className="px-6 py-4 text-slate-500">
                         {orderDate}
                       </td>
-                      <td className="px-6 py-4 text-slate-400 capitalize">
+                      <td className="px-6 py-4 text-slate-500 capitalize">
                         {o.payment_method}
                       </td>
                       <td className="px-6 py-4 font-bold text-slate-900">
@@ -100,7 +100,7 @@ export default function AdminOrdersPage() {
                       <td className="px-6 py-4 text-right">
                         <Button
                           onClick={() => setSelectedOrder(o)}
-                          className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-slate-900 text-slate-400 hover:text-white hover:border-slate-600 ml-auto"
+                          className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-slate-900 text-slate-500 hover:text-white hover:border-slate-600 ml-auto"
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -125,7 +125,7 @@ export default function AdminOrdersPage() {
               </div>
               <Button
                 onClick={() => setSelectedOrder(null)}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-500 hover:text-white"
               >
                 ✕
               </Button>
@@ -138,7 +138,7 @@ export default function AdminOrdersPage() {
               </h4>
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
                 <p className="font-bold text-slate-900">{selectedOrder.profiles?.full_name || "—"}</p>
-                <p className="text-xs text-slate-400 mt-0.5">{selectedOrder.profiles?.email || "—"}</p>
+                <p className="text-xs text-slate-500 mt-0.5">{selectedOrder.profiles?.email || "—"}</p>
               </div>
             </div>
 
@@ -150,8 +150,8 @@ export default function AdminOrdersPage() {
                 </h4>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 space-y-1">
                   <p className="font-bold text-slate-900">{selectedOrder.addresses.name}</p>
-                  <p className="text-xs text-slate-400">{selectedOrder.addresses.phone}</p>
-                  <p className="text-xs text-slate-400 leading-relaxed pt-1">
+                  <p className="text-xs text-slate-500">{selectedOrder.addresses.phone}</p>
+                  <p className="text-xs text-slate-500 leading-relaxed pt-1">
                     {selectedOrder.addresses.address_line1}
                     {selectedOrder.addresses.address_line2 ? `, ${selectedOrder.addresses.address_line2}` : ""}
                     <br />
@@ -183,7 +183,7 @@ export default function AdminOrdersPage() {
             </div>
 
             {/* Subtotal summary */}
-            <div className="space-y-2 border-t border-slate-100 pt-4 text-sm text-slate-400">
+            <div className="space-y-2 border-t border-slate-100 pt-4 text-sm text-slate-500">
               <div className="flex justify-between">
                 <span>Subtotal</span>
                 <span className="font-semibold text-white">₹{Number(selectedOrder.subtotal).toLocaleString()}</span>

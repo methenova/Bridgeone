@@ -95,7 +95,7 @@ export default function AdminAuditLogsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Security Audit Logs</h1>
-          <p className="mt-1 text-xs text-slate-400">Track and inspect Super Admin actions, role changes, and tenant modification details.</p>
+          <p className="mt-1 text-xs text-slate-500">Track and inspect Super Admin actions, role changes, and tenant modification details.</p>
         </div>
 
         <Button
@@ -145,7 +145,7 @@ export default function AdminAuditLogsPage() {
             <select
               value={moduleFilter}
               onChange={(e) => setModuleFilter(e.target.value)}
-              className="rounded-xl border border-slate-200 bg-slate-955 bg-slate-950 px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
+              className="rounded-xl border border-slate-200 bg-slate-955 bg-slate-50 px-3 py-1.5 text-xs text-slate-900 outline-none focus:border-slate-200"
             >
               <option value="all">All Modules</option>
               <option value="Users">Users</option>
@@ -163,7 +163,7 @@ export default function AdminAuditLogsPage() {
       <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Administrator / Actor</th>
                 <th className="px-6 py-4.5">Audit Action details</th>
@@ -173,7 +173,7 @@ export default function AdminAuditLogsPage() {
                 <th className="px-6 py-4.5">Timestamp</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-900 bg-transparent text-xs text-slate-300">
+            <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
               {filteredLogs.map((log, idx) => {
                 const dateText = log.created_at ? new Date(log.created_at).toLocaleString("en-IN", {
                   day: "numeric",
@@ -201,12 +201,12 @@ export default function AdminAuditLogsPage() {
                     </td>
 
                     {/* Action */}
-                    <td className="px-6 py-4 max-w-xs leading-relaxed font-bold text-slate-200">
+                    <td className="px-6 py-4 max-w-xs leading-relaxed font-bold text-slate-800">
                       {log.action}
                     </td>
 
                     {/* Target Module */}
-                    <td className="px-6 py-4 font-semibold text-slate-400">
+                    <td className="px-6 py-4 font-semibold text-slate-500">
                       {log.module}
                     </td>
 
@@ -242,7 +242,7 @@ export default function AdminAuditLogsPage() {
                     </td>
 
                     {/* Date */}
-                    <td className="px-6 py-4 text-slate-400 font-medium">{dateText}</td>
+                    <td className="px-6 py-4 text-slate-500 font-medium">{dateText}</td>
                   </motion.tr>
                 );
               })}
@@ -252,7 +252,7 @@ export default function AdminAuditLogsPage() {
           {filteredLogs.length === 0 && (
             <div className="py-20 text-center flex flex-col items-center">
               <FileText className="h-10 w-10 text-slate-700 mb-3 animate-pulse" />
-              <p className="text-sm font-bold text-slate-400">No system audit logs found</p>
+              <p className="text-sm font-bold text-slate-500">No system audit logs found</p>
             </div>
           )}
         </div>

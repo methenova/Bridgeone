@@ -77,14 +77,14 @@ export default function AdminNotificationsPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Platform Broadcasts</h1>
-        <p className="mt-1 text-xs text-slate-400">Broadcast warning banners to seller dashboards, email updates, and push notifications.</p>
+        <p className="mt-1 text-xs text-slate-500">Broadcast warning banners to seller dashboards, email updates, and push notifications.</p>
       </div>
 
       <div className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-3">
         
         {/* Left 2 Cols: Form to compose announcement */}
-        <div className="lg:col-span-2 rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-6">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-400 flex items-center gap-2">
+        <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-6">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500 flex items-center gap-2">
             <Send className="h-4 w-4 text-blue-500" />
             <span>Compose Broadcast</span>
           </h2>
@@ -147,7 +147,7 @@ export default function AdminNotificationsPage() {
               <select
                 value={targetAudience}
                 onChange={(e) => setTargetAudience(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-white outline-none focus:border-blue-500 font-semibold"
+                className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-semibold"
               >
                 <option value="all">All Platform Users (Sellers + Customers)</option>
                 <option value="sellers">Registered Sellers / Shop Owners only</option>
@@ -162,7 +162,7 @@ export default function AdminNotificationsPage() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="planned server maintenance window..."
-                className="w-full rounded-xl border border-slate-200 bg-slate-955 bg-slate-950 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                className="w-full rounded-xl border border-slate-200 bg-slate-955 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
               />
             </div>
 
@@ -174,7 +174,7 @@ export default function AdminNotificationsPage() {
                 onChange={(e) => setBody(e.target.value)}
                 rows={5}
                 placeholder="Write warning details here..."
-                className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-white outline-none focus:border-blue-500 resize-none leading-relaxed"
+                className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 resize-none leading-relaxed"
               />
             </div>
 
@@ -197,9 +197,9 @@ export default function AdminNotificationsPage() {
         </div>
 
         {/* Right 1 Col: Broadcast Log History */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4">
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-400">Broadcast History</h3>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500">Broadcast History</h3>
             <p className="text-xs text-slate-500">Previously dispatched communications log</p>
           </div>
 
@@ -208,14 +208,14 @@ export default function AdminNotificationsPage() {
               <div key={log.id} className="rounded-xl border border-slate-200 bg-white p-4 space-y-2.5">
                 <div className="flex justify-between items-start">
                   <div className="space-y-0.5">
-                    <h4 className="text-xs font-bold text-white leading-normal line-clamp-1">{log.title}</h4>
+                    <h4 className="text-xs font-bold text-slate-900 leading-normal line-clamp-1">{log.title}</h4>
                     <p className="text-[9px] text-slate-500 font-semibold">{log.date} · {log.audience}</p>
                   </div>
                   <span className="inline-flex items-center gap-1 rounded bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 text-[8px] font-bold text-emerald-400 uppercase">
                     Sent
                   </span>
                 </div>
-                <p className="text-[10px] text-slate-400 leading-relaxed line-clamp-2">{log.body}</p>
+                <p className="text-[10px] text-slate-500 leading-relaxed line-clamp-2">{log.body}</p>
                 <div className="text-[9px] text-slate-500 pt-1 border-t border-slate-100">
                   Channel: <span className="uppercase font-semibold text-slate-700">{log.channel}</span>
                 </div>

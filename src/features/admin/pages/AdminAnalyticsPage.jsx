@@ -148,17 +148,17 @@ export default function AdminAnalyticsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Platform Analytics</h1>
-          <p className="mt-1 text-xs text-slate-400">Deep-dive call metrics, monthly active integrations, and platform commission flows.</p>
+          <p className="mt-1 text-xs text-slate-500">Deep-dive call metrics, monthly active integrations, and platform commission flows.</p>
         </div>
         
         {/* Date Filter & Export Row */}
         <div className="flex items-center gap-3 self-start">
-          <div className="flex items-center gap-2 bg-slate-900 border border-slate-200 px-3 py-1.5 rounded-xl text-xs text-slate-300">
+          <div className="flex items-center gap-2 bg-slate-900 border border-slate-200 px-3 py-1.5 rounded-xl text-xs text-slate-700">
             <Calendar className="h-3.5 w-3.5 text-indigo-400" />
             <select
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value)}
-              className="bg-transparent border-none outline-none text-xs font-bold text-slate-300 cursor-pointer"
+              className="bg-transparent border-none outline-none text-xs font-bold text-slate-700 cursor-pointer"
             >
               <option value="7">Last 7 Days</option>
               <option value="30">Last 30 Days</option>
@@ -169,7 +169,7 @@ export default function AdminAnalyticsPage() {
 
           <Button
             onClick={handleExportReport}
-            className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-500 transition-all cursor-pointer shadow-lg shadow-blue-500/10 active:scale-[0.98]"
+            className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-slate-900 hover:bg-blue-500 transition-all cursor-pointer shadow-lg shadow-blue-500/10 active:scale-[0.98]"
           >
             <Download className="h-3.5 w-3.5" />
             <span>Export CSV</span>
@@ -233,10 +233,10 @@ export default function AdminAnalyticsPage() {
       <div className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-3">
         
         {/* Left 2 Cols: Growth graphics */}
-        <div className="lg:col-span-2 rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-6">
+        <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider text-[10px] text-slate-400">Monthly Revenue Stream Growth</h3>
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Monthly Revenue Stream Growth</h3>
               <p className="text-xs text-slate-500">Collected platform transactions vs monthly active subscriptions pricing</p>
             </div>
             <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
@@ -278,9 +278,9 @@ export default function AdminAnalyticsPage() {
         </div>
 
         {/* Right 1 Col: Top organizations leaderboard list */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4">
           <div>
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider text-[10px] text-slate-400">Top Performing Tenants</h3>
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Top Performing Tenants</h3>
             <p className="text-xs text-slate-500">Shops leading in call counts & checkouts</p>
           </div>
 
@@ -288,11 +288,11 @@ export default function AdminAnalyticsPage() {
             {leaderboard.map((item, idx) => (
               <div key={item.name} className="flex justify-between items-center text-xs pb-3 border-b border-slate-100/50 last:border-b-0 last:pb-0">
                 <div className="flex items-center gap-3">
-                  <div className="h-7 w-7 rounded-lg bg-slate-900 border border-slate-200 flex items-center justify-center font-bold text-slate-400 text-[11px]">
+                  <div className="h-7 w-7 rounded-lg bg-slate-900 border border-slate-200 flex items-center justify-center font-bold text-slate-500 text-[11px]">
                     #{idx + 1}
                   </div>
                   <div>
-                    <p className="font-bold text-white text-xs">{item.name}</p>
+                    <p className="font-bold text-slate-900 text-xs">{item.name}</p>
                     <p className="text-[10px] text-slate-500 mt-0.5">{item.calls} live calls</p>
                   </div>
                 </div>

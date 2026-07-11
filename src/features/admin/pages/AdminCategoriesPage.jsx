@@ -72,12 +72,12 @@ export default function AdminCategoriesPage() {
   }
 
   return (
-    <div className="space-y-4 md:space-y-6 text-white max-w-7xl">
+    <div className="space-y-4 md:space-y-6 text-slate-900 max-w-7xl">
       
       {/* Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Categories</h1>
-        <p className="mt-1 text-xs text-slate-400">Configure marketplace product verticals and visual symbols.</p>
+        <p className="mt-1 text-xs text-slate-500">Configure marketplace product verticals and visual symbols.</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
@@ -89,10 +89,10 @@ export default function AdminCategoriesPage() {
           {isLoading ? ( <AdminTableSkeleton rows={5} /> ) : categories.length === 0 ? (
             <div className="py-20 text-center flex flex-col items-center">
               <Folder className="h-10 w-10 text-slate-700 mb-3 animate-pulse" />
-              <p className="text-sm font-bold text-slate-400">No Categories Found</p>
+              <p className="text-sm font-bold text-slate-500">No Categories Found</p>
             </div>
           ) : (
-            <div className="divide-y divide-slate-900">
+            <div className="divide-y divide-slate-100">
               {categories.map((cat, idx) => (
                 <motion.div 
                   initial={{ opacity: 0, y: 8 }}
@@ -117,7 +117,7 @@ export default function AdminCategoriesPage() {
                   <div className="flex gap-2">
                     <Button
                       onClick={() => handleEdit(cat)}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-slate-900/60 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-slate-900/60 text-slate-500 hover:text-white transition-colors cursor-pointer"
                       title="Edit Category"
                     >
                       <Pencil className="h-3.5 w-3.5" />
@@ -145,7 +145,7 @@ export default function AdminCategoriesPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Category Name *</label>
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Category Name *</label>
               <input
                 type="text"
                 value={name}
@@ -156,7 +156,7 @@ export default function AdminCategoriesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Icon Symbol (Emoji)</label>
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Icon Symbol (Emoji)</label>
               <input
                 type="text"
                 value={icon}
@@ -170,7 +170,7 @@ export default function AdminCategoriesPage() {
               <Button
                 type="submit"
                 disabled={createCat.isPending || updateCat.isPending}
-                className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-2.5 text-xs font-bold text-white hover:bg-blue-500 disabled:opacity-50 transition-all active:scale-[0.98] cursor-pointer shadow-lg shadow-blue-650/10"
+                className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-2.5 text-xs font-bold text-slate-900 hover:bg-blue-500 disabled:opacity-50 transition-all active:scale-[0.98] cursor-pointer shadow-lg shadow-blue-650/10"
               >
                 {createCat.isPending || updateCat.isPending ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -183,7 +183,7 @@ export default function AdminCategoriesPage() {
                 <Button
                   type="button"
                   onClick={handleCancel}
-                  className="rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  className="rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-semibold text-slate-500 hover:text-white transition-colors cursor-pointer"
                 >
                   Cancel
                 </Button>

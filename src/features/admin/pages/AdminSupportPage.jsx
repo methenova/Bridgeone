@@ -147,7 +147,7 @@ export default function AdminSupportPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Support Desk</h1>
-          <p className="mt-1 text-xs text-slate-400">Review client-submitted issues, address system bugs, and respond to feature requests.</p>
+          <p className="mt-1 text-xs text-slate-500">Review client-submitted issues, address system bugs, and respond to feature requests.</p>
         </div>
         
         <Button
@@ -157,7 +157,7 @@ export default function AdminSupportPage() {
             setFormType("bug");
             setIsOpen(true);
           }}
-          className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10 transition-all active:scale-[0.98]"
+          className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-slate-900 hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10 transition-all active:scale-[0.98]"
         >
           <Plus className="h-4 w-4" />
           <span>Add Ticket</span>
@@ -219,7 +219,7 @@ export default function AdminSupportPage() {
       <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Ticket details</th>
                 <th className="px-6 py-4.5">Vertical Type</th>
@@ -228,7 +228,7 @@ export default function AdminSupportPage() {
                 <th className="px-6 py-4.5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-900 bg-transparent text-xs text-slate-300">
+            <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
               {filteredTickets.map((t, idx) => {
                 const dateText = t.created_at ? new Date(t.created_at).toLocaleDateString("en-IN") : "—";
                 
@@ -243,7 +243,7 @@ export default function AdminSupportPage() {
                     {/* Ticket Title & Desc */}
                     <td className="px-6 py-4 max-w-md">
                       <div>
-                        <span className="font-bold text-white block text-sm">{t.title}</span>
+                        <span className="font-bold text-slate-900 block text-sm">{t.title}</span>
                         <span className="text-[10px] text-slate-500 mt-1 block leading-normal line-clamp-2">
                           {t.description}
                         </span>
@@ -271,7 +271,7 @@ export default function AdminSupportPage() {
                       <select
                         value={t.status}
                         onChange={(e) => handleStatusChange(t.id, e.target.value)}
-                        className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs outline-none text-slate-300 font-semibold"
+                        className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs outline-none text-slate-700 font-semibold"
                       >
                         <option value="open">Open</option>
                         <option value="resolved">Resolved</option>
@@ -280,7 +280,7 @@ export default function AdminSupportPage() {
                     </td>
 
                     {/* Report Date */}
-                    <td className="px-6 py-4 text-slate-400 font-medium">{dateText}</td>
+                    <td className="px-6 py-4 text-slate-500 font-medium">{dateText}</td>
 
                     {/* Action buttons */}
                     <td className="px-6 py-4 text-right">
@@ -301,7 +301,7 @@ export default function AdminSupportPage() {
           {filteredTickets.length === 0 && (
             <div className="py-20 text-center flex flex-col items-center">
               <LifeBuoy className="h-10 w-10 text-slate-700 mb-3 animate-pulse" />
-              <p className="text-sm font-bold text-slate-400">No Support Tickets Found</p>
+              <p className="text-sm font-bold text-slate-500">No Support Tickets Found</p>
             </div>
           )}
         </div>

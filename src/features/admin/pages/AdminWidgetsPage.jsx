@@ -116,7 +116,7 @@ export default function AdminWidgetsPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Widget Management</h1>
-        <p className="mt-1 text-xs text-slate-400">View script integrations status, copy launcher embed codes, and rotate API security tokens.</p>
+        <p className="mt-1 text-xs text-slate-500">View script integrations status, copy launcher embed codes, and rotate API security tokens.</p>
       </div>
 
       {/* Aggregate metrics */}
@@ -144,10 +144,10 @@ export default function AdminWidgetsPage() {
         <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Widgets Offline</p>
-            <p className="text-xl font-bold tracking-tight text-slate-400">{stats.offline}</p>
+            <p className="text-xl font-bold tracking-tight text-slate-500">{stats.offline}</p>
           </div>
           <div className="h-9 w-9 rounded-xl bg-slate-800 text-slate-500 flex items-center justify-center shrink-0">
-            <Sliders className="h-4.5 w-4.5 text-slate-400" />
+            <Sliders className="h-4.5 w-4.5 text-slate-500" />
           </div>
         </div>
       </div>
@@ -185,7 +185,7 @@ export default function AdminWidgetsPage() {
       <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Widget Name</th>
                 <th className="px-6 py-4.5">Organization</th>
@@ -194,7 +194,7 @@ export default function AdminWidgetsPage() {
                 <th className="px-6 py-4.5 text-right">Integrate Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-900 bg-transparent text-xs text-slate-300">
+            <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
               {filteredShops.map((s, idx) => {
                 const joinDate = s.created_at ? new Date(s.created_at).toLocaleDateString("en-IN") : "—";
                 
@@ -207,13 +207,13 @@ export default function AdminWidgetsPage() {
                     className="hover:bg-slate-900/10 transition-colors"
                   >
                     {/* Widget name */}
-                    <td className="px-6 py-4 font-bold text-white flex items-center gap-2">
+                    <td className="px-6 py-4 font-bold text-slate-900 flex items-center gap-2">
                       <Code className="h-4 w-4 text-indigo-400" />
                       <span>{s.shop_name} Call Widget</span>
                     </td>
 
                     {/* Org Name */}
-                    <td className="px-6 py-4 font-semibold text-slate-300">{s.shop_name}</td>
+                    <td className="px-6 py-4 font-semibold text-slate-700">{s.shop_name}</td>
 
                     {/* Api Key */}
                     <td className="px-6 py-4">
@@ -277,7 +277,7 @@ export default function AdminWidgetsPage() {
           {filteredShops.length === 0 && (
             <div className="py-20 text-center flex flex-col items-center">
               <Sliders className="h-10 w-10 text-slate-700 mb-3 animate-pulse" />
-              <p className="text-sm font-bold text-slate-400">No Integrations Found</p>
+              <p className="text-sm font-bold text-slate-500">No Integrations Found</p>
             </div>
           )}
         </div>
@@ -300,19 +300,19 @@ export default function AdminWidgetsPage() {
                 </div>
                 <Button 
                   onClick={() => setSelectedShop(null)}
-                  className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  className="text-slate-500 hover:text-white transition-colors cursor-pointer"
                 >
                   <X className="h-5 w-5" />
                 </Button>
               </div>
 
               <div className="space-y-4 text-xs">
-                <p className="text-slate-400 leading-normal">
+                <p className="text-slate-500 leading-normal">
                   Copy and paste the HTML snippet below right before the closing <code className="text-indigo-400">&lt;/body&gt;</code> tag of your store's theme template code:
                 </p>
 
                 <div className="relative">
-                  <pre className="bg-slate-50 p-4 rounded-xl border border-slate-200 font-mono text-[10px] text-slate-300 overflow-x-auto select-all leading-relaxed whitespace-pre-wrap">
+                  <pre className="bg-slate-50 p-4 rounded-xl border border-slate-200 font-mono text-[10px] text-slate-700 overflow-x-auto select-all leading-relaxed whitespace-pre-wrap">
                     {`<!-- BridgeOne Live Video Widget Embed -->
 <script>
   window.BridgeOneConfig = {

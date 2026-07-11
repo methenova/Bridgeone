@@ -82,12 +82,12 @@ export default function AdminProductsPage() {
   }
 
   return (
-    <div className="space-y-4 md:space-y-6 text-white max-w-7xl">
+    <div className="space-y-4 md:space-y-6 text-slate-900 max-w-7xl">
       
       {/* Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Products</h1>
-        <p className="mt-1 text-xs text-slate-400">Manage, feature, and audit active product listings across the live commerce marketplace.</p>
+        <p className="mt-1 text-xs text-slate-500">Manage, feature, and audit active product listings across the live commerce marketplace.</p>
       </div>
 
       {/* Metrics Cards */}
@@ -151,7 +151,7 @@ export default function AdminProductsPage() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-800"
             >
               <option value="all">All Categories</option>
               {categoriesList.map((cat) => (
@@ -166,7 +166,7 @@ export default function AdminProductsPage() {
             <select
               value={featuredFilter}
               onChange={(e) => setFeaturedFilter(e.target.value)}
-              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-800"
             >
               <option value="all">All Items</option>
               <option value="featured">Featured Only</option>
@@ -181,7 +181,7 @@ export default function AdminProductsPage() {
       <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Product</th>
                 <th className="px-6 py-4.5">Merchant Shop</th>
@@ -192,7 +192,7 @@ export default function AdminProductsPage() {
                 <th className="px-6 py-4.5 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-900 bg-transparent text-xs text-slate-300">
+            <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
               {filteredProducts.map((p, idx) => {
                 const displayPrice = p.discount_price ? Number(p.discount_price) : Number(p.price);
                 return (
@@ -214,7 +214,7 @@ export default function AdminProductsPage() {
                           )}
                         </div>
                         <div>
-                          <span className="font-bold text-white block text-sm max-w-[180px] truncate">{p.name}</span>
+                          <span className="font-bold text-slate-900 block text-sm max-w-[180px] truncate">{p.name}</span>
                           <span className="text-[10px] text-slate-500 font-mono mt-0.5 block">
                             SKU: {p.sku || "N/A"}
                           </span>
@@ -228,7 +228,7 @@ export default function AdminProductsPage() {
                     </td>
 
                     {/* Category */}
-                    <td className="px-6 py-4 text-slate-400 font-medium">
+                    <td className="px-6 py-4 text-slate-500 font-medium">
                       {p.categories?.name || "Uncategorized"}
                     </td>
 
@@ -246,7 +246,7 @@ export default function AdminProductsPage() {
                         className={`inline-flex h-8 w-8 items-center justify-center rounded-lg border transition-all cursor-pointer ${
                           p.featured
                             ? "border-amber-500/30 bg-amber-500/10 text-amber-400"
-                            : "border-slate-200 bg-slate-900/40 text-slate-650 hover:text-slate-400 hover:border-slate-800"
+                            : "border-slate-200 bg-slate-900/40 text-slate-650 hover:text-slate-500 hover:border-slate-800"
                         }`}
                       >
                         <Star className={`h-4 w-4 ${p.featured ? "fill-amber-400" : ""}`} />
@@ -289,7 +289,7 @@ export default function AdminProductsPage() {
           {filteredProducts.length === 0 && (
             <div className="py-20 text-center flex flex-col items-center">
               <Package className="h-10 w-10 text-slate-700 mb-3 animate-pulse" />
-              <p className="text-sm font-bold text-slate-400">No Products Registered</p>
+              <p className="text-sm font-bold text-slate-500">No Products Registered</p>
               <p className="text-xs text-slate-500 mt-1">Products published by vendors will list here.</p>
             </div>
           )}

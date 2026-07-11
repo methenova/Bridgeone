@@ -63,7 +63,7 @@ export default function AdminSystemHealthPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">System Infrastructure Health</h1>
-          <p className="mt-1 text-xs text-slate-400">Monitor active WebRTC channels, memory capacities, STUN servers, and database telemetry.</p>
+          <p className="mt-1 text-xs text-slate-500">Monitor active WebRTC channels, memory capacities, STUN servers, and database telemetry.</p>
         </div>
 
         <Button
@@ -143,13 +143,13 @@ export default function AdminSystemHealthPage() {
       <div className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-3">
         
         {/* Left 2 Cols: Platform Services status list */}
-        <div className="lg:col-span-2 rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4">
+        <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4">
           <div>
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider text-[10px] text-slate-400">Core Microservices status</h3>
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Core Microservices status</h3>
             <p className="text-xs text-slate-500">Live operational validation logs for primary interfaces</p>
           </div>
 
-          <div className="divide-y divide-slate-900 text-xs">
+          <div className="divide-y divide-slate-100 text-xs">
             {services.map(ser => (
               <div key={ser.name} className="flex justify-between items-center py-4 first:pt-0 last:pb-0">
                 <div className="flex items-center gap-3">
@@ -157,7 +157,7 @@ export default function AdminSystemHealthPage() {
                     <Server className="h-4 w-4 text-slate-500" />
                   </div>
                   <div>
-                    <p className="font-bold text-white text-xs">{ser.name}</p>
+                    <p className="font-bold text-slate-900 text-xs">{ser.name}</p>
                     <p className="text-[10px] text-slate-500 mt-0.5">{ser.desc}</p>
                   </div>
                 </div>
@@ -174,13 +174,13 @@ export default function AdminSystemHealthPage() {
         </div>
 
         {/* Right 1 Col: Platform Diagnostic Logs console */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4 flex flex-col justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4 flex flex-col justify-between">
           <div>
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider text-[10px] text-slate-400">Diagnostic Logs console</h3>
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Diagnostic Logs console</h3>
             <p className="text-xs text-slate-500">Real-time gateway warning & allocation logs</p>
           </div>
 
-          <div className="space-y-3 font-mono text-[9px] text-slate-400 bg-slate-950 p-4 rounded-xl border border-slate-900 h-56 overflow-y-auto leading-normal">
+          <div className="space-y-3 font-mono text-[9px] text-slate-500 bg-slate-950 p-4 rounded-xl border border-slate-900 h-56 overflow-y-auto leading-normal">
             {errorLogs.map((log, idx) => (
               <div key={idx} className="pb-2.5 border-b border-slate-100/80 last:border-0 last:pb-0 space-y-0.5">
                 <div className="flex justify-between text-slate-500">
@@ -189,7 +189,7 @@ export default function AdminSystemHealthPage() {
                     log.type === "warning" ? "text-amber-500" : "text-blue-500"
                   }`}>{log.type}</span>
                 </div>
-                <p className="text-slate-300 leading-normal">{log.message}</p>
+                <p className="text-slate-700 leading-normal">{log.message}</p>
               </div>
             ))}
           </div>

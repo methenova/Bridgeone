@@ -144,7 +144,7 @@ export default function AdminSubscriptionsPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Subscriptions & Billing</h1>
-        <p className="mt-1 text-xs text-slate-400">Configure global SaaS plan limits, audit payment histories, and modify tenant memberships.</p>
+        <p className="mt-1 text-xs text-slate-500">Configure global SaaS plan limits, audit payment histories, and modify tenant memberships.</p>
       </div>
 
       {/* Aggregate Counts Row */}
@@ -186,9 +186,9 @@ export default function AdminSubscriptionsPage() {
         <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Free Tier Tenants</p>
-            <p className="text-xl font-bold tracking-tight text-slate-400">{stats.freeCount}</p>
+            <p className="text-xl font-bold tracking-tight text-slate-500">{stats.freeCount}</p>
           </div>
-          <div className="h-8 w-8 rounded-xl bg-slate-800 text-slate-400 flex items-center justify-center shrink-0">
+          <div className="h-8 w-8 rounded-xl bg-slate-800 text-slate-500 flex items-center justify-center shrink-0">
             <Building className="h-4 w-4" />
           </div>
         </div>
@@ -200,9 +200,9 @@ export default function AdminSubscriptionsPage() {
         <div className="lg:col-span-2 space-y-6">
           
           {/* Tenant plan manager */}
-          <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4">
+          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4">
             <div>
-              <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-400">Tenant Subscription Manager</h3>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500">Tenant Subscription Manager</h3>
               <p className="text-xs text-slate-500">Quickly upgrade, downgrade, or cancel tenant plans directly.</p>
             </div>
 
@@ -215,7 +215,7 @@ export default function AdminSubscriptionsPage() {
                     <th className="py-3 px-2 text-right">Update Subscription</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-900 text-xs text-slate-300">
+                <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
                   {shops.slice(0, 5).map(shop => (
                     <tr key={shop.id}>
                       <td className="py-3.5 px-2 font-bold text-slate-900">{shop.shop_name}</td>
@@ -225,7 +225,7 @@ export default function AdminSubscriptionsPage() {
                             ? "bg-indigo-500/10 text-indigo-400 border-indigo-500/20"
                             : shop.plan_name === "basic"
                             ? "bg-purple-500/10 text-purple-400 border-purple-500/20"
-                            : "bg-slate-800 text-slate-400 border-slate-800"
+                            : "bg-slate-800 text-slate-500 border-slate-800"
                         }`}>
                           {shop.plan_name || "free"}
                         </span>
@@ -249,10 +249,10 @@ export default function AdminSubscriptionsPage() {
           </div>
 
           {/* Payment History Log */}
-          <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4">
+          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-400">Payment Invoice Audit</h3>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500">Payment Invoice Audit</h3>
                 <p className="text-xs text-slate-500">Completed platform transaction sales logs</p>
               </div>
               
@@ -270,15 +270,15 @@ export default function AdminSubscriptionsPage() {
               </div>
             </div>
 
-            <div className="divide-y divide-slate-900 text-xs">
+            <div className="divide-y divide-slate-100 text-xs">
               {filteredInvoices.map((inv) => (
                 <div key={inv.id} className="flex justify-between items-center py-3">
                   <div>
-                    <p className="font-bold text-white text-xs">{inv.order_items?.[0]?.shops?.shop_name || "Platform Merchant"}</p>
+                    <p className="font-bold text-slate-900 text-xs">{inv.order_items?.[0]?.shops?.shop_name || "Platform Merchant"}</p>
                     <p className="text-[10px] text-slate-500 font-mono mt-0.5">Inv: #{inv.id.slice(0, 8).toUpperCase()}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-extrabold text-white">₹{Number(inv.total).toLocaleString()}</p>
+                    <p className="font-extrabold text-slate-900">₹{Number(inv.total).toLocaleString()}</p>
                     <span className="inline-flex items-center gap-1 text-[8px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded uppercase mt-0.5">
                       Paid
                     </span>
@@ -298,9 +298,9 @@ export default function AdminSubscriptionsPage() {
 
         {/* Right 1 Col: Subscription Configuration Panel */}
         <div className="space-y-6">
-          <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-5">
+          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-5">
             <div>
-              <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-400">SaaS Plan Thresholds</h3>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500">SaaS Plan Thresholds</h3>
               <p className="text-xs text-slate-500">Edit features, usage caps, and commissions globally.</p>
             </div>
 
@@ -310,7 +310,7 @@ export default function AdminSubscriptionsPage() {
                   <div className="flex justify-between items-start">
                     <div>
                       <h4 className="text-xs font-bold text-slate-700 uppercase">{plan.display_name}</h4>
-                      <p className="text-sm font-black text-white mt-0.5">₹{plan.price}/month</p>
+                      <p className="text-sm font-black text-slate-900 mt-0.5">₹{plan.price}/month</p>
                     </div>
                     <Button
                       onClick={() => handleStartEdit(plan)}
@@ -322,10 +322,10 @@ export default function AdminSubscriptionsPage() {
 
                   <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-500 pt-2 border-t border-slate-100/50">
                     <div>
-                      Call Limit: <strong className="text-slate-300">{plan.call_limit === -1 ? "Unlimited" : `${plan.call_limit}/mo`}</strong>
+                      Call Limit: <strong className="text-slate-700">{plan.call_limit === -1 ? "Unlimited" : `${plan.call_limit}/mo`}</strong>
                     </div>
                     <div>
-                      Commission: <strong className="text-slate-300">{plan.commission_rate}%</strong>
+                      Commission: <strong className="text-slate-700">{plan.commission_rate}%</strong>
                     </div>
                   </div>
                 </div>
@@ -363,7 +363,7 @@ export default function AdminSubscriptionsPage() {
                     type="number"
                     value={editPrice}
                     onChange={(e) => setEditPrice(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-white outline-none focus:border-blue-500"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-slate-900 outline-none focus:border-blue-500"
                   />
                 </div>
 
@@ -389,7 +389,7 @@ export default function AdminSubscriptionsPage() {
                       type="number"
                       value={editCallLimit}
                       onChange={(e) => setEditCallLimit(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-slate-900 outline-none focus:border-blue-500"
                     />
                   )}
                 </div>
@@ -405,7 +405,7 @@ export default function AdminSubscriptionsPage() {
                     step="0.1"
                     value={editCommission}
                     onChange={(e) => setEditCommission(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-white outline-none focus:border-blue-500"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-slate-900 outline-none focus:border-blue-500"
                   />
                 </div>
 
@@ -413,7 +413,7 @@ export default function AdminSubscriptionsPage() {
                   <Button
                     type="button"
                     onClick={() => setEditingPlan(null)}
-                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-400 hover:text-white cursor-pointer"
+                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-white cursor-pointer"
                   >
                     Cancel
                   </Button>

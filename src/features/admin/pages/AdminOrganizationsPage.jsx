@@ -297,11 +297,11 @@ export default function AdminOrganizationsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Organizations</h1>
-          <p className="mt-1 text-xs text-slate-400">Moderate tenant subscriptions, toggle API integration permissions, and view active usages.</p>
+          <p className="mt-1 text-xs text-slate-500">Moderate tenant subscriptions, toggle API integration permissions, and view active usages.</p>
         </div>
         <Button
           onClick={handleOpenCreate}
-          className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10 transition-all active:scale-[0.98]"
+          className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-slate-900 hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10 transition-all active:scale-[0.98]"
         >
           <Plus className="h-4 w-4" />
           <span>Create Organization</span>
@@ -365,7 +365,7 @@ export default function AdminOrganizationsPage() {
             <select
               value={planFilter}
               onChange={(e) => setPlanFilter(e.target.value)}
-              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-200"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
             >
               <option value="all">All Plans</option>
               <option value="free">Free Plan</option>
@@ -380,7 +380,7 @@ export default function AdminOrganizationsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-200"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
             >
               <option value="all">All Statuses</option>
               <option value="approved">Approved</option>
@@ -395,7 +395,7 @@ export default function AdminOrganizationsPage() {
       <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Organization / brand</th>
                 <th className="px-6 py-4.5">Admin Profile</th>
@@ -404,7 +404,7 @@ export default function AdminOrganizationsPage() {
                 <th className="px-6 py-4.5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-900 bg-transparent text-xs text-slate-300">
+            <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
               {filteredShops.map((s, idx) => {
                 const ownerName = s.profiles?.full_name || "—";
                 const ownerEmail = s.profiles?.email || "—";
@@ -434,7 +434,7 @@ export default function AdminOrganizationsPage() {
                         <div>
                           <span 
                             onClick={() => handleOpenDetails(s)}
-                            className="font-bold text-white block text-sm cursor-pointer hover:text-blue-400 transition-colors"
+                            className="font-bold text-slate-900 block text-sm cursor-pointer hover:text-blue-400 transition-colors"
                           >
                             {s.shop_name}
                           </span>
@@ -483,7 +483,7 @@ export default function AdminOrganizationsPage() {
                         <Button
                           onClick={() => handleToggleActive(s)}
                           disabled={toggleStatus.isPending}
-                          className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+                          className="text-slate-500 hover:text-white transition-colors cursor-pointer"
                         >
                           {isApproved ? (
                             <ToggleRight className="h-6 w-6 text-emerald-500" />
@@ -520,7 +520,7 @@ export default function AdminOrganizationsPage() {
           {filteredShops.length === 0 && (
             <div className="py-20 text-center flex flex-col items-center">
               <Store className="h-10 w-10 text-slate-700 mb-3 animate-pulse" />
-              <p className="text-sm font-bold text-slate-400">No organizations found</p>
+              <p className="text-sm font-bold text-slate-500">No organizations found</p>
               <p className="text-xs text-slate-500 mt-1">Try resetting the filters above.</p>
             </div>
           )}
@@ -545,7 +545,7 @@ export default function AdminOrganizationsPage() {
                   </div>
                   <Button 
                     onClick={() => setSelectedShop(null)}
-                    className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+                    className="text-slate-500 hover:text-white transition-colors cursor-pointer"
                   >
                     <X className="h-5 w-5" />
                   </Button>
@@ -577,7 +577,7 @@ export default function AdminOrganizationsPage() {
 
                 {/* Usage metrics logs */}
                 <div className="space-y-3">
-                  <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400">Month-to-Date Usage Metrics</h4>
+                  <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-slate-500">Month-to-Date Usage Metrics</h4>
                   {loadingUsage ? (
                     <div className="flex py-6 justify-center">
                       <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
@@ -590,7 +590,7 @@ export default function AdminOrganizationsPage() {
                           <Activity className="h-4 w-4 text-indigo-400" />
                           <span>Monthly Video Calls</span>
                         </div>
-                        <span className="font-bold text-white text-xs">{selectedShopUsage.calls} calls</span>
+                        <span className="font-bold text-slate-900 text-xs">{selectedShopUsage.calls} calls</span>
                       </div>
                       
                       {/* Products */}
@@ -599,7 +599,7 @@ export default function AdminOrganizationsPage() {
                           <Layers className="h-4 w-4 text-emerald-400" />
                           <span>Catalog Items (Products)</span>
                         </div>
-                        <span className="font-bold text-white text-xs">{selectedShopUsage.products} items</span>
+                        <span className="font-bold text-slate-900 text-xs">{selectedShopUsage.products} items</span>
                       </div>
 
                       {/* Orders */}
@@ -608,7 +608,7 @@ export default function AdminOrganizationsPage() {
                           <DollarSign className="h-4 w-4 text-amber-400" />
                           <span>Transactions Flow Volume</span>
                         </div>
-                        <span className="font-bold text-white text-xs">₹{selectedShopUsage.orders.toLocaleString()}</span>
+                        <span className="font-bold text-slate-900 text-xs">₹{selectedShopUsage.orders.toLocaleString()}</span>
                       </div>
                     </div>
                   )}
@@ -616,10 +616,10 @@ export default function AdminOrganizationsPage() {
 
                 {/* Widget Info */}
                 <div className="space-y-3">
-                  <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400">Widget Configuration</h4>
+                  <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-slate-500">Widget Configuration</h4>
                   <div className="bg-slate-900/20 p-4 rounded-xl border border-slate-900 space-y-2 text-xs text-slate-700">
-                    <p>Widget Color: <span className="font-bold text-white uppercase">{selectedShop.widget_color || "#2563eb"}</span></p>
-                    <p>Widget Position: <span className="font-bold text-white capitalize">{selectedShop.widget_position || "bottom-right"}</span></p>
+                    <p>Widget Color: <span className="font-bold text-slate-900 uppercase">{selectedShop.widget_color || "#2563eb"}</span></p>
+                    <p>Widget Position: <span className="font-bold text-slate-900 capitalize">{selectedShop.widget_position || "bottom-right"}</span></p>
                     <p>Widget Token API Key: <span className="font-mono text-slate-500 font-bold block bg-slate-950 p-2 mt-1 rounded text-[10px] select-all">{selectedShop.id}</span></p>
                   </div>
                 </div>
@@ -628,7 +628,7 @@ export default function AdminOrganizationsPage() {
               <div className="pt-4 border-t border-slate-100 flex justify-end gap-3 text-xs">
                 <Button 
                   onClick={() => handleOpenEdit(selectedShop)}
-                  className="px-4 py-2 border border-slate-200 rounded-xl text-slate-300 hover:text-white cursor-pointer"
+                  className="px-4 py-2 border border-slate-200 rounded-xl text-slate-700 hover:text-white cursor-pointer"
                 >
                   Edit Shop details
                 </Button>

@@ -163,11 +163,11 @@ export default function AdminOrgAdminsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Organization Admins</h1>
-          <p className="mt-1 text-xs text-slate-400">Promote system users, audit merchant profile states, and map storefront ownerships.</p>
+          <p className="mt-1 text-xs text-slate-500">Promote system users, audit merchant profile states, and map storefront ownerships.</p>
         </div>
         <Button
           onClick={handleOpenPromote}
-          className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10 transition-all active:scale-[0.98]"
+          className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-slate-900 hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10 transition-all active:scale-[0.98]"
         >
           <Plus className="h-4 w-4" />
           <span>Promote Org Admin</span>
@@ -194,7 +194,7 @@ export default function AdminOrgAdminsPage() {
       <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Administrator</th>
                 <th className="px-6 py-4.5">Associated Shop / Org</th>
@@ -202,7 +202,7 @@ export default function AdminOrgAdminsPage() {
                 <th className="px-6 py-4.5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-900 bg-transparent text-xs text-slate-300">
+            <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
               {filteredAdmins.map((admin, idx) => {
                 const linkedShop = shops.find(s => s.owner_id === admin.id);
                 const joinDate = admin.created_at ? new Date(admin.created_at).toLocaleDateString("en-IN", {
@@ -226,7 +226,7 @@ export default function AdminOrgAdminsPage() {
                           <Users className="h-4 w-4 text-indigo-400" />
                         </div>
                         <div>
-                          <span className="font-bold text-white block text-sm">{admin.full_name || "Merchant"}</span>
+                          <span className="font-bold text-slate-900 block text-sm">{admin.full_name || "Merchant"}</span>
                           <span className="text-[10px] text-slate-500 font-mono block mt-0.5">{admin.email}</span>
                         </div>
                       </div>
@@ -235,7 +235,7 @@ export default function AdminOrgAdminsPage() {
                     {/* Linked store */}
                     <td className="px-6 py-4 font-semibold">
                       {linkedShop ? (
-                        <div className="flex items-center gap-2 text-slate-200">
+                        <div className="flex items-center gap-2 text-slate-800">
                           <Building className="h-3.5 w-3.5 text-indigo-500" />
                           <span>{linkedShop.shop_name}</span>
                         </div>
@@ -245,7 +245,7 @@ export default function AdminOrgAdminsPage() {
                     </td>
 
                     {/* Registration Date */}
-                    <td className="px-6 py-4 text-slate-400 font-medium">{joinDate}</td>
+                    <td className="px-6 py-4 text-slate-500 font-medium">{joinDate}</td>
 
                     {/* Action buttons */}
                     <td className="px-6 py-4 text-right">
@@ -265,7 +265,7 @@ export default function AdminOrgAdminsPage() {
           {filteredAdmins.length === 0 && (
             <div className="py-20 text-center flex flex-col items-center">
               <Users className="h-10 w-10 text-slate-700 mb-3 animate-pulse" />
-              <p className="text-sm font-bold text-slate-400">No Administrators Found</p>
+              <p className="text-sm font-bold text-slate-500">No Administrators Found</p>
             </div>
           )}
         </div>
@@ -307,7 +307,7 @@ export default function AdminOrgAdminsPage() {
                   <Button
                     type="button"
                     onClick={() => setIsPromoteOpen(false)}
-                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-400 hover:text-white cursor-pointer"
+                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-white cursor-pointer"
                   >
                     Cancel
                   </Button>
@@ -360,7 +360,7 @@ export default function AdminOrgAdminsPage() {
                   <Button
                     type="button"
                     onClick={() => setIsLinkOpen(false)}
-                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-400 hover:text-white cursor-pointer"
+                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-white cursor-pointer"
                   >
                     Cancel
                   </Button>

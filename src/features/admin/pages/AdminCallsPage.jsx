@@ -138,12 +138,12 @@ export default function AdminCallsPage() {
   }
 
   return (
-    <div className="space-y-6 md:space-y-8 text-white max-w-7xl">
+    <div className="space-y-6 md:space-y-8 text-slate-900 max-w-7xl">
       
       {/* Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Live Calls</h1>
-        <p className="mt-1 text-xs text-slate-400">Moderate ongoing consulting calls, track offline bookings, and view video log history.</p>
+        <p className="mt-1 text-xs text-slate-500">Moderate ongoing consulting calls, track offline bookings, and view video log history.</p>
       </div>
 
       {/* KPI Cards */}
@@ -198,7 +198,7 @@ export default function AdminCallsPage() {
         <Button
           onClick={() => { setActiveTab("live"); setSearchQuery(""); setStatusFilter("all"); }}
           className={`pb-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
-            activeTab === "live" ? "border-blue-500 text-white" : "border-transparent text-slate-500 hover:text-slate-300"
+            activeTab === "live" ? "border-blue-500 text-white" : "border-transparent text-slate-500 hover:text-slate-700"
           }`}
         >
           Live Sessions ({stats.activeRooms})
@@ -206,7 +206,7 @@ export default function AdminCallsPage() {
         <Button
           onClick={() => { setActiveTab("callbacks"); setSearchQuery(""); setStatusFilter("all"); }}
           className={`pb-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
-            activeTab === "callbacks" ? "border-blue-500 text-white" : "border-transparent text-slate-500 hover:text-slate-300"
+            activeTab === "callbacks" ? "border-blue-500 text-white" : "border-transparent text-slate-500 hover:text-slate-700"
           }`}
         >
           Scheduled Callbacks ({stats.totalCallbacks})
@@ -214,7 +214,7 @@ export default function AdminCallsPage() {
         <Button
           onClick={() => { setActiveTab("logs"); setSearchQuery(""); setStatusFilter("all"); }}
           className={`pb-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
-            activeTab === "logs" ? "border-blue-500 text-white" : "border-transparent text-slate-500 hover:text-slate-300"
+            activeTab === "logs" ? "border-blue-500 text-white" : "border-transparent text-slate-500 hover:text-slate-700"
           }`}
         >
           Audit Logs ({stats.totalCalls})
@@ -227,7 +227,7 @@ export default function AdminCallsPage() {
           {liveRooms.length === 0 ? (
             <div className="rounded-2xl border border-slate-900 bg-slate-900/10 p-16 text-center flex flex-col items-center justify-center space-y-2.5">
               <Video className="h-9 w-9 text-slate-750" />
-              <p className="text-sm font-bold text-slate-400">No active sessions live</p>
+              <p className="text-sm font-bold text-slate-500">No active sessions live</p>
               <p className="text-xs text-slate-500 max-w-sm">Ongoing customer calls will list here with live terminate capability.</p>
             </div>
           ) : (
@@ -245,7 +245,7 @@ export default function AdminCallsPage() {
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-450 animate-ping" />
                         <span>Active</span>
                       </span>
-                      <h3 className="text-sm font-extrabold text-white block pt-2">{room.shops?.shop_name || "Merchant Store"}</h3>
+                      <h3 className="text-sm font-extrabold text-slate-900 block pt-2">{room.shops?.shop_name || "Merchant Store"}</h3>
                       <p className="text-[9px] text-slate-500 font-mono">Room: {room.room_code}</p>
                     </div>
                     <div className="h-9 w-9 rounded-xl bg-slate-950 border border-slate-200 flex items-center justify-center shrink-0 text-slate-500">
@@ -255,7 +255,7 @@ export default function AdminCallsPage() {
 
                   <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-[10px]">
                     <div className="text-slate-500 font-medium">
-                      Seller: <span className="text-slate-300 font-bold">{room.profiles?.full_name || "Online Host"}</span>
+                      Seller: <span className="text-slate-700 font-bold">{room.profiles?.full_name || "Online Host"}</span>
                     </div>
                     <Button
                       onClick={() => handleTerminateSession(room.id, room.room_code)}
@@ -293,7 +293,7 @@ export default function AdminCallsPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
+                className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-800"
               >
                 <option value="all">All Bookings</option>
                 <option value="pending">Pending</option>
@@ -306,7 +306,7 @@ export default function AdminCallsPage() {
           <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
             <div className="overflow-x-auto">
               <table className="min-w-full text-left border-collapse">
-                <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+                <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
                   <tr>
                     <th className="px-6 py-4.5">Client Contact</th>
                     <th className="px-6 py-4.5">Storefront Target</th>
@@ -315,7 +315,7 @@ export default function AdminCallsPage() {
                     <th className="px-6 py-4.5 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-900 bg-transparent text-xs text-slate-300">
+                <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
                   {filteredCallbacks.map((cb, idx) => {
                     const scheduledDate = new Date(cb.scheduled_time).toLocaleDateString(undefined, {
                       year: "numeric",
@@ -339,7 +339,7 @@ export default function AdminCallsPage() {
                               {(cb.customer_name || "G").charAt(0).toUpperCase()}
                             </div>
                             <div>
-                              <span className="font-bold text-white block text-sm">{cb.customer_name || "Guest Customer"}</span>
+                              <span className="font-bold text-slate-900 block text-sm">{cb.customer_name || "Guest Customer"}</span>
                               <span className="text-[10px] text-slate-500 mt-0.5 flex items-center gap-2">
                                 {cb.customer_email && <span className="flex items-center gap-0.5"><Mail className="h-2.5 w-2.5" />{cb.customer_email}</span>}
                                 {cb.customer_phone && <span className="flex items-center gap-0.5"><Phone className="h-2.5 w-2.5" />{cb.customer_phone}</span>}
@@ -352,7 +352,7 @@ export default function AdminCallsPage() {
                           {cb.shops?.shop_name || "—"}
                         </td>
 
-                        <td className="px-6 py-4 text-slate-400 font-medium">
+                        <td className="px-6 py-4 text-slate-500 font-medium">
                           {scheduledDate}
                         </td>
 
@@ -387,7 +387,7 @@ export default function AdminCallsPage() {
               {filteredCallbacks.length === 0 && (
                 <div className="py-20 text-center flex flex-col items-center">
                   <Calendar className="h-10 w-10 text-slate-700 mb-3 animate-pulse" />
-                  <p className="text-sm font-bold text-slate-400">No Callbacks Found</p>
+                  <p className="text-sm font-bold text-slate-500">No Callbacks Found</p>
                 </div>
               )}
             </div>
@@ -417,7 +417,7 @@ export default function AdminCallsPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
+                className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-800"
               >
                 <option value="all">All Logs</option>
                 <option value="completed">Completed</option>
@@ -431,7 +431,7 @@ export default function AdminCallsPage() {
           <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
             <div className="overflow-x-auto">
               <table className="min-w-full text-left border-collapse">
-                <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+                <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
                   <tr>
                     <th className="px-6 py-4.5">Caller / Customer</th>
                     <th className="px-6 py-4.5">Target Store</th>
@@ -441,7 +441,7 @@ export default function AdminCallsPage() {
                     <th className="px-6 py-4.5 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-900 bg-transparent text-xs text-slate-300">
+                <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
                   {filteredCalls.map((c, idx) => {
                     const callDate = new Date(c.created_at).toLocaleDateString(undefined, {
                       year: "numeric",
@@ -461,11 +461,11 @@ export default function AdminCallsPage() {
                       >
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-950 border border-slate-200 text-slate-400 shrink-0">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-950 border border-slate-200 text-slate-500 shrink-0">
                               <User className="h-4 w-4" />
                             </div>
                             <div>
-                              <span className="font-bold text-white block text-sm">{c.customer_name || "Guest User"}</span>
+                              <span className="font-bold text-slate-900 block text-sm">{c.customer_name || "Guest User"}</span>
                               <span className="text-[10px] text-slate-500 mt-0.5 flex items-center gap-2">
                                 {c.customer_email && <span className="flex items-center gap-0.5"><Mail className="h-2.5 w-2.5" />{c.customer_email}</span>}
                                 {c.customer_phone && <span className="flex items-center gap-0.5"><Phone className="h-2.5 w-2.5" />{c.customer_phone}</span>}
@@ -478,7 +478,7 @@ export default function AdminCallsPage() {
                           {c.shops?.shop_name || "—"}
                         </td>
 
-                        <td className="px-6 py-4 text-slate-400 font-mono">
+                        <td className="px-6 py-4 text-slate-500 font-mono">
                           {formatDuration(c.duration)}
                         </td>
 
@@ -516,7 +516,7 @@ export default function AdminCallsPage() {
               {filteredCalls.length === 0 && (
                 <div className="py-20 text-center flex flex-col items-center">
                   <Clock className="h-10 w-10 text-slate-700 mb-3 animate-pulse" />
-                  <p className="text-sm font-bold text-slate-400">No Call Logs Match Filter Criteria</p>
+                  <p className="text-sm font-bold text-slate-500">No Call Logs Match Filter Criteria</p>
                 </div>
               )}
             </div>

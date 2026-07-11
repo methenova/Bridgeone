@@ -80,12 +80,12 @@ export default function AdminShopsPage() {
   }
 
   return (
-    <div className="space-y-4 md:space-y-6 text-white max-w-7xl">
+    <div className="space-y-4 md:space-y-6 text-slate-900 max-w-7xl">
       
       {/* Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Shops</h1>
-        <p className="mt-1 text-xs text-slate-400">Moderate vendor listings, adjust subscription levels, and view approval statuses.</p>
+        <p className="mt-1 text-xs text-slate-500">Moderate vendor listings, adjust subscription levels, and view approval statuses.</p>
       </div>
 
       {/* Aggregate Stats Bar */}
@@ -149,7 +149,7 @@ export default function AdminShopsPage() {
             <select
               value={planFilter}
               onChange={(e) => setPlanFilter(e.target.value)}
-              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-800"
             >
               <option value="all">All Plans</option>
               <option value="free">Free Plan</option>
@@ -164,7 +164,7 @@ export default function AdminShopsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-300 outline-none focus:border-slate-800"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-800"
             >
               <option value="all">All Statuses</option>
               <option value="approved">Approved</option>
@@ -179,7 +179,7 @@ export default function AdminShopsPage() {
       <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Store / Brand</th>
                 <th className="px-6 py-4.5">Merchant / Owner</th>
@@ -189,7 +189,7 @@ export default function AdminShopsPage() {
                 <th className="px-6 py-4.5 text-right">Access Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-900 bg-transparent text-xs text-slate-300">
+            <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
               {filteredShops.map((s, idx) => {
                 const ownerName = s.profiles?.full_name || "—";
                 const ownerEmail = s.profiles?.email || "—";
@@ -214,7 +214,7 @@ export default function AdminShopsPage() {
                           )}
                         </div>
                         <div>
-                          <span className="font-bold text-white block text-sm">{s.shop_name}</span>
+                          <span className="font-bold text-slate-900 block text-sm">{s.shop_name}</span>
                           <span className="text-[10px] text-slate-500 font-mono mt-0.5 block uppercase">
                             #{s.id.slice(0, 8)}
                           </span>
@@ -229,7 +229,7 @@ export default function AdminShopsPage() {
                     </td>
 
                     {/* Category */}
-                    <td className="px-6 py-4 text-slate-400 font-medium">
+                    <td className="px-6 py-4 text-slate-500 font-medium">
                       {s.categories?.name || "Uncategorized"}
                     </td>
 
@@ -290,7 +290,7 @@ export default function AdminShopsPage() {
           {filteredShops.length === 0 && (
             <div className="py-20 text-center flex flex-col items-center">
               <Store className="h-10 w-10 text-slate-700 mb-3 animate-pulse" />
-              <p className="text-sm font-bold text-slate-400">No Shops Match Filter criteria</p>
+              <p className="text-sm font-bold text-slate-500">No Shops Match Filter criteria</p>
               <p className="text-xs text-slate-500 mt-1">Try resetting the search filters above.</p>
             </div>
           )}

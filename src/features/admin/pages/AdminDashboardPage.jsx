@@ -194,17 +194,17 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="space-y-6 md:space-y-8 text-white max-w-7xl">
+    <div className="space-y-6 md:space-y-8 text-slate-900 max-w-7xl">
       
       {/* Upper Welcome Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Platform Dashboard</h1>
-          <p className="mt-1 text-xs text-slate-400">Multi-tenant operational health and global usage analytics.</p>
+          <p className="mt-1 text-xs text-slate-500">Multi-tenant operational health and global usage analytics.</p>
         </div>
         
         {/* Pulsing server connectivity status */}
-        <div className="flex items-center gap-2 self-start bg-white border border-slate-200 px-4 py-2 rounded-xl text-xs font-bold text-slate-300">
+        <div className="flex items-center gap-2 self-start bg-white border border-slate-200 px-4 py-2 rounded-xl text-xs font-bold text-slate-700">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
@@ -290,10 +290,10 @@ export default function AdminDashboardPage() {
       <div className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-3">
         
         {/* Sales Performance Graph */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4 lg:col-span-2">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4 lg:col-span-2">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider text-[10px] text-slate-400">Monthly Call Growth</h3>
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Monthly Call Growth</h3>
               <p className="text-xs text-slate-500">Global consultation volumes tracking dynamic growth</p>
             </div>
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-bold text-emerald-400">
@@ -339,9 +339,9 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Quick Actions Panel */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-5 flex flex-col justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-5 flex flex-col justify-between">
           <div>
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider text-[10px] text-slate-400">Super Admin Quick Actions</h3>
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Super Admin Quick Actions</h3>
             <p className="text-xs text-slate-500">Run global marketplace maintenance routines instantly.</p>
           </div>
 
@@ -365,7 +365,7 @@ export default function AdminDashboardPage() {
               className="w-full flex items-center justify-between px-4 py-3 bg-white border border-slate-200 hover:border-slate-800 transition-all rounded-xl text-left cursor-pointer group hover:-translate-y-0.5 transition-all duration-200"
             >
               <div>
-                <p className="text-xs font-bold text-slate-200">Send Global Announcement</p>
+                <p className="text-xs font-bold text-slate-800">Send Global Announcement</p>
                 <p className="text-[10px] text-slate-500 mt-0.5">Push banners to all active sellers</p>
               </div>
               <Bell className="h-4 w-4 text-indigo-400 group-hover:scale-110 transition-transform" />
@@ -377,7 +377,7 @@ export default function AdminDashboardPage() {
               className="w-full flex items-center justify-between px-4 py-3 bg-white border border-slate-200 hover:border-slate-800 transition-all rounded-xl text-left cursor-pointer group hover:-translate-y-0.5 transition-all duration-200"
             >
               <div>
-                <p className="text-xs font-bold text-slate-200">Adjust Dynamic SaaS Limits</p>
+                <p className="text-xs font-bold text-slate-800">Adjust Dynamic SaaS Limits</p>
                 <p className="text-[10px] text-slate-500 mt-0.5">Configure billing prices & call metrics</p>
               </div>
               <Layers className="h-4 w-4 text-emerald-400 group-hover:scale-110 transition-transform" />
@@ -395,10 +395,10 @@ export default function AdminDashboardPage() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         
         {/* Newly Registered Organizations */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider text-[10px] text-slate-400">Newly Registered Stores</h3>
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Newly Registered Stores</h3>
               <p className="text-xs text-slate-500">Shops awaiting reviews or newly active</p>
             </div>
             <Link 
@@ -410,11 +410,11 @@ export default function AdminDashboardPage() {
             </Link>
           </div>
 
-          <div className="divide-y divide-slate-900">
+          <div className="divide-y divide-slate-100">
             {recentRegistrations.map((shop) => (
               <div key={shop.id} className="flex justify-between items-center py-3 first:pt-0 last:pb-0 text-sm">
                 <div>
-                  <p className="font-bold text-white text-xs">{shop.shop_name}</p>
+                  <p className="font-bold text-slate-900 text-xs">{shop.shop_name}</p>
                   <p className="text-[10px] text-slate-500 mt-0.5 font-mono">
                     Tier: <span className="uppercase text-slate-700 font-bold">{shop.plan_name || "free"}</span>
                   </p>
@@ -438,10 +438,10 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Recent WebRTC Calls Log */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider text-[10px] text-slate-400">Recent Platform Calls</h3>
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Recent Platform Calls</h3>
               <p className="text-xs text-slate-500">Live conversation histories</p>
             </div>
             <Link 
@@ -453,11 +453,11 @@ export default function AdminDashboardPage() {
             </Link>
           </div>
 
-          <div className="divide-y divide-slate-900">
+          <div className="divide-y divide-slate-100">
             {recentCalls.map((log) => (
               <div key={log.id} className="flex justify-between items-center py-3 first:pt-0 last:pb-0 text-sm">
                 <div>
-                  <p className="font-bold text-white text-xs">{log.customer_name || "Guest User"}</p>
+                  <p className="font-bold text-slate-900 text-xs">{log.customer_name || "Guest User"}</p>
                   <p className="text-[10px] text-slate-500 mt-0.5">
                     called <span className="text-slate-700 font-semibold">{log.shops?.shop_name || "Merchant"}</span>
                   </p>
@@ -481,9 +481,9 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* System Health Monitor */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 space-y-4">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4">
           <div>
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider text-[10px] text-slate-400">System Infrastructure</h3>
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">System Infrastructure</h3>
             <p className="text-xs text-slate-500">Live API and server health parameters</p>
           </div>
           
@@ -497,7 +497,7 @@ export default function AdminDashboardPage() {
                       <HealthIcon className="h-3.5 w-3.5" />
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-300 text-xs">{health.name}</p>
+                      <p className="font-semibold text-slate-700 text-xs">{health.name}</p>
                       <p className="text-[9px] text-slate-500 mt-0.5 font-mono">{health.value}</p>
                     </div>
                   </div>
