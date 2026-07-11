@@ -186,45 +186,6 @@ export default function AdminCallsPage() {
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Pending Booking</p>
             <p className="text-xl font-bold tracking-tight text-amber-400">{stats.pendingCallbacks}</p>
-          </div>
-          <div className="h-9 w-9 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
-            <Clock className="h-4.5 w-4.5" />
-          </div>
-        </div>
-      </div>
-
-      {/* Tabs Switcher */}
-      <div className="flex border-b border-slate-100 gap-6">
-        <Button
-          onClick={() => { setActiveTab("live"); setSearchQuery(""); setStatusFilter("all"); }}
-          className={`pb-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
-            activeTab === "live" ? "border-blue-500 text-slate-900" : "border-transparent text-slate-500 hover:text-slate-700"
-          }`}
-        >
-          Live Sessions ({stats.activeRooms})
-        </Button>
-        <Button
-          onClick={() => { setActiveTab("callbacks"); setSearchQuery(""); setStatusFilter("all"); }}
-          className={`pb-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
-            activeTab === "callbacks" ? "border-blue-500 text-slate-900" : "border-transparent text-slate-500 hover:text-slate-700"
-          }`}
-        >
-          Scheduled Callbacks ({stats.totalCallbacks})
-        </Button>
-        <Button
-          onClick={() => { setActiveTab("logs"); setSearchQuery(""); setStatusFilter("all"); }}
-          className={`pb-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
-            activeTab === "logs" ? "border-blue-500 text-slate-900" : "border-transparent text-slate-500 hover:text-slate-700"
-          }`}
-        >
-          Audit Logs ({stats.totalCalls})
-        </Button>
-      </div>
-
-      {/* ── TAB 1: LIVE SESSIONS ──────────────────────── */}
-      {activeTab === "live" && (
-        <div className="space-y-6">
-          {liveRooms.length === 0 ? (
             <div className="rounded-2xl border border-slate-200 bg-white shadow-sm/10 p-16 text-center flex flex-col items-center justify-center space-y-2.5">
               <Video className="h-9 w-9 text-slate-750" />
               <p className="text-sm font-bold text-slate-500">No active sessions live</p>
