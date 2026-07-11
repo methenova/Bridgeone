@@ -22,11 +22,11 @@ export default function CustomerInvoiceModal({ isOpen, order, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm print:absolute print:inset-0 print:bg-white print:p-0">
       {/* Container */}
-      <div className="relative flex h-full max-h-[85vh] w-full max-w-3xl flex-col rounded-3xl border border-slate-800 bg-slate-950 shadow-2xl print:h-auto print:max-h-none print:border-none print:bg-white print:shadow-none">
+      <div className="relative flex h-full max-h-[85vh] w-full max-w-3xl flex-col rounded-3xl border border-slate-200 bg-slate-50 shadow-2xl print:h-auto print:max-h-none print:border-none print:bg-white print:shadow-none">
         
         {/* Modal Controls (Hidden on Print) */}
-        <div className="flex shrink-0 items-center justify-between border-b border-slate-800 px-6 py-4 print:hidden">
-          <h3 className="text-lg font-bold text-white">Download Invoice</h3>
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-4 print:hidden">
+          <h3 className="text-lg font-bold text-slate-900">Download Invoice</h3>
           <div className="flex gap-2">
             <button
               onClick={handlePrint}
@@ -37,7 +37,7 @@ export default function CustomerInvoiceModal({ isOpen, order, onClose }) {
             </button>
             <button
               onClick={onClose}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-700 text-slate-400 hover:text-white"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-500 hover:text-slate-900"
             >
               <X className="h-5 w-5" />
             </button>
@@ -159,7 +159,7 @@ export default function CustomerInvoiceModal({ isOpen, order, onClose }) {
           </div>
 
           {/* Footer Terms */}
-          <div className="mt-16 text-center text-xs text-slate-400 border-t border-slate-100 pt-6">
+          <div className="mt-16 text-center text-xs text-slate-500 border-t border-slate-100 pt-6">
             <p>This is a system-generated official receipt for your BridgeOne marketplace order.</p>
             <p className="mt-0.5">Thank you for your purchase!</p>
           </div>

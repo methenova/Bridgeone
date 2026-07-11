@@ -7,7 +7,7 @@ import ReviewList from "../components/ReviewList";
 
 export default function ShopProfilePage() {
   return (
-    <main className="min-h-screen bg-slate-950 py-10">
+    <main className="min-h-screen bg-slate-50 py-10">
       <Container>
         <ShopBanner />
 

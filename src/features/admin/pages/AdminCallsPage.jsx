@@ -131,7 +131,7 @@ export default function AdminCallsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
+        <div className="h-10 w-48 animate-pulse rounded-lg bg-white shadow-sm" />
         <ProductSkeleton rows={6} />
       </div>
     );
@@ -149,7 +149,7 @@ export default function AdminCallsPage() {
       {/* KPI Cards */}
       <div className="grid gap-3 md:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 max-w-4xl">
         {/* Active Calls */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Active Calls</p>
             <p className="text-xl font-bold tracking-tight text-emerald-400">{stats.activeRooms}</p>
@@ -160,7 +160,7 @@ export default function AdminCallsPage() {
         </div>
 
         {/* Total Consults */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Total Consults</p>
             <p className="text-xl font-bold tracking-tight">{stats.totalCalls}</p>
@@ -171,7 +171,7 @@ export default function AdminCallsPage() {
         </div>
 
         {/* Total Booked Callbacks */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Total Bookings</p>
             <p className="text-xl font-bold tracking-tight text-indigo-400">{stats.totalCallbacks}</p>
@@ -182,7 +182,7 @@ export default function AdminCallsPage() {
         </div>
 
         {/* Pending Callbacks */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Pending Booking</p>
             <p className="text-xl font-bold tracking-tight text-amber-400">{stats.pendingCallbacks}</p>
@@ -198,7 +198,7 @@ export default function AdminCallsPage() {
         <Button
           onClick={() => { setActiveTab("live"); setSearchQuery(""); setStatusFilter("all"); }}
           className={`pb-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
-            activeTab === "live" ? "border-blue-500 text-white" : "border-transparent text-slate-500 hover:text-slate-700"
+            activeTab === "live" ? "border-blue-500 text-slate-900" : "border-transparent text-slate-500 hover:text-slate-700"
           }`}
         >
           Live Sessions ({stats.activeRooms})
@@ -206,7 +206,7 @@ export default function AdminCallsPage() {
         <Button
           onClick={() => { setActiveTab("callbacks"); setSearchQuery(""); setStatusFilter("all"); }}
           className={`pb-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
-            activeTab === "callbacks" ? "border-blue-500 text-white" : "border-transparent text-slate-500 hover:text-slate-700"
+            activeTab === "callbacks" ? "border-blue-500 text-slate-900" : "border-transparent text-slate-500 hover:text-slate-700"
           }`}
         >
           Scheduled Callbacks ({stats.totalCallbacks})
@@ -214,7 +214,7 @@ export default function AdminCallsPage() {
         <Button
           onClick={() => { setActiveTab("logs"); setSearchQuery(""); setStatusFilter("all"); }}
           className={`pb-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
-            activeTab === "logs" ? "border-blue-500 text-white" : "border-transparent text-slate-500 hover:text-slate-700"
+            activeTab === "logs" ? "border-blue-500 text-slate-900" : "border-transparent text-slate-500 hover:text-slate-700"
           }`}
         >
           Audit Logs ({stats.totalCalls})
@@ -225,7 +225,7 @@ export default function AdminCallsPage() {
       {activeTab === "live" && (
         <div className="space-y-6">
           {liveRooms.length === 0 ? (
-            <div className="rounded-2xl border border-slate-900 bg-slate-900/10 p-16 text-center flex flex-col items-center justify-center space-y-2.5">
+            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm/10 p-16 text-center flex flex-col items-center justify-center space-y-2.5">
               <Video className="h-9 w-9 text-slate-750" />
               <p className="text-sm font-bold text-slate-500">No active sessions live</p>
               <p className="text-xs text-slate-500 max-w-sm">Ongoing customer calls will list here with live terminate capability.</p>
@@ -237,7 +237,7 @@ export default function AdminCallsPage() {
                   key={room.id}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="rounded-2xl border border-slate-900 bg-slate-900/30 p-5 flex flex-col justify-between space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200"
+                  className="rounded-2xl border border-slate-200 bg-white shadow-sm p-5 flex flex-col justify-between space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200"
                 >
                   <div className="flex items-start justify-between">
                     <div className="space-y-1">
@@ -248,7 +248,7 @@ export default function AdminCallsPage() {
                       <h3 className="text-sm font-extrabold text-slate-900 block pt-2">{room.shops?.shop_name || "Merchant Store"}</h3>
                       <p className="text-[9px] text-slate-500 font-mono">Room: {room.room_code}</p>
                     </div>
-                    <div className="h-9 w-9 rounded-xl bg-slate-950 border border-slate-200 flex items-center justify-center shrink-0 text-slate-500">
+                    <div className="h-9 w-9 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0 text-slate-500">
                       <Store className="h-4.5 w-4.5" />
                     </div>
                   </div>
@@ -274,7 +274,7 @@ export default function AdminCallsPage() {
       {/* ── TAB 2: SCHEDULED CALLBACKS ────────────────── */}
       {activeTab === "callbacks" && (
         <div className="space-y-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/20 p-4 rounded-2xl border border-slate-900">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white shadow-sm p-4 rounded-2xl border border-slate-200">
             <div className="relative flex-1 max-w-md">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
                 <Search className="h-4 w-4" />
@@ -284,7 +284,7 @@ export default function AdminCallsPage() {
                 placeholder="Search callbacks by name, email, or store..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-800 transition-colors"
+                className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-slate-200 transition-colors"
               />
             </div>
 
@@ -293,7 +293,7 @@ export default function AdminCallsPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-800"
+                className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
               >
                 <option value="all">All Bookings</option>
                 <option value="pending">Pending</option>
@@ -303,10 +303,10 @@ export default function AdminCallsPage() {
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
             <div className="overflow-x-auto">
               <table className="min-w-full text-left border-collapse">
-                <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+                <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
                   <tr>
                     <th className="px-6 py-4.5">Client Contact</th>
                     <th className="px-6 py-4.5">Storefront Target</th>
@@ -331,11 +331,11 @@ export default function AdminCallsPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.02 }}
                         key={cb.id} 
-                        className="hover:bg-slate-900/10 transition-colors"
+                        className="hover:bg-white shadow-sm/10 transition-colors"
                       >
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-950 border border-slate-200 text-slate-500 shrink-0 font-bold">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-50 border border-slate-200 text-slate-500 shrink-0 font-bold">
                               {(cb.customer_name || "G").charAt(0).toUpperCase()}
                             </div>
                             <div>
@@ -348,7 +348,7 @@ export default function AdminCallsPage() {
                           </div>
                         </td>
 
-                        <td className="px-6 py-4 text-white font-semibold">
+                        <td className="px-6 py-4 text-slate-900 font-semibold">
                           {cb.shops?.shop_name || "—"}
                         </td>
 
@@ -361,7 +361,7 @@ export default function AdminCallsPage() {
                             value={cb.status || "pending"}
                             onChange={(e) => handleCallbackStatus(cb.id, e.target.value)}
                             disabled={updateCallback.isPending}
-                            className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-white outline-none focus:border-blue-500 disabled:opacity-50 font-bold transition-all"
+                            className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-900 outline-none focus:border-blue-500 disabled:opacity-50 font-bold transition-all"
                           >
                             {CALLBACK_STATUSES.map((stat) => (
                               <option key={stat.value} value={stat.value}>{stat.label}</option>
@@ -398,7 +398,7 @@ export default function AdminCallsPage() {
       {/* ── TAB 3: AUDIT LOGS ──────────────────────────── */}
       {activeTab === "logs" && (
         <div className="space-y-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/20 p-4 rounded-2xl border border-slate-900">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white shadow-sm p-4 rounded-2xl border border-slate-200">
             <div className="relative flex-1 max-w-md">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
                 <Search className="h-4 w-4" />
@@ -408,7 +408,7 @@ export default function AdminCallsPage() {
                 placeholder="Search call logs by name, email, or store..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-800 transition-colors"
+                className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-slate-200 transition-colors"
               />
             </div>
 
@@ -417,7 +417,7 @@ export default function AdminCallsPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-800"
+                className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
               >
                 <option value="all">All Logs</option>
                 <option value="completed">Completed</option>
@@ -428,10 +428,10 @@ export default function AdminCallsPage() {
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
             <div className="overflow-x-auto">
               <table className="min-w-full text-left border-collapse">
-                <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+                <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
                   <tr>
                     <th className="px-6 py-4.5">Caller / Customer</th>
                     <th className="px-6 py-4.5">Target Store</th>
@@ -457,11 +457,11 @@ export default function AdminCallsPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.02 }}
                         key={c.id} 
-                        className="hover:bg-slate-900/10 transition-colors"
+                        className="hover:bg-white shadow-sm/10 transition-colors"
                       >
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-950 border border-slate-200 text-slate-500 shrink-0">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-50 border border-slate-200 text-slate-500 shrink-0">
                               <User className="h-4 w-4" />
                             </div>
                             <div>
@@ -474,7 +474,7 @@ export default function AdminCallsPage() {
                           </div>
                         </td>
 
-                        <td className="px-6 py-4 text-white font-semibold">
+                        <td className="px-6 py-4 text-slate-900 font-semibold">
                           {c.shops?.shop_name || "—"}
                         </td>
 

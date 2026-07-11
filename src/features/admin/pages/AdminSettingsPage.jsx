@@ -132,8 +132,8 @@ export default function AdminSettingsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-200" />
+        <div className="h-10 w-48 animate-pulse rounded-lg bg-white shadow-sm" />
+        <div className="h-96 animate-pulse rounded-2xl bg-white shadow-sm border border-slate-200" />
       </div>
     );
   }
@@ -303,8 +303,8 @@ export default function AdminSettingsPage() {
                         <p className="text-sm font-black text-slate-900 mt-0.5">₹{plan.price}/mo</p>
                       </div>
                       <div className="text-[10px] text-slate-500 border-t border-slate-100 pt-2 space-y-1">
-                        <p>Call Limit: <span className="text-white font-bold">{plan.call_limit === -1 ? "Unlimited" : plan.call_limit}</span></p>
-                        <p>Commission: <span className="text-white font-bold">{plan.commission_rate}%</span></p>
+                        <p>Call Limit: <span className="text-slate-900 font-bold">{plan.call_limit === -1 ? "Unlimited" : plan.call_limit}</span></p>
+                        <p>Commission: <span className="text-slate-900 font-bold">{plan.commission_rate}%</span></p>
                       </div>
                       <Button
                         onClick={() => handleStartEditPlan(plan)}
@@ -538,7 +538,7 @@ export default function AdminSettingsPage() {
                         type="checkbox"
                         checked={mfaEnabled}
                         onChange={(e) => setMfaEnabled(e.target.checked)}
-                        className="rounded border-slate-200 bg-slate-950 text-blue-600 h-4 w-4 focus:ring-blue-550"
+                        className="rounded border-slate-200 bg-slate-50 text-blue-600 h-4 w-4 focus:ring-blue-550"
                       />
                       <span>Enforce Two-Factor Authentication (MFA Ready)</span>
                     </label>
@@ -573,7 +573,7 @@ export default function AdminSettingsPage() {
                       type="checkbox"
                       checked={maintenanceMode}
                       onChange={(e) => setMaintenanceMode(e.target.checked)}
-                      className="rounded border-slate-200 bg-slate-950 text-blue-600 h-4.5 w-4.5 focus:ring-blue-550"
+                      className="rounded border-slate-200 bg-slate-50 text-blue-600 h-4.5 w-4.5 focus:ring-blue-550"
                     />
                     <span className="text-red-400">Trigger Maintenance Mode (Go offline)</span>
                   </label>
@@ -608,7 +608,7 @@ export default function AdminSettingsPage() {
 
       {/* Editing Plan Modal Backdrop */}
       {editingPlanId && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-white shadow-sm/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -651,7 +651,7 @@ export default function AdminSettingsPage() {
                       type="checkbox"
                       checked={editUnlimitedCalls}
                       onChange={(e) => setEditUnlimitedCalls(e.target.checked)}
-                      className="rounded border-slate-200 bg-slate-900 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                      className="rounded border-slate-200 bg-white shadow-sm text-blue-600 focus:ring-blue-500 h-4 w-4"
                     />
                     <span>Unlimited Sessions</span>
                   </label>
@@ -686,7 +686,7 @@ export default function AdminSettingsPage() {
                 <Button
                   type="button"
                   onClick={() => setEditingPlanId(null)}
-                  className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-white cursor-pointer"
+                  className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-slate-900 cursor-pointer"
                 >
                   Cancel
                 </Button>

@@ -39,7 +39,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/90 backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 shadow-sm backdrop-blur-md">
         <Container>
           <div className="flex h-16 items-center justify-between gap-4">
 
@@ -49,7 +49,7 @@ export default function Navbar() {
                 B
               </div>
               <div className="hidden sm:block">
-                <p className="text-sm font-bold leading-none text-white">BridgeOne</p>
+                <p className="text-sm font-bold leading-none text-slate-900">BridgeOne</p>
                 <p className="text-[10px] text-slate-500">Live Commerce</p>
               </div>
             </Link>
@@ -65,7 +65,7 @@ export default function Navbar() {
                     `rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                       isActive
                         ? "bg-blue-600/15 text-blue-400"
-                        : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                        : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
                     }`
                   }
                 >
@@ -83,7 +83,7 @@ export default function Navbar() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search products, shops..."
-                  className="w-full rounded-xl border border-slate-700 bg-slate-900 py-2 pl-9 pr-4 text-sm text-white placeholder-slate-500 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-xl border border-slate-200 bg-white shadow-sm py-2 pl-9 pr-4 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
             </form>
@@ -95,7 +95,7 @@ export default function Navbar() {
               {isAuthenticated && (
                 <Link
                   to="/wishlist"
-                  className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-colors hover:bg-slate-800 hover:text-red-400"
+                  className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-red-400"
                 >
                   <Heart className="h-5 w-5" />
                 </Link>
@@ -104,7 +104,7 @@ export default function Navbar() {
               {/* Cart */}
               <button
                 onClick={() => setCartOpen(true)}
-                className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
+                className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
               >
                 <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
@@ -124,7 +124,7 @@ export default function Navbar() {
                 <div className="relative">
                   <button
                     onClick={() => setUserMenuOpen((v) => !v)}
-                    className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-300 transition-colors hover:border-slate-600 hover:text-white"
+                    className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-100 px-3 py-1.5 text-sm text-slate-700 transition-colors hover:border-slate-300 hover:text-slate-900"
                   >
                     <div className="flex h-5 w-5 items-center justify-center overflow-hidden rounded-full bg-blue-600 text-xs font-bold text-white">
                       {(profile?.full_name || user?.email || "U").charAt(0).toUpperCase()}
@@ -141,9 +141,9 @@ export default function Navbar() {
                         className="fixed inset-0 z-10"
                         onClick={() => setUserMenuOpen(false)}
                       />
-                      <div className="absolute right-0 top-full z-20 mt-2 w-52 overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl">
-                        <div className="border-b border-slate-800 px-4 py-3">
-                          <p className="truncate text-sm font-medium text-white">
+                      <div className="absolute right-0 top-full z-20 mt-2 w-52 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-2xl">
+                        <div className="border-b border-slate-200 px-4 py-3">
+                          <p className="truncate text-sm font-medium text-slate-900">
                             {profile?.full_name || "My Account"}
                           </p>
                           <p className="truncate text-xs text-slate-500">
@@ -156,7 +156,7 @@ export default function Navbar() {
                             <Link
                               to="/admin"
                               onClick={() => setUserMenuOpen(false)}
-                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
+                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
                             >
                               <LayoutDashboard className="h-4 w-4" />
                               Admin Panel
@@ -166,7 +166,7 @@ export default function Navbar() {
                             <Link
                               to="/seller"
                               onClick={() => setUserMenuOpen(false)}
-                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
+                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
                             >
                               <LayoutDashboard className="h-4 w-4" />
                               Seller Dashboard
@@ -175,7 +175,7 @@ export default function Navbar() {
                           <Link
                             to="/wishlist"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
                           >
                             <Heart className="h-4 w-4" />
                             Wishlist
@@ -183,14 +183,14 @@ export default function Navbar() {
                           <Link
                             to="/orders"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
                           >
                             <Package className="h-4 w-4" />
                             My Orders
                           </Link>
                         </div>
 
-                        <div className="border-t border-slate-800 py-1">
+                        <div className="border-t border-slate-200 py-1">
                           <button
                             onClick={handleLogout}
                             className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-red-400 transition-colors hover:bg-red-500/10"
@@ -207,7 +207,7 @@ export default function Navbar() {
                 <div className="flex items-center gap-2">
                   <Link
                     to="/login"
-                    className="rounded-xl border border-slate-700 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-slate-800"
+                    className="rounded-xl border border-slate-200 px-4 py-1.5 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100"
                   >
                     Login
                   </Link>

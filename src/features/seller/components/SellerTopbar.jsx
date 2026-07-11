@@ -123,7 +123,7 @@ export default function SellerTopbar({ onToggleSidebar }) {
             <span className="hidden sm:inline font-semibold truncate max-w-[100px]">
               {profile?.full_name || "Merchant"}
             </span>
-            <ChevronDown className={`h-3.5 w-3.5 text-slate-400 transition-transform ${profileMenuOpen ? "rotate-180" : ""}`} />
+            <ChevronDown className={`h-3.5 w-3.5 text-slate-500 transition-transform ${profileMenuOpen ? "rotate-180" : ""}`} />
           </button>
 
           <AnimatePresence>

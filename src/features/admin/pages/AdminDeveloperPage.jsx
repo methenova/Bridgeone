@@ -82,7 +82,7 @@ export default function AdminDeveloperPage() {
   }
 
   return (
-    <div className="space-y-6 text-white max-w-6xl relative">
+    <div className="space-y-6 text-slate-900 max-w-6xl relative">
       
       {/* Header */}
       <div>
@@ -91,7 +91,7 @@ export default function AdminDeveloperPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1.5 p-1 bg-slate-900 border border-slate-200/80 rounded-2xl self-start max-w-sm">
+      <div className="flex gap-1.5 p-1 bg-white shadow-sm border border-slate-200/80 rounded-2xl self-start max-w-sm">
         <Button
           onClick={() => setActiveTab("webhooks")}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
@@ -142,7 +142,7 @@ export default function AdminDeveloperPage() {
                   placeholder="https://api.yourdomain.com/webhooks"
                   value={newUrl}
                   onChange={(e) => setNewUrl(e.target.value)}
-                  className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 outline-none text-white focus:border-blue-500 transition-colors"
+                  className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 outline-none text-slate-900 focus:border-blue-500 transition-colors"
                   required
                 />
                 <Button
@@ -185,7 +185,7 @@ export default function AdminDeveloperPage() {
 
                     <div className="flex flex-wrap gap-1.5 pt-2.5 border-t border-slate-100">
                       {wh.events.map(ev => (
-                        <span key={ev} className="px-2 py-0.5 rounded bg-slate-900 border border-slate-200 text-[9px] font-mono font-bold text-slate-500">
+                        <span key={ev} className="px-2 py-0.5 rounded bg-white shadow-sm border border-slate-200 text-[9px] font-mono font-bold text-slate-500">
                           {ev}
                         </span>
                       ))}
@@ -249,12 +249,12 @@ export default function AdminDeveloperPage() {
                 <div>
                   <p className="font-bold text-slate-900 text-sm">{key.name}</p>
                   <div className="flex items-center gap-2 mt-1.5">
-                    <code className="text-[10px] font-mono text-slate-500 bg-slate-950 p-2 rounded block">
+                    <code className="text-[10px] font-mono text-slate-500 bg-slate-50 p-2 rounded block">
                       {key.token}
                     </code>
                     <Button
                       onClick={() => handleCopyText(key.token)}
-                      className="text-slate-500 hover:text-white transition-colors bg-slate-900 border border-slate-200 p-1.5 rounded-lg cursor-pointer"
+                      className="text-slate-500 hover:text-slate-900 transition-colors bg-white shadow-sm border border-slate-200 p-1.5 rounded-lg cursor-pointer"
                     >
                       <Copy className="h-3.5 w-3.5" />
                     </Button>
@@ -282,22 +282,22 @@ export default function AdminDeveloperPage() {
           </div>
 
           <div className="space-y-3.5 font-mono text-[11px] text-slate-500">
-            <div className="flex justify-between p-3 rounded-lg bg-slate-950/80 border border-slate-900">
+            <div className="flex justify-between p-3 rounded-lg bg-slate-50/80 border border-slate-200">
               <span className="text-slate-500 uppercase font-bold">Node Environment</span>
               <span className="text-indigo-400 font-bold">production</span>
             </div>
             
-            <div className="flex justify-between p-3 rounded-lg bg-slate-950/80 border border-slate-900">
+            <div className="flex justify-between p-3 rounded-lg bg-slate-50/80 border border-slate-200">
               <span className="text-slate-500 uppercase font-bold">Database Port host</span>
               <span className="text-indigo-400 font-bold">xrsujalzbvvlyplehdrm.supabase.co</span>
             </div>
 
-            <div className="flex justify-between p-3 rounded-lg bg-slate-950/80 border border-slate-900">
+            <div className="flex justify-between p-3 rounded-lg bg-slate-50/80 border border-slate-200">
               <span className="text-slate-500 uppercase font-bold">WebRTC STUN / TURN Host</span>
               <span className="text-indigo-400 font-bold">stun.l.google.com:19302 (Default fallback)</span>
             </div>
 
-            <div className="flex justify-between p-3 rounded-lg bg-slate-950/80 border border-slate-900">
+            <div className="flex justify-between p-3 rounded-lg bg-slate-50/80 border border-slate-200">
               <span className="text-slate-500 uppercase font-bold">Signalling Socket Protocol</span>
               <span className="text-indigo-400 font-bold">wss://xrsujalzbvvlyplehdrm.supabase.co/realtime</span>
             </div>

@@ -18,18 +18,18 @@ function ProductDetailSkeleton() {
   return (
     <div className="grid gap-10 lg:grid-cols-2">
       <div className="space-y-3">
-        <div className="aspect-square animate-pulse rounded-3xl bg-slate-800" />
+        <div className="aspect-square animate-pulse rounded-3xl bg-slate-100" />
         <div className="flex gap-2">
           {[1,2,3,4].map((i) => (
-            <div key={i} className="h-16 w-16 animate-pulse rounded-xl bg-slate-800" />
+            <div key={i} className="h-16 w-16 animate-pulse rounded-xl bg-slate-100" />
           ))}
         </div>
       </div>
       <div className="space-y-4">
-        <div className="h-6 w-1/3 animate-pulse rounded bg-slate-800" />
-        <div className="h-8 w-2/3 animate-pulse rounded bg-slate-800" />
-        <div className="h-6 w-1/4 animate-pulse rounded bg-slate-800" />
-        <div className="h-20 animate-pulse rounded bg-slate-800" />
+        <div className="h-6 w-1/3 animate-pulse rounded bg-slate-100" />
+        <div className="h-8 w-2/3 animate-pulse rounded bg-slate-100" />
+        <div className="h-6 w-1/4 animate-pulse rounded bg-slate-100" />
+        <div className="h-20 animate-pulse rounded bg-slate-100" />
       </div>
     </div>
   );
@@ -56,7 +56,7 @@ export default function ProductDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-950 py-10">
+      <div className="min-h-screen bg-slate-50 py-10">
         <Container><ProductDetailSkeleton /></Container>
       </div>
     );
@@ -64,8 +64,8 @@ export default function ProductDetailPage() {
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-slate-950 py-20 text-center">
-        <p className="text-xl text-white">Product not found</p>
+      <div className="min-h-screen bg-slate-50 py-20 text-center">
+        <p className="text-xl text-slate-900">Product not found</p>
         <Link to="/products" className="mt-4 inline-block text-blue-400 underline">
           Browse Products
         </Link>
@@ -98,27 +98,27 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 py-10">
+    <div className="min-h-screen bg-slate-50 py-10">
       <Container>
 
         {/* Breadcrumb */}
         <nav className="mb-8 flex items-center gap-2 text-sm text-slate-500">
-          <Link to="/" className="hover:text-white">Home</Link>
+          <Link to="/" className="hover:text-slate-900">Home</Link>
           <span>/</span>
-          <Link to="/products" className="hover:text-white">Products</Link>
+          <Link to="/products" className="hover:text-slate-900">Products</Link>
           {product.categories?.name && (
             <>
               <span>/</span>
               <Link
                 to={`/products?category=${product.category_id}`}
-                className="hover:text-white"
+                className="hover:text-slate-900"
               >
                 {product.categories.name}
               </Link>
             </>
           )}
           <span>/</span>
-          <span className="truncate text-slate-300">{product.name}</span>
+          <span className="truncate text-slate-700">{product.name}</span>
         </nav>
 
         {/* Main Grid */}
@@ -127,7 +127,7 @@ export default function ProductDetailPage() {
           {/* ── Left: Images ─────────────────────────────── */}
           <div className="space-y-3">
             {/* Main image */}
-            <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 aspect-square">
+            <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm aspect-square">
               {currentImageUrl ? (
                 <img
                   src={currentImageUrl}
@@ -149,14 +149,14 @@ export default function ProductDetailPage() {
                   <button
                     onClick={() => setSelectedImage((i) => Math.max(0, i - 1))}
                     disabled={selectedImage === 0}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900/80 text-white backdrop-blur-sm disabled:opacity-30"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl bg-white/80 shadow-sm text-slate-900 backdrop-blur-sm disabled:opacity-30"
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
                   <button
                     onClick={() => setSelectedImage((i) => Math.min(images.length - 1, i + 1))}
                     disabled={selectedImage === images.length - 1}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900/80 text-white backdrop-blur-sm disabled:opacity-30"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl bg-white/80 shadow-sm text-slate-900 backdrop-blur-sm disabled:opacity-30"
                   >
                     <ChevronRight className="h-5 w-5" />
                   </button>
@@ -172,7 +172,7 @@ export default function ProductDetailPage() {
                     key={i}
                     onClick={() => setSelectedImage(i)}
                     className={`h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 transition-all ${
-                      i === selectedImage ? "border-blue-500" : "border-slate-700 opacity-60 hover:opacity-100"
+                      i === selectedImage ? "border-blue-500" : "border-slate-200 opacity-60 hover:opacity-100"
                     }`}
                   >
                     <img src={img.url} alt="" className="h-full w-full object-cover" />
@@ -196,7 +196,7 @@ export default function ProductDetailPage() {
             )}
 
             {/* Name */}
-            <h1 className="text-2xl font-bold leading-tight text-white md:text-3xl">
+            <h1 className="text-2xl font-bold leading-tight text-slate-900 md:text-3xl">
               {product.name}
             </h1>
 
@@ -207,12 +207,12 @@ export default function ProductDetailPage() {
                   <Star key={s} className={`h-4 w-4 ${s <= 4 ? "fill-amber-400 text-amber-400" : "text-slate-600"}`} />
                 ))}
               </div>
-              <span className="text-sm text-slate-400">4.0 · 0 reviews</span>
+              <span className="text-sm text-slate-500">4.0 · 0 reviews</span>
             </div>
 
             {/* Price */}
             <div className="flex items-end gap-4">
-              <span className="text-4xl font-bold text-white">
+              <span className="text-4xl font-bold text-slate-900">
                 ₹{displayPrice.toLocaleString()}
               </span>
               {hasDiscount && (
@@ -235,19 +235,19 @@ export default function ProductDetailPage() {
             {/* Quantity + Add to Cart */}
             {!isOutOfStock && (
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800">
+                <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-100">
                   <button
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="flex h-10 w-10 items-center justify-center text-slate-400 hover:text-white"
+                    className="flex h-10 w-10 items-center justify-center text-slate-500 hover:text-slate-900"
                   >
                     –
                   </button>
-                  <span className="min-w-[2rem] text-center font-semibold text-white">
+                  <span className="min-w-[2rem] text-center font-semibold text-slate-900">
                     {quantity}
                   </span>
                   <button
                     onClick={() => setQuantity((q) => Math.min(Number(product.stock), q + 1))}
-                    className="flex h-10 w-10 items-center justify-center text-slate-400 hover:text-white"
+                    className="flex h-10 w-10 items-center justify-center text-slate-500 hover:text-slate-900"
                   >
                     +
                   </button>
@@ -276,12 +276,12 @@ export default function ProductDetailPage() {
 
             {/* Shop */}
             {product.shops && (
-              <div className="flex items-center justify-between gap-4 rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3">
+              <div className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white shadow-sm px-4 py-3">
                 <Link
                   to={`/shops/${product.shops.id}`}
                   className="flex items-center gap-3 transition-colors hover:opacity-80"
                 >
-                  <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-slate-700 bg-slate-800">
+                  <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
                     {product.shops.logo_url ? (
                       <img src={product.shops.logo_url} alt={product.shops.name} className="h-full w-full object-cover" />
                     ) : (
@@ -291,14 +291,14 @@ export default function ProductDetailPage() {
                     )}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-white">{product.shops.name}</p>
+                    <p className="text-sm font-semibold text-slate-900">{product.shops.name}</p>
                     <p className="text-xs text-slate-500">{product.shops.city} · Visit shop →</p>
                   </div>
                 </Link>
                 <button
                   type="button"
                   onClick={() => window.dispatchEvent(new CustomEvent("trigger-shop-call"))}
-                  className="flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-xs font-bold text-white hover:from-blue-500 hover:to-indigo-500 transition-all hover:scale-[1.03] active:scale-95 shadow-lg shadow-blue-600/20 cursor-pointer"
+                  className="flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-xs font-bold text-slate-900 hover:from-blue-500 hover:to-indigo-500 transition-all hover:scale-[1.03] active:scale-95 shadow-lg shadow-blue-600/20 cursor-pointer"
                 >
                   <Phone className="h-3.5 w-3.5 fill-current animate-pulse" />
                   Call Expert
@@ -309,8 +309,8 @@ export default function ProductDetailPage() {
             {/* Description */}
             {product.description && (
               <div>
-                <h3 className="mb-2 text-sm font-semibold text-white">About this product</h3>
-                <p className="whitespace-pre-line text-sm leading-relaxed text-slate-400">
+                <h3 className="mb-2 text-sm font-semibold text-slate-900">About this product</h3>
+                <p className="whitespace-pre-line text-sm leading-relaxed text-slate-500">
                   {product.description}
                 </p>
               </div>
@@ -322,7 +322,7 @@ export default function ProductDetailPage() {
         {/* Related Products */}
         {relatedProducts.length > 0 && (
           <section className="mt-16">
-            <h2 className="mb-6 text-2xl font-bold text-white">Related Products</h2>
+            <h2 className="mb-6 text-2xl font-bold text-slate-900">Related Products</h2>
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
               {relatedProducts.map((p) => (
                 <ProductCard key={p.id} product={p} />

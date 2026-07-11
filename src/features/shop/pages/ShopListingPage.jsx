@@ -11,10 +11,10 @@ function ShopCardFull({ shop }) {
   return (
     <Link
       to={`/shops/${shop.id}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/5"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/5"
     >
       {/* Banner / Logo Image */}
-      <div className="relative h-36 w-full overflow-hidden bg-slate-800">
+      <div className="relative h-36 w-full overflow-hidden bg-slate-100">
         {shop.banner_url ? (
           <img
             src={shop.banner_url}
@@ -29,7 +29,7 @@ function ShopCardFull({ shop }) {
         {shop.is_live && (
           <div className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full bg-red-500 px-2.5 py-1">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
-            <span className="text-xs font-bold text-white">LIVE</span>
+            <span className="text-xs font-bold text-slate-900">LIVE</span>
           </div>
         )}
       </div>
@@ -37,7 +37,7 @@ function ShopCardFull({ shop }) {
       {/* Content */}
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div className="flex items-start gap-3">
-          <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-slate-700 bg-slate-800">
+          <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
             {shop.logo_url ? (
               <img src={shop.logo_url} alt={shop.name} className="h-full w-full object-cover" />
             ) : (
@@ -45,7 +45,7 @@ function ShopCardFull({ shop }) {
             )}
           </div>
           <div className="min-w-0">
-            <h3 className="truncate font-semibold text-white">{shop.name}</h3>
+            <h3 className="truncate font-semibold text-slate-900">{shop.name}</h3>
             {shop.categories?.name && (
               <p className="text-xs text-blue-400">{shop.categories.name}</p>
             )}
@@ -53,7 +53,7 @@ function ShopCardFull({ shop }) {
         </div>
 
         {shop.description && (
-          <p className="line-clamp-2 text-sm text-slate-400">{shop.description}</p>
+          <p className="line-clamp-2 text-sm text-slate-500">{shop.description}</p>
         )}
 
         <div className="mt-auto flex items-center justify-between text-xs text-slate-500">
@@ -88,13 +88,13 @@ export default function ShopListingPage() {
   const totalPages = shopData?.totalPages ?? 1;
 
   return (
-    <div className="min-h-screen bg-slate-950 py-10">
+    <div className="min-h-screen bg-slate-50 py-10">
       <Container>
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white">Browse Shops</h1>
-          <p className="mt-1 text-slate-400">
+          <h1 className="text-3xl font-bold text-slate-900">Browse Shops</h1>
+          <p className="mt-1 text-slate-500">
             {total.toLocaleString()} shop{total !== 1 ? "s" : ""} on BridgeOne
           </p>
         </div>
@@ -108,13 +108,13 @@ export default function ShopListingPage() {
               value={filters.search}
               onChange={(e) => updateFilters({ search: e.target.value })}
               placeholder="Search shops..."
-              className="w-full rounded-xl border border-slate-700 bg-slate-900 py-2.5 pl-9 pr-4 text-sm text-white placeholder-slate-500 outline-none focus:border-blue-500"
+              className="w-full rounded-xl border border-slate-200 bg-white shadow-sm py-2.5 pl-9 pr-4 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500"
             />
           </div>
           <select
             value={filters.categoryId}
             onChange={(e) => updateFilters({ categoryId: e.target.value })}
-            className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm text-white outline-none focus:border-blue-500"
+            className="rounded-xl border border-slate-200 bg-white shadow-sm px-4 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500"
           >
             <option value="">All Categories</option>
             {categories.map((cat) => (
@@ -127,19 +127,19 @@ export default function ShopListingPage() {
         {isLoading ? (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
-                <div className="h-36 animate-pulse bg-slate-800" />
+              <div key={i} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <div className="h-36 animate-pulse bg-slate-100" />
                 <div className="space-y-3 p-4">
-                  <div className="h-4 w-2/3 animate-pulse rounded bg-slate-800" />
-                  <div className="h-3 w-1/2 animate-pulse rounded bg-slate-800" />
+                  <div className="h-4 w-2/3 animate-pulse rounded bg-slate-100" />
+                  <div className="h-3 w-1/2 animate-pulse rounded bg-slate-100" />
                 </div>
               </div>
             ))}
           </div>
         ) : shops.length === 0 ? (
           <div className="py-24 text-center">
-            <p className="text-xl font-semibold text-white">No shops found</p>
-            <p className="mt-2 text-slate-400">Try a different search or category</p>
+            <p className="text-xl font-semibold text-slate-900">No shops found</p>
+            <p className="mt-2 text-slate-500">Try a different search or category</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

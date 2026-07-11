@@ -202,7 +202,7 @@ export default function ProductList({
                   className={`transition-colors ${
                     isSelected
                       ? "bg-blue-600/5"
-                      : "hover:bg-slate-800/50"
+                      : "hover:bg-slate-100/50"
                   } ${isDeleting ? "opacity-50" : ""}`}
                 >
 

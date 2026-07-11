@@ -204,7 +204,7 @@ export default function SellerNotificationsPage() {
                 className={`px-4 py-2 rounded-xl transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === tab 
                     ? "bg-blue-600 text-white shadow-lg" 
-                    : "text-slate-400 hover:text-white"
+                    : "text-slate-500 hover:text-slate-900"
                 }`}
               >
                 {tab}
@@ -262,7 +262,7 @@ export default function SellerNotificationsPage() {
                             <span className="h-1.5 w-1.5 rounded-full bg-blue-600 animate-pulse" />
                           )}
                         </div>
-                        <span className="text-[9px] text-slate-400 font-bold font-mono whitespace-nowrap">
+                        <span className="text-[9px] text-slate-500 font-bold font-mono whitespace-nowrap">
                           {formatRelativeTime(n.created_at)}
                         </span>
                       </div>

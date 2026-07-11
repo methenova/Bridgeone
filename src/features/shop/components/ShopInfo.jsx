@@ -13,21 +13,21 @@ export default function ShopInfo() {
   const shop = shopData[0];
 
   return (
-    <section className="mt-10 rounded-3xl border border-slate-800 bg-slate-900 p-8">
+    <section className="mt-10 rounded-3xl border border-slate-200 bg-white shadow-sm p-8">
 
       <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
 
         <div>
 
-          <h2 className="text-4xl font-bold text-white">
+          <h2 className="text-4xl font-bold text-slate-900">
             {shop.name}
           </h2>
 
-          <p className="mt-3 max-w-2xl text-slate-400">
+          <p className="mt-3 max-w-2xl text-slate-500">
             {shop.description}
           </p>
 
-          <div className="mt-8 grid gap-4 text-slate-300 sm:grid-cols-2">
+          <div className="mt-8 grid gap-4 text-slate-700 sm:grid-cols-2">
 
             <div className="flex items-center gap-3">
               <Star className="text-yellow-400" />

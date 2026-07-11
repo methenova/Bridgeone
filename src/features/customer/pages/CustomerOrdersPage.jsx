@@ -8,12 +8,12 @@ export default function CustomerOrdersPage() {
   const { data: orders = [], isLoading } = useOrders();
 
   return (
-    <div className="min-h-screen bg-slate-950 py-10">
+    <div className="min-h-screen bg-slate-50 py-10">
       <Container>
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white">My Orders</h1>
-          <p className="mt-1 text-slate-400">
+          <h1 className="text-3xl font-bold text-slate-900">My Orders</h1>
+          <p className="mt-1 text-slate-500">
             View order details, invoice receipts, and delivery tracking.
           </p>
         </div>
@@ -21,16 +21,16 @@ export default function CustomerOrdersPage() {
         {isLoading ? (
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-48 animate-pulse rounded-2xl bg-slate-900 border border-slate-800" />
+              <div key={i} className="h-48 animate-pulse rounded-2xl bg-white shadow-sm border border-slate-200" />
             ))}
           </div>
         ) : orders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 rounded-2xl border border-slate-800 bg-slate-900/50 text-center">
-            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-800 text-slate-500">
+          <div className="flex flex-col items-center justify-center py-24 rounded-2xl border border-slate-200 bg-white/50 shadow-sm text-center">
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-500">
               <ShoppingBag className="h-6 w-6" />
             </div>
-            <h3 className="text-lg font-semibold text-white">No orders yet</h3>
-            <p className="mt-1 text-sm text-slate-400">
+            <h3 className="text-lg font-semibold text-slate-900">No orders yet</h3>
+            <p className="mt-1 text-sm text-slate-500">
               You haven't placed any orders on BridgeOne.
             </p>
             <Link
@@ -52,22 +52,22 @@ export default function CustomerOrdersPage() {
               return (
                 <div
                   key={order.id}
-                  className="rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden transition-all hover:border-slate-700"
+                  className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden transition-all hover:border-slate-200"
                 >
                   {/* Top Bar */}
-                  <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-950/40 px-6 py-4 border-b border-slate-800 text-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-50/40 px-6 py-4 border-b border-slate-200 text-sm">
                     <div className="flex flex-wrap gap-x-6 gap-y-2">
                       <div>
                         <p className="text-xs text-slate-500 uppercase tracking-wider">Date Placed</p>
-                        <p className="mt-0.5 font-semibold text-slate-300">{orderDate}</p>
+                        <p className="mt-0.5 font-semibold text-slate-700">{orderDate}</p>
                       </div>
                       <div>
                         <p className="text-xs text-slate-500 uppercase tracking-wider">Total Paid</p>
-                        <p className="mt-0.5 font-semibold text-white">₹{Number(order.total).toLocaleString()}</p>
+                        <p className="mt-0.5 font-semibold text-slate-900">₹{Number(order.total).toLocaleString()}</p>
                       </div>
                       <div>
                         <p className="text-xs text-slate-500 uppercase tracking-wider">Order ID</p>
-                        <p className="mt-0.5 font-mono font-medium text-slate-400">
+                        <p className="mt-0.5 font-mono font-medium text-slate-500">
                           #{order.id.slice(0, 8).toUpperCase()}
                         </p>
                       </div>
@@ -95,10 +95,10 @@ export default function CustomerOrdersPage() {
                   </div>
 
                   {/* Items Summary */}
-                  <div className="p-6 divide-y divide-slate-800">
+                  <div className="p-6 divide-y divide-slate-100">
                     {order.order_items?.map((item) => (
                       <div key={item.id} className="flex gap-4 py-4 first:pt-0 last:pb-0">
-                        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-slate-800 border border-slate-700">
+                        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-slate-100 border border-slate-200">
                           {item.products?.thumbnail_url ? (
                             <img
                               src={item.products.thumbnail_url}
@@ -111,7 +111,7 @@ export default function CustomerOrdersPage() {
                         </div>
 
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-white text-sm truncate">
+                          <h4 className="font-semibold text-slate-900 text-sm truncate">
                             {item.products?.name}
                           </h4>
                           <p className="text-xs text-slate-500 mt-1">

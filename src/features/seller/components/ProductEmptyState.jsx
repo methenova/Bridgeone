@@ -16,7 +16,7 @@ export default function ProductEmptyState({ isFiltered = false, onAddProduct }) 
           We couldn't find any products matching your active filters. Try adjusting your search term, category, or status queries.
         </p>
 
-        <p className="text-[10px] text-slate-400 font-medium">
+        <p className="text-[10px] text-slate-500 font-medium">
           Tip: clear all active selectors to view your entire catalog collection.
         </p>
       </div>
@@ -50,7 +50,7 @@ export default function ProductEmptyState({ isFiltered = false, onAddProduct }) 
             <ArrowRight className="h-3.5 w-3.5" />
           </button>
           
-          <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-400 font-semibold">
+          <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-500 font-semibold">
             <HelpCircle className="h-3.5 w-3.5" />
             <span>Need help? Read our <a href="#" className="text-blue-600 hover:underline">catalog setup guide</a></span>
           </div>

@@ -9,14 +9,14 @@ export default function HeroContent() {
         🚀 India's First Live Video Commerce Platform
       </span>
 
-      <h1 className="mt-8 text-5xl font-extrabold leading-tight text-white lg:text-7xl">
+      <h1 className="mt-8 text-5xl font-extrabold leading-tight text-slate-900 lg:text-7xl">
         Shop Smarter.
         <br />
         See Before
         <span className="text-blue-500"> You Buy.</span>
       </h1>
 
-      <p className="mt-8 max-w-xl text-xl leading-9 text-slate-400">
+      <p className="mt-8 max-w-xl text-xl leading-9 text-slate-500">
         Connect directly with trusted shop owners through live video.
         Explore products in real time, ask questions instantly,
         and shop with complete confidence.

@@ -44,7 +44,7 @@ export default function BarChartSVG({ data = [], height = 200 }) {
 
   if (chartData.length === 0) {
     return (
-      <div className="flex h-48 items-center justify-center text-xs text-slate-500 bg-slate-900/10 rounded-2xl border border-slate-900">
+      <div className="flex h-48 items-center justify-center text-xs text-slate-500 bg-white shadow-sm/10 rounded-2xl border border-slate-200">
         No comparative data available.
       </div>
     );

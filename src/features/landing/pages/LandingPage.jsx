@@ -7,7 +7,7 @@ import WhyBridgeOne from "../components/WhyBridgeOne";
 
 export default function LandingPage() {
   return (
-    <main className="bg-slate-950">
+    <main className="bg-slate-50">
       <Hero />
       <Categories />
       <FeaturedShops />

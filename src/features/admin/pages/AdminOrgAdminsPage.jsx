@@ -150,14 +150,14 @@ export default function AdminOrgAdminsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-200" />
+        <div className="h-10 w-48 animate-pulse rounded-lg bg-white shadow-sm" />
+        <div className="h-96 animate-pulse rounded-2xl bg-white shadow-sm border border-slate-200" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-4 md:space-y-6 text-white max-w-7xl relative">
+    <div className="space-y-4 md:space-y-6 text-slate-900 max-w-7xl relative">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -175,7 +175,7 @@ export default function AdminOrgAdminsPage() {
       </div>
 
       {/* Filter and Search */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/20 p-4 rounded-2xl border border-slate-900">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white shadow-sm p-4 rounded-2xl border border-slate-200">
         <div className="relative flex-1 max-w-md">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
             <Search className="h-4 w-4" />
@@ -185,16 +185,16 @@ export default function AdminOrgAdminsPage() {
             placeholder="Search by admin name or email address..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-200 transition-colors"
+            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-slate-200 transition-colors"
           />
         </div>
       </div>
 
       {/* Admins Table */}
-      <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Administrator</th>
                 <th className="px-6 py-4.5">Associated Shop / Org</th>
@@ -217,7 +217,7 @@ export default function AdminOrgAdminsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.03 }}
                     key={admin.id} 
-                    className="hover:bg-slate-900/10 transition-colors"
+                    className="hover:bg-white shadow-sm/10 transition-colors"
                   >
                     {/* Admin profile info */}
                     <td className="px-6 py-4">
@@ -274,7 +274,7 @@ export default function AdminOrgAdminsPage() {
       {/* PROMOTE MODAL */}
       <AnimatePresence>
         {isPromoteOpen && (
-          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-white shadow-sm/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -292,7 +292,7 @@ export default function AdminOrgAdminsPage() {
                   <select
                     value={promoteUserId}
                     onChange={(e) => setPromoteUserId(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                   >
                     {eligibleUsers.map(u => (
                       <option key={u.id} value={u.id}>{u.full_name} ({u.email})</option>
@@ -307,7 +307,7 @@ export default function AdminOrgAdminsPage() {
                   <Button
                     type="button"
                     onClick={() => setIsPromoteOpen(false)}
-                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-white cursor-pointer"
+                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-slate-900 cursor-pointer"
                   >
                     Cancel
                   </Button>
@@ -329,7 +329,7 @@ export default function AdminOrgAdminsPage() {
       {/* LINK/MAP SHOP MODAL */}
       <AnimatePresence>
         {isLinkOpen && (
-          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-white shadow-sm/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -347,7 +347,7 @@ export default function AdminOrgAdminsPage() {
                   <select
                     value={linkShopId}
                     onChange={(e) => setLinkShopId(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                   >
                     <option value="">Unlinked (No Store)</option>
                     {shops.map(s => (
@@ -360,7 +360,7 @@ export default function AdminOrgAdminsPage() {
                   <Button
                     type="button"
                     onClick={() => setIsLinkOpen(false)}
-                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-white cursor-pointer"
+                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-slate-900 cursor-pointer"
                   >
                     Cancel
                   </Button>

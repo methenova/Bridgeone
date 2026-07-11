@@ -90,7 +90,7 @@ export default function SellerSidebar({ isOpen, onClose }) {
       {isOpen && (
         <div 
           onClick={onClose} 
-          className="fixed inset-0 z-40 bg-slate-900/10 backdrop-blur-xs lg:hidden transition-opacity duration-300"
+          className="fixed inset-0 z-40 bg-white shadow-sm/10 backdrop-blur-xs lg:hidden transition-opacity duration-300"
         />
       )}
 
@@ -108,13 +108,13 @@ export default function SellerSidebar({ isOpen, onClose }) {
             </div>
             <div className="flex flex-col">
               <span className="text-xs font-bold text-slate-900 leading-none">BridgeOne</span>
-              <span className="text-[9px] font-bold text-slate-400 mt-1 leading-none uppercase tracking-wider">Seller Panel</span>
+              <span className="text-[9px] font-bold text-slate-500 mt-1 leading-none uppercase tracking-wider">Seller Panel</span>
             </div>
           </div>
           {/* Close button on mobile */}
           <button 
             onClick={onClose} 
-            className="rounded-lg border border-slate-150 p-1.5 text-slate-400 hover:bg-slate-50 hover:text-slate-700 lg:hidden transition-colors"
+            className="rounded-lg border border-slate-150 p-1.5 text-slate-500 hover:bg-slate-50 hover:text-slate-700 lg:hidden transition-colors"
           >
             <X size={14} />
           </button>
@@ -125,7 +125,7 @@ export default function SellerSidebar({ isOpen, onClose }) {
           {Object.entries(sections).map(([sectionName, items], sectionIndex) => (
             <div key={sectionName} className="space-y-1">
               {sectionIndex > 0 && <div className="h-px bg-slate-100/60 mx-3 my-4" />}
-              <h2 className="px-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2.5">
+              <h2 className="px-3 text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2.5">
                 {sectionName}
               </h2>
               <div className="space-y-[2px]">
@@ -153,7 +153,7 @@ export default function SellerSidebar({ isOpen, onClose }) {
                           <Icon
                             size={15}
                             className={`shrink-0 transition-colors ${
-                              isActive ? "text-blue-600" : "text-slate-400 group-hover:text-slate-700"
+                              isActive ? "text-blue-600" : "text-slate-500 group-hover:text-slate-700"
                             }`}
                             strokeWidth={1.7}
                           />

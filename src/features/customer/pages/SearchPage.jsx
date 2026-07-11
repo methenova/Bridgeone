@@ -9,12 +9,12 @@ function SearchSkeleton() {
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
       {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
-          <div className="aspect-[4/3] animate-pulse bg-slate-800" />
+        <div key={i} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="aspect-[4/3] animate-pulse bg-slate-100" />
           <div className="space-y-2 p-4">
-            <div className="h-4 w-full animate-pulse rounded bg-slate-800" />
-            <div className="h-4 w-2/3 animate-pulse rounded bg-slate-800" />
-            <div className="h-10 animate-pulse rounded-xl bg-slate-800" />
+            <div className="h-4 w-full animate-pulse rounded bg-slate-100" />
+            <div className="h-4 w-2/3 animate-pulse rounded bg-slate-100" />
+            <div className="h-10 animate-pulse rounded-xl bg-slate-100" />
           </div>
         </div>
       ))}
@@ -44,7 +44,7 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 py-10">
+    <div className="min-h-screen bg-slate-50 py-10">
       <Container>
 
         {/* Header */}
@@ -55,29 +55,29 @@ export default function SearchPage() {
                 <Search className="h-4 w-4" />
                 Search results
               </div>
-              <h1 className="text-2xl font-bold text-white">
+              <h1 className="text-2xl font-bold text-slate-900">
                 &ldquo;{query}&rdquo;
               </h1>
-              <p className="mt-1 text-slate-400">
+              <p className="mt-1 text-slate-500">
                 {total.toLocaleString()} product{total !== 1 ? "s" : ""} found
               </p>
             </>
           ) : (
-            <h1 className="text-2xl font-bold text-white">Search Products</h1>
+            <h1 className="text-2xl font-bold text-slate-900">Search Products</h1>
           )}
         </div>
 
         {!query ? (
           <div className="py-24 text-center">
             <Search className="mx-auto mb-4 h-12 w-12 text-slate-600" />
-            <p className="text-slate-400">Use the search bar above to find products</p>
+            <p className="text-slate-500">Use the search bar above to find products</p>
           </div>
         ) : isLoading ? (
           <SearchSkeleton />
         ) : products.length === 0 ? (
           <div className="py-24 text-center">
-            <p className="text-xl font-semibold text-white">No results for &ldquo;{query}&rdquo;</p>
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="text-xl font-semibold text-slate-900">No results for &ldquo;{query}&rdquo;</p>
+            <p className="mt-2 text-sm text-slate-500">
               Try different keywords or browse all products
             </p>
           </div>

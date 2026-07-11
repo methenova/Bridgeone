@@ -134,14 +134,14 @@ export default function AdminSupportPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-200" />
+        <div className="h-10 w-48 animate-pulse rounded-lg bg-white shadow-sm" />
+        <div className="h-96 animate-pulse rounded-2xl bg-white shadow-sm border border-slate-200" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-4 md:space-y-6 text-white max-w-7xl relative">
+    <div className="space-y-4 md:space-y-6 text-slate-900 max-w-7xl relative">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -165,7 +165,7 @@ export default function AdminSupportPage() {
       </div>
 
       {/* Utilities bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/20 p-4 rounded-2xl border border-slate-900">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white shadow-sm p-4 rounded-2xl border border-slate-200">
         
         {/* Search */}
         <div className="relative flex-1 max-w-md">
@@ -177,7 +177,7 @@ export default function AdminSupportPage() {
             placeholder="Search by ticket title or description..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-200 transition-colors"
+            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-slate-200 transition-colors"
           />
         </div>
 
@@ -216,10 +216,10 @@ export default function AdminSupportPage() {
       </div>
 
       {/* Tickets table */}
-      <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Ticket details</th>
                 <th className="px-6 py-4.5">Vertical Type</th>
@@ -238,7 +238,7 @@ export default function AdminSupportPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.03 }}
                     key={t.id} 
-                    className="hover:bg-slate-900/10 transition-colors"
+                    className="hover:bg-white shadow-sm/10 transition-colors"
                   >
                     {/* Ticket Title & Desc */}
                     <td className="px-6 py-4 max-w-md">
@@ -310,7 +310,7 @@ export default function AdminSupportPage() {
       {/* CREATE MODAL */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-white shadow-sm/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -321,7 +321,7 @@ export default function AdminSupportPage() {
                 <h2 className="text-base font-bold text-slate-900 tracking-tight">Log Ticket</h2>
                 <Button 
                   onClick={() => setIsOpen(false)}
-                  className="text-slate-500 hover:text-white transition-colors"
+                  className="text-slate-500 hover:text-slate-900 transition-colors"
                 >
                   <X className="h-5 w-5" />
                 </Button>
@@ -336,7 +336,7 @@ export default function AdminSupportPage() {
                     type="text"
                     value={formTitle}
                     onChange={(e) => setFormTitle(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                     placeholder="e.g. Call logs fail to render"
                   />
                 </div>
@@ -348,7 +348,7 @@ export default function AdminSupportPage() {
                     value={formDesc}
                     onChange={(e) => setFormDesc(e.target.value)}
                     rows={4}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500 resize-none"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 resize-none"
                     placeholder="Provide details about the issue..."
                   />
                 </div>
@@ -359,7 +359,7 @@ export default function AdminSupportPage() {
                   <select
                     value={formType}
                     onChange={(e) => setFormType(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500 font-semibold"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-semibold"
                   >
                     <option value="bug">System Bug Log</option>
                     <option value="feature">Feature Request Option</option>
@@ -371,7 +371,7 @@ export default function AdminSupportPage() {
                   <Button
                     type="button"
                     onClick={() => setIsOpen(false)}
-                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-white cursor-pointer"
+                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-slate-900 cursor-pointer"
                   >
                     Cancel
                   </Button>

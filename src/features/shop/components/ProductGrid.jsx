@@ -39,7 +39,7 @@ export default function ProductGrid() {
   return (
     <section className="mt-10">
 
-      <h2 className="mb-8 text-3xl font-bold text-white">
+      <h2 className="mb-8 text-3xl font-bold text-slate-900">
         Products
       </h2>
 

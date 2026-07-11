@@ -18,7 +18,7 @@ export default function LoginHeader() {
           Live.
         </h1>
 
-        <p className="max-w-lg text-lg leading-8 text-slate-400">
+        <p className="max-w-lg text-lg leading-8 text-slate-500">
           Connect instantly with your customers through live video.
           Show products in real time, answer questions and increase
           customer confidence before purchase.

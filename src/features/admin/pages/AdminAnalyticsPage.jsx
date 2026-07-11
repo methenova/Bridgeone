@@ -135,14 +135,14 @@ export default function AdminAnalyticsPage() {
   if (overallLoading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-200" />
+        <div className="h-10 w-48 animate-pulse rounded-lg bg-white shadow-sm" />
+        <div className="h-96 animate-pulse rounded-2xl bg-white shadow-sm border border-slate-200" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 text-white max-w-7xl relative">
+    <div className="space-y-8 text-slate-900 max-w-7xl relative">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -153,7 +153,7 @@ export default function AdminAnalyticsPage() {
         
         {/* Date Filter & Export Row */}
         <div className="flex items-center gap-3 self-start">
-          <div className="flex items-center gap-2 bg-slate-900 border border-slate-200 px-3 py-1.5 rounded-xl text-xs text-slate-700">
+          <div className="flex items-center gap-2 bg-white shadow-sm border border-slate-200 px-3 py-1.5 rounded-xl text-xs text-slate-700">
             <Calendar className="h-3.5 w-3.5 text-indigo-400" />
             <select
               value={timeRange}
@@ -187,7 +187,7 @@ export default function AdminAnalyticsPage() {
             <Video className="h-4.5 w-4.5 text-blue-400" />
           </div>
           <div>
-            <p className="text-2xl font-extrabold tracking-tight text-white">{totalCalls}</p>
+            <p className="text-2xl font-extrabold tracking-tight text-slate-900">{totalCalls}</p>
             <p className="text-[10px] text-slate-500 mt-1">Total WebRTC rooms created</p>
           </div>
         </div>
@@ -199,7 +199,7 @@ export default function AdminAnalyticsPage() {
             <Clock className="h-4.5 w-4.5 text-indigo-400" />
           </div>
           <div>
-            <p className="text-2xl font-extrabold tracking-tight text-white">{avgCallDuration}</p>
+            <p className="text-2xl font-extrabold tracking-tight text-slate-900">{avgCallDuration}</p>
             <p className="text-[10px] text-slate-500 mt-1">Sustained customer talk sessions</p>
           </div>
         </div>
@@ -211,7 +211,7 @@ export default function AdminAnalyticsPage() {
             <Activity className="h-4.5 w-4.5 text-emerald-400" />
           </div>
           <div>
-            <p className="text-2xl font-extrabold tracking-tight text-white">{conversionRate}</p>
+            <p className="text-2xl font-extrabold tracking-tight text-slate-900">{conversionRate}</p>
             <p className="text-[10px] text-slate-500 mt-1">Widget launcher clicks-to-calls ratio</p>
           </div>
         </div>
@@ -223,7 +223,7 @@ export default function AdminAnalyticsPage() {
             <DollarSign className="h-4.5 w-4.5 text-amber-400" />
           </div>
           <div>
-            <p className="text-2xl font-extrabold tracking-tight text-white">₹{revenueStats.commissions.toLocaleString()}</p>
+            <p className="text-2xl font-extrabold tracking-tight text-slate-900">₹{revenueStats.commissions.toLocaleString()}</p>
             <p className="text-[10px] text-slate-500 mt-1">Collected platform transaction fee totals</p>
           </div>
         </div>
@@ -288,7 +288,7 @@ export default function AdminAnalyticsPage() {
             {leaderboard.map((item, idx) => (
               <div key={item.name} className="flex justify-between items-center text-xs pb-3 border-b border-slate-100/50 last:border-b-0 last:pb-0">
                 <div className="flex items-center gap-3">
-                  <div className="h-7 w-7 rounded-lg bg-slate-900 border border-slate-200 flex items-center justify-center font-bold text-slate-500 text-[11px]">
+                  <div className="h-7 w-7 rounded-lg bg-white shadow-sm border border-slate-200 flex items-center justify-center font-bold text-slate-500 text-[11px]">
                     #{idx + 1}
                   </div>
                   <div>

@@ -37,15 +37,15 @@ export default function ShopStats() {
         return (
           <div
             key={item.title}
-            className="rounded-3xl border border-slate-800 bg-slate-900 p-6 transition hover:border-blue-500"
+            className="rounded-3xl border border-slate-200 bg-white shadow-sm p-6 transition hover:border-blue-500"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-slate-500">
                   {item.title}
                 </p>
 
-                <h3 className="mt-2 text-3xl font-bold text-white">
+                <h3 className="mt-2 text-3xl font-bold text-slate-900">
                   {item.value}
                 </h3>
               </div>

@@ -3,7 +3,7 @@ import ProductCard from "./ProductCard";
 export default function ProductGrid({ products }) {
   if (!products.length) {
     return (
-      <div className="py-10 text-center text-slate-400">
+      <div className="py-10 text-center text-slate-500">
         No Products Found
       </div>
     );

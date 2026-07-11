@@ -5,7 +5,7 @@ import { stepsData } from "./stepsData";
 
 export default function HowItWorks() {
   return (
-    <section className="bg-slate-950 py-24">
+    <section className="bg-slate-50 py-24">
 
       <Container>
 
@@ -15,11 +15,11 @@ export default function HowItWorks() {
             How BridgeOne Works
           </span>
 
-          <h2 className="mt-6 text-4xl font-bold text-white">
+          <h2 className="mt-6 text-4xl font-bold text-slate-900">
             Shopping Made More Personal
           </h2>
 
-          <p className="mx-auto mt-5 max-w-2xl text-lg text-slate-400">
+          <p className="mx-auto mt-5 max-w-2xl text-lg text-slate-500">
             BridgeOne helps customers connect directly with shop owners
             through live video before making a purchase.
           </p>

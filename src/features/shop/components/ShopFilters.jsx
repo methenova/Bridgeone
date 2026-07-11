@@ -21,14 +21,14 @@ export default function ShopFilters() {
         placeholder="Search shops..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="flex-1 rounded-xl border border-slate-700 bg-slate-900 p-3 text-white outline-none focus:border-blue-500"
+        className="flex-1 rounded-xl border border-slate-200 bg-white shadow-sm p-3 text-slate-900 outline-none focus:border-blue-500"
       />
 
       {/* Category */}
       <select
         value={category}
         onChange={(e) => setCategory(e.target.value)}
-        className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-white"
+        className="rounded-xl border border-slate-200 bg-white shadow-sm p-3 text-slate-900"
       >
         {categories.map((item) => (
           <option key={item} value={item}>
@@ -41,7 +41,7 @@ export default function ShopFilters() {
       <select
         value={city}
         onChange={(e) => setCity(e.target.value)}
-        className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-white"
+        className="rounded-xl border border-slate-200 bg-white shadow-sm p-3 text-slate-900"
       >
         {cities.map((item) => (
           <option key={item} value={item}>

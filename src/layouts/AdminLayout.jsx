@@ -158,7 +158,7 @@ export default function AdminLayout() {
         {/* Workspace Logo & Switcher */}
         <div className="flex h-16 items-center justify-between border-b border-slate-100 px-4 relative shrink-0">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 font-black text-white shrink-0 shadow-lg shadow-blue-500/10">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 font-black text-slate-900 shrink-0 shadow-lg shadow-blue-500/10">
               B
             </div>
             {!sidebarCollapsed && (
@@ -300,7 +300,7 @@ export default function AdminLayout() {
               <button 
                 onClick={handleLogout}
                 title="Logout"
-                className="h-7 w-7 flex items-center justify-center rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-600 transition-colors"
+                className="h-7 w-7 flex items-center justify-center rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-600 transition-colors"
               >
                 <LogOut className="h-3.5 w-3.5" />
               </button>
@@ -319,7 +319,7 @@ export default function AdminLayout() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm md:hidden"
+              className="fixed inset-0 z-40 bg-white shadow-sm/40 backdrop-blur-sm md:hidden"
               onClick={() => setMobileSidebarOpen(false)}
             />
             <motion.aside 
@@ -402,7 +402,7 @@ export default function AdminLayout() {
               <Link to="/admin" className="hover:text-slate-900 transition-colors">Admin</Link>
               {breadcrumbs.map((crumb, idx) => (
                 <div key={crumb.path} className="flex items-center gap-2">
-                  <span className="text-slate-300">/</span>
+                  <span className="text-slate-700">/</span>
                   <Link 
                     to={crumb.path} 
                     className={`transition-colors ${idx === breadcrumbs.length - 1 ? "text-slate-900 font-semibold" : "hover:text-slate-900"}`}
@@ -423,10 +423,10 @@ export default function AdminLayout() {
               className="hidden sm:flex h-9 w-64 items-center justify-between rounded-xl border border-slate-200/60 bg-slate-50 px-3 text-sm text-slate-500 hover:text-slate-900 hover:border-slate-300 hover:bg-white hover:shadow-sm transition-all group"
             >
               <div className="flex items-center gap-2">
-                <Search className="h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
+                <Search className="h-4 w-4 text-slate-500 group-hover:text-slate-600 transition-colors" />
                 <span>Search...</span>
               </div>
-              <kbd className="inline-flex h-5 items-center gap-0.5 rounded border border-slate-200 bg-white px-1.5 font-sans text-[10px] font-bold text-slate-400 shadow-sm">
+              <kbd className="inline-flex h-5 items-center gap-0.5 rounded border border-slate-200 bg-white px-1.5 font-sans text-[10px] font-bold text-slate-500 shadow-sm">
                 <span>Ctrl K</span>
               </kbd>
             </button>
@@ -454,13 +454,13 @@ export default function AdminLayout() {
                 onClick={() => setDropdownOpen((v) => !v)}
                 className="flex items-center gap-2 rounded-full border border-slate-200 bg-white p-1 pr-3 text-xs font-semibold text-slate-700 hover:border-slate-300 hover:shadow-sm transition-all"
               >
-                <div className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 font-extrabold text-[11px] text-white shadow-sm shrink-0">
+                <div className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 font-extrabold text-[11px] text-slate-900 shadow-sm shrink-0">
                   {(profile?.full_name || "A").charAt(0).toUpperCase()}
                 </div>
                 <span className="max-w-[100px] truncate hidden sm:inline">
                   {profile?.full_name || "Administrator"}
                 </span>
-                <ChevronDown className="h-3 w-3 text-slate-400 shrink-0" />
+                <ChevronDown className="h-3 w-3 text-slate-500 shrink-0" />
               </button>
 
               <AnimatePresence>
@@ -485,7 +485,7 @@ export default function AdminLayout() {
                           onClick={() => setDropdownOpen(false)}
                           className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
                         >
-                          <Settings className="h-4 w-4 text-slate-400 shrink-0" />
+                          <Settings className="h-4 w-4 text-slate-500 shrink-0" />
                           Preferences
                         </Link>
                         <Link
@@ -533,7 +533,7 @@ export default function AdminLayout() {
       {/* ── Command Palette (Modal Dialog) ──────────────────────── */}
       <AnimatePresence>
         {commandPaletteOpen && (
-          <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4 bg-white shadow-sm/40 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -553,7 +553,7 @@ export default function AdminLayout() {
                   onKeyDown={handleCommandKeyDown}
                   className="flex-1 bg-transparent text-sm text-slate-900 placeholder-slate-400 outline-none"
                 />
-                <kbd className="inline-flex items-center gap-0.5 rounded bg-slate-50 border border-slate-800 px-1.5 font-mono text-[9px] text-slate-500">
+                <kbd className="inline-flex items-center gap-0.5 rounded bg-slate-50 border border-slate-200 px-1.5 font-mono text-[9px] text-slate-500">
                   <span>esc</span>
                 </kbd>
               </div>

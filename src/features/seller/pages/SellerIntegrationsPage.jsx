@@ -173,7 +173,7 @@ export default function SellerIntegrationsPage() {
         <button
           onClick={() => setActiveTab("apps")}
           className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${
-            activeTab === "apps" ? "bg-blue-600 text-white shadow-lg" : "text-slate-400 hover:text-white"
+            activeTab === "apps" ? "bg-blue-600 text-white shadow-lg" : "text-slate-500 hover:text-white"
           }`}
         >
           E-Commerce & CRM Connectors
@@ -181,7 +181,7 @@ export default function SellerIntegrationsPage() {
         <button
           onClick={() => setActiveTab("dev")}
           className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${
-            activeTab === "dev" ? "bg-blue-600 text-white shadow-lg" : "text-slate-400 hover:text-white"
+            activeTab === "dev" ? "bg-blue-600 text-white shadow-lg" : "text-slate-500 hover:text-white"
           }`}
         >
           API Keys & Webhooks
@@ -189,7 +189,7 @@ export default function SellerIntegrationsPage() {
         <button
           onClick={() => setActiveTab("pixels")}
           className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${
-            activeTab === "pixels" ? "bg-blue-600 text-white shadow-lg" : "text-slate-400 hover:text-white"
+            activeTab === "pixels" ? "bg-blue-600 text-white shadow-lg" : "text-slate-500 hover:text-white"
           }`}
         >
           Analytics & Pixels

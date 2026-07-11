@@ -10,7 +10,7 @@ export default function OrderSuccessPage() {
   const { data: order, isLoading } = useOrder(orderId);
 
   return (
-    <div className="min-h-screen bg-slate-950 py-20">
+    <div className="min-h-screen bg-slate-50 py-20">
       <Container>
         <div className="mx-auto max-w-lg text-center">
 
@@ -29,15 +29,15 @@ export default function OrderSuccessPage() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            <h1 className="text-3xl font-bold text-white">Order Placed! 🎉</h1>
-            <p className="mt-3 text-slate-400">
+            <h1 className="text-3xl font-bold text-slate-900">Order Placed! 🎉</h1>
+            <p className="mt-3 text-slate-500">
               Thank you for your purchase. Your order has been placed successfully.
             </p>
 
             {orderId && (
-              <div className="mt-4 rounded-xl border border-slate-700 bg-slate-900 px-4 py-3">
+              <div className="mt-4 rounded-xl border border-slate-200 bg-white shadow-sm px-4 py-3">
                 <p className="text-xs text-slate-500">Order ID</p>
-                <p className="mt-1 font-mono text-sm text-slate-300">
+                <p className="mt-1 font-mono text-sm text-slate-700">
                   {orderId.slice(0, 8).toUpperCase()}
                 </p>
               </div>
@@ -50,13 +50,13 @@ export default function OrderSuccessPage() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="mt-8 rounded-2xl border border-slate-800 bg-slate-900 p-5 text-left"
+              className="mt-8 rounded-2xl border border-slate-200 bg-white shadow-sm p-5 text-left"
             >
-              <h3 className="mb-4 text-sm font-semibold text-white">Items Ordered</h3>
+              <h3 className="mb-4 text-sm font-semibold text-slate-900">Items Ordered</h3>
               <div className="space-y-3">
                 {order.order_items.map((item) => (
                   <div key={item.id} className="flex items-center gap-3">
-                    <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-slate-800">
+                    <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-slate-100">
                       {item.products?.thumbnail_url && (
                         <img
                           src={item.products.thumbnail_url}
@@ -66,17 +66,17 @@ export default function OrderSuccessPage() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="truncate text-sm text-white">{item.products?.name}</p>
+                      <p className="truncate text-sm text-slate-900">{item.products?.name}</p>
                       <p className="text-xs text-slate-500">Qty: {item.quantity}</p>
                     </div>
-                    <span className="text-sm font-medium text-white">
+                    <span className="text-sm font-medium text-slate-900">
                       ₹{item.total.toLocaleString()}
                     </span>
                   </div>
                 ))}
               </div>
               {order && (
-                <div className="mt-4 border-t border-slate-700 pt-3 flex justify-between text-sm font-bold text-white">
+                <div className="mt-4 border-t border-slate-200 pt-3 flex justify-between text-sm font-bold text-slate-900">
                   <span>Total Paid</span>
                   <span>₹{Number(order.total).toLocaleString()}</span>
                 </div>
@@ -102,7 +102,7 @@ export default function OrderSuccessPage() {
 
             <Link
               to="/products"
-              className="flex items-center justify-center gap-2 rounded-xl border border-slate-700 py-3 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-800"
+              className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100"
             >
               <ShoppingBag className="h-4 w-4" />
               Continue Shopping

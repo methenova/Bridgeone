@@ -7,13 +7,13 @@ import {
 
 export default function ShopAbout({ shop }) {
   return (
-    <div className="mt-8 rounded-3xl border border-slate-800 bg-slate-900 p-8">
+    <div className="mt-8 rounded-3xl border border-slate-200 bg-white shadow-sm p-8">
 
-      <h2 className="text-2xl font-bold text-white">
+      <h2 className="text-2xl font-bold text-slate-900">
         About Shop
       </h2>
 
-      <p className="mt-5 leading-8 text-slate-400">
+      <p className="mt-5 leading-8 text-slate-500">
         {shop.description || "No description available."}
       </p>
 
@@ -27,7 +27,7 @@ export default function ShopAbout({ shop }) {
               Address
             </p>
 
-            <p className="text-white">
+            <p className="text-slate-900">
               {shop.address}, {shop.city}, {shop.state}
             </p>
           </div>
@@ -41,7 +41,7 @@ export default function ShopAbout({ shop }) {
               Phone
             </p>
 
-            <p className="text-white">
+            <p className="text-slate-900">
               {shop.phone || "Not Available"}
             </p>
           </div>
@@ -55,7 +55,7 @@ export default function ShopAbout({ shop }) {
               Email
             </p>
 
-            <p className="text-white">
+            <p className="text-slate-900">
               {shop.email || "Not Available"}
             </p>
           </div>
@@ -69,7 +69,7 @@ export default function ShopAbout({ shop }) {
               Country
             </p>
 
-            <p className="text-white">
+            <p className="text-slate-900">
               {shop.country}
             </p>
           </div>

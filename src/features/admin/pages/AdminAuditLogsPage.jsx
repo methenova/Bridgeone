@@ -82,14 +82,14 @@ export default function AdminAuditLogsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-200" />
+        <div className="h-10 w-48 animate-pulse rounded-lg bg-white shadow-sm" />
+        <div className="h-96 animate-pulse rounded-2xl bg-white shadow-sm border border-slate-200" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-4 md:space-y-6 text-white max-w-7xl relative">
+    <div className="space-y-4 md:space-y-6 text-slate-900 max-w-7xl relative">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -108,7 +108,7 @@ export default function AdminAuditLogsPage() {
       </div>
 
       {/* Utilities bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/20 p-4 rounded-2xl border border-slate-900">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white shadow-sm p-4 rounded-2xl border border-slate-200">
         
         {/* Search */}
         <div className="relative flex-1 max-w-md">
@@ -120,7 +120,7 @@ export default function AdminAuditLogsPage() {
             placeholder="Search by action, module, or admin..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-200 transition-colors"
+            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-slate-200 transition-colors"
           />
         </div>
 
@@ -160,10 +160,10 @@ export default function AdminAuditLogsPage() {
       </div>
 
       {/* Logs Table */}
-      <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Administrator / Actor</th>
                 <th className="px-6 py-4.5">Audit Action details</th>
@@ -192,11 +192,11 @@ export default function AdminAuditLogsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.03 }}
                     key={log.id} 
-                    className="hover:bg-slate-900/10 transition-colors"
+                    className="hover:bg-white shadow-sm/10 transition-colors"
                   >
                     {/* Actor profile */}
                     <td className="px-6 py-4">
-                      <div className="font-semibold text-white">{actorName}</div>
+                      <div className="font-semibold text-slate-900">{actorName}</div>
                       <div className="text-[10px] text-slate-500 mt-0.5">{actorEmail}</div>
                     </td>
 

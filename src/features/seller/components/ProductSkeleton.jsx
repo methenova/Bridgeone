@@ -28,7 +28,7 @@ export default function ProductSkeleton({ rows = 6 }) {
             <div className="h-14 w-14 shrink-0 animate-pulse rounded-2xl bg-slate-50" />
             <div className="flex-1 space-y-2">
               <div className="h-4 w-48 animate-pulse rounded bg-slate-50" />
-              <div className="h-3 w-24 animate-pulse rounded bg-slate-800/70" />
+              <div className="h-3 w-24 animate-pulse rounded bg-slate-100/70" />
             </div>
           </div>
 

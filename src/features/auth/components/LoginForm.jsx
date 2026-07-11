@@ -57,7 +57,7 @@ export default function LoginForm() {
         placeholder="Email"
         value={formData.email}
         onChange={handleChange}
-        className="w-full rounded-xl border border-slate-700 bg-slate-900 p-3 text-white"
+        className="w-full rounded-xl border border-slate-200 bg-white shadow-sm p-3 text-slate-900"
       />
 
       <input
@@ -66,7 +66,7 @@ export default function LoginForm() {
         placeholder="Password"
         value={formData.password}
         onChange={handleChange}
-        className="w-full rounded-xl border border-slate-700 bg-slate-900 p-3 text-white"
+        className="w-full rounded-xl border border-slate-200 bg-white shadow-sm p-3 text-slate-900"
       />
 
       <button

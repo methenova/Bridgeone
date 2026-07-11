@@ -18,9 +18,9 @@ export default function CustomerOrderDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-950 py-10">
+      <div className="min-h-screen bg-slate-50 py-10">
         <Container>
-          <div className="h-64 animate-pulse rounded-2xl bg-slate-900 border border-slate-800" />
+          <div className="h-64 animate-pulse rounded-2xl bg-white shadow-sm border border-slate-200" />
         </Container>
       </div>
     );
@@ -28,8 +28,8 @@ export default function CustomerOrderDetailPage() {
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-slate-950 py-20 text-center">
-        <p className="text-xl text-white">Order not found</p>
+      <div className="min-h-screen bg-slate-50 py-20 text-center">
+        <p className="text-xl text-slate-900">Order not found</p>
         <Link to="/orders" className="mt-4 inline-block text-blue-400 underline">
           Back to Orders
         </Link>
@@ -55,13 +55,13 @@ export default function CustomerOrderDetailPage() {
   const isBusy = cancelOrder.isPending || returnOrder.isPending;
 
   return (
-    <div className="min-h-screen bg-slate-950 py-10">
+    <div className="min-h-screen bg-slate-50 py-10">
       <Container>
 
         {/* Back Link */}
         <Link
           to="/orders"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-400 hover:text-white mb-6 transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-slate-900 mb-6 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to My Orders
@@ -70,14 +70,14 @@ export default function CustomerOrderDetailPage() {
         {/* Page Header */}
         <div className="flex flex-wrap items-start justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white">Order Details</h1>
-            <p className="mt-1 text-slate-400">Placed on {orderDate}</p>
+            <h1 className="text-3xl font-bold text-slate-900">Order Details</h1>
+            <p className="mt-1 text-slate-500">Placed on {orderDate}</p>
           </div>
 
           <div className="flex items-center gap-3">
             <button
               onClick={() => setInvoiceOpen(true)}
-              className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white shadow-sm px-4 py-2.5 text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors"
             >
               <Printer className="h-4 w-4" />
               Invoice Receipt
@@ -116,8 +116,8 @@ export default function CustomerOrderDetailPage() {
         </div>
 
         {/* Timeline */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 mb-8">
-          <h3 className="mb-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 mb-8">
+          <h3 className="mb-4 text-sm font-semibold text-slate-500 uppercase tracking-wider">
             Order Status Timeline
           </h3>
           <OrderStatusTimeline status={order.status} />
@@ -133,15 +133,15 @@ export default function CustomerOrderDetailPage() {
             <div className="grid gap-6 sm:grid-cols-2">
 
               {/* Address */}
-              <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 space-y-3">
+              <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-5 space-y-3">
                 <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                   <MapPin className="h-3.5 w-3.5" /> Shipping Address
                 </h3>
                 {order.addresses ? (
-                  <div className="text-sm text-slate-300 space-y-1">
-                    <p className="font-semibold text-white">{order.addresses.name}</p>
-                    <p className="text-xs text-slate-400">{order.addresses.phone}</p>
-                    <p className="text-xs text-slate-400 pt-1 leading-relaxed">
+                  <div className="text-sm text-slate-700 space-y-1">
+                    <p className="font-semibold text-slate-900">{order.addresses.name}</p>
+                    <p className="text-xs text-slate-500">{order.addresses.phone}</p>
+                    <p className="text-xs text-slate-500 pt-1 leading-relaxed">
                       {order.addresses.address_line1}
                       {order.addresses.address_line2 ? `, ${order.addresses.address_line2}` : ""}
                       <br />
@@ -154,12 +154,12 @@ export default function CustomerOrderDetailPage() {
               </div>
 
               {/* Payment details */}
-              <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 space-y-3">
+              <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-5 space-y-3">
                 <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                   <CreditCard className="h-3.5 w-3.5" /> Payment Method
                 </h3>
-                <div className="text-sm text-slate-300 space-y-1">
-                  <p className="font-semibold text-white capitalize">{order.payment_method}</p>
+                <div className="text-sm text-slate-700 space-y-1">
+                  <p className="font-semibold text-slate-900 capitalize">{order.payment_method}</p>
                   {order.payment_id && (
                     <p className="text-xs text-slate-500 font-mono mt-1">Txn ID: {order.payment_id}</p>
                   )}
@@ -174,12 +174,12 @@ export default function CustomerOrderDetailPage() {
               <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                 <ShoppingBag className="h-3.5 w-3.5" /> Items Purchased
               </h3>
-              <div className="divide-y divide-slate-800 rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden">
+              <div className="divide-y divide-slate-100 rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
                 {order.order_items?.map((item) => {
                   const itemPrice = item.discount_price ? Number(item.discount_price) : Number(item.price);
                   return (
                     <div key={item.id} className="flex gap-4 p-4">
-                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-slate-800 border border-slate-700">
+                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-slate-100 border border-slate-200">
                         {item.products?.thumbnail_url ? (
                           <img
                             src={item.products.thumbnail_url}
@@ -192,14 +192,14 @@ export default function CustomerOrderDetailPage() {
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <p className="truncate text-sm font-semibold text-white">{item.products?.name}</p>
-                        <p className="text-xs text-slate-400 mt-1">
+                        <p className="truncate text-sm font-semibold text-slate-900">{item.products?.name}</p>
+                        <p className="text-xs text-slate-500 mt-1">
                           Sold by: <span className="text-blue-400 font-medium">{item.shops?.name || "BridgeOne Vendor"}</span>
                         </p>
                       </div>
 
                       <div className="text-right">
-                        <p className="text-sm font-bold text-white">₹{item.total.toLocaleString()}</p>
+                        <p className="text-sm font-bold text-slate-900">₹{item.total.toLocaleString()}</p>
                         <p className="text-xs text-slate-500 mt-0.5">{item.quantity} × ₹{itemPrice.toLocaleString()}</p>
                       </div>
                     </div>
@@ -212,13 +212,13 @@ export default function CustomerOrderDetailPage() {
 
           {/* Right Column: Pricing Summary */}
           <div className="lg:col-span-1">
-            <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 space-y-4">
-              <h3 className="font-semibold text-white text-sm uppercase tracking-wider">Pricing Details</h3>
+            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-5 space-y-4">
+              <h3 className="font-semibold text-slate-900 text-sm uppercase tracking-wider">Pricing Details</h3>
 
               <div className="space-y-2.5 text-sm">
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-500">
                   <span>Subtotal</span>
-                  <span className="font-medium text-white">₹{subtotal.toLocaleString()}</span>
+                  <span className="font-medium text-slate-900">₹{subtotal.toLocaleString()}</span>
                 </div>
 
                 {discount > 0 && (
@@ -228,14 +228,14 @@ export default function CustomerOrderDetailPage() {
                   </div>
                 )}
 
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-500">
                   <span>Delivery Charges</span>
-                  <span className={delivery === 0 ? "text-emerald-400" : "text-white"}>
+                  <span className={delivery === 0 ? "text-emerald-400" : "text-slate-900"}>
                     {delivery === 0 ? "FREE" : `₹${delivery}`}
                   </span>
                 </div>
 
-                <div className="flex justify-between border-t border-slate-700 pt-3 text-base font-bold text-white">
+                <div className="flex justify-between border-t border-slate-200 pt-3 text-base font-bold text-slate-900">
                   <span>Grand Total</span>
                   <span>₹{total.toLocaleString()}</span>
                 </div>

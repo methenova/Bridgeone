@@ -74,7 +74,7 @@ export default function AdminUsersPage() {
       {/* Aggregate Stats Cards */}
       <div className="grid gap-3 md:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 max-w-4xl">
         {/* Total Users */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Total Users</p>
             <p className="text-xl font-bold tracking-tight">{stats.total}</p>
@@ -85,7 +85,7 @@ export default function AdminUsersPage() {
         </div>
 
         {/* Platform Admins */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Admins</p>
             <p className="text-xl font-bold tracking-tight text-red-400">{stats.admins}</p>
@@ -96,7 +96,7 @@ export default function AdminUsersPage() {
         </div>
 
         {/* Sellers */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Sellers</p>
             <p className="text-xl font-bold tracking-tight text-blue-400">{stats.sellers}</p>
@@ -107,7 +107,7 @@ export default function AdminUsersPage() {
         </div>
 
         {/* Customers */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Customers</p>
             <p className="text-xl font-bold tracking-tight text-slate-700">{stats.customers}</p>
@@ -119,7 +119,7 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Filter and Search Utility Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/20 p-4 rounded-2xl border border-slate-900">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white shadow-sm p-4 rounded-2xl border border-slate-200">
         
         {/* Search */}
         <div className="relative flex-1 max-w-md">
@@ -131,7 +131,7 @@ export default function AdminUsersPage() {
             placeholder="Search by user name or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-800 transition-colors"
+            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-slate-200 transition-colors"
           />
         </div>
 
@@ -141,7 +141,7 @@ export default function AdminUsersPage() {
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-800"
+            className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
           >
             <option value="all">All Roles</option>
             <option value="customer">Customer</option>
@@ -153,10 +153,10 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Users Table Card */}
-      <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Account Profile</th>
                 <th className="px-6 py-4.5">Email Address</th>
@@ -180,7 +180,7 @@ export default function AdminUsersPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.02 }}
                     key={u.id} 
-                    className="hover:bg-slate-900/10 transition-colors"
+                    className="hover:bg-white shadow-sm/10 transition-colors"
                   >
                     {/* Profile */}
                     <td className="px-6 py-4">
@@ -209,7 +209,7 @@ export default function AdminUsersPage() {
                           ? "bg-red-500/10 text-red-400 border-red-500/20"
                           : userRole === "seller"
                           ? "bg-blue-500/10 text-blue-400 border-blue-500/20"
-                          : "bg-slate-800 text-slate-500 border border-slate-700/60"
+                          : "bg-slate-100 text-slate-500 border border-slate-200/60"
                       }`}>
                         {userRole}
                       </span>
@@ -226,7 +226,7 @@ export default function AdminUsersPage() {
                         value={userRole}
                         onChange={(e) => handleRoleChange(u.id, e.target.value)}
                         disabled={updateRole.isPending}
-                        className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-white outline-none focus:border-blue-500 disabled:opacity-50 font-bold transition-all"
+                        className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-900 outline-none focus:border-blue-500 disabled:opacity-50 font-bold transition-all"
                       >
                         {ROLES.map((role) => (
                           <option key={role.value} value={role.value}>{role.label}</option>

@@ -34,14 +34,14 @@ export default function AdminOrdersPage() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search by Order ID, customer name..."
-          className="w-full rounded-xl border border-slate-200 bg-slate-900 py-2.5 pl-9 pr-4 text-sm text-white placeholder-slate-600 outline-none focus:border-blue-500"
+          className="w-full rounded-xl border border-slate-200 bg-white shadow-sm py-2.5 pl-9 pr-4 text-sm text-slate-900 placeholder-slate-600 outline-none focus:border-blue-500"
         />
       </div>
 
       {isLoading ? (
         <ProductSkeleton rows={6} />
       ) : filteredOrders.length === 0 ? (
-        <div className="py-20 text-center border border-slate-900 rounded-2xl bg-slate-900/10">
+        <div className="py-20 text-center border border-slate-200 rounded-2xl bg-white shadow-sm/10">
           <ShoppingBag className="mx-auto mb-3 h-12 w-12 text-slate-600" />
           <p className="text-slate-500">No checkouts found matching queries.</p>
         </div>
@@ -49,7 +49,7 @@ export default function AdminOrdersPage() {
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
           <div className="overflow-x-auto">
             <table className="min-w-full text-left">
-              <thead className="border-b border-slate-800 bg-slate-950/60 text-slate-700 text-sm font-semibold">
+              <thead className="border-b border-slate-200 bg-slate-50/60 text-slate-700 text-sm font-semibold">
                 <tr>
                   <th className="px-6 py-4">Order ID</th>
                   <th className="px-6 py-4">Customer</th>
@@ -60,7 +60,7 @@ export default function AdminOrdersPage() {
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-850 bg-slate-900/10 text-sm text-slate-600">
+              <tbody className="divide-y divide-slate-850 bg-white shadow-sm/10 text-sm text-slate-600">
                 {filteredOrders.map((o) => {
                   const customerName = o.profiles?.full_name || "—";
                   const orderDate = new Date(o.created_at).toLocaleDateString(undefined, {
@@ -70,11 +70,11 @@ export default function AdminOrdersPage() {
                   });
 
                   return (
-                    <tr key={o.id} className="hover:bg-slate-800/20 transition-colors">
+                    <tr key={o.id} className="hover:bg-slate-100/20 transition-colors">
                       <td className="px-6 py-4 font-mono text-xs font-semibold text-slate-500">
                         #{o.id.slice(0, 8).toUpperCase()}
                       </td>
-                      <td className="px-6 py-4 font-medium text-white">
+                      <td className="px-6 py-4 font-medium text-slate-900">
                         {customerName}
                       </td>
                       <td className="px-6 py-4 text-slate-500">
@@ -100,7 +100,7 @@ export default function AdminOrdersPage() {
                       <td className="px-6 py-4 text-right">
                         <Button
                           onClick={() => setSelectedOrder(o)}
-                          className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-slate-900 text-slate-500 hover:text-white hover:border-slate-600 ml-auto"
+                          className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white shadow-sm text-slate-500 hover:text-slate-900 hover:border-slate-300 ml-auto"
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -116,7 +116,7 @@ export default function AdminOrdersPage() {
 
       {/* Simple Details Modal */}
       {selectedOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white shadow-sm/40 p-4 backdrop-blur-sm">
           <div className="w-full max-w-xl max-w-[calc(100vw-2rem)] rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/50 max-h-[90vh] overflow-y-auto space-y-6">
             <div className="flex justify-between items-center border-b border-slate-100 pb-4">
               <div>
@@ -125,7 +125,7 @@ export default function AdminOrdersPage() {
               </div>
               <Button
                 onClick={() => setSelectedOrder(null)}
-                className="text-slate-500 hover:text-white"
+                className="text-slate-500 hover:text-slate-900"
               >
                 ✕
               </Button>
@@ -170,7 +170,7 @@ export default function AdminOrdersPage() {
                 {selectedOrder.order_items?.map((item) => (
                   <div key={item.id} className="flex justify-between items-center p-4">
                     <div>
-                      <p className="font-semibold text-white">{item.products?.name || "—"}</p>
+                      <p className="font-semibold text-slate-900">{item.products?.name || "—"}</p>
                       <p className="text-xs text-slate-500 mt-0.5">Vendor: {item.shops?.name || "—"}</p>
                     </div>
                     <div className="text-right">
@@ -186,7 +186,7 @@ export default function AdminOrdersPage() {
             <div className="space-y-2 border-t border-slate-100 pt-4 text-sm text-slate-500">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span className="font-semibold text-white">₹{Number(selectedOrder.subtotal).toLocaleString()}</span>
+                <span className="font-semibold text-slate-900">₹{Number(selectedOrder.subtotal).toLocaleString()}</span>
               </div>
               {Number(selectedOrder.discount) > 0 && (
                 <div className="flex justify-between text-emerald-400">
@@ -196,7 +196,7 @@ export default function AdminOrdersPage() {
               )}
               <div className="flex justify-between">
                 <span>Delivery</span>
-                <span className="font-semibold text-white">₹{Number(selectedOrder.delivery_fee).toLocaleString()}</span>
+                <span className="font-semibold text-slate-900">₹{Number(selectedOrder.delivery_fee).toLocaleString()}</span>
               </div>
               <div className="flex justify-between border-t border-slate-100 pt-2 text-base font-bold text-slate-900">
                 <span>Total Paid</span>

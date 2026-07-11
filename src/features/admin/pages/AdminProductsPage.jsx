@@ -93,7 +93,7 @@ export default function AdminProductsPage() {
       {/* Metrics Cards */}
       <div className="grid gap-4 grid-cols-3 max-w-3xl">
         {/* Total Products */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Total Products</p>
             <p className="text-xl font-bold tracking-tight">{stats.total}</p>
@@ -104,7 +104,7 @@ export default function AdminProductsPage() {
         </div>
 
         {/* Active Listings */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Active Listings</p>
             <p className="text-xl font-bold tracking-tight text-emerald-400">{stats.active}</p>
@@ -115,7 +115,7 @@ export default function AdminProductsPage() {
         </div>
 
         {/* Featured Showcase */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Featured Items</p>
             <p className="text-xl font-bold tracking-tight text-amber-400">{stats.featured}</p>
@@ -127,7 +127,7 @@ export default function AdminProductsPage() {
       </div>
 
       {/* Filter and Search Utility Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/20 p-4 rounded-2xl border border-slate-900">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white shadow-sm p-4 rounded-2xl border border-slate-200">
         
         {/* Search */}
         <div className="relative flex-1 max-w-md">
@@ -139,7 +139,7 @@ export default function AdminProductsPage() {
             placeholder="Search by product name, shop, or SKU..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-800 transition-colors"
+            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-slate-200 transition-colors"
           />
         </div>
 
@@ -151,7 +151,7 @@ export default function AdminProductsPage() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-800"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
             >
               <option value="all">All Categories</option>
               {categoriesList.map((cat) => (
@@ -166,7 +166,7 @@ export default function AdminProductsPage() {
             <select
               value={featuredFilter}
               onChange={(e) => setFeaturedFilter(e.target.value)}
-              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-800"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
             >
               <option value="all">All Items</option>
               <option value="featured">Featured Only</option>
@@ -178,10 +178,10 @@ export default function AdminProductsPage() {
       </div>
 
       {/* Products Table Card */}
-      <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Product</th>
                 <th className="px-6 py-4.5">Merchant Shop</th>
@@ -201,7 +201,7 @@ export default function AdminProductsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.02 }}
                     key={p.id} 
-                    className="hover:bg-slate-900/10 transition-colors"
+                    className="hover:bg-white shadow-sm/10 transition-colors"
                   >
                     {/* Thumbnail + SKU */}
                     <td className="px-6 py-4">
@@ -223,7 +223,7 @@ export default function AdminProductsPage() {
                     </td>
 
                     {/* Shop Name */}
-                    <td className="px-6 py-4 text-white font-semibold">
+                    <td className="px-6 py-4 text-slate-900 font-semibold">
                       {p.shops?.name || "—"}
                     </td>
 
@@ -246,7 +246,7 @@ export default function AdminProductsPage() {
                         className={`inline-flex h-8 w-8 items-center justify-center rounded-lg border transition-all cursor-pointer ${
                           p.featured
                             ? "border-amber-500/30 bg-amber-500/10 text-amber-400"
-                            : "border-slate-200 bg-slate-900/40 text-slate-650 hover:text-slate-500 hover:border-slate-800"
+                            : "border-slate-200 bg-white shadow-sm/40 text-slate-650 hover:text-slate-500 hover:border-slate-200"
                         }`}
                       >
                         <Star className={`h-4 w-4 ${p.featured ? "fill-amber-400" : ""}`} />
@@ -270,7 +270,7 @@ export default function AdminProductsPage() {
                         onClick={() => handleToggleActive(p)}
                         disabled={toggleActive.isPending}
                         title={p.is_active ? "Deactivate Product" : "Activate Product"}
-                        className="text-slate-500 hover:text-white transition-colors disabled:opacity-50 cursor-pointer"
+                        className="text-slate-500 hover:text-slate-900 transition-colors disabled:opacity-50 cursor-pointer"
                       >
                         {p.is_active ? (
                           <ToggleRight className="h-6 w-6 text-emerald-500" />

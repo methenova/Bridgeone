@@ -407,7 +407,7 @@ export default function SellerDashboardPage() {
                   <TrendingUp size={12} strokeWidth={3} />
                   <span>+14.2%</span>
                 </div>
-                <span className="text-[10px] font-medium text-slate-400">vs yesterday</span>
+                <span className="text-[10px] font-medium text-slate-500">vs yesterday</span>
               </div>
               {/* Mini SVG Sparkline */}
               <div className="h-8 w-20">
@@ -437,7 +437,7 @@ export default function SellerDashboardPage() {
                   <TrendingUp size={12} strokeWidth={3} />
                   <span>+8.4%</span>
                 </div>
-                <span className="text-[10px] font-medium text-slate-400">vs yesterday</span>
+                <span className="text-[10px] font-medium text-slate-500">vs yesterday</span>
               </div>
               <div className="h-8 w-20">
                 <svg viewBox="0 0 100 30" className="w-full h-full overflow-visible">
@@ -468,7 +468,7 @@ export default function SellerDashboardPage() {
                 <div className="flex items-center gap-1 text-[11px] font-bold text-slate-500">
                   <span>Steady Traffic</span>
                 </div>
-                <span className="text-[10px] font-medium text-slate-400">Currently browsing</span>
+                <span className="text-[10px] font-medium text-slate-500">Currently browsing</span>
               </div>
               <div className="h-8 w-20 flex items-end justify-between gap-1">
                 {[40, 60, 45, 80, 50, 70, 90, 65].map((h, i) => (
@@ -497,7 +497,7 @@ export default function SellerDashboardPage() {
                   <TrendingUp size={12} strokeWidth={3} />
                   <span>+2.1%</span>
                 </div>
-                <span className="text-[10px] font-medium text-slate-400">vs last week</span>
+                <span className="text-[10px] font-medium text-slate-500">vs last week</span>
               </div>
               <div className="h-8 w-20">
                 <svg viewBox="0 0 100 30" className="w-full h-full overflow-visible">
@@ -526,7 +526,7 @@ export default function SellerDashboardPage() {
                   <TrendingUp size={12} strokeWidth={3} />
                   <span>+15s</span>
                 </div>
-                <span className="text-[10px] font-medium text-slate-400">vs yesterday</span>
+                <span className="text-[10px] font-medium text-slate-500">vs yesterday</span>
               </div>
               <div className="h-8 w-20 flex items-end justify-between gap-1">
                 {[60, 50, 70, 80, 55, 85, 75, 90].map((h, i) => (
@@ -557,7 +557,7 @@ export default function SellerDashboardPage() {
                     {waitingCustomers > 5 ? 'High Volume' : 'Manageable'}
                   </span>
                 </div>
-                <span className="text-[10px] font-medium text-slate-400">queued for agents</span>
+                <span className="text-[10px] font-medium text-slate-500">queued for agents</span>
               </div>
               <div className="h-8 w-20">
                 <svg viewBox="0 0 100 30" className="w-full h-full overflow-visible">
@@ -643,11 +643,11 @@ export default function SellerDashboardPage() {
                 <tr>
                   <td colSpan={5} className="py-12 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center space-y-2">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-slate-400">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-slate-500">
                         <Users className="h-5 w-5" />
                       </div>
                       <p className="text-xs font-bold text-slate-700">No Active Website Visitors</p>
-                      <p className="text-[10px] text-slate-400 max-w-[240px] leading-normal mx-auto">When shoppers browse your online storefront widget, they will appear here in real-time.</p>
+                      <p className="text-[10px] text-slate-500 max-w-[240px] leading-normal mx-auto">When shoppers browse your online storefront widget, they will appear here in real-time.</p>
                     </div>
                   </td>
                 </tr>
@@ -681,12 +681,12 @@ export default function SellerDashboardPage() {
               ))}
               {recentActivities.length === 0 && (
                 <div className="py-10 text-center flex flex-col items-center justify-center space-y-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-slate-400">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-slate-500">
                     <Activity className="h-5 w-5" />
                   </div>
                   <div className="space-y-0.5">
                     <p className="text-xs font-bold text-slate-700">No Activity Logs Found</p>
-                    <p className="text-[10px] text-slate-400 max-w-[200px] leading-normal mx-auto">Completed call consults and dashboard actions will be logged here.</p>
+                    <p className="text-[10px] text-slate-500 max-w-[200px] leading-normal mx-auto">Completed call consults and dashboard actions will be logged here.</p>
                   </div>
                 </div>
               )}
@@ -713,11 +713,11 @@ export default function SellerDashboardPage() {
               ))}
               {availableAgentsList.length === 0 && (
                 <div className="py-6 text-center flex flex-col items-center justify-center col-span-2 space-y-2">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-slate-400">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-slate-500">
                     <UserCheck className="h-5 w-5" />
                   </div>
                   <p className="text-[10px] font-bold text-slate-750">No Team Agents Online</p>
-                  <p className="text-[9px] text-slate-400 leading-normal">Invite agents under settings to start accepting caller requests.</p>
+                  <p className="text-[9px] text-slate-500 leading-normal">Invite agents under settings to start accepting caller requests.</p>
                 </div>
               )}
             </div>
@@ -739,11 +739,11 @@ export default function SellerDashboardPage() {
               ))}
               {topSharedProducts.length === 0 && (
                 <div className="py-6 text-center flex flex-col items-center justify-center space-y-2">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-slate-400">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-slate-500">
                     <ShoppingCart className="h-5 w-5" />
                   </div>
                   <p className="text-[10px] font-bold text-slate-750">No Shared Products</p>
-                  <p className="text-[9px] text-slate-400 leading-normal">Catalog items shared during caller consults appear here.</p>
+                  <p className="text-[9px] text-slate-500 leading-normal">Catalog items shared during caller consults appear here.</p>
                 </div>
               )}
             </div>
@@ -771,7 +771,7 @@ export default function SellerDashboardPage() {
                     <UserCheck className="h-5 w-5" />
                   </div>
                   <p className="text-[10px] font-bold text-emerald-800">Follow-up Queue Clear</p>
-                  <p className="text-[9px] text-slate-400 leading-normal">All pending consult call-backs have been processed.</p>
+                  <p className="text-[9px] text-slate-500 leading-normal">All pending consult call-backs have been processed.</p>
                 </div>
               )}
             </div>

@@ -291,7 +291,7 @@ export default function AdminOrganizationsPage() {
   }
 
   return (
-    <div className="space-y-4 md:space-y-6 text-white max-w-7xl relative">
+    <div className="space-y-4 md:space-y-6 text-slate-900 max-w-7xl relative">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -310,17 +310,17 @@ export default function AdminOrganizationsPage() {
 
       {/* Aggregate Stats Cards */}
       <div className="grid gap-4 grid-cols-3 max-w-3xl">
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Total Tenants</p>
-            <p className="text-xl font-bold tracking-tight text-white">{stats.total}</p>
+            <p className="text-xl font-bold tracking-tight text-slate-900">{stats.total}</p>
           </div>
           <div className="h-9 w-9 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0">
             <Building className="h-4.5 w-4.5" />
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Active</p>
             <p className="text-xl font-bold tracking-tight text-emerald-400">{stats.approved}</p>
@@ -330,7 +330,7 @@ export default function AdminOrganizationsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Suspended</p>
             <p className="text-xl font-bold tracking-tight text-amber-400">{stats.suspended}</p>
@@ -342,7 +342,7 @@ export default function AdminOrganizationsPage() {
       </div>
 
       {/* Filters Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/20 p-4 rounded-2xl border border-slate-900">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white shadow-sm p-4 rounded-2xl border border-slate-200">
         
         {/* Search */}
         <div className="relative flex-1 max-w-md">
@@ -354,7 +354,7 @@ export default function AdminOrganizationsPage() {
             placeholder="Search by store name, admin profile name, or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-200 transition-colors"
+            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-slate-200 transition-colors"
           />
         </div>
 
@@ -392,10 +392,10 @@ export default function AdminOrganizationsPage() {
       </div>
 
       {/* Organizations List Table */}
-      <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Organization / brand</th>
                 <th className="px-6 py-4.5">Admin Profile</th>
@@ -416,7 +416,7 @@ export default function AdminOrganizationsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.03 }}
                     key={s.id} 
-                    className="hover:bg-slate-900/10 transition-colors"
+                    className="hover:bg-white shadow-sm/10 transition-colors"
                   >
                     {/* Brand Info */}
                     <td className="px-6 py-4">
@@ -447,7 +447,7 @@ export default function AdminOrganizationsPage() {
 
                     {/* Owner Contact */}
                     <td className="px-6 py-4">
-                      <div className="font-semibold text-white">{ownerName}</div>
+                      <div className="font-semibold text-slate-900">{ownerName}</div>
                       <div className="text-[10px] text-slate-500 mt-0.5">{ownerEmail}</div>
                     </td>
 
@@ -457,7 +457,7 @@ export default function AdminOrganizationsPage() {
                         value={s.plan_name || "free"}
                         onChange={(e) => handlePlanChange(s.id, e.target.value)}
                         disabled={updatePlan.isPending}
-                        className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-white outline-none focus:border-blue-500 disabled:opacity-50 font-bold transition-all"
+                        className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-900 outline-none focus:border-blue-500 disabled:opacity-50 font-bold transition-all"
                       >
                         {PLANS.map((plan) => (
                           <option key={plan.value} value={plan.value}>{plan.label}</option>
@@ -483,7 +483,7 @@ export default function AdminOrganizationsPage() {
                         <Button
                           onClick={() => handleToggleActive(s)}
                           disabled={toggleStatus.isPending}
-                          className="text-slate-500 hover:text-white transition-colors cursor-pointer"
+                          className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
                         >
                           {isApproved ? (
                             <ToggleRight className="h-6 w-6 text-emerald-500" />
@@ -495,7 +495,7 @@ export default function AdminOrganizationsPage() {
                         {/* Edit details */}
                         <Button
                           onClick={() => handleOpenEdit(s)}
-                          className="text-slate-500 hover:text-white transition-colors cursor-pointer"
+                          className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
                           title="Edit Details"
                         >
                           <Edit3 className="h-4 w-4" />
@@ -530,7 +530,7 @@ export default function AdminOrganizationsPage() {
       {/* DETAILS DRAWER MODAL */}
       <AnimatePresence>
         {selectedShop && (
-          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex justify-end">
+          <div className="fixed inset-0 bg-white shadow-sm/40 backdrop-blur-sm z-50 flex justify-end">
             <motion.div 
               initial={{ opacity: 0, x: 200 }}
               animate={{ opacity: 1, x: 0 }}
@@ -545,7 +545,7 @@ export default function AdminOrganizationsPage() {
                   </div>
                   <Button 
                     onClick={() => setSelectedShop(null)}
-                    className="text-slate-500 hover:text-white transition-colors cursor-pointer"
+                    className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
                   >
                     <X className="h-5 w-5" />
                   </Button>
@@ -554,7 +554,7 @@ export default function AdminOrganizationsPage() {
                 {/* Main Details */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-xl border border-slate-200 bg-slate-900 flex items-center justify-center">
+                    <div className="h-12 w-12 rounded-xl border border-slate-200 bg-white shadow-sm flex items-center justify-center">
                       {selectedShop.logo_url ? <img src={selectedShop.logo_url} alt="" className="h-full w-full object-cover" /> : "🏪"}
                     </div>
                     <div>
@@ -563,14 +563,14 @@ export default function AdminOrganizationsPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 bg-slate-900/30 p-4 rounded-xl border border-slate-900 text-xs">
+                  <div className="grid grid-cols-2 gap-4 bg-white shadow-sm p-4 rounded-xl border border-slate-200 text-xs">
                     <div>
                       <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Plan Active</p>
-                      <p className="text-white capitalize font-extrabold mt-0.5">{selectedShop.plan_name || "free"}</p>
+                      <p className="text-slate-900 capitalize font-extrabold mt-0.5">{selectedShop.plan_name || "free"}</p>
                     </div>
                     <div>
                       <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Status</p>
-                      <p className="text-white font-extrabold mt-0.5">{selectedShop.is_verified ? "Approved" : "Suspended"}</p>
+                      <p className="text-slate-900 font-extrabold mt-0.5">{selectedShop.is_verified ? "Approved" : "Suspended"}</p>
                     </div>
                   </div>
                 </div>
@@ -585,7 +585,7 @@ export default function AdminOrganizationsPage() {
                   ) : (
                     <div className="space-y-3">
                       {/* Calls */}
-                      <div className="flex items-center justify-between p-3 rounded-lg border border-slate-900 bg-slate-900/10">
+                      <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 bg-white shadow-sm/10">
                         <div className="flex items-center gap-2 text-xs">
                           <Activity className="h-4 w-4 text-indigo-400" />
                           <span>Monthly Video Calls</span>
@@ -594,7 +594,7 @@ export default function AdminOrganizationsPage() {
                       </div>
                       
                       {/* Products */}
-                      <div className="flex items-center justify-between p-3 rounded-lg border border-slate-900 bg-slate-900/10">
+                      <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 bg-white shadow-sm/10">
                         <div className="flex items-center gap-2 text-xs">
                           <Layers className="h-4 w-4 text-emerald-400" />
                           <span>Catalog Items (Products)</span>
@@ -603,7 +603,7 @@ export default function AdminOrganizationsPage() {
                       </div>
 
                       {/* Orders */}
-                      <div className="flex items-center justify-between p-3 rounded-lg border border-slate-900 bg-slate-900/10">
+                      <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 bg-white shadow-sm/10">
                         <div className="flex items-center gap-2 text-xs">
                           <DollarSign className="h-4 w-4 text-amber-400" />
                           <span>Transactions Flow Volume</span>
@@ -617,10 +617,10 @@ export default function AdminOrganizationsPage() {
                 {/* Widget Info */}
                 <div className="space-y-3">
                   <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-slate-500">Widget Configuration</h4>
-                  <div className="bg-slate-900/20 p-4 rounded-xl border border-slate-900 space-y-2 text-xs text-slate-700">
+                  <div className="bg-white shadow-sm p-4 rounded-xl border border-slate-200 space-y-2 text-xs text-slate-700">
                     <p>Widget Color: <span className="font-bold text-slate-900 uppercase">{selectedShop.widget_color || "#2563eb"}</span></p>
                     <p>Widget Position: <span className="font-bold text-slate-900 capitalize">{selectedShop.widget_position || "bottom-right"}</span></p>
-                    <p>Widget Token API Key: <span className="font-mono text-slate-500 font-bold block bg-slate-950 p-2 mt-1 rounded text-[10px] select-all">{selectedShop.id}</span></p>
+                    <p>Widget Token API Key: <span className="font-mono text-slate-500 font-bold block bg-slate-50 p-2 mt-1 rounded text-[10px] select-all">{selectedShop.id}</span></p>
                   </div>
                 </div>
               </div>
@@ -628,7 +628,7 @@ export default function AdminOrganizationsPage() {
               <div className="pt-4 border-t border-slate-100 flex justify-end gap-3 text-xs">
                 <Button 
                   onClick={() => handleOpenEdit(selectedShop)}
-                  className="px-4 py-2 border border-slate-200 rounded-xl text-slate-700 hover:text-white cursor-pointer"
+                  className="px-4 py-2 border border-slate-200 rounded-xl text-slate-700 hover:text-slate-900 cursor-pointer"
                 >
                   Edit Shop details
                 </Button>
@@ -647,7 +647,7 @@ export default function AdminOrganizationsPage() {
       {/* CREATE MODAL */}
       <AnimatePresence>
         {isCreateOpen && (
-          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-white shadow-sm/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -670,7 +670,7 @@ export default function AdminOrganizationsPage() {
                         setFormShopName(e.target.value);
                         setFormSlug(e.target.value.toLowerCase().replace(/\s+/g, "-"));
                       }}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                       placeholder="Nike India"
                     />
                   </div>
@@ -681,7 +681,7 @@ export default function AdminOrganizationsPage() {
                       type="text"
                       value={formSlug}
                       onChange={(e) => setFormSlug(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                     />
                   </div>
 
@@ -691,7 +691,7 @@ export default function AdminOrganizationsPage() {
                       value={formDesc}
                       onChange={(e) => setFormDesc(e.target.value)}
                       rows={3}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500 resize-none"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 resize-none"
                     />
                   </div>
 
@@ -701,7 +701,7 @@ export default function AdminOrganizationsPage() {
                       type="email"
                       value={formEmail}
                       onChange={(e) => setFormEmail(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                     />
                   </div>
 
@@ -711,7 +711,7 @@ export default function AdminOrganizationsPage() {
                       type="text"
                       value={formPhone}
                       onChange={(e) => setFormPhone(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                     />
                   </div>
 
@@ -720,7 +720,7 @@ export default function AdminOrganizationsPage() {
                     <select
                       value={formOwnerId}
                       onChange={(e) => setFormOwnerId(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                     >
                       {availableSellers.map(s => (
                         <option key={s.id} value={s.id}>{s.full_name} ({s.email})</option>
@@ -736,7 +736,7 @@ export default function AdminOrganizationsPage() {
                     <select
                       value={formCatId}
                       onChange={(e) => setFormCatId(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                     >
                       {categories.map(c => (
                         <option key={c.id} value={c.id}>{c.name}</option>
@@ -749,7 +749,7 @@ export default function AdminOrganizationsPage() {
                   <Button
                     type="button"
                     onClick={() => setIsCreateOpen(false)}
-                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-white cursor-pointer"
+                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-slate-900 cursor-pointer"
                   >
                     Cancel
                   </Button>
@@ -771,7 +771,7 @@ export default function AdminOrganizationsPage() {
       {/* EDIT MODAL */}
       <AnimatePresence>
         {isEditOpen && (
-          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-white shadow-sm/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -791,7 +791,7 @@ export default function AdminOrganizationsPage() {
                       type="text"
                       value={formShopName}
                       onChange={(e) => setFormShopName(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                     />
                   </div>
 
@@ -801,7 +801,7 @@ export default function AdminOrganizationsPage() {
                       type="text"
                       value={formSlug}
                       onChange={(e) => setFormSlug(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                     />
                   </div>
 
@@ -811,7 +811,7 @@ export default function AdminOrganizationsPage() {
                       value={formDesc}
                       onChange={(e) => setFormDesc(e.target.value)}
                       rows={3}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500 resize-none"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 resize-none"
                     />
                   </div>
 
@@ -821,7 +821,7 @@ export default function AdminOrganizationsPage() {
                       type="email"
                       value={formEmail}
                       onChange={(e) => setFormEmail(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                     />
                   </div>
 
@@ -831,7 +831,7 @@ export default function AdminOrganizationsPage() {
                       type="text"
                       value={formPhone}
                       onChange={(e) => setFormPhone(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                     />
                   </div>
 
@@ -841,7 +841,7 @@ export default function AdminOrganizationsPage() {
                       type="text"
                       value={formCity}
                       onChange={(e) => setFormCity(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                     />
                   </div>
 
@@ -850,7 +850,7 @@ export default function AdminOrganizationsPage() {
                     <select
                       value={formCatId}
                       onChange={(e) => setFormCatId(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-white outline-none focus:border-blue-500"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                     >
                       {categories.map(c => (
                         <option key={c.id} value={c.id}>{c.name}</option>
@@ -863,7 +863,7 @@ export default function AdminOrganizationsPage() {
                   <Button
                     type="button"
                     onClick={() => setIsEditOpen(false)}
-                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-white cursor-pointer"
+                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-slate-900 cursor-pointer"
                   >
                     Cancel
                   </Button>

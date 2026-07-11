@@ -10,17 +10,17 @@ export default function FeaturedShops() {
   const shopsToShow = dbShops.length > 0 ? dbShops : shopData;
 
   return (
-    <section className="bg-slate-950 py-24 border-t border-slate-900">
+    <section className="bg-slate-50 py-24 border-t border-slate-200">
 
       <Container>
 
         <div className="mb-16 text-center">
 
-          <h2 className="text-4xl font-bold text-white">
+          <h2 className="text-4xl font-bold text-slate-900">
             Featured Live Shops
           </h2>
 
-          <p className="mt-4 text-slate-400">
+          <p className="mt-4 text-slate-500">
             Join live sessions and interact directly with trusted shop owners.
           </p>
 
@@ -29,12 +29,12 @@ export default function FeaturedShops() {
         {isLoading && dbShops.length === 0 ? (
           <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900">
-                <div className="h-48 animate-pulse bg-slate-800" />
+              <div key={i} className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+                <div className="h-48 animate-pulse bg-slate-100" />
                 <div className="space-y-3 p-6">
-                  <div className="h-4 w-2/3 animate-pulse rounded bg-slate-800" />
-                  <div className="h-3 w-1/2 animate-pulse rounded bg-slate-800" />
-                  <div className="h-10 animate-pulse rounded-xl bg-slate-800" />
+                  <div className="h-4 w-2/3 animate-pulse rounded bg-slate-100" />
+                  <div className="h-3 w-1/2 animate-pulse rounded bg-slate-100" />
+                  <div className="h-10 animate-pulse rounded-xl bg-slate-100" />
                 </div>
               </div>
             ))}

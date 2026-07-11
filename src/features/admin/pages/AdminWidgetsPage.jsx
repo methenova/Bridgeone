@@ -104,14 +104,14 @@ export default function AdminWidgetsPage() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-200" />
+        <div className="h-10 w-48 animate-pulse rounded-lg bg-white shadow-sm" />
+        <div className="h-96 animate-pulse rounded-2xl bg-white shadow-sm border border-slate-200" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-4 md:space-y-6 text-white max-w-7xl relative">
+    <div className="space-y-4 md:space-y-6 text-slate-900 max-w-7xl relative">
       
       {/* Header */}
       <div>
@@ -121,17 +121,17 @@ export default function AdminWidgetsPage() {
 
       {/* Aggregate metrics */}
       <div className="grid gap-4 grid-cols-3 max-w-3xl">
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Total Integrations</p>
-            <p className="text-xl font-bold tracking-tight text-white">{stats.total}</p>
+            <p className="text-xl font-bold tracking-tight text-slate-900">{stats.total}</p>
           </div>
           <div className="h-9 w-9 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0">
             <Sliders className="h-4.5 w-4.5" />
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Widgets Online</p>
             <p className="text-xl font-bold tracking-tight text-emerald-400">{stats.online}</p>
@@ -141,19 +141,19 @@ export default function AdminWidgetsPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Widgets Offline</p>
             <p className="text-xl font-bold tracking-tight text-slate-500">{stats.offline}</p>
           </div>
-          <div className="h-9 w-9 rounded-xl bg-slate-800 text-slate-500 flex items-center justify-center shrink-0">
+          <div className="h-9 w-9 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center shrink-0">
             <Sliders className="h-4.5 w-4.5 text-slate-500" />
           </div>
         </div>
       </div>
 
       {/* Filter utility */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/20 p-4 rounded-2xl border border-slate-900">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white shadow-sm p-4 rounded-2xl border border-slate-200">
         <div className="relative flex-1 max-w-md">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
             <Search className="h-4 w-4" />
@@ -163,7 +163,7 @@ export default function AdminWidgetsPage() {
             placeholder="Search by store name or API Key..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-200 transition-colors"
+            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-slate-200 transition-colors"
           />
         </div>
 
@@ -182,10 +182,10 @@ export default function AdminWidgetsPage() {
       </div>
 
       {/* Widgets Table */}
-      <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Widget Name</th>
                 <th className="px-6 py-4.5">Organization</th>
@@ -204,7 +204,7 @@ export default function AdminWidgetsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.03 }}
                     key={s.id} 
-                    className="hover:bg-slate-900/10 transition-colors"
+                    className="hover:bg-white shadow-sm/10 transition-colors"
                   >
                     {/* Widget name */}
                     <td className="px-6 py-4 font-bold text-slate-900 flex items-center gap-2">
@@ -217,7 +217,7 @@ export default function AdminWidgetsPage() {
 
                     {/* Api Key */}
                     <td className="px-6 py-4">
-                      <code className="text-[10px] font-mono text-slate-500 bg-slate-950 px-2 py-1 rounded select-all font-bold">
+                      <code className="text-[10px] font-mono text-slate-500 bg-slate-50 px-2 py-1 rounded select-all font-bold">
                         {s.id}
                       </code>
                     </td>
@@ -227,7 +227,7 @@ export default function AdminWidgetsPage() {
                       <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider border ${
                         s.is_online
                           ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                          : "bg-slate-800 text-slate-500 border-slate-800"
+                          : "bg-slate-100 text-slate-500 border-slate-200"
                       }`}>
                         {s.is_online ? "Active" : "Disabled"}
                       </span>
@@ -240,7 +240,7 @@ export default function AdminWidgetsPage() {
                         {/* Toggle active status */}
                         <Button
                           onClick={() => handleToggleWidget(s)}
-                          className="text-slate-500 hover:text-white transition-colors cursor-pointer"
+                          className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
                           title="Toggle Status"
                         >
                           {s.is_online ? (
@@ -253,7 +253,7 @@ export default function AdminWidgetsPage() {
                         {/* View Embed Code */}
                         <Button
                           onClick={() => setSelectedShop(s)}
-                          className="text-slate-500 hover:text-indigo-400 transition-colors cursor-pointer flex items-center gap-1 bg-slate-900 border border-slate-200 px-2.5 py-1 rounded-lg hover:border-slate-800 text-[10px] font-bold uppercase tracking-wider"
+                          className="text-slate-500 hover:text-indigo-400 transition-colors cursor-pointer flex items-center gap-1 bg-white shadow-sm border border-slate-200 px-2.5 py-1 rounded-lg hover:border-slate-200 text-[10px] font-bold uppercase tracking-wider"
                         >
                           <Eye className="h-3 w-3" /> Snippet
                         </Button>
@@ -261,7 +261,7 @@ export default function AdminWidgetsPage() {
                         {/* Rotate Security API Key */}
                         <Button
                           onClick={() => handleRegenerateKey(s.shop_name)}
-                          className="text-slate-500 hover:text-white transition-colors cursor-pointer"
+                          className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
                           title="Rotate API Key Token"
                         >
                           <RefreshCw className="h-3.5 w-3.5" />
@@ -286,7 +286,7 @@ export default function AdminWidgetsPage() {
       {/* SNIPPET MODAL */}
       <AnimatePresence>
         {selectedShop && (
-          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-white shadow-sm/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -300,7 +300,7 @@ export default function AdminWidgetsPage() {
                 </div>
                 <Button 
                   onClick={() => setSelectedShop(null)}
-                  className="text-slate-500 hover:text-white transition-colors cursor-pointer"
+                  className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
                 >
                   <X className="h-5 w-5" />
                 </Button>
@@ -324,7 +324,7 @@ export default function AdminWidgetsPage() {
                   
                   <Button
                     onClick={() => handleCopySnippet(selectedShop.id)}
-                    className="absolute top-3 right-3 text-slate-500 hover:text-white transition-colors cursor-pointer bg-slate-950 p-1.5 rounded-lg border border-slate-200"
+                    className="absolute top-3 right-3 text-slate-500 hover:text-slate-900 transition-colors cursor-pointer bg-slate-50 p-1.5 rounded-lg border border-slate-200"
                   >
                     {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
                   </Button>

@@ -5,7 +5,7 @@ export default function ReviewList() {
   return (
     <section className="mt-20">
 
-      <h2 className="mb-8 text-3xl font-bold text-white">
+      <h2 className="mb-8 text-3xl font-bold text-slate-900">
         Customer Reviews
       </h2>
 

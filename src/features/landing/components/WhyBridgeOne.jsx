@@ -5,7 +5,7 @@ import { featuresData } from "./featuresData";
 
 export default function WhyBridgeOne() {
   return (
-    <section className="bg-slate-950 py-24">
+    <section className="bg-slate-50 py-24">
 
       <Container>
 
@@ -15,13 +15,13 @@ export default function WhyBridgeOne() {
             Why Choose BridgeOne
           </span>
 
-          <h2 className="mt-6 text-4xl font-bold text-white">
+          <h2 className="mt-6 text-4xl font-bold text-slate-900">
             Everything You Need for
             <br />
             Live Shopping
           </h2>
 
-          <p className="mx-auto mt-5 max-w-2xl text-lg text-slate-400">
+          <p className="mx-auto mt-5 max-w-2xl text-lg text-slate-500">
             We combine trust, technology, and convenience to create a
             better shopping experience for customers and shop owners.
           </p>

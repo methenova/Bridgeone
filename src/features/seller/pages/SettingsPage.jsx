@@ -265,7 +265,7 @@ export default function SettingsPage() {
           <button
             onClick={() => setActiveTab("profile")}
             className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
-              activeTab === "profile" ? "bg-blue-600 text-white font-bold" : "text-slate-400 hover:text-white"
+              activeTab === "profile" ? "bg-blue-600 text-white font-bold" : "text-slate-500 hover:text-white"
             }`}
           >
             <Store className="h-4 w-4" />
@@ -275,7 +275,7 @@ export default function SettingsPage() {
           <button
             onClick={() => setActiveTab("hours")}
             className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
-              activeTab === "hours" ? "bg-blue-600 text-white font-bold" : "text-slate-400 hover:text-white"
+              activeTab === "hours" ? "bg-blue-600 text-white font-bold" : "text-slate-500 hover:text-white"
             }`}
           >
             <Clock className="h-4 w-4" />
@@ -285,7 +285,7 @@ export default function SettingsPage() {
           <button
             onClick={() => setActiveTab("routing")}
             className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
-              activeTab === "routing" ? "bg-blue-600 text-white font-bold" : "text-slate-400 hover:text-white"
+              activeTab === "routing" ? "bg-blue-600 text-white font-bold" : "text-slate-500 hover:text-white"
             }`}
           >
             <Route className="h-4 w-4" />
@@ -295,7 +295,7 @@ export default function SettingsPage() {
           <button
             onClick={() => setActiveTab("widget")}
             className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
-              activeTab === "widget" ? "bg-blue-600 text-white font-bold" : "text-slate-400 hover:text-white"
+              activeTab === "widget" ? "bg-blue-600 text-white font-bold" : "text-slate-500 hover:text-white"
             }`}
           >
             <Video className="h-4 w-4" />
@@ -305,7 +305,7 @@ export default function SettingsPage() {
           <button
             onClick={() => setActiveTab("notifications")}
             className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
-              activeTab === "notifications" ? "bg-blue-600 text-white font-bold" : "text-slate-400 hover:text-white"
+              activeTab === "notifications" ? "bg-blue-600 text-white font-bold" : "text-slate-500 hover:text-white"
             }`}
           >
             <Bell className="h-4 w-4" />
@@ -315,7 +315,7 @@ export default function SettingsPage() {
           <button
             onClick={() => setActiveTab("security")}
             className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
-              activeTab === "security" ? "bg-blue-600 text-white font-bold" : "text-slate-400 hover:text-white"
+              activeTab === "security" ? "bg-blue-600 text-white font-bold" : "text-slate-500 hover:text-white"
             }`}
           >
             <Shield className="h-4 w-4" />
@@ -325,7 +325,7 @@ export default function SettingsPage() {
           <button
             onClick={() => setActiveTab("integrations")}
             className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
-              activeTab === "integrations" ? "bg-blue-600 text-white font-bold" : "text-slate-400 hover:text-white"
+              activeTab === "integrations" ? "bg-blue-600 text-white font-bold" : "text-slate-500 hover:text-white"
             }`}
           >
             <Layers className="h-4 w-4" />
@@ -661,7 +661,7 @@ export default function SettingsPage() {
                   </div>
                   <button
                     onClick={() => { setEmailAlerts(!emailAlerts); toast.success("Email preference saved!"); }}
-                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${emailAlerts ? "bg-blue-600" : "bg-slate-800"}`}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${emailAlerts ? "bg-blue-600" : "bg-slate-100"}`}
                   >
                     <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${emailAlerts ? "translate-x-4" : "translate-x-1"}`} />
                   </button>
@@ -674,7 +674,7 @@ export default function SettingsPage() {
                   </div>
                   <button
                     onClick={() => { setPushAlerts(!pushAlerts); toast.success("Push warning alert saved!"); }}
-                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${pushAlerts ? "bg-blue-600" : "bg-slate-800"}`}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer ${pushAlerts ? "bg-blue-600" : "bg-slate-100"}`}
                   >
                     <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${pushAlerts ? "translate-x-4" : "translate-x-1"}`} />
                   </button>

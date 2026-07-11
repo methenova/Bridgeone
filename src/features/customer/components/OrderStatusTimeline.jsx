@@ -38,7 +38,7 @@ export default function OrderStatusTimeline({ status }) {
               {idx < STEPS.length - 1 && (
                 <div
                   className={`absolute left-1/2 top-5 h-0.5 w-full -translate-y-1/2 transition-colors duration-300 ${
-                    idx < currentStepIndex ? "bg-blue-500" : "bg-slate-800"
+                    idx < currentStepIndex ? "bg-blue-500" : "bg-slate-100"
                   }`}
                 />
               )}
@@ -48,7 +48,7 @@ export default function OrderStatusTimeline({ status }) {
                 className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 ${
                   isCompleted
                     ? "border-blue-500 bg-blue-600 text-white shadow-lg shadow-blue-500/20"
-                    : "border-slate-800 bg-slate-900 text-slate-500"
+                    : "border-slate-200 bg-white shadow-sm text-slate-500"
                 } ${isCurrent ? "scale-110 ring-4 ring-blue-500/20" : ""}`}
               >
                 <StepIcon className="h-5 w-5" />
@@ -57,7 +57,7 @@ export default function OrderStatusTimeline({ status }) {
               {/* Step Label */}
               <span
                 className={`mt-2 text-xs font-semibold whitespace-nowrap transition-colors duration-300 ${
-                  isCompleted ? "text-white" : "text-slate-500"
+                  isCompleted ? "text-slate-900" : "text-slate-500"
                 } ${isCurrent ? "text-blue-400 font-bold" : ""}`}
               >
                 {step.label}

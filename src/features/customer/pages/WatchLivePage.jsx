@@ -273,16 +273,16 @@ export default function WatchLivePage() {
 
   if (shopLoading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-700 border-t-blue-500" />
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center text-slate-500">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-200 border-t-blue-500" />
       </div>
     );
   }
 
   if (!shop) {
     return (
-      <div className="min-h-screen bg-slate-950 py-20 text-center">
-        <p className="text-xl text-white">Shop not found</p>
+      <div className="min-h-screen bg-slate-50 py-20 text-center">
+        <p className="text-xl text-slate-900">Shop not found</p>
         <Link to="/shops" className="mt-4 inline-block text-blue-400 underline">
           Browse Shops
         </Link>
@@ -291,13 +291,13 @@ export default function WatchLivePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 py-8">
+    <div className="min-h-screen bg-slate-50 py-8">
       <Container>
         
         {/* Back navigation */}
         <Link
           to={`/shops/${shopId}`}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-400 hover:text-white mb-6"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-slate-900 mb-6"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Shop
@@ -306,21 +306,21 @@ export default function WatchLivePage() {
         {/* Page Header */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-xl overflow-hidden bg-slate-900 border border-slate-800 flex items-center justify-center">
+            <div className="h-12 w-12 rounded-xl overflow-hidden bg-white shadow-sm border border-slate-200 flex items-center justify-center">
               {shop.logo_url ? <img src={shop.logo_url} alt="" className="h-full w-full object-cover" /> : "🏪"}
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white flex items-center gap-2">
+              <h1 className="text-xl font-bold text-slate-900 flex items-center gap-2">
                 {shop.name} Live Stream
                 <span className="flex items-center gap-1 rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-bold text-white uppercase animate-pulse">
                   Live
                 </span>
               </h1>
-              <p className="text-xs text-slate-400 mt-0.5">{shop.city} · {shop.categories?.name}</p>
+              <p className="text-xs text-slate-500 mt-0.5">{shop.city} · {shop.categories?.name}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 rounded-full bg-slate-900 border border-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-300">
+          <div className="flex items-center gap-1.5 rounded-full bg-white shadow-sm border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700">
             <Eye className="h-4 w-4 text-blue-400" /> {viewers} watching
           </div>
         </div>
@@ -330,7 +330,7 @@ export default function WatchLivePage() {
           
           {/* Stream Player View */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="relative aspect-video rounded-3xl border border-slate-900 bg-slate-950 overflow-hidden shadow-2xl flex items-center justify-center">
+            <div className="relative aspect-video rounded-3xl border border-slate-200 bg-slate-50 overflow-hidden shadow-2xl flex items-center justify-center">
               
               {/* Real WebRTC video player */}
               {remoteStream ? (
@@ -343,7 +343,7 @@ export default function WatchLivePage() {
                   />
                   {/* PiP Local video feed when viewer is a speaker */}
                   {isSpeaker && viewerLocalStream && (
-                    <div className="absolute bottom-4 right-4 h-28 aspect-video rounded-2xl overflow-hidden border-2 border-green-500 bg-slate-900 shadow-2xl z-20 animate-fade-in group">
+                    <div className="absolute bottom-4 right-4 h-28 aspect-video rounded-2xl overflow-hidden border-2 border-green-500 bg-white shadow-sm shadow-2xl z-20 animate-fade-in group">
                       <video
                         ref={(el) => {
                           if (el) el.srcObject = viewerLocalStream;
@@ -361,8 +361,8 @@ export default function WatchLivePage() {
                           onClick={toggleSpeakerMic}
                           className={`p-1.5 rounded-lg transition-colors ${
                             speakerMicMuted
-                              ? "bg-red-655 text-white"
-                              : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                              ? "bg-red-655 text-slate-900"
+                              : "bg-slate-100 text-slate-700 hover:bg-slate-700"
                           }`}
                           title={speakerMicMuted ? "Unmute Mic" : "Mute Mic"}
                         >
@@ -388,7 +388,7 @@ export default function WatchLivePage() {
                 /* Dynamic visualization canvas representing the active stream or connection status */
                 <div className="flex flex-col items-center gap-4 text-center">
                   {isConnecting ? (
-                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-700 border-t-blue-500" />
+                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-blue-500" />
                   ) : (
                     <div className="flex items-end gap-1.5 h-16">
                       {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -430,17 +430,17 @@ export default function WatchLivePage() {
 
               {/* Pinned Product Overlay Card (Interactive) */}
               {pinnedProduct && (
-                <div className="absolute bottom-4 left-4 right-4 bg-slate-900/90 border border-slate-800 backdrop-blur-md rounded-2xl p-3 flex items-center justify-between gap-4 z-15">
+                <div className="absolute bottom-4 left-4 right-4 bg-white/90 shadow-sm border border-slate-200 backdrop-blur-md rounded-2xl p-3 flex items-center justify-between gap-4 z-15">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="h-12 w-12 rounded-xl bg-slate-800 border border-slate-700 overflow-hidden shrink-0">
+                    <div className="h-12 w-12 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shrink-0">
                       {pinnedProduct.thumbnail_url && (
                         <img src={pinnedProduct.thumbnail_url} alt="" className="h-full w-full object-cover" />
                       )}
                     </div>
                     <div className="min-w-0">
                       <p className="text-xs font-semibold text-blue-400 uppercase tracking-widest">Featured Product</p>
-                      <p className="text-sm font-bold text-white truncate max-w-[200px]">{pinnedProduct.name}</p>
-                      <p className="text-xs text-slate-300 font-semibold">₹{Number(pinnedProduct.price).toLocaleString()}</p>
+                      <p className="text-sm font-bold text-slate-900 truncate max-w-[200px]">{pinnedProduct.name}</p>
+                      <p className="text-xs text-slate-700 font-semibold">₹{Number(pinnedProduct.price).toLocaleString()}</p>
                     </div>
                   </div>
                   <button
@@ -456,10 +456,10 @@ export default function WatchLivePage() {
           </div>
 
           {/* Chat Feed Panel */}
-          <div className="rounded-3xl border border-slate-900 bg-slate-900/20 flex flex-col h-[400px] lg:h-auto">
+          <div className="rounded-3xl border border-slate-200 bg-white shadow-sm flex flex-col h-[400px] lg:h-auto">
             {/* Header */}
-            <div className="border-b border-slate-900 px-5 py-4 flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white">Live Comments</h3>
+            <div className="border-b border-slate-200 px-5 py-4 flex items-center justify-between">
+              <h3 className="text-sm font-bold text-slate-900">Live Comments</h3>
               
               <div className="flex gap-2">
                 {/* Request to Speak Button */}
@@ -493,8 +493,8 @@ export default function WatchLivePage() {
             <div className="flex-1 overflow-y-auto p-5 space-y-3.5 scrollbar-none">
               {comments.map((c) => (
                 <div key={c.id} className="text-xs leading-relaxed">
-                  <span className="font-bold text-slate-400">{c.sender}</span>
-                  <span className="text-slate-300 ml-1.5">{c.text}</span>
+                  <span className="font-bold text-slate-500">{c.sender}</span>
+                  <span className="text-slate-700 ml-1.5">{c.text}</span>
                 </div>
               ))}
               {comments.length === 0 && (
@@ -507,13 +507,13 @@ export default function WatchLivePage() {
             </div>
 
             {/* Chat submit form */}
-            <form onSubmit={handleSendComment} className="border-t border-slate-900 p-4 flex gap-2">
+            <form onSubmit={handleSendComment} className="border-t border-slate-200 p-4 flex gap-2">
               <input
                 type="text"
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
                 placeholder="Say something nice..."
-                className="flex-1 rounded-xl border border-slate-800 bg-slate-900 px-4 py-2 text-xs text-white outline-none focus:border-blue-500 placeholder-slate-650"
+                className="flex-1 rounded-xl border border-slate-200 bg-white shadow-sm px-4 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 placeholder-slate-650"
               />
               <button
                 type="submit"

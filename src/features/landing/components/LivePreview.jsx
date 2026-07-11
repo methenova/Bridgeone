@@ -2,7 +2,7 @@ export default function LivePreview() {
   return (
     <div className="relative">
 
-      <div className="rounded-3xl border border-slate-800 bg-slate-900 p-8 shadow-2xl">
+      <div className="rounded-3xl border border-slate-200 bg-white shadow-sm p-8 shadow-2xl">
 
         <div className="mb-6 flex items-center justify-between">
 
@@ -16,7 +16,7 @@ export default function LivePreview() {
 
           </div>
 
-          <span className="rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-300">
+          <span className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700">
             248 Watching
           </span>
 
@@ -30,7 +30,7 @@ export default function LivePreview() {
               📹
             </div>
 
-            <h3 className="text-3xl font-bold text-white">
+            <h3 className="text-3xl font-bold text-slate-900">
               Live Product Demo
             </h3>
 

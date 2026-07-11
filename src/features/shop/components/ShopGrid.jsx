@@ -9,7 +9,7 @@ export default function ShopGrid() {
 
   if (loading) {
     return (
-      <div className="text-center py-10 text-white">
+      <div className="text-center py-10 text-slate-900">
         Loading shops...
       </div>
     );
@@ -17,7 +17,7 @@ export default function ShopGrid() {
 
   if (filteredShops.length === 0) {
     return (
-      <div className="text-center py-10 text-slate-400">
+      <div className="text-center py-10 text-slate-500">
         No shops found.
       </div>
     );

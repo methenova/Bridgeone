@@ -10,10 +10,10 @@ export default function ShopCard({ shop }) {
   const location = shop.city ? `${shop.city}, ${shop.state}` : "Local Shop";
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 transition-all duration-300 hover:-translate-y-2 hover:border-blue-500 hover:shadow-xl hover:shadow-blue-500/10">
+    <div className="flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-blue-500 hover:shadow-xl hover:shadow-blue-500/10">
 
       {/* Banner / Image */}
-      <div className="relative h-48 w-full overflow-hidden bg-slate-800">
+      <div className="relative h-48 w-full overflow-hidden bg-slate-100">
         {shop.banner_url || shop.logo_url ? (
           <img
             src={shop.banner_url || shop.logo_url}
@@ -40,12 +40,12 @@ export default function ShopCard({ shop }) {
           <span className="text-xs font-semibold text-blue-400 uppercase tracking-wider">
             {category}
           </span>
-          <h3 className="line-clamp-1 text-xl font-bold text-white mt-0.5">
+          <h3 className="line-clamp-1 text-xl font-bold text-slate-900 mt-0.5">
             {name}
           </h3>
         </div>
 
-        <p className="line-clamp-2 text-sm text-slate-400 mb-4">
+        <p className="line-clamp-2 text-sm text-slate-500 mb-4">
           {shop.description || "Welcome to our shop! Discover our latest products and live updates."}
         </p>
 
@@ -57,7 +57,7 @@ export default function ShopCard({ shop }) {
             </div>
 
             {isLive && (
-              <div className="flex items-center gap-1.5 text-slate-400">
+              <div className="flex items-center gap-1.5 text-slate-500">
                 <Eye className="h-4 w-4" />
                 <span>{viewers} watching</span>
               </div>

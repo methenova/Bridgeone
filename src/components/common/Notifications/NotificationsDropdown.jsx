@@ -39,14 +39,14 @@ export default function NotificationsDropdown() {
                   <button
                     onClick={markAllAsRead}
                     title="Mark all as read"
-                    className="text-slate-400 hover:text-blue-600 transition-colors cursor-pointer"
+                    className="text-slate-500 hover:text-blue-600 transition-colors cursor-pointer"
                   >
                     <CheckCheck className="h-3.5 w-3.5" />
                   </button>
                   <button
                     onClick={clearAll}
                     title="Clear all"
-                    className="text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
+                    className="text-slate-500 hover:text-red-600 transition-colors cursor-pointer"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
@@ -89,15 +89,15 @@ export default function NotificationsDropdown() {
                           {n.title}
                         </p>
                         <p className="text-slate-500 mt-0.5 leading-relaxed text-[11px]">{n.message}</p>
-                        <span className="text-[9px] text-slate-400 font-bold block mt-1">{timeStr}</span>
+                        <span className="text-[9px] text-slate-500 font-bold block mt-1">{timeStr}</span>
                       </div>
                     </div>
                   </div>
                 );
               })}
               {notifications.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-10 text-slate-400 space-y-2 bg-white">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 border border-slate-100 text-slate-400">
+                <div className="flex flex-col items-center justify-center py-10 text-slate-500 space-y-2 bg-white">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 border border-slate-100 text-slate-500">
                     <Bell className="h-5 w-5 stroke-[1.6]" />
                   </div>
                   <div className="text-center">

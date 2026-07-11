@@ -2,7 +2,7 @@ import { MapPin, Star, CheckCircle } from "lucide-react";
 
 export default function ShopHeader({ shop }) {
   return (
-    <div className="mt-8 flex flex-col gap-6 rounded-3xl border border-slate-800 bg-slate-900 p-8 lg:flex-row lg:items-center">
+    <div className="mt-8 flex flex-col gap-6 rounded-3xl border border-slate-200 bg-white shadow-sm p-8 lg:flex-row lg:items-center">
 
       <img
         src={
@@ -19,7 +19,7 @@ export default function ShopHeader({ shop }) {
 
         <div className="flex items-center gap-3">
 
-          <h1 className="text-3xl font-bold text-white">
+          <h1 className="text-3xl font-bold text-slate-900">
             {shop.shop_name}
           </h1>
 
@@ -32,7 +32,7 @@ export default function ShopHeader({ shop }) {
 
         </div>
 
-        <p className="mt-2 text-slate-400">
+        <p className="mt-2 text-slate-500">
           {shop.categories?.name}
         </p>
 
@@ -43,7 +43,7 @@ export default function ShopHeader({ shop }) {
             <span>4.8</span>
           </div>
 
-          <div className="flex items-center gap-2 text-slate-400">
+          <div className="flex items-center gap-2 text-slate-500">
             <MapPin size={18} />
             {shop.city}
           </div>

@@ -68,12 +68,12 @@ export default function RegisterForm() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-md rounded-2xl bg-slate-900 p-8 shadow-xl">
-      <h1 className="mb-2 text-center text-3xl font-bold text-white">
+    <div className="mx-auto w-full max-w-md rounded-2xl bg-white shadow-sm p-8 shadow-xl">
+      <h1 className="mb-2 text-center text-3xl font-bold text-slate-900">
         Create Account
       </h1>
 
-      <p className="mb-8 text-center text-slate-400">
+      <p className="mb-8 text-center text-slate-500">
         Register to continue to BridgeOne
       </p>
 
@@ -85,7 +85,7 @@ export default function RegisterForm() {
           className={`py-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
             formData.role === "customer"
               ? "border-blue-500 bg-blue-600/10 text-blue-400"
-              : "border-slate-800 bg-slate-900 text-slate-400 hover:text-slate-300"
+              : "border-slate-200 bg-white shadow-sm text-slate-500 hover:text-slate-700"
           }`}
         >
           🛍️ Customer Account
@@ -96,7 +96,7 @@ export default function RegisterForm() {
           className={`py-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
             formData.role === "seller"
               ? "border-blue-500 bg-blue-600/10 text-blue-400"
-              : "border-slate-800 bg-slate-900 text-slate-400 hover:text-slate-300"
+              : "border-slate-200 bg-white shadow-sm text-slate-500 hover:text-slate-700"
           }`}
         >
           🏪 Shop Owner (Seller)
@@ -114,7 +114,7 @@ export default function RegisterForm() {
             onChange={handleChange}
             required
             autoComplete="name"
-            className="w-full rounded-xl border border-slate-700 bg-slate-800/40 pl-12 pr-4 py-3 text-sm text-white outline-none focus:border-blue-500 transition-all focus:bg-slate-800"
+            className="w-full rounded-xl border border-slate-200 bg-slate-100/40 pl-12 pr-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-500 transition-all focus:bg-slate-100"
           />
         </div>
 
@@ -128,7 +128,7 @@ export default function RegisterForm() {
             onChange={handleChange}
             required
             autoComplete="email"
-            className="w-full rounded-xl border border-slate-700 bg-slate-800/40 pl-12 pr-4 py-3 text-sm text-white outline-none focus:border-blue-500 transition-all focus:bg-slate-800"
+            className="w-full rounded-xl border border-slate-200 bg-slate-100/40 pl-12 pr-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-500 transition-all focus:bg-slate-100"
           />
         </div>
 
@@ -142,7 +142,7 @@ export default function RegisterForm() {
             onChange={handleChange}
             required
             autoComplete="new-password"
-            className="w-full rounded-xl border border-slate-700 bg-slate-800/40 pl-12 pr-4 py-3 text-sm text-white outline-none focus:border-blue-500 transition-all focus:bg-slate-800"
+            className="w-full rounded-xl border border-slate-200 bg-slate-100/40 pl-12 pr-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-500 transition-all focus:bg-slate-100"
           />
         </div>
 
@@ -156,7 +156,7 @@ export default function RegisterForm() {
             onChange={handleChange}
             required
             autoComplete="new-password"
-            className="w-full rounded-xl border border-slate-700 bg-slate-800/40 pl-12 pr-4 py-3 text-sm text-white outline-none focus:border-blue-500 transition-all focus:bg-slate-800"
+            className="w-full rounded-xl border border-slate-200 bg-slate-100/40 pl-12 pr-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-500 transition-all focus:bg-slate-100"
           />
         </div>
 
@@ -169,7 +169,7 @@ export default function RegisterForm() {
         </button>
       </form>
 
-      <p className="mt-6 text-center text-slate-400">
+      <p className="mt-6 text-center text-slate-500">
         Already have an account?{" "}
         <Link
           to="/login"

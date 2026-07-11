@@ -19,13 +19,13 @@ function ProductGridSkeleton() {
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
       {Array.from({ length: 12 }).map((_, i) => (
-        <div key={i} className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
-          <div className="aspect-[4/3] animate-pulse bg-slate-800" />
+        <div key={i} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="aspect-[4/3] animate-pulse bg-slate-100" />
           <div className="space-y-3 p-4">
-            <div className="h-3 w-1/3 animate-pulse rounded bg-slate-800" />
-            <div className="h-4 w-full animate-pulse rounded bg-slate-800" />
-            <div className="h-4 w-2/3 animate-pulse rounded bg-slate-800" />
-            <div className="h-10 animate-pulse rounded-xl bg-slate-800" />
+            <div className="h-3 w-1/3 animate-pulse rounded bg-slate-100" />
+            <div className="h-4 w-full animate-pulse rounded bg-slate-100" />
+            <div className="h-4 w-2/3 animate-pulse rounded bg-slate-100" />
+            <div className="h-10 animate-pulse rounded-xl bg-slate-100" />
           </div>
         </div>
       ))}
@@ -73,20 +73,20 @@ export default function MarketplacePage() {
   const activeCategory = categories.find((c) => c.id === filters.categoryId);
 
   return (
-    <div className="min-h-screen bg-slate-950 py-8">
+    <div className="min-h-screen bg-slate-50 py-8">
       <Container>
 
         {/* Page Header */}
         <div className="mb-8 flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-white">
+            <h1 className="text-3xl font-bold text-slate-900">
               {filters.search
                 ? `Results for "${filters.search}"`
                 : activeCategory
                 ? activeCategory.name
                 : "All Products"}
             </h1>
-            <p className="mt-1 text-slate-400">
+            <p className="mt-1 text-slate-500">
               {total.toLocaleString()} product{total !== 1 ? "s" : ""} found
             </p>
           </div>
@@ -96,7 +96,7 @@ export default function MarketplacePage() {
             <select
               value={`${filters.sortBy}:${filters.sortOrder}`}
               onChange={(e) => updateParam("sort", e.target.value)}
-              className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+              className="rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500"
             >
               {SORT_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -105,7 +105,7 @@ export default function MarketplacePage() {
 
             <button
               onClick={() => setSidebarOpen((v) => !v)}
-              className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800 px-4 py-2 text-sm text-slate-300 transition-colors hover:border-blue-500/50 hover:text-white md:hidden"
+              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-100 px-4 py-2 text-sm text-slate-700 transition-colors hover:border-blue-500/50 hover:text-slate-900 md:hidden"
             >
               <SlidersHorizontal className="h-4 w-4" />
               Filters
@@ -118,13 +118,13 @@ export default function MarketplacePage() {
           {/* ── Sidebar Filters ───────────────────────────── */}
           <aside
             className={`${
-              sidebarOpen ? "fixed inset-0 z-30 bg-slate-950/95 px-6 py-8 overflow-y-auto md:static md:inset-auto md:z-auto md:bg-transparent md:p-0" : "hidden md:block"
+              sidebarOpen ? "fixed inset-0 z-30 bg-slate-50/95 px-6 py-8 overflow-y-auto md:static md:inset-auto md:z-auto md:bg-transparent md:p-0" : "hidden md:block"
             } w-full shrink-0 space-y-6 md:w-64`}
           >
             {sidebarOpen && (
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="mb-4 text-sm text-slate-400 underline md:hidden"
+                className="mb-4 text-sm text-slate-500 underline md:hidden"
               >
                 ← Close filters
               </button>
@@ -132,14 +132,14 @@ export default function MarketplacePage() {
 
             {/* Categories */}
             <div>
-              <h3 className="mb-3 text-sm font-semibold text-white">Category</h3>
+              <h3 className="mb-3 text-sm font-semibold text-slate-900">Category</h3>
               <div className="space-y-1">
                 <button
                   onClick={() => updateParam("category", "")}
                   className={`w-full rounded-xl px-3 py-2 text-left text-sm transition-colors ${
                     !filters.categoryId
                       ? "bg-blue-600/20 font-medium text-blue-400"
-                      : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                      : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
                   }`}
                 >
                   All Categories
@@ -151,7 +151,7 @@ export default function MarketplacePage() {
                     className={`w-full rounded-xl px-3 py-2 text-left text-sm transition-colors ${
                       filters.categoryId === cat.id
                         ? "bg-blue-600/20 font-medium text-blue-400"
-                        : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                        : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
                     }`}
                   >
                     {cat.icon && <span className="mr-2">{cat.icon}</span>}
@@ -163,14 +163,14 @@ export default function MarketplacePage() {
 
             {/* Price Range */}
             <div>
-              <h3 className="mb-3 text-sm font-semibold text-white">Price Range</h3>
+              <h3 className="mb-3 text-sm font-semibold text-slate-900">Price Range</h3>
               <div className="flex items-center gap-2">
                 <input
                   type="number"
                   placeholder="Min"
                   value={filters.minPrice ?? ""}
                   onChange={(e) => updateParam("minPrice", e.target.value)}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500"
                 />
                 <span className="text-slate-500">–</span>
                 <input
@@ -178,7 +178,7 @@ export default function MarketplacePage() {
                   placeholder="Max"
                   value={filters.maxPrice ?? ""}
                   onChange={(e) => updateParam("maxPrice", e.target.value)}
-                  className="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500"
                 />
               </div>
             </div>
@@ -191,8 +191,8 @@ export default function MarketplacePage() {
             ) : products.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-24 text-center">
                 <div className="mb-4 text-5xl">🔍</div>
-                <h3 className="text-lg font-semibold text-white">No products found</h3>
-                <p className="mt-2 text-sm text-slate-400">
+                <h3 className="text-lg font-semibold text-slate-900">No products found</h3>
+                <p className="mt-2 text-sm text-slate-500">
                   Try different filters or search terms
                 </p>
               </div>

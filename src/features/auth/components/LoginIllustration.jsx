@@ -9,11 +9,11 @@ export default function LoginIllustration() {
   return (
     <div className="space-y-10">
 
-      <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-10">
+      <div className="rounded-3xl border border-slate-200 bg-white/50 shadow-sm p-10">
 
         <div className="flex flex-col items-center gap-5">
 
-          <div className="rounded-2xl bg-slate-800 p-5">
+          <div className="rounded-2xl bg-slate-100 p-5">
             <ShoppingBag className="size-8 text-cyan-400" />
           </div>
 
@@ -25,7 +25,7 @@ export default function LoginIllustration() {
 
           <ArrowDown className="text-slate-600" />
 
-          <div className="rounded-2xl bg-slate-800 p-5">
+          <div className="rounded-2xl bg-slate-100 p-5">
             <Smartphone className="size-8 text-green-400" />
           </div>
 
@@ -53,7 +53,7 @@ function Feature({ text }) {
 
       <div className="size-2 rounded-full bg-cyan-400" />
 
-      <span className="text-slate-300">
+      <span className="text-slate-700">
         {text}
       </span>
 

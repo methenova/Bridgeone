@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export default function ProductCard({ product }) {
   return (
-    <div className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 transition-all duration-300 hover:-translate-y-2 hover:border-blue-500">
+    <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-blue-500">
 
       {/* Product Image */}
       <img
@@ -20,7 +20,7 @@ export default function ProductCard({ product }) {
       <div className="space-y-4 p-5">
 
         {/* Product Name */}
-        <h3 className="line-clamp-2 text-lg font-semibold text-white">
+        <h3 className="line-clamp-2 text-lg font-semibold text-slate-900">
           {product.product_name}
         </h3>
 
@@ -40,7 +40,7 @@ export default function ProductCard({ product }) {
         </div>
 
         {/* Stock */}
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-slate-500">
           Stock : {product.stock_quantity}
         </p>
 

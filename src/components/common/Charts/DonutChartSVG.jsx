@@ -45,7 +45,7 @@ export default function DonutChartSVG({ data = [], size = 180 }) {
 
   if (chartData.length === 0 || totalVal === 0) {
     return (
-      <div className="flex h-48 items-center justify-center text-xs text-slate-500 bg-slate-900/10 rounded-2xl border border-slate-900">
+      <div className="flex h-48 items-center justify-center text-xs text-slate-500 bg-white shadow-sm/10 rounded-2xl border border-slate-200">
         No share distribution available.
       </div>
     );
@@ -74,7 +74,7 @@ export default function DonutChartSVG({ data = [], size = 180 }) {
 
         {/* Center Text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
-          <span className="text-2xl font-black text-white">{totalVal.toLocaleString()}</span>
+          <span className="text-2xl font-black text-slate-900">{totalVal.toLocaleString()}</span>
           <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Total</span>
         </div>
       </div>
@@ -84,8 +84,8 @@ export default function DonutChartSVG({ data = [], size = 180 }) {
         {slices.map((slice, idx) => (
           <div key={idx} className="flex items-center gap-2">
             <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: slice.color }} />
-            <span className="text-slate-400 font-medium whitespace-nowrap">{slice.label}</span>
-            <span className="font-bold text-white">
+            <span className="text-slate-500 font-medium whitespace-nowrap">{slice.label}</span>
+            <span className="font-bold text-slate-900">
               {slice.value} ({slice.percentage}%)
             </span>
           </div>

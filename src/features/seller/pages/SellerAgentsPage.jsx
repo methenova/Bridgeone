@@ -394,7 +394,7 @@ export default function SellerAgentsPage() {
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => handleRemoveAgent(ag.id)}
-                        className="text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
+                        className="text-slate-500 hover:text-red-600 transition-colors cursor-pointer"
                         title="Remove Agent"
                       >
                         <Trash2 className="h-4 w-4" />

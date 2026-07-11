@@ -12,12 +12,12 @@ import CustomerChatWidget from "@/features/chat/components/CustomerChatWidget";
 function ShopProfileSkeleton() {
   return (
     <div className="space-y-8">
-      <div className="h-56 animate-pulse rounded-3xl bg-slate-800" />
+      <div className="h-56 animate-pulse rounded-3xl bg-slate-100" />
       <div className="flex items-center gap-6">
-        <div className="h-24 w-24 animate-pulse rounded-full bg-slate-800" />
+        <div className="h-24 w-24 animate-pulse rounded-full bg-slate-100" />
         <div className="space-y-2 flex-1">
-          <div className="h-7 w-1/3 animate-pulse rounded bg-slate-800" />
-          <div className="h-4 w-1/2 animate-pulse rounded bg-slate-800" />
+          <div className="h-7 w-1/3 animate-pulse rounded bg-slate-100" />
+          <div className="h-4 w-1/2 animate-pulse rounded bg-slate-100" />
         </div>
       </div>
     </div>
@@ -42,7 +42,7 @@ export default function ShopProfilePage() {
 
   if (shopLoading) {
     return (
-      <div className="min-h-screen bg-slate-950 py-10">
+      <div className="min-h-screen bg-slate-50 py-10">
         <Container><ShopProfileSkeleton /></Container>
       </div>
     );
@@ -50,8 +50,8 @@ export default function ShopProfilePage() {
 
   if (error || !shop) {
     return (
-      <div className="min-h-screen bg-slate-950 py-20 text-center">
-        <p className="text-xl font-semibold text-white">Shop not found</p>
+      <div className="min-h-screen bg-slate-50 py-20 text-center">
+        <p className="text-xl font-semibold text-slate-900">Shop not found</p>
         <Link to="/shops" className="mt-4 inline-block text-blue-400 underline">
           Browse Shops
         </Link>
@@ -60,10 +60,10 @@ export default function ShopProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-50">
 
       {/* Banner */}
-      <div className="relative h-56 w-full overflow-hidden bg-slate-900 md:h-72">
+      <div className="relative h-56 w-full overflow-hidden bg-white shadow-sm md:h-72">
         {shop.banner_url ? (
           <img src={shop.banner_url} alt={shop.name} className="h-full w-full object-cover" />
         ) : (
@@ -80,7 +80,7 @@ export default function ShopProfilePage() {
         {/* Shop Info */}
         <div className="-mt-16 relative mb-10 flex flex-col gap-5 sm:flex-row sm:items-end">
           {/* Logo */}
-          <div className="h-28 w-28 shrink-0 overflow-hidden rounded-2xl border-4 border-slate-950 bg-slate-800 shadow-xl">
+          <div className="h-28 w-28 shrink-0 overflow-hidden rounded-2xl border-4 border-slate-950 bg-slate-100 shadow-xl">
             {shop.logo_url ? (
               <img src={shop.logo_url} alt={shop.name} className="h-full w-full object-cover" />
             ) : (
@@ -90,7 +90,7 @@ export default function ShopProfilePage() {
 
           <div className="flex-1 pb-2">
             <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-3xl font-bold text-white">{shop.name}</h1>
+              <h1 className="text-3xl font-bold text-slate-900">{shop.name}</h1>
               {shop.is_live && (
                 <span className="flex items-center gap-1.5 rounded-full bg-red-500 px-3 py-1 text-xs font-bold text-white">
                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
@@ -101,14 +101,14 @@ export default function ShopProfilePage() {
               <button
                 type="button"
                 onClick={() => window.dispatchEvent(new CustomEvent("trigger-shop-call"))}
-                className="flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-xs font-bold text-white hover:from-blue-500 hover:to-indigo-500 transition-all hover:scale-[1.03] active:scale-95 shadow-lg shadow-blue-600/20 cursor-pointer"
+                className="flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-xs font-bold text-slate-900 hover:from-blue-500 hover:to-indigo-500 transition-all hover:scale-[1.03] active:scale-95 shadow-lg shadow-blue-600/20 cursor-pointer"
               >
                 <Phone className="h-3.5 w-3.5 fill-current animate-pulse" />
                 Call Shop Expert
               </button>
             </div>
 
-            <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-slate-400">
+            <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-slate-500">
               {shop.categories?.name && (
                 <span className="text-blue-400">{shop.categories.name}</span>
               )}
@@ -138,7 +138,7 @@ export default function ShopProfilePage() {
             </div>
 
             {shop.description && (
-              <p className="mt-3 max-w-2xl text-sm text-slate-400">{shop.description}</p>
+              <p className="mt-3 max-w-2xl text-sm text-slate-500">{shop.description}</p>
             )}
           </div>
         </div>
@@ -146,8 +146,8 @@ export default function ShopProfilePage() {
         {/* Products */}
         <div>
           <div className="mb-6 flex items-center justify-between gap-4">
-            <h2 className="text-xl font-bold text-white">
-              Products · <span className="text-slate-400 font-normal">{total}</span>
+            <h2 className="text-xl font-bold text-slate-900">
+              Products · <span className="text-slate-500 font-normal">{total}</span>
             </h2>
             {/* Search within shop */}
             <div className="relative w-full max-w-xs">
@@ -157,7 +157,7 @@ export default function ShopProfilePage() {
                 value={productFilters.search}
                 onChange={(e) => setProductFilters((f) => ({ ...f, search: e.target.value, page: 1 }))}
                 placeholder="Search in shop..."
-                className="w-full rounded-xl border border-slate-700 bg-slate-900 py-2 pl-9 pr-4 text-sm text-white placeholder-slate-500 outline-none focus:border-blue-500"
+                className="w-full rounded-xl border border-slate-200 bg-white shadow-sm py-2 pl-9 pr-4 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500"
               />
             </div>
           </div>
@@ -165,11 +165,11 @@ export default function ShopProfilePage() {
           {productsLoading ? (
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
-                  <div className="aspect-[4/3] animate-pulse bg-slate-800" />
+                <div key={i} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                  <div className="aspect-[4/3] animate-pulse bg-slate-100" />
                   <div className="space-y-2 p-4">
-                    <div className="h-4 w-full animate-pulse rounded bg-slate-800" />
-                    <div className="h-10 animate-pulse rounded-xl bg-slate-800" />
+                    <div className="h-4 w-full animate-pulse rounded bg-slate-100" />
+                    <div className="h-10 animate-pulse rounded-xl bg-slate-100" />
                   </div>
                 </div>
               ))}
@@ -177,7 +177,7 @@ export default function ShopProfilePage() {
           ) : products.length === 0 ? (
             <div className="py-20 text-center">
               <Package className="mx-auto mb-3 h-12 w-12 text-slate-600" />
-              <p className="text-slate-400">
+              <p className="text-slate-500">
                 {productFilters.search ? "No products match your search" : "No products in this shop yet"}
               </p>
             </div>

@@ -151,7 +151,7 @@ export default function ChatInboxPage() {
                 </div>
                 <div className="text-left">
                   <h4 className="text-xs font-bold text-slate-900">{selectedContact.user?.full_name || "Buyer"}</h4>
-                  <p className="text-[10px] text-slate-400 font-bold">{selectedContact.user?.email}</p>
+                  <p className="text-[10px] text-slate-500 font-bold">{selectedContact.user?.email}</p>
                 </div>
               </div>
 
@@ -180,7 +180,7 @@ export default function ChatInboxPage() {
                               <img src={m.image_url} alt="" className="object-cover w-full h-auto" />
                             </div>
                           )}
-                          <span className={`block text-[9px] text-right mt-1 ${isOwn ? "text-blue-200 font-bold" : "text-slate-400 font-bold"}`}>
+                          <span className={`block text-[9px] text-right mt-1 ${isOwn ? "text-blue-200 font-bold" : "text-slate-500 font-bold"}`}>
                             {new Date(m.created_at).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
                           </span>
                         </div>

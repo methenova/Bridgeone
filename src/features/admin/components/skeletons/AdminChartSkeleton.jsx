@@ -18,10 +18,10 @@ export default function AdminChartSkeleton() {
       <div className="h-64 w-full flex items-end justify-between gap-2 pt-4 relative">
         {/* Grid Lines */}
         <div className="absolute inset-0 flex flex-col justify-between opacity-10 pointer-events-none">
-          <div className="border-t border-slate-900 w-full" />
-          <div className="border-t border-slate-900 w-full" />
-          <div className="border-t border-slate-900 w-full" />
-          <div className="border-t border-slate-900 w-full" />
+          <div className="border-t border-slate-200 w-full" />
+          <div className="border-t border-slate-200 w-full" />
+          <div className="border-t border-slate-200 w-full" />
+          <div className="border-t border-slate-200 w-full" />
         </div>
         
         {/* Bars */}

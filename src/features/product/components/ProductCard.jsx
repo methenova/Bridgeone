@@ -49,11 +49,11 @@ export default function ProductCard({ product }) {
   return (
     <Link
       to={`/products/${product.id}`}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/5"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/5"
     >
       {/* Image Container */}
       <div className="relative overflow-hidden">
-        <div className="aspect-[4/3] w-full overflow-hidden bg-slate-800">
+        <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100">
           {primaryImage ? (
             <img
               src={primaryImage}
@@ -81,7 +81,7 @@ export default function ProductCard({ product }) {
             </span>
           )}
           {isOutOfStock && (
-            <span className="rounded-lg bg-slate-700 px-2 py-0.5 text-xs font-semibold text-slate-300">
+            <span className="rounded-lg bg-slate-700 px-2 py-0.5 text-xs font-semibold text-slate-700">
               Out of Stock
             </span>
           )}
@@ -108,7 +108,7 @@ export default function ProductCard({ product }) {
         )}
 
         {/* Name */}
-        <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-white">
+        <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-slate-900">
           {product.name}
         </h3>
 
@@ -133,7 +133,7 @@ export default function ProductCard({ product }) {
         {/* Price */}
         <div className="mt-auto flex items-end justify-between pt-2">
           <div>
-            <span className="text-lg font-bold text-white">
+            <span className="text-lg font-bold text-slate-900">
               ₹{displayPrice.toLocaleString()}
             </span>
             {hasDiscount && (
@@ -150,7 +150,7 @@ export default function ProductCard({ product }) {
           disabled={isOutOfStock}
           className={`mt-2 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-all active:scale-95 ${
             isOutOfStock
-              ? "cursor-not-allowed bg-slate-800 text-slate-500"
+              ? "cursor-not-allowed bg-slate-100 text-slate-500"
               : inCart
               ? "bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/30"
               : "bg-blue-600 text-white hover:bg-blue-500"

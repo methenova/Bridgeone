@@ -1129,8 +1129,8 @@ export default function WidgetPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen flex-col items-center justify-center bg-slate-950 text-slate-400">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-800 border-t-blue-500" />
+      <div className="flex h-screen flex-col items-center justify-center bg-slate-50 text-slate-500">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-blue-500" />
         <span className="mt-3 text-xs uppercase tracking-widest font-bold">Loading...</span>
       </div>
     );
@@ -1138,40 +1138,40 @@ export default function WidgetPage() {
 
   if (limitExceeded) {
     return (
-      <div className="h-screen flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans border border-slate-900 shadow-2xl relative select-none">
-        <header className="flex items-center justify-between border-b border-slate-900 px-5 py-4 bg-slate-900/40 backdrop-blur-md shrink-0">
+      <div className="h-screen flex flex-col bg-slate-50 text-slate-100 overflow-hidden font-sans border border-slate-200 shadow-2xl relative select-none">
+        <header className="flex items-center justify-between border-b border-slate-200 px-5 py-4 bg-white shadow-sm/40 backdrop-blur-md shrink-0">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl border border-slate-800 overflow-hidden bg-slate-900 flex items-center justify-center shrink-0">
+            <div className="h-9 w-9 rounded-xl border border-slate-200 overflow-hidden bg-white shadow-sm flex items-center justify-center shrink-0">
               {shop?.logo_url ? <img src={shop.logo_url} alt="" className="h-full w-full object-cover" /> : <Video className="h-4.5 w-4.5 text-slate-500" />}
             </div>
             <div>
-              <h1 className="text-sm font-bold text-white leading-tight">{shop?.name || "Live Consultation"}</h1>
+              <h1 className="text-sm font-bold text-slate-900 leading-tight">{shop?.name || "Live Consultation"}</h1>
             </div>
           </div>
           <button
             onClick={() => window.parent.postMessage("close-widget", "*")}
-            className="h-8 w-8 flex items-center justify-center rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white transition-colors"
+            className="h-8 w-8 flex items-center justify-center rounded-xl bg-white/60 shadow-sm hover:bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-900 transition-colors"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </header>
-        <main className="flex-1 p-6 flex flex-col items-center justify-center text-center space-y-5 bg-slate-950">
+        <main className="flex-1 p-6 flex flex-col items-center justify-center text-center space-y-5 bg-slate-50">
           <div className="h-16 w-16 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-500 flex items-center justify-center animate-bounce">
             <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
           <div className="space-y-1.5">
-            <h2 className="text-base font-extrabold text-white">Call Limit Reached</h2>
-            <p className="text-xs text-slate-400 max-w-[260px] leading-relaxed mx-auto">
+            <h2 className="text-base font-extrabold text-slate-900">Call Limit Reached</h2>
+            <p className="text-xs text-slate-500 max-w-[260px] leading-relaxed mx-auto">
               This merchant has reached their monthly video consultation call limit. Please contact store support for assistance.
             </p>
           </div>
           <button
             onClick={() => window.parent.postMessage("close-widget", "*")}
-            className="rounded-xl border border-slate-900 hover:border-slate-800 bg-slate-900/60 hover:bg-slate-800 text-xs font-semibold px-6 py-2.5 text-slate-300 hover:text-white transition-colors cursor-pointer"
+            className="rounded-xl border border-slate-200 hover:border-slate-200 bg-white/60 shadow-sm hover:bg-slate-100 text-xs font-semibold px-6 py-2.5 text-slate-700 hover:text-slate-900 transition-colors cursor-pointer"
           >
             Close Widget
           </button>
@@ -1181,7 +1181,7 @@ export default function WidgetPage() {
   }
 
   return (
-    <div ref={containerRef} className="h-screen flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans border border-slate-900 shadow-2xl relative select-none">
+    <div ref={containerRef} className="h-screen flex flex-col bg-slate-50 text-slate-100 overflow-hidden font-sans border border-slate-200 shadow-2xl relative select-none">
 
       {/* Keyboard, Screen Reader and Mobile Responsive Style Injections */}
       <style>{`
@@ -1250,9 +1250,9 @@ export default function WidgetPage() {
       )}
 
       {/* Widget Header */}
-      <header className="flex items-center justify-between border-b border-slate-900 px-5 py-4 bg-slate-900/40 backdrop-blur-md shrink-0">
+      <header className="flex items-center justify-between border-b border-slate-200 px-5 py-4 bg-white shadow-sm/40 backdrop-blur-md shrink-0">
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl border border-slate-800 overflow-hidden bg-slate-900 flex items-center justify-center shrink-0">
+          <div className="h-9 w-9 rounded-xl border border-slate-200 overflow-hidden bg-white shadow-sm flex items-center justify-center shrink-0">
             {shop?.logo_url ? (
               <img src={shop.logo_url} alt={`${shop.name} Logo`} loading="lazy" decoding="async" className="h-full w-full object-cover" />
             ) : (
@@ -1260,10 +1260,10 @@ export default function WidgetPage() {
             )}
           </div>
           <div>
-            <h1 className="text-sm font-bold text-white leading-tight">{shop?.name || "Live Consultation"}</h1>
+            <h1 className="text-sm font-bold text-slate-900 leading-tight">{shop?.name || "Live Consultation"}</h1>
             <div className="flex items-center gap-1.5 mt-0.5" aria-live="polite">
               <span className={`h-1.5 w-1.5 rounded-full ${shop?.is_online ? "bg-green-500" : "bg-slate-500"}`} />
-              <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">
+              <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">
                 {shop?.is_online ? "Online Now" : "Offline"}
               </span>
             </div>
@@ -1272,7 +1272,7 @@ export default function WidgetPage() {
         <button
           onClick={handleHangUp}
           aria-label="Close widget window"
-          className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+          className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/60 shadow-sm hover:bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-900 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
         >
           <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -1281,7 +1281,7 @@ export default function WidgetPage() {
       </header>
 
       {/* Main Body Flow */}
-      <main className="flex-1 overflow-y-auto p-5 flex flex-col relative min-h-0 bg-slate-950">
+      <main className="flex-1 overflow-y-auto p-5 flex flex-col relative min-h-0 bg-slate-50">
 
         {/* State A: Calling Form */}
         {flowState === "form" && (() => {
@@ -1299,7 +1299,7 @@ export default function WidgetPage() {
                   {getGreeting()} · Welcome to {shop?.name || "Store"}
                 </span>
 
-                <h2 className="text-lg font-black text-white tracking-tight leading-tight">
+                <h2 className="text-lg font-black text-slate-900 tracking-tight leading-tight">
                   {shop?.welcome_message || "Start a Live Consultation"}
                 </h2>
 
@@ -1318,16 +1318,16 @@ export default function WidgetPage() {
 
               {/* Status details indicators */}
               <div className="grid grid-cols-2 gap-2 text-[10px] leading-normal font-semibold">
-                <div className="bg-slate-900/35 border border-slate-900 rounded-xl p-3.5 space-y-1">
+                <div className="bg-white shadow-sm/35 border border-slate-200 rounded-xl p-3.5 space-y-1">
                   <span className="text-slate-500 uppercase tracking-wider block text-[8px]">Est. Wait Time</span>
-                  <span className="font-bold text-white text-xs block">
+                  <span className="font-bold text-slate-900 text-xs block">
                     {onlineAgentsCount > 0 ? "< 2 minutes" : "< 5 minutes"}
                   </span>
                 </div>
 
-                <div className="bg-slate-900/35 border border-slate-900 rounded-xl p-3.5 space-y-1 min-w-0">
+                <div className="bg-white shadow-sm/35 border border-slate-200 rounded-xl p-3.5 space-y-1 min-w-0">
                   <span className="text-slate-500 uppercase tracking-wider block text-[8px] truncate">Store hours status</span>
-                  <span className="font-bold text-white text-xs block truncate text-green-400">
+                  <span className="font-bold text-slate-900 text-xs block truncate text-green-400">
                     Open now
                   </span>
                 </div>
@@ -1335,9 +1335,9 @@ export default function WidgetPage() {
 
               {/* Detected Viewed Product Card */}
               {detectedProduct && (
-                <div className="bg-slate-900/35 border border-slate-900 rounded-xl p-3.5 space-y-3 text-left">
+                <div className="bg-white shadow-sm/35 border border-slate-200 rounded-xl p-3.5 space-y-3 text-left">
                   <div className="flex gap-3">
-                    <div className="h-12 w-12 rounded-lg bg-slate-900 border border-slate-900/50 overflow-hidden shrink-0 flex items-center justify-center">
+                    <div className="h-12 w-12 rounded-lg bg-white shadow-sm border border-slate-200/50 overflow-hidden shrink-0 flex items-center justify-center">
                       {detectedProduct.product_images?.[0]?.image_url || detectedProduct.image_url ? (
                         <img src={detectedProduct.product_images?.[0]?.image_url || detectedProduct.image_url} alt={detectedProduct.name} loading="lazy" decoding="async" className="h-full w-full object-cover" />
                       ) : (
@@ -1347,7 +1347,7 @@ export default function WidgetPage() {
 
                     <div className="space-y-0.5 min-w-0 flex-1">
                       <span className="text-[8px] text-blue-400 uppercase tracking-wider font-bold block">Active Product Details</span>
-                      <h3 className="text-[11px] font-bold text-white leading-tight truncate">
+                      <h3 className="text-[11px] font-bold text-slate-900 leading-tight truncate">
                         {detectedProduct.name}
                       </h3>
                       <span className="text-xs font-black text-blue-400 block leading-tight">
@@ -1376,7 +1376,7 @@ export default function WidgetPage() {
 
               {/* Roster Live Availability Grid */}
               {agentsList && agentsList.length > 0 && (
-                <div className="bg-slate-900/35 border border-slate-900 rounded-xl p-3.5 space-y-2.5">
+                <div className="bg-white shadow-sm/35 border border-slate-200 rounded-xl p-3.5 space-y-2.5">
                   <span className="text-slate-500 uppercase tracking-wider block text-[8px] font-bold">Roster Availability</span>
                   <div className="space-y-2 max-h-[110px] overflow-y-auto pr-1">
                     {agentsList.map((ag) => {
@@ -1405,22 +1405,22 @@ export default function WidgetPage() {
                       return (
                         <div key={ag.id} className="flex items-center justify-between text-[10px]">
                           <div className="flex items-center gap-2">
-                            <div className="h-6.5 w-6.5 rounded-full overflow-hidden bg-slate-800 flex items-center justify-center shrink-0 border border-slate-900">
+                            <div className="h-6.5 w-6.5 rounded-full overflow-hidden bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200">
                               {avatar ? (
                                 <img src={avatar} alt={name} loading="lazy" decoding="async" className="h-full w-full object-cover" />
                               ) : (
-                                <span className="text-[8px] font-black text-slate-400">{name[0]}</span>
+                                <span className="text-[8px] font-black text-slate-500">{name[0]}</span>
                               )}
                             </div>
                             <div className="text-left">
-                              <span className="font-bold text-white block leading-tight">{name}</span>
+                              <span className="font-bold text-slate-900 block leading-tight">{name}</span>
                               <span className="text-slate-500 text-[8px] leading-tight block">{dept}</span>
                             </div>
                           </div>
 
                           <div className="flex items-center gap-1.5 shrink-0">
                             <span className={`h-1.5 w-1.5 rounded-full ${statusBadgeColor}`} />
-                            <span className="text-[9px] text-slate-400 capitalize">{statusText}</span>
+                            <span className="text-[9px] text-slate-500 capitalize">{statusText}</span>
                           </div>
                         </div>
                       );
@@ -1442,7 +1442,7 @@ export default function WidgetPage() {
                     value={name}
                     aria-label="Enter your name"
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-xl border border-slate-900 bg-slate-900/60 pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:bg-slate-900 focus-visible:outline-none transition-all"
+                    className="w-full rounded-xl border border-slate-200 bg-white/60 shadow-sm pl-11 pr-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:bg-white shadow-sm focus-visible:outline-none transition-all"
                   />
                 </div>
 
@@ -1457,7 +1457,7 @@ export default function WidgetPage() {
                     value={email}
                     aria-label="Enter your email address (optional)"
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-xl border border-slate-900 bg-slate-900/60 pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:bg-slate-900 focus-visible:outline-none transition-all"
+                    className="w-full rounded-xl border border-slate-200 bg-white/60 shadow-sm pl-11 pr-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:bg-white shadow-sm focus-visible:outline-none transition-all"
                   />
                 </div>
 
@@ -1472,7 +1472,7 @@ export default function WidgetPage() {
                     value={phone}
                     aria-label="Enter your phone number (optional)"
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full rounded-xl border border-slate-900 bg-slate-900/60 pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:bg-slate-900 focus-visible:outline-none transition-all"
+                    className="w-full rounded-xl border border-slate-200 bg-white/60 shadow-sm pl-11 pr-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:bg-white shadow-sm focus-visible:outline-none transition-all"
                   />
                 </div>
 
@@ -1488,7 +1488,7 @@ export default function WidgetPage() {
                       setLanguage(e.target.value);
                       try { localStorage.setItem("bo_customer_language", e.target.value); } catch (err) { }
                     }}
-                    className="w-full rounded-xl border border-slate-900 bg-slate-900/60 pl-11 pr-8 py-3 text-xs text-white outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-colors appearance-none cursor-pointer"
+                    className="w-full rounded-xl border border-slate-200 bg-white/60 shadow-sm pl-11 pr-8 py-3 text-xs text-slate-900 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-colors appearance-none cursor-pointer"
                   >
                     <option value="en">English (Preferred Language)</option>
                     <option value="es">Español (Spanish)</option>
@@ -1504,7 +1504,7 @@ export default function WidgetPage() {
 
               {/* Collapsible History Section */}
               {((previousCalls && previousCalls.length > 0) || (previousProducts && previousProducts.length > 0)) && (
-                <div className="bg-slate-900/35 border border-slate-900 rounded-xl p-3.5 space-y-2.5 text-left">
+                <div className="bg-white shadow-sm/35 border border-slate-200 rounded-xl p-3.5 space-y-2.5 text-left">
                   <button
                     type="button"
                     onClick={() => setShowHistoryPanel(!showHistoryPanel)}
@@ -1517,7 +1517,7 @@ export default function WidgetPage() {
                   </button>
 
                   {showHistoryPanel && (
-                    <div className="space-y-3 pt-1.5 border-t border-slate-900/60 text-[10px]">
+                    <div className="space-y-3 pt-1.5 border-t border-slate-200/60 text-[10px]">
                       {/* Previous Calls list */}
                       {previousCalls.length > 0 && (
                         <div className="space-y-1.5">
@@ -1533,7 +1533,7 @@ export default function WidgetPage() {
 
                       {/* Previous Products list */}
                       {previousProducts.length > 0 && (
-                        <div className="space-y-1.5 pt-1.5 border-t border-slate-900/40">
+                        <div className="space-y-1.5 pt-1.5 border-t border-slate-200/40">
                           <span className="text-slate-500 text-[8px] uppercase tracking-wider block font-bold">Recent Shared Catalog</span>
                           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
                             {previousProducts.map((p, i) => (
@@ -1545,9 +1545,9 @@ export default function WidgetPage() {
                                 }}
                                 role="button"
                                 aria-label={`Select shared product ${p.name}`}
-                                className="bg-slate-950 border border-slate-900 rounded-lg p-2 shrink-0 w-24 space-y-1 text-center cursor-pointer hover:border-blue-500/30 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-all"
+                                className="bg-slate-50 border border-slate-200 rounded-lg p-2 shrink-0 w-24 space-y-1 text-center cursor-pointer hover:border-blue-500/30 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-all"
                               >
-                                <span className="font-bold text-white block truncate leading-tight text-[9px]">{p.name}</span>
+                                <span className="font-bold text-slate-900 block truncate leading-tight text-[9px]">{p.name}</span>
                                 <span className="text-[9px] text-blue-400 block">${p.price}</span>
                               </div>
                             ))}
@@ -1563,7 +1563,7 @@ export default function WidgetPage() {
                 type="submit"
                 style={{ backgroundColor: primaryColor }}
                 aria-label="Initiate live video consultation"
-                className="w-full rounded-xl py-3.5 text-xs font-bold text-white shadow-xl hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:outline-none"
+                className="w-full rounded-xl py-3.5 text-xs font-bold text-slate-900 shadow-xl hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:outline-none"
               >
                 <Video className="h-4.5 w-4.5" />
                 <span>Start Video Consultation</span>
@@ -1587,14 +1587,14 @@ export default function WidgetPage() {
             {/* Live Queue details */}
             <div className="space-y-4 max-w-[280px] mx-auto w-full">
               <div className="space-y-1.5" aria-live="polite">
-                <h3 className="text-sm font-black text-white uppercase tracking-wider">Connecting Consultation...</h3>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
+                <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider">Connecting Consultation...</h3>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
                   Connecting with the shop staff. Please hold on.
                 </p>
               </div>
 
               {/* Real-time Queue Stats Card */}
-              <div className="bg-slate-900/40 border border-slate-900 rounded-xl p-3.5 space-y-2.5 text-left text-[11px]">
+              <div className="bg-white shadow-sm/40 border border-slate-200 rounded-xl p-3.5 space-y-2.5 text-left text-[11px]">
                 <div className="flex justify-between items-center" aria-live="polite">
                   <span className="text-slate-500 font-semibold">Queue Position:</span>
                   <span className="text-white font-extrabold bg-blue-600/20 text-blue-400 px-2 py-0.5 rounded-md">
@@ -1603,13 +1603,13 @@ export default function WidgetPage() {
                 </div>
                 <div className="flex justify-between items-center" aria-live="polite">
                   <span className="text-slate-500 font-semibold">Estimated Wait:</span>
-                  <span className="text-white font-extrabold text-right">
+                  <span className="text-slate-900 font-extrabold text-right">
                     ~{queuePosition * 2} min
                   </span>
                 </div>
                 <div className="flex justify-between items-center" aria-live="polite">
                   <span className="text-slate-500 font-semibold">Target Department:</span>
-                  <span className="text-white font-extrabold truncate max-w-[120px]">
+                  <span className="text-slate-900 font-extrabold truncate max-w-[120px]">
                     Sales & Support
                   </span>
                 </div>
@@ -1636,7 +1636,7 @@ export default function WidgetPage() {
               <button
                 onClick={handleHangUp}
                 aria-label="Cancel consultation call and exit"
-                className="w-full rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold py-2.5 text-slate-300 hover:text-white transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+                className="w-full rounded-xl bg-white shadow-sm hover:bg-slate-100 border border-slate-200 text-xs font-bold py-2.5 text-slate-700 hover:text-slate-900 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
               >
                 Cancel Request
               </button>
@@ -1653,9 +1653,9 @@ export default function WidgetPage() {
             [pinnedProductCall?.image_url].filter(Boolean);
 
           return (
-            <div className="absolute inset-0 flex flex-col bg-slate-950">
+            <div className="absolute inset-0 flex flex-col bg-slate-50">
               {/* Full-width Remote Video */}
-              <div className="flex-1 relative bg-slate-950 flex items-center justify-center overflow-hidden min-h-0">
+              <div className="flex-1 relative bg-slate-50 flex items-center justify-center overflow-hidden min-h-0">
                 {remoteStream ? (
                   <video
                     ref={remoteVideoRef}
@@ -1665,18 +1665,18 @@ export default function WidgetPage() {
                   />
                 ) : (
                   <div className="flex flex-col items-center text-center gap-3">
-                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-800 border-t-blue-500" />
+                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-blue-500" />
                     <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Awaiting expert stream...</p>
                   </div>
                 )}
 
                 {/* Network unstable/reconnecting screen overlay */}
                 {isReconnecting && (
-                  <div className="absolute inset-0 bg-slate-950/75 backdrop-blur-sm z-40 flex flex-col items-center justify-center text-center space-y-4">
-                    <div className="h-10 w-10 animate-spin rounded-full border-2 border-slate-800 border-t-blue-500" />
+                  <div className="absolute inset-0 bg-slate-50/75 backdrop-blur-sm z-40 flex flex-col items-center justify-center text-center space-y-4">
+                    <div className="h-10 w-10 animate-spin rounded-full border-2 border-slate-200 border-t-blue-500" />
                     <div className="space-y-1">
-                      <h3 className="text-xs font-black text-white uppercase tracking-wider">Signal Unstable</h3>
-                      <p className="text-[10px] text-slate-400 max-w-[200px]">Reconnecting WebRTC stream channels...</p>
+                      <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider">Signal Unstable</h3>
+                      <p className="text-[10px] text-slate-500 max-w-[200px]">Reconnecting WebRTC stream channels...</p>
                     </div>
                   </div>
                 )}
@@ -1684,7 +1684,7 @@ export default function WidgetPage() {
                 {/* Floating Top Control Indicators Overlay */}
                 <div className="absolute top-4 inset-x-4 z-20 flex justify-between items-start pointer-events-none">
                   {/* Call Timer Badge */}
-                  <div className="bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-xs font-mono font-bold tabular-nums text-white flex items-center gap-1.5 pointer-events-auto">
+                  <div className="bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-xs font-mono font-bold tabular-nums text-slate-900 flex items-center gap-1.5 pointer-events-auto">
                     <span className="relative flex h-2 w-2">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
@@ -1700,7 +1700,7 @@ export default function WidgetPage() {
                     </span>
 
                     {/* Network quality signal */}
-                    <div className="bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/10 text-[9px] font-bold text-white flex items-center gap-1.5">
+                    <div className="bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/10 text-[9px] font-bold text-slate-900 flex items-center gap-1.5">
                       {isGoodSignal ? (
                         <>
                           <Wifi className="h-3 w-3 text-green-400" />
@@ -1723,7 +1723,7 @@ export default function WidgetPage() {
                     aria-live="polite"
                     className="absolute bottom-16 left-4 z-30 bg-black/85 backdrop-blur-md p-2.5 rounded-xl border border-white/10 text-left max-w-[190px] flex gap-2 shadow-2xl animate-bounce"
                   >
-                    <div className="h-9 w-9 rounded-lg bg-slate-950 border border-white/10 overflow-hidden shrink-0 flex items-center justify-center">
+                    <div className="h-9 w-9 rounded-lg bg-slate-50 border border-white/10 overflow-hidden shrink-0 flex items-center justify-center">
                       {productImages[0] ? (
                         <img src={productImages[0]} alt={pinnedProductCall.name} loading="lazy" decoding="async" className="h-full w-full object-cover" />
                       ) : (
@@ -1732,7 +1732,7 @@ export default function WidgetPage() {
                     </div>
                     <div className="space-y-0.5 min-w-0 flex-1">
                       <span className="text-[7px] text-green-400 font-extrabold uppercase tracking-wider block">Recommended Live</span>
-                      <h4 className="text-[9px] font-bold text-white truncate">{pinnedProductCall.name}</h4>
+                      <h4 className="text-[9px] font-bold text-slate-900 truncate">{pinnedProductCall.name}</h4>
                       <button
                         onClick={() => setShowProductDetailCall(true)}
                         aria-label={`View details of shared product ${pinnedProductCall.name}`}
@@ -1750,17 +1750,17 @@ export default function WidgetPage() {
                     role="dialog"
                     aria-modal="true"
                     aria-label={`Product showcase detail modal for ${pinnedProductCall.name}`}
-                    className="absolute inset-x-4 bottom-16 top-16 bg-slate-950/95 backdrop-blur-md rounded-2xl border border-white/15 p-4 z-40 flex flex-col overflow-y-auto text-left shadow-2xl text-slate-100"
+                    className="absolute inset-x-4 bottom-16 top-16 bg-slate-50/95 backdrop-blur-md rounded-2xl border border-white/15 p-4 z-40 flex flex-col overflow-y-auto text-left shadow-2xl text-slate-100"
                   >
                     <div className="flex justify-between items-start pb-2 border-b border-white/10">
                       <div>
                         <span className="text-[8px] text-green-400 uppercase tracking-widest font-black block">Live Showcase</span>
-                        <h3 className="text-xs font-black text-white leading-tight">{pinnedProductCall.name}</h3>
+                        <h3 className="text-xs font-black text-slate-900 leading-tight">{pinnedProductCall.name}</h3>
                       </div>
                       <button
                         onClick={() => setShowProductDetailCall(false)}
                         aria-label="Close product details panel"
-                        className="h-6 w-6 rounded-lg bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+                        className="h-6 w-6 rounded-lg bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-slate-500 hover:text-slate-900 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
                       >
                         <X className="h-3.5 w-3.5" />
                       </button>
@@ -1770,12 +1770,12 @@ export default function WidgetPage() {
                     <div className="mt-3 flex gap-2 overflow-x-auto pb-1 scrollbar-none snap-x" aria-label="Product image gallery">
                       {productImages.length > 0 ? (
                         productImages.map((img, i) => (
-                          <div key={i} className="h-20 aspect-square rounded-xl bg-slate-900 border border-white/10 overflow-hidden shrink-0 snap-center flex items-center justify-center">
+                          <div key={i} className="h-20 aspect-square rounded-xl bg-white shadow-sm border border-white/10 overflow-hidden shrink-0 snap-center flex items-center justify-center">
                             <img src={img} alt={`Gallery image ${i + 1} of ${pinnedProductCall.name}`} loading="lazy" decoding="async" className="h-full w-full object-cover" />
                           </div>
                         ))
                       ) : (
-                        <div className="h-20 w-full rounded-xl bg-slate-900 border border-white/10 flex items-center justify-center text-slate-600">
+                        <div className="h-20 w-full rounded-xl bg-white shadow-sm border border-white/10 flex items-center justify-center text-slate-600">
                           <Sparkles className="h-5 w-5" />
                         </div>
                       )}
@@ -1784,13 +1784,13 @@ export default function WidgetPage() {
                     {/* Pricing & Description */}
                     <div className="mt-3 space-y-2 flex-1">
                       <div className="flex justify-between items-center">
-                        <span className="text-[10px] text-slate-400">Unit Price</span>
+                        <span className="text-[10px] text-slate-500">Unit Price</span>
                         <span className="text-sm font-black text-blue-400">${pinnedProductCall.price}</span>
                       </div>
 
                       <div className="space-y-1">
                         <span className="text-[8px] text-slate-500 uppercase tracking-wider block font-bold">Product Description</span>
-                        <p className="text-[10px] text-slate-300 leading-relaxed max-h-[80px] overflow-y-auto pr-1">
+                        <p className="text-[10px] text-slate-700 leading-relaxed max-h-[80px] overflow-y-auto pr-1">
                           {pinnedProductCall.description || "No description provided for this product."}
                         </p>
                       </div>
@@ -1804,7 +1804,7 @@ export default function WidgetPage() {
                           window.parent.postMessage({ type: "ADD_TO_CART", product: pinnedProductCall }, "*");
                         }}
                         aria-label={`Add product ${pinnedProductCall.name} to checkout cart`}
-                        className="py-2.5 bg-white/10 hover:bg-white/15 border border-white/10 text-white font-bold text-[10px] rounded-xl transition-all cursor-pointer text-center focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+                        className="py-2.5 bg-white/10 hover:bg-white/15 border border-white/10 text-slate-900 font-bold text-[10px] rounded-xl transition-all cursor-pointer text-center focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
                       >
                         Add to Cart
                       </button>
@@ -1825,7 +1825,7 @@ export default function WidgetPage() {
 
                 {/* PiP View (Local Stream) */}
                 {localStream && (
-                  <div className="absolute top-16 right-4 h-28 aspect-[3/4] rounded-xl overflow-hidden border border-white/10 bg-slate-900 shadow-2xl z-20">
+                  <div className="absolute top-16 right-4 h-28 aspect-[3/4] rounded-xl overflow-hidden border border-white/10 bg-white shadow-sm shadow-2xl z-20">
                     <video
                       ref={localVideoRef}
                       autoPlay
@@ -1834,7 +1834,7 @@ export default function WidgetPage() {
                       className={`w-full h-full object-cover scale-x-[-1] transition-opacity duration-200 ${camEnabled ? "opacity-100" : "opacity-0"}`}
                     />
                     {!camEnabled && (
-                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 text-slate-600 gap-1.5">
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-white shadow-sm text-slate-600 gap-1.5">
                         <VideoOff className="h-4 w-4" />
                       </div>
                     )}
@@ -1849,7 +1849,7 @@ export default function WidgetPage() {
                     aria-label={micMuted ? "Unmute microphone" : "Mute microphone"}
                     className={`flex h-11 w-11 items-center justify-center rounded-full transition-all active:scale-95 border focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none ${micMuted
                         ? "bg-rose-500/25 text-rose-400 border-rose-500/30 hover:bg-rose-500/35"
-                        : "bg-white/10 text-white border-white/10 hover:bg-white/20"
+                        : "bg-white/10 text-slate-900 border-white/10 hover:bg-white/20"
                       }`}
                   >
                     {micMuted ? <MicOff className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5" />}
@@ -1861,7 +1861,7 @@ export default function WidgetPage() {
                     aria-label={camEnabled ? "Disable camera" : "Enable camera"}
                     className={`flex h-11 w-11 items-center justify-center rounded-full transition-all active:scale-95 border focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none ${!camEnabled
                         ? "bg-rose-500/25 text-rose-400 border-rose-500/30 hover:bg-rose-500/35"
-                        : "bg-white/10 text-white border-white/10 hover:bg-white/20"
+                        : "bg-white/10 text-slate-900 border-white/10 hover:bg-white/20"
                       }`}
                   >
                     {camEnabled ? <Video className="h-3.5 w-3.5" /> : <VideoOff className="h-3.5 w-3.5" />}
@@ -1873,7 +1873,7 @@ export default function WidgetPage() {
                       onClick={togglePiP}
                       title="Toggle Picture in Picture"
                       aria-label="Toggle picture in picture mode"
-                      className="flex h-11 w-11 items-center justify-center rounded-full transition-all active:scale-95 border bg-white/10 text-white border-white/10 hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+                      className="flex h-11 w-11 items-center justify-center rounded-full transition-all active:scale-95 border bg-white/10 text-slate-900 border-white/10 hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
                     >
                       <Tv className="h-3.5 w-3.5" />
                     </button>
@@ -1884,7 +1884,7 @@ export default function WidgetPage() {
                     onClick={toggleFullscreen}
                     title="Toggle Fullscreen"
                     aria-label={isFullscreen ? "Exit fullscreen mode" : "Enter fullscreen mode"}
-                    className="flex h-11 w-11 items-center justify-center rounded-full transition-all active:scale-95 border bg-white/10 text-white border-white/10 hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+                    className="flex h-11 w-11 items-center justify-center rounded-full transition-all active:scale-95 border bg-white/10 text-slate-900 border-white/10 hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
                   >
                     {isFullscreen ? <Minimize className="h-3.5 w-3.5" /> : <Maximize className="h-3.5 w-3.5" />}
                   </button>
@@ -1911,8 +1911,8 @@ export default function WidgetPage() {
         {flowState === "offline" && (
           <form onSubmit={handleScheduleCallback} className="my-auto space-y-5 flex flex-col justify-center">
             <div className="text-center space-y-1.5 mb-2">
-              <h2 className="text-lg font-extrabold text-white tracking-wide">Leave a Message</h2>
-              <p className="text-xs text-slate-400 max-w-[260px] mx-auto leading-relaxed">
+              <h2 className="text-lg font-extrabold text-slate-900 tracking-wide">Leave a Message</h2>
+              <p className="text-xs text-slate-500 max-w-[260px] mx-auto leading-relaxed">
                 {shop?.business_hours_config?.holidays?.includes(new Date().toISOString().split('T')[0])
                   ? "We are currently closed for a public holiday."
                   : `We are currently closed. Operational hours (Timezone: ${shop?.business_hours_config?.timezone || "UTC"}): ${shop?.business_hours || "Mon-Fri: 09:00 - 18:00"}`}
@@ -1921,7 +1921,7 @@ export default function WidgetPage() {
 
             {/* Offline Roster indicators */}
             {agentsList && agentsList.length > 0 && (
-              <div className="bg-slate-900/35 border border-slate-900 rounded-xl p-3.5 space-y-2 text-left">
+              <div className="bg-white shadow-sm/35 border border-slate-200 rounded-xl p-3.5 space-y-2 text-left">
                 <span className="text-slate-500 uppercase tracking-wider block text-[8px] font-bold">Roster Availability (All Offline)</span>
                 <div className="space-y-2 max-h-[90px] overflow-y-auto pr-1">
                   {agentsList.map((ag) => {
@@ -1932,15 +1932,15 @@ export default function WidgetPage() {
                     return (
                       <div key={ag.id} className="flex items-center justify-between text-[10px]">
                         <div className="flex items-center gap-2">
-                          <div className="h-6 w-6 rounded-full overflow-hidden bg-slate-800 flex items-center justify-center shrink-0 border border-slate-900">
+                          <div className="h-6 w-6 rounded-full overflow-hidden bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200">
                             {avatar ? (
                               <img src={avatar} alt="" className="h-full w-full object-cover" />
                             ) : (
-                              <span className="text-[8px] font-black text-slate-400">{name[0]}</span>
+                              <span className="text-[8px] font-black text-slate-500">{name[0]}</span>
                             )}
                           </div>
                           <div>
-                            <span className="font-bold text-white block leading-tight">{name}</span>
+                            <span className="font-bold text-slate-900 block leading-tight">{name}</span>
                             <span className="text-slate-500 text-[8px] leading-tight block">{dept}</span>
                           </div>
                         </div>
@@ -1969,7 +1969,7 @@ export default function WidgetPage() {
                   value={name}
                   aria-label="Enter your name for callback request"
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-900/60 pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:bg-slate-900 focus-visible:outline-none transition-all"
+                  className="w-full rounded-xl border border-slate-200 bg-white/60 shadow-sm pl-11 pr-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:bg-white shadow-sm focus-visible:outline-none transition-all"
                 />
               </div>
 
@@ -1984,7 +1984,7 @@ export default function WidgetPage() {
                   value={email}
                   aria-label="Enter your email address for callback updates"
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-900/60 pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:bg-slate-900 focus-visible:outline-none transition-all"
+                  className="w-full rounded-xl border border-slate-200 bg-white/60 shadow-sm pl-11 pr-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:bg-white shadow-sm focus-visible:outline-none transition-all"
                 />
               </div>
 
@@ -1999,7 +1999,7 @@ export default function WidgetPage() {
                   value={phone}
                   aria-label="Enter your phone number for callback updates"
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-900/60 pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:bg-slate-900 focus-visible:outline-none transition-all"
+                  className="w-full rounded-xl border border-slate-200 bg-white/60 shadow-sm pl-11 pr-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:bg-white shadow-sm focus-visible:outline-none transition-all"
                 />
               </div>               {/* Date */}
               <div className="relative">
@@ -2013,7 +2013,7 @@ export default function WidgetPage() {
                   min={new Date().toISOString().split("T")[0]}
                   aria-label="Choose callback date"
                   onChange={(e) => setCallbackDate(e.target.value)}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-900/60 pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-colors"
+                  className="w-full rounded-xl border border-slate-200 bg-white/60 shadow-sm pl-11 pr-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-colors"
                 />
               </div>
 
@@ -2028,7 +2028,7 @@ export default function WidgetPage() {
                   value={callbackTimeOnly}
                   aria-label="Choose callback time"
                   onChange={(e) => setCallbackTimeOnly(e.target.value)}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-900/60 pl-11 pr-4 py-3 text-xs text-white placeholder-slate-500 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-colors"
+                  className="w-full rounded-xl border border-slate-200 bg-white/60 shadow-sm pl-11 pr-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-colors"
                 />
               </div>
 
@@ -2042,7 +2042,7 @@ export default function WidgetPage() {
                   value={callbackTimezone}
                   aria-label="Select callback timezone"
                   onChange={(e) => setCallbackTimezone(e.target.value)}
-                  className="w-full rounded-xl border border-slate-900 bg-slate-900/60 pl-11 pr-8 py-3 text-xs text-white outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-colors appearance-none cursor-pointer"
+                  className="w-full rounded-xl border border-slate-200 bg-white/60 shadow-sm pl-11 pr-8 py-3 text-xs text-slate-900 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-colors appearance-none cursor-pointer"
                 >
                   <option value={Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"}>
                     {Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"} (Local Zone)
@@ -2065,7 +2065,7 @@ export default function WidgetPage() {
               type="submit"
               style={{ backgroundColor: primaryColor }}
               aria-label={bookedCallbackId ? "Save updated callback changes" : "Confirm scheduled callback appointment"}
-              className="w-full rounded-xl py-3.5 text-xs font-bold text-white shadow-xl hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:outline-none"
+              className="w-full rounded-xl py-3.5 text-xs font-bold text-slate-900 shadow-xl hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:outline-none"
             >
               <Calendar className="h-4.5 w-4.5" />
               <span>{bookedCallbackId ? "Save Appointment Changes" : "Schedule Callback"}</span>
@@ -2076,7 +2076,7 @@ export default function WidgetPage() {
                 type="button"
                 onClick={() => setFlowState("callback-submitted")}
                 aria-label="Back to confirmation sheet"
-                className="w-full rounded-xl border border-slate-850 hover:bg-slate-900/60 text-xs font-semibold py-2.5 text-slate-400 hover:text-white transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+                className="w-full rounded-xl border border-slate-850 hover:bg-white/60 shadow-sm text-xs font-semibold py-2.5 text-slate-500 hover:text-slate-900 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
               >
                 Back to Confirmation
               </button>
@@ -2092,25 +2092,25 @@ export default function WidgetPage() {
             </div>
 
             <div className="space-y-1.5">
-              <h2 className="text-sm font-extrabold text-white">Callback Scheduled!</h2>
-              <p className="text-[11px] text-slate-400 max-w-[240px] leading-relaxed mx-auto">
+              <h2 className="text-sm font-extrabold text-slate-900">Callback Scheduled!</h2>
+              <p className="text-[11px] text-slate-500 max-w-[240px] leading-relaxed mx-auto">
                 Your consultation has been registered. An expert will call you back at:
               </p>
             </div>
 
             {/* Booked appointment details box */}
-            <div className="w-full bg-slate-900/35 border border-slate-900 rounded-xl p-3.5 text-left text-[11px] space-y-1.5 font-semibold text-slate-300">
+            <div className="w-full bg-white shadow-sm/35 border border-slate-200 rounded-xl p-3.5 text-left text-[11px] space-y-1.5 font-semibold text-slate-700">
               <div className="flex justify-between">
                 <span className="text-slate-500">Date:</span>
-                <span className="text-white">{callbackDate}</span>
+                <span className="text-slate-900">{callbackDate}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Time:</span>
-                <span className="text-white">{callbackTimeOnly}</span>
+                <span className="text-slate-900">{callbackTimeOnly}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Time Zone:</span>
-                <span className="text-white truncate max-w-[130px]">{callbackTimezone}</span>
+                <span className="text-slate-900 truncate max-w-[130px]">{callbackTimezone}</span>
               </div>
             </div>
 
@@ -2132,12 +2132,12 @@ export default function WidgetPage() {
                 Cancel Appointment
               </button>
 
-              <div className="h-px bg-slate-900 my-1" />
+              <div className="h-px bg-white shadow-sm my-1" />
 
               <button
                 onClick={handleHangUp}
                 aria-label="Close scheduling panel"
-                className="w-full rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold py-2.5 text-slate-300 hover:text-white transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+                className="w-full rounded-xl bg-white shadow-sm hover:bg-slate-100 border border-slate-200 text-xs font-bold py-2.5 text-slate-700 hover:text-slate-900 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
               >
                 Close Widget
               </button>
@@ -2147,14 +2147,14 @@ export default function WidgetPage() {
 
         {/* State F: Ringing/Calling Timeout Screen */}
         {flowState === "call-timeout" && (
-          <div className="my-auto flex flex-col items-center justify-center text-center space-y-4 p-4 bg-slate-950" aria-live="polite">
+          <div className="my-auto flex flex-col items-center justify-center text-center space-y-4 p-4 bg-slate-50" aria-live="polite">
             <div className="h-14 w-14 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center animate-pulse">
               <Clock className="h-6 w-6" />
             </div>
 
             <div className="space-y-1.5">
-              <h2 className="text-sm font-extrabold text-white">All Agents Are Busy</h2>
-              <p className="text-[11px] text-slate-400 max-w-[240px] leading-relaxed mx-auto">
+              <h2 className="text-sm font-extrabold text-slate-900">All Agents Are Busy</h2>
+              <p className="text-[11px] text-slate-500 max-w-[240px] leading-relaxed mx-auto">
                 Our team is currently answering other calls. You can keep waiting, or schedule a callback.
               </p>
             </div>
@@ -2174,17 +2174,17 @@ export default function WidgetPage() {
               <button
                 onClick={handleSwitchToCallback}
                 aria-label="Switch call to callback scheduling form"
-                className="w-full rounded-xl py-2.5 bg-white/10 border border-white/10 hover:bg-white/15 text-white text-xs font-bold transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+                className="w-full rounded-xl py-2.5 bg-white/10 border border-white/10 hover:bg-white/15 text-slate-900 text-xs font-bold transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
               >
                 Switch to Callback
               </button>
 
-              <div className="h-px bg-slate-900 my-1" />
+              <div className="h-px bg-white shadow-sm my-1" />
 
               <button
                 onClick={handleHangUp}
                 aria-label="Cancel consultation and hang up"
-                className="w-full rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold py-2.5 text-slate-300 hover:text-white transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+                className="w-full rounded-xl bg-white shadow-sm hover:bg-slate-100 border border-slate-200 text-xs font-bold py-2.5 text-slate-700 hover:text-slate-900 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
               >
                 Cancel Call
               </button>
@@ -2194,28 +2194,28 @@ export default function WidgetPage() {
 
         {/* State G: Post-Call Summary and Feedback Form */}
         {flowState === "post-call" && (
-          <div className="my-auto flex flex-col items-center justify-center text-center space-y-4 p-4 bg-slate-950 text-slate-100" aria-live="polite">
+          <div className="my-auto flex flex-col items-center justify-center text-center space-y-4 p-4 bg-slate-50 text-slate-100" aria-live="polite">
             <div className="h-12 w-12 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center animate-bounce">
               <Star className="h-5 w-5 fill-blue-400" />
             </div>
 
             <div className="space-y-1">
-              <h2 className="text-sm font-extrabold text-white">Consultation Summary</h2>
-              <p className="text-[11px] text-slate-400">Thank you for your valuable time!</p>
+              <h2 className="text-sm font-extrabold text-slate-900">Consultation Summary</h2>
+              <p className="text-[11px] text-slate-500">Thank you for your valuable time!</p>
             </div>
 
             {/* Call Info details */}
-            <div className="w-full bg-slate-900/35 border border-slate-900 rounded-xl p-3.5 text-left text-[11px] space-y-1.5 font-semibold text-slate-350">
+            <div className="w-full bg-white shadow-sm/35 border border-slate-200 rounded-xl p-3.5 text-left text-[11px] space-y-1.5 font-semibold text-slate-350">
               <div className="flex justify-between">
                 <span className="text-slate-500">Expert Agent:</span>
-                <span className="text-white">{answeringAgentName || "Our Store Specialist"}</span>
+                <span className="text-slate-900">{answeringAgentName || "Our Store Specialist"}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Call Duration:</span>
-                <span className="text-white">{finalDurationText || "0s"}</span>
+                <span className="text-slate-900">{finalDurationText || "0s"}</span>
               </div>
               {discussedProducts && discussedProducts.length > 0 && (
-                <div className="flex flex-col gap-1 pt-1.5 border-t border-slate-900/60">
+                <div className="flex flex-col gap-1 pt-1.5 border-t border-slate-200/60">
                   <span className="text-slate-500">Products Discussed:</span>
                   <div className="flex flex-wrap gap-1 mt-0.5">
                     {discussedProducts.map((p, idx) => (
@@ -2290,7 +2290,7 @@ export default function WidgetPage() {
                         type="button"
                         onClick={() => setCustomerRating(star)}
                         aria-label={`Rate ${star} Stars`}
-                        className="text-slate-400 hover:text-amber-400 cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none rounded"
+                        className="text-slate-500 hover:text-amber-400 cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none rounded"
                       >
                         <Star className={`h-6 w-6 ${customerRating >= star ? "text-amber-400 fill-amber-400" : "text-slate-700"}`} />
                       </button>
@@ -2305,14 +2305,14 @@ export default function WidgetPage() {
                     onChange={(e) => setFeedbackText(e.target.value)}
                     aria-label="Write your feedback comments"
                     placeholder="Tell us how we did (optional)..."
-                    className="w-full rounded-xl border border-slate-900 bg-slate-900/60 p-3 text-xs text-white placeholder-slate-500 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none resize-none transition-all"
+                    className="w-full rounded-xl border border-slate-200 bg-white/60 shadow-sm p-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none resize-none transition-all"
                   />
                 </div>
 
                 <button
                   type="submit"
                   style={{ backgroundColor: primaryColor }}
-                  className="w-full rounded-xl py-3 text-xs font-bold text-white shadow-xl hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+                  className="w-full rounded-xl py-3 text-xs font-bold text-slate-900 shadow-xl hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
                 >
                   Submit Review
                 </button>
@@ -2322,7 +2322,7 @@ export default function WidgetPage() {
                 <p className="text-xs text-green-400 font-bold">✓ Feedback recorded. Thank you!</p>
                 <button
                   onClick={() => setFlowState(shop?.is_online ? "form" : "offline")}
-                  className="w-full rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold py-3 text-slate-300 hover:text-white transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+                  className="w-full rounded-xl bg-white shadow-sm hover:bg-slate-100 border border-slate-200 text-xs font-bold py-3 text-slate-700 hover:text-slate-900 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
                 >
                   Return to Dashboard
                 </button>

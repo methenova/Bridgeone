@@ -72,7 +72,7 @@ export default function AdminNotificationsPage() {
   }
 
   return (
-    <div className="space-y-6 text-white max-w-6xl relative">
+    <div className="space-y-6 text-slate-900 max-w-6xl relative">
       
       {/* Header */}
       <div>
@@ -103,7 +103,7 @@ export default function AdminNotificationsPage() {
                   className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer ${
                     channel === "banner" 
                       ? "bg-indigo-500/10 border-indigo-500/30 text-indigo-400 font-bold" 
-                      : "bg-slate-950 border-slate-900 text-slate-500 hover:border-slate-800"
+                      : "bg-slate-50 border-slate-200 text-slate-500 hover:border-slate-200"
                   }`}
                 >
                   <Bell className="h-4 w-4 mb-1" />
@@ -117,7 +117,7 @@ export default function AdminNotificationsPage() {
                   className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer ${
                     channel === "email" 
                       ? "bg-indigo-500/10 border-indigo-500/30 text-indigo-400 font-bold" 
-                      : "bg-slate-950 border-slate-900 text-slate-500 hover:border-slate-800"
+                      : "bg-slate-50 border-slate-200 text-slate-500 hover:border-slate-200"
                   }`}
                 >
                   <Mail className="h-4 w-4 mb-1" />
@@ -131,7 +131,7 @@ export default function AdminNotificationsPage() {
                   className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer ${
                     channel === "push" 
                       ? "bg-indigo-500/10 border-indigo-500/30 text-indigo-400 font-bold" 
-                      : "bg-slate-950 border-slate-900 text-slate-500 hover:border-slate-800"
+                      : "bg-slate-50 border-slate-200 text-slate-500 hover:border-slate-200"
                   }`}
                 >
                   <Smartphone className="h-4 w-4 mb-1" />

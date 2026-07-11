@@ -119,7 +119,7 @@ export default function OrdersPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by Order ID, customer, product..."
-            className="w-full rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 py-2.5 pl-9 pr-4 text-sm text-slate-900 placeholder-slate-500 outline-none focus:border-blue-500"
+            className="w-full rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 py-2.5 pl-9 pr-4 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500"
           />
         </div>
       </div>

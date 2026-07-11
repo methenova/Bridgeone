@@ -339,16 +339,16 @@ export default function CustomerChatWidget({ shop }) {
 
       {/* Chat Box */}
       {isOpen && (
-        <div className="w-80 sm:w-96 h-[480px] rounded-3xl border border-slate-800 bg-slate-950 shadow-2xl flex flex-col overflow-hidden animate-slide-up">
+        <div className="w-80 sm:w-96 h-[480px] rounded-3xl border border-slate-200 bg-slate-50 shadow-2xl flex flex-col overflow-hidden animate-slide-up">
 
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-slate-800 px-5 py-4 bg-slate-900/60">
+          <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4 bg-white/60 shadow-sm">
             <div className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-xl overflow-hidden bg-slate-800 border border-slate-700 flex items-center justify-center">
+              <div className="h-8 w-8 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center">
                 {shop.logo_url ? <img src={shop.logo_url} alt="" className="h-full w-full object-cover" /> : "🏪"}
               </div>
               <div>
-                <h4 className="text-xs font-bold text-white">Chat with {shop.name}</h4>
+                <h4 className="text-xs font-bold text-slate-900">Chat with {shop.name}</h4>
                 <p className="text-[10px] text-slate-500">Typically replies in minutes</p>
               </div>
             </div>
@@ -362,8 +362,8 @@ export default function CustomerChatWidget({ shop }) {
                 title={isCallActive ? "Call in progress" : "Start Video Consultation"}
                 className={`relative flex h-8 w-8 items-center justify-center rounded-xl transition-all ${
                   isCallActive
-                    ? "bg-slate-800/60 text-slate-600 cursor-not-allowed"
-                    : "text-blue-400 hover:text-blue-300 hover:bg-slate-800/40 active:scale-95"
+                    ? "bg-slate-100/60 text-slate-600 cursor-not-allowed"
+                    : "text-blue-400 hover:text-blue-300 hover:bg-slate-100/40 active:scale-95"
                 }`}
               >
                 {isStartingRef.current && !activeCall ? (
@@ -377,7 +377,7 @@ export default function CustomerChatWidget({ shop }) {
                 )}
               </button>
 
-              <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white p-1 rounded-lg">
+              <button onClick={() => setIsOpen(false)} className="text-slate-500 hover:text-slate-900 p-1 rounded-lg">
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -390,7 +390,7 @@ export default function CustomerChatWidget({ shop }) {
             ) : messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center text-slate-600">
                 <MessageSquare className="h-8 w-8 mb-1.5 stroke-[1.5]" />
-                <p className="text-[11px] font-semibold text-slate-400">No messages yet</p>
+                <p className="text-[11px] font-semibold text-slate-500">No messages yet</p>
                 <p className="text-[9px] text-slate-500 mt-0.5">Ask the seller about products, pricing, or shipping.</p>
               </div>
             ) : (
@@ -401,11 +401,11 @@ export default function CustomerChatWidget({ shop }) {
                     <div className={`max-w-[75%] rounded-2xl p-3 text-[11px] space-y-1 ${
                       isOwn
                         ? "bg-blue-600 text-white rounded-tr-none"
-                        : "bg-slate-900 text-slate-200 rounded-tl-none border border-slate-800"
+                        : "bg-white shadow-sm text-slate-800 rounded-tl-none border border-slate-200"
                     }`}>
                       {m.content && <p className="leading-relaxed">{m.content}</p>}
                       {m.image_url && (
-                        <div className="overflow-hidden rounded-xl border border-slate-700 bg-slate-950 mt-1 max-w-[150px]">
+                        <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50 mt-1 max-w-[150px]">
                           <img src={m.image_url} alt="" className="object-cover w-full h-auto" />
                         </div>
                       )}
@@ -421,11 +421,11 @@ export default function CustomerChatWidget({ shop }) {
           </div>
 
           {/* Message Form */}
-          <form onSubmit={handleSend} className="border-t border-slate-800 p-4 bg-slate-900/20 space-y-3">
+          <form onSubmit={handleSend} className="border-t border-slate-200 p-4 bg-white shadow-sm space-y-3">
             {attachmentUrl && (
-              <div className="relative inline-flex items-center border border-slate-700 rounded-xl bg-slate-900 px-2 py-1 text-[10px] text-slate-400 gap-2">
+              <div className="relative inline-flex items-center border border-slate-200 rounded-xl bg-white shadow-sm px-2 py-1 text-[10px] text-slate-500 gap-2">
                 <span>Attachment ready</span>
-                <button type="button" onClick={() => setAttachmentUrl("")} className="text-slate-500 hover:text-white">
+                <button type="button" onClick={() => setAttachmentUrl("")} className="text-slate-500 hover:text-slate-900">
                   <X className="h-3 w-3" />
                 </button>
               </div>
@@ -434,7 +434,7 @@ export default function CustomerChatWidget({ shop }) {
               <button
                 type="button"
                 onClick={handleAttachImage}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-700 text-slate-400 hover:text-white transition-colors"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-slate-500 hover:text-slate-900 transition-colors"
               >
                 <Paperclip className="h-4 w-4" />
               </button>
@@ -443,7 +443,7 @@ export default function CustomerChatWidget({ shop }) {
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
                 placeholder="Type a message..."
-                className="flex-1 rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-[11px] text-white outline-none focus:border-blue-500 placeholder-slate-600 transition-colors"
+                className="flex-1 rounded-xl border border-slate-200 bg-white shadow-sm px-3 py-2 text-[11px] text-slate-900 outline-none focus:border-blue-500 placeholder-slate-600 transition-colors"
               />
               <button
                 type="submit"
@@ -458,7 +458,7 @@ export default function CustomerChatWidget({ shop }) {
 
       {/* ── 1-on-1 Video Call Floating Card ───────────────────────────────── */}
       {activeCall && (
-        <div className="fixed bottom-24 right-4 left-4 sm:left-auto sm:right-6 z-50 w-auto sm:w-96 h-[480px] max-h-[78vh] rounded-3xl border border-white/10 bg-slate-950 shadow-2xl shadow-black/80 flex flex-col overflow-hidden animate-slide-up relative">
+        <div className="fixed bottom-24 right-4 left-4 sm:left-auto sm:right-6 z-50 w-auto sm:w-96 h-[480px] max-h-[78vh] rounded-3xl border border-white/10 bg-slate-50 shadow-2xl shadow-black/80 flex flex-col overflow-hidden animate-slide-up relative">
 
           {/* Call Header (Floating Overlay) */}
           <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between bg-black/60 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/10 shadow-lg">
@@ -475,19 +475,19 @@ export default function CustomerChatWidget({ shop }) {
                 }`} />
               </span>
               <div>
-                <h4 className="text-[11px] font-bold text-white leading-tight">
+                <h4 className="text-[11px] font-bold text-slate-900 leading-tight">
                   {isConnected ? `Zara Shop` : connLabel}
                 </h4>
                 {isConnected && (
-                  <p className="text-[9px] text-slate-400 font-mono tabular-nums leading-none mt-0.5">{formatDuration(callDuration)}</p>
+                  <p className="text-[9px] text-slate-500 font-mono tabular-nums leading-none mt-0.5">{formatDuration(callDuration)}</p>
                 )}
               </div>
             </div>
-            <span className="text-[8px] bg-white/10 px-2 py-0.5 rounded-md text-white font-bold uppercase tracking-wider">Consultation</span>
+            <span className="text-[8px] bg-white/10 px-2 py-0.5 rounded-md text-slate-900 font-bold uppercase tracking-wider">Consultation</span>
           </div>
 
           {/* Video Area (Occupies full space) */}
-          <div className="w-full h-full bg-slate-950 relative flex items-center justify-center overflow-hidden">
+          <div className="w-full h-full bg-slate-50 relative flex items-center justify-center overflow-hidden">
             {callRemoteStream ? (
               <video
                 ref={callRemoteVideoRef}
@@ -506,7 +506,7 @@ export default function CustomerChatWidget({ shop }) {
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm font-bold text-white tracking-wide">
+                  <p className="text-sm font-bold text-slate-900 tracking-wide">
                     {isCalling ? `Calling Zara Shop...` : connLabel}
                   </p>
                   <p className="text-[10px] text-slate-500 max-w-[200px] leading-relaxed mx-auto">
@@ -518,7 +518,7 @@ export default function CustomerChatWidget({ shop }) {
 
             {/* PiP — Local Camera Preview (Self View) */}
             {callStream && (
-              <div className="absolute bottom-20 right-4 h-24 aspect-[3/4] sm:aspect-video rounded-xl overflow-hidden border border-white/10 bg-slate-900 shadow-2xl z-20 transition-all hover:scale-105 duration-300">
+              <div className="absolute bottom-20 right-4 h-24 aspect-[3/4] sm:aspect-video rounded-xl overflow-hidden border border-white/10 bg-white shadow-sm shadow-2xl z-20 transition-all hover:scale-105 duration-300">
                 <video
                   ref={callLocalVideoRef}
                   autoPlay
@@ -527,12 +527,12 @@ export default function CustomerChatWidget({ shop }) {
                   className={`w-full h-full object-cover scale-x-[-1] transition-opacity duration-300 ${camEnabled ? "opacity-100" : "opacity-0"}`}
                 />
                 {!camEnabled && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 text-slate-600 gap-1.5">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-white shadow-sm text-slate-600 gap-1.5">
                     <VideoOff className="h-4 w-4" />
                     <span className="text-[7px] uppercase tracking-wider font-bold">Cam Off</span>
                   </div>
                 )}
-                <div className="absolute bottom-1.5 left-2 bg-black/40 backdrop-blur-sm px-1.5 py-0.5 rounded-md text-[7px] font-bold text-white/80 uppercase tracking-wide">You</div>
+                <div className="absolute bottom-1.5 left-2 bg-black/40 backdrop-blur-sm px-1.5 py-0.5 rounded-md text-[7px] font-bold text-slate-900/80 uppercase tracking-wide">You</div>
               </div>
             )}
 
@@ -545,7 +545,7 @@ export default function CustomerChatWidget({ shop }) {
                 className={`flex h-10 w-10 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border ${
                   micMuted
                     ? "bg-rose-500/20 text-rose-400 border-rose-500/30 hover:bg-rose-500/30"
-                    : "bg-white/10 text-white border-white/10 hover:bg-white/20"
+                    : "bg-white/10 text-slate-900 border-white/10 hover:bg-white/20"
                 }`}
               >
                 {micMuted ? <MicOff className="h-4.5 w-4.5" /> : <Mic className="h-4.5 w-4.5" />}
@@ -558,7 +558,7 @@ export default function CustomerChatWidget({ shop }) {
                 className={`flex h-10 w-10 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border ${
                   !camEnabled
                     ? "bg-rose-500/20 text-rose-400 border-rose-500/30 hover:bg-rose-500/30"
-                    : "bg-white/10 text-white border-white/10 hover:bg-white/20"
+                    : "bg-white/10 text-slate-900 border-white/10 hover:bg-white/20"
                 }`}
               >
                 {camEnabled ? <Video className="h-4.5 w-4.5" /> : <VideoOff className="h-4.5 w-4.5" />}

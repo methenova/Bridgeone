@@ -39,7 +39,7 @@ export default function CouponInput({ subtotal, onApply, onRemove, appliedCoupon
         </div>
         <button
           onClick={onRemove}
-          className="text-slate-400 transition-colors hover:text-white"
+          className="text-slate-500 transition-colors hover:text-slate-900"
         >
           <X className="h-4 w-4" />
         </button>
@@ -58,7 +58,7 @@ export default function CouponInput({ subtotal, onApply, onRemove, appliedCoupon
             onChange={(e) => { setCode(e.target.value.toUpperCase()); setError(""); }}
             onKeyDown={(e) => e.key === "Enter" && handleApply()}
             placeholder="Enter coupon code"
-            className="w-full rounded-xl border border-slate-700 bg-slate-800 py-2.5 pl-9 pr-4 text-sm text-white placeholder-slate-500 uppercase outline-none transition focus:border-blue-500"
+            className="w-full rounded-xl border border-slate-200 bg-slate-100 py-2.5 pl-9 pr-4 text-sm text-slate-900 placeholder-slate-400 uppercase outline-none transition focus:border-blue-500"
           />
         </div>
         <button

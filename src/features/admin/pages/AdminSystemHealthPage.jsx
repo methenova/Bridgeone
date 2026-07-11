@@ -57,7 +57,7 @@ export default function AdminSystemHealthPage() {
   ];
 
   return (
-    <div className="space-y-4 md:space-y-6 text-white max-w-7xl relative">
+    <div className="space-y-4 md:space-y-6 text-slate-900 max-w-7xl relative">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -69,7 +69,7 @@ export default function AdminSystemHealthPage() {
         <Button
           onClick={handleTriggerRefresh}
           disabled={refreshing}
-          className="flex items-center gap-2 rounded-xl bg-slate-900 border border-slate-200 hover:border-slate-800 px-4 py-2.5 text-xs font-bold text-slate-700 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-50"
+          className="flex items-center gap-2 rounded-xl bg-white shadow-sm border border-slate-200 hover:border-slate-200 px-4 py-2.5 text-xs font-bold text-slate-700 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-50"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
           <span>Refresh Telemetry</span>
@@ -86,10 +86,10 @@ export default function AdminSystemHealthPage() {
             <Cpu className="h-4.5 w-4.5 text-blue-400" />
           </div>
           <div className="space-y-2">
-            <p className="text-2xl font-extrabold tracking-tight text-white">{cpuUsage}%</p>
+            <p className="text-2xl font-extrabold tracking-tight text-slate-900">{cpuUsage}%</p>
             
             {/* Progress load */}
-            <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden border border-slate-900">
+            <div className="h-1.5 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-200">
               <div 
                 style={{ width: `${cpuUsage}%` }} 
                 className={`h-full rounded-full transition-all duration-500 ${
@@ -107,10 +107,10 @@ export default function AdminSystemHealthPage() {
             <HardDrive className="h-4.5 w-4.5 text-indigo-400" />
           </div>
           <div className="space-y-2">
-            <p className="text-2xl font-extrabold tracking-tight text-white">{memUsage}%</p>
+            <p className="text-2xl font-extrabold tracking-tight text-slate-900">{memUsage}%</p>
             
             {/* Progress load */}
-            <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden border border-slate-900">
+            <div className="h-1.5 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-200">
               <div 
                 style={{ width: `${memUsage}%` }} 
                 className="h-full bg-indigo-500 rounded-full transition-all duration-500"
@@ -126,10 +126,10 @@ export default function AdminSystemHealthPage() {
             <Database className="h-4.5 w-4.5 text-emerald-400" />
           </div>
           <div className="space-y-2">
-            <p className="text-2xl font-extrabold tracking-tight text-white">{latency}ms</p>
+            <p className="text-2xl font-extrabold tracking-tight text-slate-900">{latency}ms</p>
             
             {/* Progress load */}
-            <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden border border-slate-900">
+            <div className="h-1.5 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-200">
               <div 
                 style={{ width: `${(latency / 100) * 100}%` }} 
                 className="h-full bg-emerald-500 rounded-full transition-all duration-500"
@@ -153,7 +153,7 @@ export default function AdminSystemHealthPage() {
             {services.map(ser => (
               <div key={ser.name} className="flex justify-between items-center py-4 first:pt-0 last:pb-0">
                 <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-slate-900 border border-slate-200 flex items-center justify-center shrink-0">
+                  <div className="h-8 w-8 rounded-lg bg-white shadow-sm border border-slate-200 flex items-center justify-center shrink-0">
                     <Server className="h-4 w-4 text-slate-500" />
                   </div>
                   <div>
@@ -180,7 +180,7 @@ export default function AdminSystemHealthPage() {
             <p className="text-xs text-slate-500">Real-time gateway warning & allocation logs</p>
           </div>
 
-          <div className="space-y-3 font-mono text-[9px] text-slate-500 bg-slate-950 p-4 rounded-xl border border-slate-900 h-56 overflow-y-auto leading-normal">
+          <div className="space-y-3 font-mono text-[9px] text-slate-500 bg-slate-50 p-4 rounded-xl border border-slate-200 h-56 overflow-y-auto leading-normal">
             {errorLogs.map((log, idx) => (
               <div key={idx} className="pb-2.5 border-b border-slate-100/80 last:border-0 last:pb-0 space-y-0.5">
                 <div className="flex justify-between text-slate-500">

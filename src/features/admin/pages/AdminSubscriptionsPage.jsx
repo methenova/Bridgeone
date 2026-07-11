@@ -132,14 +132,14 @@ export default function AdminSubscriptionsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-slate-900" />
-        <div className="h-96 animate-pulse rounded-2xl bg-slate-900 border border-slate-200" />
+        <div className="h-10 w-48 animate-pulse rounded-lg bg-white shadow-sm" />
+        <div className="h-96 animate-pulse rounded-2xl bg-white shadow-sm border border-slate-200" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 text-white max-w-7xl relative">
+    <div className="space-y-8 text-slate-900 max-w-7xl relative">
       
       {/* Header */}
       <div>
@@ -150,10 +150,10 @@ export default function AdminSubscriptionsPage() {
       {/* Aggregate Counts Row */}
       <div className="grid gap-4 grid-cols-4 max-w-4xl">
         {/* Total Active Subscriptions */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Active Paid Subs</p>
-            <p className="text-xl font-bold tracking-tight text-white">{stats.totalActive}</p>
+            <p className="text-xl font-bold tracking-tight text-slate-900">{stats.totalActive}</p>
           </div>
           <div className="h-8 w-8 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0">
             <Zap className="h-4 w-4" />
@@ -161,7 +161,7 @@ export default function AdminSubscriptionsPage() {
         </div>
 
         {/* Pro Plan Count */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Pro Tier Tenants</p>
             <p className="text-xl font-bold tracking-tight text-indigo-400">{stats.proCount}</p>
@@ -172,7 +172,7 @@ export default function AdminSubscriptionsPage() {
         </div>
 
         {/* Basic Plan Count */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Basic Tier Tenants</p>
             <p className="text-xl font-bold tracking-tight text-purple-400">{stats.basicCount}</p>
@@ -183,12 +183,12 @@ export default function AdminSubscriptionsPage() {
         </div>
 
         {/* Free Plan Count */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Free Tier Tenants</p>
             <p className="text-xl font-bold tracking-tight text-slate-500">{stats.freeCount}</p>
           </div>
-          <div className="h-8 w-8 rounded-xl bg-slate-800 text-slate-500 flex items-center justify-center shrink-0">
+          <div className="h-8 w-8 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center shrink-0">
             <Building className="h-4 w-4" />
           </div>
         </div>
@@ -208,7 +208,7 @@ export default function AdminSubscriptionsPage() {
 
             <div className="overflow-x-auto">
               <table className="min-w-full text-left">
-                <thead className="border-b border-slate-100 bg-slate-900/30 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+                <thead className="border-b border-slate-100 bg-white shadow-sm text-slate-500 text-[10px] uppercase font-bold tracking-wider">
                   <tr>
                     <th className="py-3 px-2">Store name</th>
                     <th className="py-3 px-2">Current plan</th>
@@ -225,7 +225,7 @@ export default function AdminSubscriptionsPage() {
                             ? "bg-indigo-500/10 text-indigo-400 border-indigo-500/20"
                             : shop.plan_name === "basic"
                             ? "bg-purple-500/10 text-purple-400 border-purple-500/20"
-                            : "bg-slate-800 text-slate-500 border-slate-800"
+                            : "bg-slate-100 text-slate-500 border-slate-200"
                         }`}>
                           {shop.plan_name || "free"}
                         </span>
@@ -265,7 +265,7 @@ export default function AdminSubscriptionsPage() {
                   placeholder="Search by store or invoice ID..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full rounded-lg border border-slate-200 bg-white pl-8 pr-3 py-1.5 text-[11px] text-white placeholder-slate-500 outline-none focus:border-slate-200"
+                  className="w-full rounded-lg border border-slate-200 bg-white pl-8 pr-3 py-1.5 text-[11px] text-slate-900 placeholder-slate-400 outline-none focus:border-slate-200"
                 />
               </div>
             </div>
@@ -339,7 +339,7 @@ export default function AdminSubscriptionsPage() {
       {/* PLAN EDIT MODAL */}
       <AnimatePresence>
         {editingPlan && (
-          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-white shadow-sm/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -379,7 +379,7 @@ export default function AdminSubscriptionsPage() {
                       type="checkbox"
                       checked={editUnlimitedCalls}
                       onChange={(e) => setEditUnlimitedCalls(e.target.checked)}
-                      className="rounded border-slate-200 bg-slate-900 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                      className="rounded border-slate-200 bg-white shadow-sm text-blue-600 focus:ring-blue-500 h-4 w-4"
                     />
                     <span>Unlimited Sessions</span>
                   </label>
@@ -413,7 +413,7 @@ export default function AdminSubscriptionsPage() {
                   <Button
                     type="button"
                     onClick={() => setEditingPlan(null)}
-                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-white cursor-pointer"
+                    className="px-4 py-2 border border-slate-200 rounded-xl text-slate-500 hover:text-slate-900 cursor-pointer"
                   >
                     Cancel
                   </Button>

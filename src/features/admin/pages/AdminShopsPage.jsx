@@ -91,7 +91,7 @@ export default function AdminShopsPage() {
       {/* Aggregate Stats Bar */}
       <div className="grid gap-4 grid-cols-3 max-w-3xl">
         {/* Total Stores */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Total Shops</p>
             <p className="text-xl font-bold tracking-tight">{stats.total}</p>
@@ -102,7 +102,7 @@ export default function AdminShopsPage() {
         </div>
 
         {/* Approved Stores */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Approved</p>
             <p className="text-xl font-bold tracking-tight text-emerald-400">{stats.approved}</p>
@@ -113,7 +113,7 @@ export default function AdminShopsPage() {
         </div>
 
         {/* Suspended Stores */}
-        <div className="rounded-2xl border border-slate-900 bg-slate-900/30 p-4.5 flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4.5 flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Suspended</p>
             <p className="text-xl font-bold tracking-tight text-amber-400">{stats.suspended}</p>
@@ -125,7 +125,7 @@ export default function AdminShopsPage() {
       </div>
 
       {/* Filter and Search Utility Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/20 p-4 rounded-2xl border border-slate-900">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white shadow-sm p-4 rounded-2xl border border-slate-200">
         
         {/* Search Input */}
         <div className="relative flex-1 max-w-md">
@@ -137,7 +137,7 @@ export default function AdminShopsPage() {
             placeholder="Search by store, owner name, or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-slate-800 transition-colors"
+            className="w-full rounded-xl border border-slate-200 bg-white/80 pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-slate-200 transition-colors"
           />
         </div>
 
@@ -149,7 +149,7 @@ export default function AdminShopsPage() {
             <select
               value={planFilter}
               onChange={(e) => setPlanFilter(e.target.value)}
-              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-800"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
             >
               <option value="all">All Plans</option>
               <option value="free">Free Plan</option>
@@ -164,7 +164,7 @@ export default function AdminShopsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-800"
+              className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
             >
               <option value="all">All Statuses</option>
               <option value="approved">Approved</option>
@@ -176,10 +176,10 @@ export default function AdminShopsPage() {
       </div>
 
       {/* Enterprise Shops Table */}
-      <div className="overflow-hidden rounded-2xl border border-slate-900 bg-slate-900/30">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-100 bg-slate-900/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-4.5">Store / Brand</th>
                 <th className="px-6 py-4.5">Merchant / Owner</th>
@@ -201,7 +201,7 @@ export default function AdminShopsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.03 }}
                     key={s.id} 
-                    className="hover:bg-slate-900/10 transition-colors"
+                    className="hover:bg-white shadow-sm/10 transition-colors"
                   >
                     {/* Brand Info */}
                     <td className="px-6 py-4">
@@ -224,7 +224,7 @@ export default function AdminShopsPage() {
 
                     {/* Owner Contact */}
                     <td className="px-6 py-4">
-                      <div className="font-semibold text-white">{ownerName}</div>
+                      <div className="font-semibold text-slate-900">{ownerName}</div>
                       <div className="text-[10px] text-slate-500 mt-0.5">{ownerEmail}</div>
                     </td>
 
@@ -239,7 +239,7 @@ export default function AdminShopsPage() {
                         value={s.plan_name || "free"}
                         onChange={(e) => handlePlanChange(s.id, e.target.value)}
                         disabled={updatePlan.isPending}
-                        className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-white outline-none focus:border-blue-500 disabled:opacity-50 font-bold transition-all"
+                        className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-900 outline-none focus:border-blue-500 disabled:opacity-50 font-bold transition-all"
                       >
                         {PLANS.map((plan) => (
                           <option key={plan.value} value={plan.value}>{plan.label}</option>
@@ -272,7 +272,7 @@ export default function AdminShopsPage() {
                         onClick={() => handleToggleActive(s)}
                         disabled={toggleStatus.isPending}
                         title={isApproved ? "Suspend Shop Access" : "Approve Shop Access"}
-                        className="text-slate-500 hover:text-white transition-colors disabled:opacity-50 cursor-pointer"
+                        className="text-slate-500 hover:text-slate-900 transition-colors disabled:opacity-50 cursor-pointer"
                       >
                         {isApproved ? (
                           <ToggleRight className="h-6 w-6 text-emerald-500" />

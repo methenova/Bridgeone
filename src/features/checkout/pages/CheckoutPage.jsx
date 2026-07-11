@@ -35,10 +35,10 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-slate-950 py-20 text-center">
+      <div className="min-h-screen bg-slate-50 py-20 text-center">
         <ShoppingBag className="mx-auto mb-4 h-16 w-16 text-slate-600" />
-        <h2 className="text-2xl font-bold text-white">Your cart is empty</h2>
-        <p className="mt-2 text-slate-400">Add items to proceed to checkout</p>
+        <h2 className="text-2xl font-bold text-slate-900">Your cart is empty</h2>
+        <p className="mt-2 text-slate-500">Add items to proceed to checkout</p>
         <button
           onClick={() => navigate("/products")}
           className="mt-6 rounded-xl bg-blue-600 px-6 py-3 text-white hover:bg-blue-500"
@@ -96,8 +96,8 @@ export default function CheckoutPage() {
   }
 
   const OrderSummary = (
-    <div className="sticky top-24 rounded-2xl border border-slate-800 bg-slate-900 p-5">
-      <h3 className="mb-4 font-semibold text-white">Order Summary</h3>
+    <div className="sticky top-24 rounded-2xl border border-slate-200 bg-white shadow-sm p-5">
+      <h3 className="mb-4 font-semibold text-slate-900">Order Summary</h3>
 
       {/* Items */}
       <div className="mb-4 max-h-64 space-y-3 overflow-y-auto">
@@ -111,14 +111,14 @@ export default function CheckoutPage() {
 
           return (
             <div key={item.product.id} className="flex items-center gap-3">
-              <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-slate-800">
+              <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-slate-100">
                 {img && <img src={img} alt={item.product.name} className="h-full w-full object-cover" />}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="truncate text-xs font-medium text-white">{item.product.name}</p>
+                <p className="truncate text-xs font-medium text-slate-900">{item.product.name}</p>
                 <p className="text-xs text-slate-500">Qty: {item.quantity}</p>
               </div>
-              <span className="shrink-0 text-xs font-semibold text-white">
+              <span className="shrink-0 text-xs font-semibold text-slate-900">
                 ₹{(price * item.quantity).toLocaleString()}
               </span>
             </div>
@@ -126,7 +126,7 @@ export default function CheckoutPage() {
         })}
       </div>
 
-      <div className="border-t border-slate-700 pt-4">
+      <div className="border-t border-slate-200 pt-4">
         <CouponInput
           subtotal={subtotal}
           appliedCoupon={appliedCoupon}
@@ -135,10 +135,10 @@ export default function CheckoutPage() {
         />
       </div>
 
-      <div className="mt-4 space-y-2 border-t border-slate-700 pt-4 text-sm">
-        <div className="flex justify-between text-slate-400">
+      <div className="mt-4 space-y-2 border-t border-slate-200 pt-4 text-sm">
+        <div className="flex justify-between text-slate-500">
           <span>Subtotal</span>
-          <span className="text-white">₹{subtotal.toLocaleString()}</span>
+          <span className="text-slate-900">₹{subtotal.toLocaleString()}</span>
         </div>
         {discount > 0 && (
           <div className="flex justify-between text-emerald-400">
@@ -146,13 +146,13 @@ export default function CheckoutPage() {
             <span>-₹{discount.toLocaleString()}</span>
           </div>
         )}
-        <div className="flex justify-between text-slate-400">
+        <div className="flex justify-between text-slate-500">
           <span>Delivery</span>
-          <span className={deliveryFee === 0 ? "text-emerald-400" : "text-white"}>
+          <span className={deliveryFee === 0 ? "text-emerald-400" : "text-slate-900"}>
             {deliveryFee === 0 ? "FREE" : `₹${deliveryFee}`}
           </span>
         </div>
-        <div className="flex justify-between border-t border-slate-700 pt-2 text-base font-bold text-white">
+        <div className="flex justify-between border-t border-slate-200 pt-2 text-base font-bold text-slate-900">
           <span>Total</span>
           <span>₹{total.toLocaleString()}</span>
         </div>
@@ -161,9 +161,9 @@ export default function CheckoutPage() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 py-10">
+    <div className="min-h-screen bg-slate-50 py-10">
       <Container>
-        <h1 className="mb-8 text-2xl font-bold text-white">Checkout</h1>
+        <h1 className="mb-8 text-2xl font-bold text-slate-900">Checkout</h1>
 
         {/* Step indicator */}
         <div className="mb-8 flex items-center gap-2">
@@ -173,12 +173,12 @@ export default function CheckoutPage() {
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold transition-colors ${
                   i <= step
                     ? "bg-blue-600 text-white"
-                    : "bg-slate-800 text-slate-500"
+                    : "bg-slate-100 text-slate-500"
                 }`}
               >
                 {i + 1}
               </div>
-              <span className={`ml-2 text-sm font-medium ${i <= step ? "text-white" : "text-slate-500"}`}>
+              <span className={`ml-2 text-sm font-medium ${i <= step ? "text-slate-900" : "text-slate-500"}`}>
                 {s}
               </span>
               {i < STEPS.length - 1 && (
@@ -195,10 +195,10 @@ export default function CheckoutPage() {
 
             {/* Step 0: Address */}
             {step === 0 && (
-              <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+              <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6">
                 <div className="mb-5 flex items-center gap-2">
                   <MapPin className="h-5 w-5 text-blue-400" />
-                  <h2 className="text-lg font-semibold text-white">Delivery Address</h2>
+                  <h2 className="text-lg font-semibold text-slate-900">Delivery Address</h2>
                 </div>
                 <AddressList
                   selectedId={selectedAddress?.id}
@@ -217,19 +217,19 @@ export default function CheckoutPage() {
 
             {/* Step 1: Review */}
             {step === 1 && (
-              <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-                <h2 className="mb-5 text-lg font-semibold text-white">Review Order</h2>
+              <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6">
+                <h2 className="mb-5 text-lg font-semibold text-slate-900">Review Order</h2>
 
                 {/* Selected Address */}
-                <div className="mb-6 rounded-xl border border-slate-700 bg-slate-800 p-4">
+                <div className="mb-6 rounded-xl border border-slate-200 bg-slate-100 p-4">
                   <div className="mb-2 flex items-center justify-between">
-                    <p className="text-sm font-semibold text-white">Delivering to</p>
+                    <p className="text-sm font-semibold text-slate-900">Delivering to</p>
                     <button onClick={() => setStep(0)} className="text-xs text-blue-400 hover:underline">
                       Change
                     </button>
                   </div>
-                  <p className="text-sm text-slate-300">{selectedAddress.name} · {selectedAddress.phone}</p>
-                  <p className="text-sm text-slate-400">
+                  <p className="text-sm text-slate-700">{selectedAddress.name} · {selectedAddress.phone}</p>
+                  <p className="text-sm text-slate-500">
                     {selectedAddress.address_line1}, {selectedAddress.city}, {selectedAddress.state} – {selectedAddress.pincode}
                   </p>
                 </div>
@@ -241,17 +241,17 @@ export default function CheckoutPage() {
                       ? Number(item.product.discount_price)
                       : Number(item.product.price);
                     return (
-                      <div key={item.product.id} className="flex items-center gap-3 rounded-xl bg-slate-800 p-3">
+                      <div key={item.product.id} className="flex items-center gap-3 rounded-xl bg-slate-100 p-3">
                         <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg">
                           {item.product.thumbnail_url && (
                             <img src={item.product.thumbnail_url} alt={item.product.name} className="h-full w-full object-cover" />
                           )}
                         </div>
                         <div className="flex-1">
-                          <p className="text-sm font-medium text-white">{item.product.name}</p>
+                          <p className="text-sm font-medium text-slate-900">{item.product.name}</p>
                           <p className="text-xs text-slate-500">Qty: {item.quantity} × ₹{price.toLocaleString()}</p>
                         </div>
-                        <span className="text-sm font-bold text-white">
+                        <span className="text-sm font-bold text-slate-900">
                           ₹{(price * item.quantity).toLocaleString()}
                         </span>
                       </div>
@@ -270,10 +270,10 @@ export default function CheckoutPage() {
 
             {/* Step 2: Payment */}
             {step === 2 && (
-              <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+              <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6">
                 <div className="mb-5 flex items-center gap-2">
                   <CreditCard className="h-5 w-5 text-blue-400" />
-                  <h2 className="text-lg font-semibold text-white">Payment</h2>
+                  <h2 className="text-lg font-semibold text-slate-900">Payment</h2>
                 </div>
 
                 <div className="mb-6 rounded-xl border border-blue-500/20 bg-blue-500/5 p-4">
@@ -298,7 +298,7 @@ export default function CheckoutPage() {
 
                 <button
                   onClick={() => setStep(1)}
-                  className="mt-3 w-full rounded-xl border border-slate-700 py-2.5 text-sm text-slate-400 transition-colors hover:text-white"
+                  className="mt-3 w-full rounded-xl border border-slate-200 py-2.5 text-sm text-slate-500 transition-colors hover:text-slate-900"
                 >
                   ← Back to Review
                 </button>

@@ -270,7 +270,7 @@ export default function SellerWidgetPage() {
           <button
             onClick={() => setActiveSubTab("settings")}
             className={`px-4 py-2 rounded-lg transition-all cursor-pointer ${
-              activeSubTab === "settings" ? "bg-blue-600 text-white font-bold" : "text-slate-400 hover:text-white"
+              activeSubTab === "settings" ? "bg-blue-600 text-white font-bold" : "text-slate-500 hover:text-white"
             }`}
           >
             <Sliders className="h-4 w-4 inline mr-1.5" />
@@ -280,7 +280,7 @@ export default function SellerWidgetPage() {
           <button
             onClick={() => setActiveSubTab("analytics")}
             className={`px-4 py-2 rounded-lg transition-all cursor-pointer ${
-              activeSubTab === "analytics" ? "bg-blue-600 text-white font-bold" : "text-slate-400 hover:text-white"
+              activeSubTab === "analytics" ? "bg-blue-600 text-white font-bold" : "text-slate-500 hover:text-white"
             }`}
           >
             <BarChart3 className="h-4 w-4 inline mr-1.5" />
@@ -378,7 +378,7 @@ export default function SellerWidgetPage() {
                       type="button"
                       onClick={() => setIsOnline(!isOnline)}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors outline-none cursor-pointer ${
-                        isOnline ? "bg-emerald-500" : "bg-slate-800"
+                        isOnline ? "bg-emerald-500" : "bg-slate-100"
                       }`}
                     >
                       <span

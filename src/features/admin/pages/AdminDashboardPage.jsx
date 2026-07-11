@@ -362,7 +362,7 @@ export default function AdminDashboardPage() {
             {/* Broadcast announcements link */}
             <Link
               to="/admin/notifications"
-              className="w-full flex items-center justify-between px-4 py-3 bg-white border border-slate-200 hover:border-slate-800 transition-all rounded-xl text-left cursor-pointer group hover:-translate-y-0.5 transition-all duration-200"
+              className="w-full flex items-center justify-between px-4 py-3 bg-white border border-slate-200 hover:border-slate-200 transition-all rounded-xl text-left cursor-pointer group hover:-translate-y-0.5 transition-all duration-200"
             >
               <div>
                 <p className="text-xs font-bold text-slate-800">Send Global Announcement</p>
@@ -374,7 +374,7 @@ export default function AdminDashboardPage() {
             {/* Platform limits settings link */}
             <Link
               to="/admin/settings"
-              className="w-full flex items-center justify-between px-4 py-3 bg-white border border-slate-200 hover:border-slate-800 transition-all rounded-xl text-left cursor-pointer group hover:-translate-y-0.5 transition-all duration-200"
+              className="w-full flex items-center justify-between px-4 py-3 bg-white border border-slate-200 hover:border-slate-200 transition-all rounded-xl text-left cursor-pointer group hover:-translate-y-0.5 transition-all duration-200"
             >
               <div>
                 <p className="text-xs font-bold text-slate-800">Adjust Dynamic SaaS Limits</p>
@@ -493,7 +493,7 @@ export default function AdminDashboardPage() {
               return (
                 <div key={health.name} className="flex items-center justify-between text-xs border-b border-slate-100/50 pb-2.5 last:border-b-0 last:pb-0">
                   <div className="flex items-center gap-2">
-                    <div className="h-7 w-7 rounded-lg bg-slate-900 border border-slate-200 flex items-center justify-center text-slate-500">
+                    <div className="h-7 w-7 rounded-lg bg-white shadow-sm border border-slate-200 flex items-center justify-center text-slate-500">
                       <HealthIcon className="h-3.5 w-3.5" />
                     </div>
                     <div>

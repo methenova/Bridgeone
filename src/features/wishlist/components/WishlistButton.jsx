@@ -21,10 +21,10 @@ export default function WishlistButton({ isWishlisted, isLoading, onClick, size 
       aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
       className={cn(
         "flex items-center justify-center rounded-xl transition-all active:scale-90",
-        "bg-slate-900/80 backdrop-blur-sm",
+        "bg-white/80 shadow-sm backdrop-blur-sm",
         isWishlisted
           ? "text-red-400 hover:bg-red-500/20"
-          : "text-slate-400 hover:bg-slate-800 hover:text-red-400",
+          : "text-slate-500 hover:bg-slate-100 hover:text-red-400",
         "disabled:cursor-not-allowed disabled:opacity-50",
         sizes[size],
         className
