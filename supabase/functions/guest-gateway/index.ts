@@ -57,10 +57,13 @@ serve(async (req) => {
     // 5. Verify Origin Domain
     const origin = req.headers.get("origin") || req.headers.get("referer") || "";
     if (shop.shopify_domain && shop.shopify_domain !== "*") {
-      const cleanDomain = shop.shopify_domain.replace(/^(https?:\/\/)?(www\.)?/, "").split(":")[0];
+      const cleanDomain = shop.shopify_domain.replace(/^(https?:\/\/)?(www\.)?/, "").split("/")[0].split(":")[0];
       const originHost = origin.replace(/^(https?:\/\/)?(www\.)?/, "").split("/")[0].split(":")[0];
       
-      if (cleanDomain !== "localhost" && !originHost.includes(cleanDomain)) {
+      const isLocalhost = originHost === "localhost" || originHost === "127.0.0.1";
+      const isPlatformHost = originHost.includes("digimirai.com") || originHost.includes("bridgeone.cloud") || originHost.includes("localhost");
+      
+      if (!isLocalhost && !isPlatformHost && cleanDomain !== "localhost" && !originHost.includes(cleanDomain)) {
         return new Response(
           JSON.stringify({ error: `Unauthorized origin: ${origin}` }),
           { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
