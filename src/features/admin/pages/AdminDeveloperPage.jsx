@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
+import { Button } from "@/components/ui/button";
 
 export default function AdminDeveloperPage() {
   const [activeTab, setActiveTab] = useState("webhooks"); // "webhooks" | "api" | "env"

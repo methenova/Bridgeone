@@ -11,6 +11,8 @@ import { motion } from "framer-motion";
 
 import { useAdminProducts, useToggleProductActive, useToggleProductFeatured } from "../hooks/useAdmin";
 import ProductSkeleton from "@/features/seller/components/ProductSkeleton";
+import { Button } from "@/components/ui/button";
+import AdminTableSkeleton from "@/features/admin/components/skeletons/AdminTableSkeleton";
 
 export default function AdminProductsPage() {
   const { data: products = [], isLoading } = useAdminProducts();

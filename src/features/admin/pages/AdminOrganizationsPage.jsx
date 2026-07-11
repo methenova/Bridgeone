@@ -23,6 +23,8 @@ import toast from "react-hot-toast";
 import { useAdminShops, useToggleShopStatus, useUpdateShopPlan, useAdminCategories } from "../hooks/useAdmin";
 import { supabase } from "@/config/supabase";
 import ProductSkeleton from "@/features/seller/components/ProductSkeleton";
+import { Button } from "@/components/ui/button";
+import AdminTableSkeleton from "@/features/admin/components/skeletons/AdminTableSkeleton";
 
 const PLANS = [
   { value: "free", label: "Free Plan" },

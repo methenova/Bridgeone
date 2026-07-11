@@ -26,6 +26,9 @@ import toast from "react-hot-toast";
 
 import { useAdminStats } from "../hooks/useAdmin";
 import { supabase } from "@/config/supabase";
+import { Button } from "@/components/ui/button";
+import AdminCardSkeleton from "@/features/admin/components/skeletons/AdminCardSkeleton";
+import AdminChartSkeleton from "@/features/admin/components/skeletons/AdminChartSkeleton";
 
 export default function AdminDashboardPage() {
   const { data: stats, isLoading: statsLoading } = useAdminStats();

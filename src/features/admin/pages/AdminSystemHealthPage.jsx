@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { Button } from "@/components/ui/button";
 
 export default function AdminSystemHealthPage() {
   const [latency, setLatency] = useState(14);

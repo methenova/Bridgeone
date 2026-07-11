@@ -12,6 +12,8 @@ import { motion } from "framer-motion";
 
 import { useAdminShops, useToggleShopStatus, useUpdateShopPlan } from "../hooks/useAdmin";
 import ProductSkeleton from "@/features/seller/components/ProductSkeleton";
+import { Button } from "@/components/ui/button";
+import AdminTableSkeleton from "@/features/admin/components/skeletons/AdminTableSkeleton";
 
 const PLANS = [
   { value: "free", label: "Free Plan" },

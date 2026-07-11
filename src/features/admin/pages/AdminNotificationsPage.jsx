@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { Button } from "@/components/ui/button";
 
 export default function AdminNotificationsPage() {
   const [channel, setChannel] = useState("banner"); // "banner" | "email" | "push"

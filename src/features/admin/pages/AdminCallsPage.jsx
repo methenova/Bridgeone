@@ -25,6 +25,7 @@ import {
 } from "../hooks/useAdmin";
 import { supabase } from "@/config/supabase";
 import ProductSkeleton from "@/features/seller/components/ProductSkeleton";
+import { Button } from "@/components/ui/button";
 
 const CALLBACK_STATUSES = [
   { value: "pending", label: "Pending" },

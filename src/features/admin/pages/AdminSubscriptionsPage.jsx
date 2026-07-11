@@ -19,6 +19,7 @@ import toast from "react-hot-toast";
 
 import { useSubscriptionPlans, useUpdateSubscriptionPlan, useAdminShops } from "../hooks/useAdmin";
 import { supabase } from "@/config/supabase";
+import { Button } from "@/components/ui/button";
 
 export default function AdminSubscriptionsPage() {
   const { data: plans = [], isLoading: plansLoading, refetch: refetchPlans } = useSubscriptionPlans();

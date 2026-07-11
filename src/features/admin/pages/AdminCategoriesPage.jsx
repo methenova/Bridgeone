@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 
 import { useAdminCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from "../hooks/useAdmin";
+import { Button } from "@/components/ui/button";
+import AdminTableSkeleton from "@/features/admin/components/skeletons/AdminTableSkeleton";
 
 function getLucideIcon(iconName) {
   if (!iconName) return Folder;

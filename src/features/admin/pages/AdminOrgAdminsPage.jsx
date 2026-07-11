@@ -15,6 +15,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { supabase } from "@/config/supabase";
+import { Button } from "@/components/ui/button";
 
 export default function AdminOrgAdminsPage() {
   const [admins, setAdmins] = useState([]);

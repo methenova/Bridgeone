@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAdminOrders } from "../hooks/useAdmin";
 import { Search, ShoppingBag, Eye, User, MapPin } from "lucide-react";
 import ProductSkeleton from "@/features/seller/components/ProductSkeleton";
+import { Button } from "@/components/ui/button";
 
 export default function AdminOrdersPage() {
   const { data: orders = [], isLoading } = useAdminOrders();

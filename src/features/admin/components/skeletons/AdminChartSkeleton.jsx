@@ -29,7 +29,7 @@ export default function AdminChartSkeleton() {
           <div 
             key={i} 
             className="w-full bg-slate-200 rounded-t-sm relative overflow-hidden"
-            style={{ height: \`\${h}%\` }}
+            style={{ height: `${h}%` }}
           >
             <div className="absolute inset-0 animate-shimmer pointer-events-none" />
           </div>

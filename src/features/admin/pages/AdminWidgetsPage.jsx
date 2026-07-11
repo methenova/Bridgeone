@@ -21,6 +21,7 @@ import toast from "react-hot-toast";
 
 import { useAdminShops } from "../hooks/useAdmin";
 import { supabase } from "@/config/supabase";
+import { Button } from "@/components/ui/button";
 
 export default function AdminWidgetsPage() {
   const { data: shops = [], isLoading, refetch } = useAdminShops();

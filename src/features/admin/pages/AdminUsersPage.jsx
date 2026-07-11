@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 
 import { useAdminUsers, useUpdateProfileRole } from "../hooks/useAdmin";
 import ProductSkeleton from "@/features/seller/components/ProductSkeleton";
+import AdminTableSkeleton from "@/features/admin/components/skeletons/AdminTableSkeleton";
 
 const ROLES = [
   { value: "customer", label: "Customer" },
