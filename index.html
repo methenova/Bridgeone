@@ -6,6 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BridgeOne — Live Commerce Marketplace</title>
     <meta name="description" content="Discover, watch, and shop directly from interactive live video commerce streams. Buy products in real-time from local stores on BridgeOne." />
+    <script>
+      // Global listener to auto-reload the page when a new deployment invalidates old code bundles
+      window.addEventListener('error', function (e) {
+        if (e.message && (e.message.indexOf('Failed to fetch dynamically imported module') !== -1 || e.message.indexOf('error loading dynamically imported module') !== -1)) {
+          window.location.reload();
+        }
+      }, true);
+      window.addEventListener('unhandledrejection', function (e) {
+        if (e.reason && e.reason.message && (e.reason.message.indexOf('Failed to fetch dynamically imported module') !== -1 || e.reason.message.indexOf('error loading dynamically imported module') !== -1)) {
+          window.location.reload();
+        }
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>
