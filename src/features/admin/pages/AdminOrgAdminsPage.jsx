@@ -16,6 +16,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { supabase } from "@/config/supabase";
+import { TableSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
 
 export default function AdminOrgAdminsPage() {
@@ -151,8 +152,7 @@ export default function AdminOrgAdminsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-white shadow-sm" />
-        <div className="h-96 animate-pulse rounded-2xl bg-white shadow-sm border border-slate-200" />
+        <TableSkeleton rows={8} />
       </div>
     );
   }

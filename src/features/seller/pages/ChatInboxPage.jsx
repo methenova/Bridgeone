@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { useAuthContext } from "@/context/AuthContext";
 import { useChatContacts, useChatMessages, useSendMessage, useMarkRead } from "../../chat/hooks/useChat";
 import toast from "react-hot-toast";
+import { SidebarSkeleton } from "@/components/skeletons";
 
 export default function ChatInboxPage() {
   const { user } = useAuthContext();
@@ -100,7 +101,7 @@ export default function ChatInboxPage() {
 
           <div className="flex-1 overflow-y-auto divide-y divide-slate-50 scrollbar-none bg-white">
             {contactsLoading ? (
-              <div className="p-4 text-center text-xs text-slate-500 animate-pulse">Loading contacts...</div>
+              <SidebarSkeleton items={6} />
             ) : contacts.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center text-slate-650">
                 <MessageSquare className="h-8 w-8 mb-2 stroke-[1.5]" />
@@ -157,7 +158,7 @@ export default function ChatInboxPage() {
               {/* Feed */}
               <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-none bg-slate-50/20">
                 {messagesLoading ? (
-                  <div className="text-center text-xs text-slate-500 animate-pulse">Loading message history...</div>
+                  <SidebarSkeleton items={4} />
                 ) : messages.length === 0 ? (
                   <div className="h-full flex flex-col items-center justify-center text-center text-slate-650">
                     <MessageSquare className="h-8 w-8 mb-2 stroke-[1.5]" />

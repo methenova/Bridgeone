@@ -1,15 +1,15 @@
 import { useState, useEffect, useMemo } from "react";
-import { 
-  Sliders, 
-  Copy, 
-  Check, 
-  Eye, 
-  RefreshCw, 
-  Activity, 
-  Clock, 
-  Video, 
-  Loader2, 
-  Save, 
+import {
+  Sliders,
+  Copy,
+  Check,
+  Eye,
+  RefreshCw,
+  Activity,
+  Clock,
+  Video,
+  Loader2,
+  Save,
   Sparkles,
   Info,
   BarChart3,
@@ -86,7 +86,7 @@ export default function SellerWidgetPage() {
         setLoadingAnalytics(true);
         const { data: sessions } = await supabase.from("visitor_sessions").select("id, current_page, cart_status, time_on_site, created_at").eq("shop_id", shopId);
         const { data: calls } = await supabase.from("call_logs").select("id, status, duration, created_at").eq("shop_id", shopId);
-        
+
         const totalViews = sessions?.length || 0;
         const totalOpens = sessions?.filter(s => s.time_on_site > 10 || s.cart_status !== "empty")?.length || 0;
         const clickRate = totalViews > 0 ? ((totalOpens / totalViews) * 100).toFixed(1) : 0;
@@ -222,7 +222,7 @@ export default function SellerWidgetPage() {
 
   return (
     <div className="space-y-8 text-slate-900 max-w-7xl relative pb-24">
-      
+
       {/* Floating Save Bar */}
       <AnimatePresence>
         {isDirty && (
@@ -233,13 +233,13 @@ export default function SellerWidgetPage() {
             className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 bg-slate-900 text-white px-5 py-3 rounded-full shadow-2xl"
           >
             <span className="text-sm font-medium mr-4">Unsaved changes</span>
-            <button 
+            <button
               onClick={handleDiscardChanges}
               className="text-xs font-bold text-slate-300 hover:text-white transition-colors"
             >
               Discard
             </button>
-            <button 
+            <button
               onClick={handleSaveWidgetSettings}
               disabled={saving}
               className="flex items-center gap-2 bg-white text-slate-900 px-4 py-1.5 rounded-full text-xs font-bold hover:bg-slate-100 transition-colors disabled:opacity-70"
@@ -261,19 +261,17 @@ export default function SellerWidgetPage() {
         <div className="flex gap-2 bg-white shadow-sm border border-slate-100/80 p-1.5 rounded-2xl text-xs font-semibold self-start sm:self-auto">
           <button
             onClick={() => setActiveSubTab("settings")}
-            className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${
-              activeSubTab === "settings" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
-            }`}
+            className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${activeSubTab === "settings" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
+              }`}
           >
             <Sliders className="h-4 w-4 inline mr-1.5" />
             Settings
           </button>
-          
+
           <button
             onClick={() => setActiveSubTab("analytics")}
-            className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${
-              activeSubTab === "analytics" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
-            }`}
+            className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${activeSubTab === "analytics" ? "bg-blue-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-900"
+              }`}
           >
             <BarChart3 className="h-4 w-4 inline mr-1.5" />
             Analytics
@@ -283,10 +281,10 @@ export default function SellerWidgetPage() {
 
       {activeSubTab === "settings" && (
         <div className="flex flex-col lg:flex-row gap-8 items-start">
-          
+
           {/* Left Column: Settings Form */}
           <div className="flex-1 w-full space-y-10">
-            
+
             {/* Section 1: Appearance */}
             <section className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               <div className="md:col-span-1 space-y-1 pt-1">
@@ -297,7 +295,7 @@ export default function SellerWidgetPage() {
                 <p className="text-xs text-slate-500 leading-relaxed">Customize the primary branding color and upload a custom logo for the chat widget head.</p>
               </div>
               <div className="md:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
-                
+
                 {/* Color Picker */}
                 <div className="space-y-3">
                   <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Primary Color</label>
@@ -319,7 +317,7 @@ export default function SellerWidgetPage() {
                         className="w-32 rounded-xl border border-slate-200 bg-white pl-9 pr-4 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 font-mono"
                       />
                     </div>
-                    
+
                     <div className="flex items-center gap-2">
                       {PRESET_COLORS.map(color => (
                         <button
@@ -369,7 +367,7 @@ export default function SellerWidgetPage() {
                 <p className="text-xs text-slate-500 leading-relaxed">Set the initial greeting text, business hours, and toggle live video call availability.</p>
               </div>
               <div className="md:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
-                
+
                 <div className="space-y-3">
                   <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Welcome Message Banner</label>
                   <input
@@ -392,18 +390,17 @@ export default function SellerWidgetPage() {
 
                 <div className="space-y-3">
                   <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Live Video Calls</label>
-                  <div 
+                  <div
                     onClick={() => setIsOnline(!isOnline)}
-                    className={`flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer ${
-                      isOnline ? "bg-emerald-50/50 border-emerald-200" : "bg-slate-50 border-slate-200"
-                    }`}
+                    className={`flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer ${isOnline ? "bg-emerald-50/50 border-emerald-200" : "bg-slate-50 border-slate-200"
+                      }`}
                   >
                     <div>
                       <span className={`block text-sm font-bold ${isOnline ? "text-emerald-700" : "text-slate-700"}`}>
                         {isOnline ? "Accepting Live Calls" : "Live Calls Disabled"}
                       </span>
                       <p className="text-[10px] text-slate-500 mt-0.5 max-w-sm">
-                        {isOnline 
+                        {isOnline
                           ? "Customers can instantly initialize WebRTC callrooms."
                           : "Widget will only accept offline callback requests."}
                       </p>
@@ -431,32 +428,30 @@ export default function SellerWidgetPage() {
               <div className="md:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-3">Screen Position Alignment</label>
                 <div className="grid grid-cols-2 gap-4">
-                  
+
                   {/* Bottom Left Card */}
-                  <div 
+                  <div
                     onClick={() => setWidgetPosition("bottom-left")}
-                    className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex flex-col items-center gap-3 ${
-                      widgetPosition === "bottom-left" ? "border-blue-600 bg-blue-50/30" : "border-slate-100 bg-white hover:border-slate-300"
-                    }`}
+                    className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex flex-col items-center gap-3 ${widgetPosition === "bottom-left" ? "border-blue-600 bg-blue-50/30" : "border-slate-100 bg-white hover:border-slate-300"
+                      }`}
                   >
                     <div className="w-full h-24 bg-slate-50 rounded-lg border border-slate-200 relative overflow-hidden">
                       <div className="absolute bottom-2 left-2 w-6 h-6 rounded-full bg-slate-300 flex items-center justify-center">
-                         <div className="w-3 h-3 bg-white rounded-full"></div>
+                        <div className="w-3 h-3 bg-white rounded-full"></div>
                       </div>
                     </div>
                     <span className={`text-xs font-bold ${widgetPosition === "bottom-left" ? "text-blue-700" : "text-slate-600"}`}>Bottom Left</span>
                   </div>
 
                   {/* Bottom Right Card */}
-                  <div 
+                  <div
                     onClick={() => setWidgetPosition("bottom-right")}
-                    className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex flex-col items-center gap-3 ${
-                      widgetPosition === "bottom-right" ? "border-blue-600 bg-blue-50/30" : "border-slate-100 bg-white hover:border-slate-300"
-                    }`}
+                    className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex flex-col items-center gap-3 ${widgetPosition === "bottom-right" ? "border-blue-600 bg-blue-50/30" : "border-slate-100 bg-white hover:border-slate-300"
+                      }`}
                   >
                     <div className="w-full h-24 bg-slate-50 rounded-lg border border-slate-200 relative overflow-hidden">
                       <div className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
-                         <div className="w-3 h-3 bg-white rounded-full"></div>
+                        <div className="w-3 h-3 bg-white rounded-full"></div>
                       </div>
                     </div>
                     <span className={`text-xs font-bold ${widgetPosition === "bottom-right" ? "text-blue-700" : "text-slate-600"}`}>Bottom Right</span>
@@ -478,7 +473,7 @@ export default function SellerWidgetPage() {
                 <p className="text-xs text-slate-500 leading-relaxed">Embed the script snippet into your storefront's HTML layout.</p>
               </div>
               <div className="md:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
-                
+
                 <div className="flex justify-between items-center">
                   <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Embed Script Snippet</h4>
                   <div className="flex gap-2">
@@ -514,7 +509,7 @@ export default function SellerWidgetPage() {
           {/* Right Column: Sticky Live Preview */}
           <div className="w-full lg:w-[320px] xl:w-[360px] shrink-0 sticky top-6">
             <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden flex flex-col h-[520px]">
-              
+
               {/* Mock Browser Header */}
               <div className="h-12 bg-slate-50 border-b border-slate-200 flex items-center px-4 gap-4">
                 <div className="flex gap-1.5 shrink-0">
@@ -529,7 +524,7 @@ export default function SellerWidgetPage() {
 
               {/* Browser Body (The Preview) */}
               <div className="flex-1 bg-slate-50 relative overflow-hidden">
-                
+
                 {/* Mock Website Content */}
                 <div className="p-6 space-y-4 opacity-40">
                   <div className="w-1/3 h-4 bg-slate-300 rounded"></div>
@@ -556,12 +551,12 @@ export default function SellerWidgetPage() {
                 </div>
 
                 {/* Simulated Widget Bubble */}
-                <div 
+                <div
                   className={`absolute bottom-4 ${widgetPosition === "bottom-right" ? "right-4" : "left-4"} w-12 h-12 rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-110 cursor-pointer`}
                   style={{ backgroundColor: widgetColor }}
                 >
                   <Video className="h-5 w-5 text-white" />
-                  
+
                   {isOnline && (
                     <div className="absolute top-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></div>
                   )}
@@ -591,7 +586,7 @@ export default function SellerWidgetPage() {
             <>
               {/* Primary Stats Grid */}
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 text-xs font-semibold">
-                
+
                 {/* Views */}
                 <div className="bg-white shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300 border-slate-100 p-4.5 rounded-2xl flex items-center justify-between">
                   <div className="space-y-1">
@@ -640,7 +635,7 @@ export default function SellerWidgetPage() {
 
               {/* Call Telemetry Details */}
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 text-xs font-semibold">
-                
+
                 {/* Call Requests */}
                 <div className="bg-white shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300 border-slate-100 p-4.5 rounded-2xl flex items-center justify-between">
                   <div className="space-y-1">
@@ -689,7 +684,7 @@ export default function SellerWidgetPage() {
 
               {/* Lower Section: Trends and Landing Pages */}
               <div className="grid gap-6 lg:grid-cols-3 text-xs">
-                
+
                 {/* Trends Column */}
                 <div className="lg:col-span-2 rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 hover:shadow-md transition-all duration-300 p-5 space-y-4">
                   <h4 className="text-[10px] font-bold uppercase text-slate-500 tracking-wider pb-2 border-b border-slate-100">

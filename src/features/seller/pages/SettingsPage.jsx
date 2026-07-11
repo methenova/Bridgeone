@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 
 import useSellerShop from "../hooks/useSellerShop";
+import { FormSkeleton } from "@/components/skeletons";
 import { updateShop } from "../services/shop.service";
 import { supabase } from "@/config/supabase";
 
@@ -219,21 +220,7 @@ export default function SettingsPage() {
   }
 
   if (loading) {
-    return (
-      <div className="space-y-6 animate-pulse max-w-4xl">
-        <div className="h-6 w-32 bg-slate-100 rounded-md" />
-        <div className="bg-white rounded-3xl border border-slate-100 p-6 space-y-6">
-          <div className="space-y-1.5">
-            <div className="h-3.5 w-24 bg-slate-100 rounded-md" />
-            <div className="h-10 bg-slate-50 rounded-xl" />
-          </div>
-          <div className="space-y-1.5">
-            <div className="h-3.5 w-24 bg-slate-100 rounded-md" />
-            <div className="h-24 bg-slate-50 rounded-xl" />
-          </div>
-        </div>
-      </div>
-    );
+    return <FormSkeleton sections={3} />;
   }
 
   if (!shop) {

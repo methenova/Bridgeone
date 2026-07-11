@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 
 import { useAdminCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from "../hooks/useAdmin";
 import { Button } from "@/components/ui/button";
-import AdminTableSkeleton from "@/features/admin/components/skeletons/AdminTableSkeleton";
+import { TableSkeleton } from "@/components/skeletons";
 
 function getLucideIcon(iconName) {
   if (!iconName) return Folder;
@@ -86,7 +86,7 @@ export default function AdminCategoriesPage() {
         <div className="md:col-span-2 rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4">
           <h3 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500">Existing Categories</h3>
 
-          {isLoading ? ( <AdminTableSkeleton rows={5} /> ) : categories.length === 0 ? (
+          {isLoading ? ( <TableSkeleton rows={5} /> ) : categories.length === 0 ? (
             <div className="py-20 text-center flex flex-col items-center">
               <Folder className="h-10 w-10 text-slate-700 mb-3 animate-pulse" />
               <p className="text-sm font-bold text-slate-500">No Categories Found</p>

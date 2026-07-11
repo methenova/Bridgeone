@@ -24,7 +24,7 @@ import {
   useDeleteCallback 
 } from "../hooks/useAdmin";
 import { supabase } from "@/config/supabase";
-import ProductSkeleton from "@/features/seller/components/ProductSkeleton";
+import { TableSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
 
 const CALLBACK_STATUSES = [
@@ -131,8 +131,7 @@ export default function AdminCallsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-white shadow-sm" />
-        <ProductSkeleton rows={6} />
+        <TableSkeleton rows={6} />
       </div>
     );
   }

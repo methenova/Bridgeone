@@ -1,20 +1,41 @@
 import { useState, useEffect } from "react";
-import { Outlet, Navigate, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/context/AuthContext";
 import { supabase } from "@/config/supabase";
 import useSellerShop from "@/features/seller/hooks/useSellerShop";
+import PremiumLayout from "./components/PremiumLayout";
+import {
+  LayoutDashboard,
+  Video,
+  Users,
+  Shield,
+  Sliders,
+  BarChart3,
+  Bell,
+  Layers,
+  Settings,
+  User
+} from "lucide-react";
 
-import SellerSidebar from "@/features/seller/components/SellerSidebar";
-import SellerTopbar from "@/features/seller/components/SellerTopbar";
+const menu = [
+  { title: "Dashboard", icon: LayoutDashboard, path: "/seller", badge: null },
+  { title: "Live Calls", icon: Video, path: "/seller/live", badge: "Live" },
+  { title: "Customers", icon: Users, path: "/seller/customers", badge: null },
+  { title: "Agents", icon: Shield, path: "/seller/agents", badge: null },
+  { title: "Widget", icon: Sliders, path: "/seller/widget", badge: null },
+  { title: "Analytics", icon: BarChart3, path: "/seller/analytics", badge: null },
+  { title: "Notifications", icon: Bell, path: "/seller/notifications", badge: null },
+  { title: "Integrations", icon: Layers, path: "/seller/integrations", badge: null },
+  { title: "Settings", icon: Settings, path: "/seller/settings", badge: null },
+  { title: "Profile", icon: User, path: "/seller/profile", badge: null },
+];
 
 export default function SellerLayout() {
-  const { profile, loading } = useAuthContext();
+  const { profile, loading, logout } = useAuthContext();
   const { shop, loading: shopLoading } = useSellerShop();
   const shopId = shop?.id;
   const location = useLocation();
-
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
 
   // 1. Request HTML5 Browser Notification permissions on mount
   useEffect(() => {
@@ -172,29 +193,20 @@ export default function SellerLayout() {
     return <Navigate to="/" replace />;
   }
 
+  async function handleLogout() {
+    await logout();
+    navigate("/login");
+  }
+
   return (
-    <div className="admin-theme flex min-h-screen bg-slate-50 text-slate-900 overflow-x-hidden selection:bg-blue-600/30 selection:text-blue-200">
-      {/* Sidebar - responsive desktop fixed / mobile sliding overlay */}
-      <SellerSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-
-      <div className="flex flex-1 flex-col min-w-0">
-        <SellerTopbar onToggleSidebar={() => setSidebarOpen((prev) => !prev)} />
-
-        <main className="flex-1 p-6 md:p-8 overflow-y-auto">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={location.pathname}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="w-full"
-            >
-              <Outlet />
-            </motion.div>
-          </AnimatePresence>
-        </main>
-      </div>
-    </div>
+    <PremiumLayout
+      menuItems={menu}
+      profile={profile}
+      onLogout={handleLogout}
+      workspaceName={shop?.shop_name || "My Store"}
+      workspaces={shop ? [{ name: shop.shop_name || "My Store" }] : []}
+      baseRoute="/seller"
+      marketplaceRoute="/"
+    />
   );
 }

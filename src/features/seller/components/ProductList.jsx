@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useDeleteProduct, useUpdateProduct } from "../hooks/useProducts";
 import ProductStatusBadge from "./ProductStatusBadge";
 import InventoryBadge from "./InventoryBadge";
-import ProductSkeleton from "./ProductSkeleton";
+import { TableSkeleton } from "@/components/skeletons";
 import ProductEmptyState from "./ProductEmptyState";
 
 export default function ProductList({
@@ -97,7 +97,7 @@ export default function ProductList({
   }
 
   // ── States ───────────────────────────────────────────────────
-  if (isLoading) return <ProductSkeleton rows={8} />;
+  if (isLoading) return <TableSkeleton rows={8} />;
 
   if (!products.length) {
     return (

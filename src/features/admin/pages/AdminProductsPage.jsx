@@ -10,9 +10,8 @@ import {
 import { motion } from "framer-motion";
 
 import { useAdminProducts, useToggleProductActive, useToggleProductFeatured } from "../hooks/useAdmin";
-import ProductSkeleton from "@/features/seller/components/ProductSkeleton";
+import { TableSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
-import AdminTableSkeleton from "@/features/admin/components/skeletons/AdminTableSkeleton";
 
 export default function AdminProductsPage() {
   const { data: products = [], isLoading } = useAdminProducts();
@@ -76,7 +75,7 @@ export default function AdminProductsPage() {
   if (isLoading) {
     return (
       <div className="space-y-6 max-w-7xl">
-        <AdminTableSkeleton rows={8} />
+        <TableSkeleton rows={8} />
       </div>
     );
   }

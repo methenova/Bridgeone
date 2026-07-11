@@ -4,6 +4,7 @@ import { Plus, X, AlertTriangle } from "lucide-react";
 
 import { useAuthContext } from "@/context/AuthContext";
 import useSellerShop from "../hooks/useSellerShop";
+import { TableSkeleton } from "@/components/skeletons";
 
 import {
   useProducts,
@@ -190,17 +191,8 @@ export default function ProductsPage() {
   // ── Shop loading ────────────────────────────────────────────
   if (shopLoading) {
     return (
-      <div className="space-y-6 animate-pulse">
-        <div className="flex justify-between items-center pb-4">
-          <div className="h-6 w-36 bg-slate-100 rounded-md" />
-          <div className="h-10 w-28 bg-slate-100 rounded-md" />
-        </div>
-        <div className="bg-white rounded-3xl border border-slate-100 p-5 space-y-4">
-          <div className="h-10 bg-slate-50 rounded-xl" />
-          {[...Array(5)].map((_, idx) => (
-            <div key={idx} className="h-12 bg-slate-50/50 rounded-xl" />
-          ))}
-        </div>
+      <div className="space-y-6">
+        <TableSkeleton rows={8} />
       </div>
     );
   }

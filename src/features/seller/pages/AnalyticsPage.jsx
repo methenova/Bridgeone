@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
+import { CardSkeleton, ChartSkeleton } from "@/components/skeletons";
 import { 
   TrendingUp, 
   ShoppingBag, 
@@ -298,17 +299,9 @@ export default function AnalyticsPage() {
 
   if (shopLoading || ordersLoading || loadingCalls) {
     return (
-      <div className="space-y-6 animate-pulse max-w-7xl">
-        <div className="h-6 w-48 bg-slate-100 rounded-md" />
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {[...Array(3)].map((_, idx) => (
-            <div key={idx} className="bg-white p-5 rounded-2xl border border-slate-100 h-28 flex flex-col justify-between">
-              <div className="h-3 w-20 bg-slate-100 rounded-md" />
-              <div className="h-6 w-32 bg-slate-100 rounded-md" />
-            </div>
-          ))}
-        </div>
-        <div className="bg-white rounded-3xl border border-slate-100 h-64 p-5" />
+      <div className="space-y-6">
+        <CardSkeleton count={6} />
+        <ChartSkeleton />
       </div>
     );
   }

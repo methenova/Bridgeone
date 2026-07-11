@@ -8,7 +8,7 @@ import OrderStatusTabs from "../components/OrderStatusTabs";
 import SellerOrderRow from "../components/SellerOrderRow";
 import OrderDetailsDrawer from "../components/OrderDetailsDrawer";
 import InvoiceModal from "../components/InvoiceModal";
-import ProductSkeleton from "../components/ProductSkeleton";
+import { TableSkeleton } from "@/components/skeletons";
 
 export default function OrdersPage() {
   const { shop, loading: shopLoading } = useSellerShop();
@@ -64,17 +64,8 @@ export default function OrdersPage() {
 
   if (shopLoading) {
     return (
-      <div className="space-y-6 animate-pulse">
-        <div className="flex justify-between items-center pb-4">
-          <div className="h-6 w-32 bg-slate-100 rounded-md" />
-          <div className="h-10 w-24 bg-slate-100 rounded-md" />
-        </div>
-        <div className="bg-white rounded-3xl border border-slate-100 p-5 space-y-4">
-          <div className="h-10 bg-slate-50 rounded-xl" />
-          {[...Array(4)].map((_, idx) => (
-            <div key={idx} className="h-12 bg-slate-50/50 rounded-xl" />
-          ))}
-        </div>
+      <div className="space-y-6">
+        <TableSkeleton rows={8} />
       </div>
     );
   }
@@ -126,7 +117,7 @@ export default function OrdersPage() {
 
       {/* Orders List Table */}
       {isLoading ? (
-        <ProductSkeleton rows={6} />
+        <TableSkeleton rows={6} />
       ) : filteredOrders.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 rounded-2xl border border-slate-200 bg-slate-50 text-center">
           <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-500">

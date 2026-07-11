@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAdminOrders } from "../hooks/useAdmin";
 import { Search, ShoppingBag, Eye, User, MapPin } from "lucide-react";
-import ProductSkeleton from "@/features/seller/components/ProductSkeleton";
+import { TableSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
 
 export default function AdminOrdersPage() {
@@ -39,7 +39,7 @@ export default function AdminOrdersPage() {
       </div>
 
       {isLoading ? (
-        <ProductSkeleton rows={6} />
+        <TableSkeleton rows={6} />
       ) : filteredOrders.length === 0 ? (
         <div className="py-20 text-center border border-slate-200 rounded-2xl bg-white shadow-sm/10">
           <ShoppingBag className="mx-auto mb-3 h-12 w-12 text-slate-600" />

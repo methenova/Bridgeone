@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 
 import { supabase } from "@/config/supabase";
 import useSellerShop from "../hooks/useSellerShop";
+import { TableSkeleton } from "@/components/skeletons";
 import { motion } from "framer-motion";
 
 export default function CallbacksPage() {
@@ -105,17 +106,8 @@ export default function CallbacksPage() {
 
   if (shopLoading || loading) {
     return (
-      <div className="space-y-6 animate-pulse">
-        <div className="flex justify-between items-center pb-4">
-          <div className="h-6 w-32 bg-slate-100 rounded-md" />
-          <div className="h-10 w-24 bg-slate-100 rounded-md" />
-        </div>
-        <div className="bg-white rounded-3xl border border-slate-100 p-5 space-y-4">
-          <div className="h-10 bg-slate-50 rounded-xl" />
-          {[...Array(4)].map((_, idx) => (
-            <div key={idx} className="h-12 bg-slate-50/50 rounded-xl" />
-          ))}
-        </div>
+      <div className="space-y-6">
+        <TableSkeleton rows={8} />
       </div>
     );
   }

@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 
 import { supabase } from "@/config/supabase";
 import useSellerShop from "../hooks/useSellerShop";
+import { TableSkeleton, CardSkeleton } from "@/components/skeletons";
 import { getSellerOrderItems } from "../services/order.service";
 import { motion } from "framer-motion";
 
@@ -316,12 +317,8 @@ export default function CustomersPage() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-2xl bg-slate-50" />
-        <div className="grid gap-6 sm:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-32 animate-pulse rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300" />
-          ))}
-        </div>
+        <CardSkeleton count={3} />
+        <TableSkeleton rows={8} />
       </div>
     );
   }

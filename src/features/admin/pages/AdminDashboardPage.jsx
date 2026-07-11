@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { DashboardSkeleton } from "@/components/skeletons";
 import { Link } from "react-router-dom";
 import { 
   Users, 
@@ -6,31 +7,26 @@ import {
   DollarSign, 
   Video, 
   Activity, 
-  CheckCircle2, 
-  Cpu, 
   Database, 
   HardDrive, 
-  Sliders, 
-  LifeBuoy, 
+  Layers,
   Bell, 
   AlertTriangle, 
-  ArrowUpRight, 
-  Zap, 
-  Layers,
-  ArrowRight,
   TrendingUp,
-  Server
+  Server,
+  ArrowRight,
+  PhoneCall,
+  CreditCard
 } from "lucide-react";
-import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 
 import { useAdminStats } from "../hooks/useAdmin";
 import { supabase } from "@/config/supabase";
 import { Button } from "@/components/ui/button";
-import AdminCardSkeleton from "@/features/admin/components/skeletons/AdminCardSkeleton";
-import AdminChartSkeleton from "@/features/admin/components/skeletons/AdminChartSkeleton";
+import { useAuthContext } from "@/context/AuthContext";
 
 export default function AdminDashboardPage() {
+  const { profile } = useAuthContext();
   const { data: stats, isLoading: statsLoading } = useAdminStats();
   
   // Dynamic stats state
@@ -176,121 +172,231 @@ export default function AdminDashboardPage() {
     { name: "TURN Signalling Server", value: "Online (Global)", icon: Server, status: "healthy" },
   ];
 
+  // Personalized Greeting based on local time
+  const greeting = useMemo(() => {
+    const hours = new Date().getHours();
+    if (hours < 12) return "Good morning";
+    if (hours < 17) return "Good afternoon";
+    return "Good evening";
+  }, []);
+
   if (loading) {
-    return (
-      <div className="space-y-6 max-w-7xl">
-        <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-          <AdminCardSkeleton />
-          <AdminCardSkeleton />
-          <AdminCardSkeleton />
-          <AdminCardSkeleton />
-        </div>
-        <div className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-3">
-          <div className="lg:col-span-2"><AdminChartSkeleton /></div>
-          <div><AdminChartSkeleton /></div>
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   return (
-    <div className="space-y-6 md:space-y-8 text-slate-900 max-w-7xl">
+    <div className="space-y-8 text-slate-900 max-w-7xl relative">
       
-      {/* Upper Welcome Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Platform Dashboard</h1>
-          <p className="mt-1 text-xs text-slate-500">Multi-tenant operational health and global usage analytics.</p>
-        </div>
-        
-        {/* Pulsing server connectivity status */}
-        <div className="flex items-center gap-2 self-start bg-white border border-slate-200 px-4 py-2 rounded-md text-xs font-bold text-slate-700">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-          </span>
-          <span>Signalling Host: Active</span>
-        </div>
-      </div>
-
-      {/* Dynamic Key Counters Grid */}
-      <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        
-        {/* Total Organizations */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
-          <div className="flex justify-between items-start">
-            <div className="space-y-1">
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Organizations</p>
-              <p className="text-2xl font-extrabold tracking-tight">{totalOrgs}</p>
-            </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl border text-indigo-400 bg-indigo-500/10 border-indigo-500/10">
-              <Store className="h-5 w-5" />
-            </div>
+      {/* Premium Dashboard Header Banner */}
+      <div className="bg-gradient-to-br from-white via-white to-blue-50/15 rounded-3xl p-6 md:p-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.015)] space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="space-y-1.5">
+            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+              <span>{greeting},</span>
+              <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 bg-clip-text text-transparent">
+                {profile?.full_name?.split(" ")[0] || "Admin"}
+              </span>
+              <span>✨</span>
+            </h1>
+            <p className="text-xs font-medium text-slate-500 max-w-xl leading-relaxed">
+              Welcome to your BridgeOne Platform Dashboard. Monitor operational health, global usage analytics, and active integrations.
+            </p>
           </div>
-          <div className="flex gap-3 text-[10px] text-slate-500 font-medium mt-4 border-t border-slate-100 pt-3">
-            <span>Active: <strong className="text-slate-700">{activeOrgs}</strong></span>
-            <span>Suspended: <strong className="text-slate-700">{suspendedOrgs}</strong></span>
+          <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-2xl px-4 py-2 self-start md:self-auto shadow-xs">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Signalling Host: Active</span>
           </div>
         </div>
 
-        {/* User Roles */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
-          <div className="flex justify-between items-start">
-            <div className="space-y-1">
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Tenant Admins & Agents</p>
-              <p className="text-2xl font-extrabold tracking-tight">{totalAdmins + totalAgents}</p>
+        {/* 6 Premium KPI Cards */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-8">
+          
+          {/* Card 1: Platform Revenue */}
+          <div className="bg-white p-6 rounded-[24px] border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-50 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="relative z-10 flex justify-between items-start mb-4">
+              <div className="space-y-1.5">
+                <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Platform Revenue</span>
+                <p className="text-3xl font-extrabold text-slate-900 tracking-tight">₹{Number(totalRevenue).toLocaleString()}</p>
+              </div>
+              <div className="h-12 w-12 bg-emerald-50/80 text-emerald-600 rounded-2xl flex items-center justify-center shrink-0 border border-emerald-100/50 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <DollarSign size={20} strokeWidth={2.2} />
+              </div>
             </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl border text-purple-400 bg-purple-500/10 border-purple-500/10">
-              <Users className="h-5 w-5" />
+            {/* Sparkline & Trend */}
+            <div className="relative z-10 mt-auto pt-4 border-t border-slate-100 flex items-end justify-between">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-600">
+                  <TrendingUp size={12} strokeWidth={3} />
+                  <span>+12.4%</span>
+                </div>
+                <span className="text-[10px] font-medium text-slate-500">vs last month</span>
+              </div>
+              <div className="h-8 w-20 flex items-end justify-between gap-1">
+                {[40, 60, 45, 80, 50, 70, 90, 65].map((h, i) => (
+                  <div key={i} className="w-1.5 bg-emerald-200 rounded-t-sm" style={{ height: `${h}%` }}></div>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="flex gap-3 text-[10px] text-slate-500 font-medium mt-4 border-t border-slate-100 pt-3">
-            <span>Org Admins: <strong className="text-slate-700">{totalAdmins}</strong></span>
-            <span>Agents: <strong className="text-slate-700">{totalAgents}</strong></span>
+
+          {/* Card 2: Organizations */}
+          <div className="bg-white p-6 rounded-[24px] border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-50 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="relative z-10 flex justify-between items-start mb-4">
+              <div className="space-y-1.5">
+                <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Organizations</span>
+                <p className="text-3xl font-extrabold text-slate-900 tracking-tight">{totalOrgs}</p>
+              </div>
+              <div className="h-12 w-12 bg-indigo-50/80 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0 border border-indigo-100/50 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <Store size={20} strokeWidth={2.2} />
+              </div>
+            </div>
+            {/* Sparkline & Trend */}
+            <div className="relative z-10 mt-auto pt-4 border-t border-slate-100 flex items-end justify-between">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1 text-[11px] font-bold text-slate-500">
+                  <span className="text-slate-700">{activeOrgs}</span> Active
+                </div>
+                <span className="text-[10px] font-medium text-slate-500">{suspendedOrgs} suspended</span>
+              </div>
+              <div className="h-8 w-20">
+                <svg viewBox="0 0 100 30" className="w-full h-full overflow-visible">
+                  <path d="M0,25 C20,20 30,30 50,15 C70,0 80,10 100,5" fill="none" stroke="#4f46e5" strokeWidth="2.5" strokeLinecap="round" className="drop-shadow-sm" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3: Active Subscriptions */}
+          <div className="bg-white p-6 rounded-[24px] border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-violet-50 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="relative z-10 flex justify-between items-start mb-4">
+              <div className="space-y-1.5">
+                <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Active Subscriptions</span>
+                <p className="text-3xl font-extrabold text-slate-900 tracking-tight">{activeSubs}</p>
+              </div>
+              <div className="h-12 w-12 bg-violet-50/80 text-violet-600 rounded-2xl flex items-center justify-center shrink-0 border border-violet-100/50 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <CreditCard size={20} strokeWidth={2.2} />
+              </div>
+            </div>
+            {/* Sparkline & Trend */}
+            <div className="relative z-10 mt-auto pt-4 border-t border-slate-100 flex items-end justify-between">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1 text-[11px] font-bold text-violet-600">
+                  <TrendingUp size={12} strokeWidth={3} />
+                  <span>+5.2%</span>
+                </div>
+                <span className="text-[10px] font-medium text-slate-500">recurring growth</span>
+              </div>
+              <div className="h-8 w-20">
+                <svg viewBox="0 0 100 30" className="w-full h-full overflow-visible">
+                  <path d="M0,25 Q25,25 50,15 T100,5" fill="none" stroke="#7c3aed" strokeWidth="2.5" strokeLinecap="round" className="drop-shadow-sm" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 4: Platform Users */}
+          <div className="bg-white p-6 rounded-[24px] border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="relative z-10 flex justify-between items-start mb-4">
+              <div className="space-y-1.5">
+                <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Tenant Users</span>
+                <p className="text-3xl font-extrabold text-slate-900 tracking-tight">{totalAdmins + totalAgents}</p>
+              </div>
+              <div className="h-12 w-12 bg-blue-50/80 text-blue-600 rounded-2xl flex items-center justify-center shrink-0 border border-blue-100/50 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <Users size={20} strokeWidth={2.2} />
+              </div>
+            </div>
+            {/* Sparkline & Trend */}
+            <div className="relative z-10 mt-auto pt-4 border-t border-slate-100 flex items-end justify-between">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1 text-[11px] font-bold text-slate-500">
+                  <span className="text-slate-700">{totalAdmins}</span> Admins
+                </div>
+                <span className="text-[10px] font-medium text-slate-500">{totalAgents} agents</span>
+              </div>
+              <div className="h-8 w-20 flex items-end justify-between gap-1">
+                {[60, 50, 70, 80, 55, 85, 75, 90].map((h, i) => (
+                  <div key={i} className="w-1.5 bg-blue-200 rounded-t-sm" style={{ height: `${h}%` }}></div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Card 5: Real-time Video Rooms */}
+          <div className="bg-white p-6 rounded-[24px] border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-50 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="relative z-10 flex justify-between items-start mb-4">
+              <div className="space-y-1.5">
+                <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Live Video Rooms</span>
+                <p className="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
+                  {liveCalls}
+                  {liveCalls > 0 && <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse mt-1" />}
+                </p>
+              </div>
+              <div className="h-12 w-12 bg-amber-50/80 text-amber-600 rounded-2xl flex items-center justify-center shrink-0 border border-amber-100/50 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <Video size={20} strokeWidth={2.2} />
+              </div>
+            </div>
+            {/* Sparkline & Trend */}
+            <div className="relative z-10 mt-auto pt-4 border-t border-slate-100 flex items-end justify-between">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1 text-[11px] font-bold text-amber-600">
+                  <span className="inline-flex items-center gap-1">
+                    {liveCalls > 10 ? 'High Capacity' : 'Stable Load'}
+                  </span>
+                </div>
+                <span className="text-[10px] font-medium text-slate-500">concurrent streams</span>
+              </div>
+              <div className="h-8 w-20 flex items-end justify-between gap-1">
+                {[20, 30, 25, 40, 35, 50, 45, 60].map((h, i) => (
+                  <div key={i} className="w-1.5 bg-amber-300/50 rounded-t-sm" style={{ height: `${h}%` }}></div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Card 6: Today's Calls */}
+          <div className="bg-white p-6 rounded-[24px] border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-rose-50 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="relative z-10 flex justify-between items-start mb-4">
+              <div className="space-y-1.5">
+                <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Today's Calls</span>
+                <p className="text-3xl font-extrabold text-slate-900 tracking-tight">{callsToday}</p>
+              </div>
+              <div className="h-12 w-12 bg-rose-50/80 text-rose-600 rounded-2xl flex items-center justify-center shrink-0 border border-rose-100/50 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <PhoneCall size={20} strokeWidth={2.2} />
+              </div>
+            </div>
+            {/* Sparkline & Trend */}
+            <div className="relative z-10 mt-auto pt-4 border-t border-slate-100 flex items-end justify-between">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1 text-[11px] font-bold text-rose-600">
+                  <TrendingUp size={12} strokeWidth={3} />
+                  <span>{monthlyCalls} MTD</span>
+                </div>
+                <span className="text-[10px] font-medium text-slate-500">across network</span>
+              </div>
+              <div className="h-8 w-20">
+                <svg viewBox="0 0 100 30" className="w-full h-full overflow-visible">
+                  <path d="M0,20 L20,25 L40,15 L60,18 L80,5 L100,8" fill="none" stroke="#e11d48" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-sm" />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Widgets / Live Calls */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
-          <div className="flex justify-between items-start">
-            <div className="space-y-1">
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Real-time Video Rooms</p>
-              <p className="text-2xl font-extrabold tracking-tight">{liveCalls}</p>
-            </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl border text-blue-400 bg-blue-500/10 border-blue-500/10">
-              <Video className="h-5 w-5" />
-            </div>
-          </div>
-          <div className="flex gap-3 text-[10px] text-slate-500 font-medium mt-4 border-t border-slate-100 pt-3">
-            <span>Active Widgets: <strong className="text-slate-700">{activeWidgets}</strong></span>
-            <span>Today Calls: <strong className="text-slate-700">{callsToday}</strong></span>
-          </div>
-        </div>
-
-        {/* Financial Flow */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
-          <div className="flex justify-between items-start">
-            <div className="space-y-1">
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Platform Revenue</p>
-              <p className="text-2xl font-extrabold tracking-tight">₹{Number(totalRevenue).toLocaleString()}</p>
-            </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl border text-emerald-400 bg-emerald-500/10 border-emerald-500/10">
-              <DollarSign className="h-5 w-5" />
-            </div>
-          </div>
-          <div className="flex gap-3 text-[10px] text-slate-500 font-medium mt-4 border-t border-slate-100 pt-3">
-            <span>Subscriptions: <strong className="text-slate-700">{activeSubs} active</strong></span>
-            <span>Calls Month: <strong className="text-slate-700">{monthlyCalls}</strong></span>
-          </div>
-        </div>
-
       </div>
 
       {/* Main Charts & Quick Action Section */}
-      <div className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-3">
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
         
         {/* Sales Performance Graph */}
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4 lg:col-span-2">
+        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm p-6 space-y-4 lg:col-span-2">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Monthly Call Growth</h3>
@@ -311,9 +417,9 @@ export default function AdminDashboardPage() {
                   <stop offset="100%" stopColor="#312e81" stopOpacity="0.0"/>
                 </linearGradient>
               </defs>
-              <line x1="0" y1="30" x2="500" y2="30" stroke="#1e293b" strokeDasharray="3,3" />
-              <line x1="0" y1="90" x2="500" y2="90" stroke="#1e293b" strokeDasharray="3,3" />
-              <line x1="0" y1="150" x2="500" y2="150" stroke="#1e293b" strokeDasharray="3,3" />
+              <line x1="0" y1="30" x2="500" y2="30" stroke="#f1f5f9" strokeDasharray="3,3" />
+              <line x1="0" y1="90" x2="500" y2="90" stroke="#f1f5f9" strokeDasharray="3,3" />
+              <line x1="0" y1="150" x2="500" y2="150" stroke="#f1f5f9" strokeDasharray="3,3" />
 
               <path
                 d="M 0 150 Q 80 80 160 110 T 320 50 T 480 35 L 480 180 L 0 180 Z"
@@ -327,10 +433,10 @@ export default function AdminDashboardPage() {
                 strokeLinecap="round"
               />
 
-              <circle cx="80" cy="80" r="5" fill="#6366f1" stroke="#0f172a" strokeWidth="2" />
-              <circle cx="160" cy="110" r="5" fill="#6366f1" stroke="#0f172a" strokeWidth="2" />
-              <circle cx="320" cy="50" r="5" fill="#6366f1" stroke="#0f172a" strokeWidth="2" />
-              <circle cx="480" cy="35" r="6" fill="#6366f1" stroke="#0f172a" strokeWidth="3" />
+              <circle cx="80" cy="80" r="5" fill="#6366f1" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="160" cy="110" r="5" fill="#6366f1" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="320" cy="50" r="5" fill="#6366f1" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="480" cy="35" r="6" fill="#6366f1" stroke="#ffffff" strokeWidth="3" />
             </svg>
             <div className="absolute inset-x-0 bottom-0 flex justify-between text-[10px] text-slate-500 font-bold px-1 mt-2">
               <span>Week 1</span><span>Week 2</span><span>Week 3</span><span>Week 4</span>
@@ -339,10 +445,10 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Quick Actions Panel */}
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-5 flex flex-col justify-between">
+        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm p-6 space-y-5 flex flex-col justify-between">
           <div>
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Super Admin Quick Actions</h3>
-            <p className="text-xs text-slate-500">Run global marketplace maintenance routines instantly.</p>
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Super Admin Actions</h3>
+            <p className="text-xs text-slate-500">Run global marketplace maintenance routines.</p>
           </div>
 
           <div className="space-y-3">
@@ -350,10 +456,10 @@ export default function AdminDashboardPage() {
             <Button
               onClick={handleForceKillAll}
               disabled={terminatingAll}
-              className="w-full flex items-center justify-between px-4 py-3 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-all rounded-xl text-left cursor-pointer group animate-fade-in hover:-translate-y-0.5 transition-all duration-200"
+              className="w-full flex items-center justify-between px-4 py-3 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-all rounded-xl text-left cursor-pointer group hover:-translate-y-0.5 duration-200"
             >
               <div>
-                <p className="text-xs font-bold text-red-400">Force-Kill Active Video Rooms</p>
+                <p className="text-xs font-bold text-red-500">Force-Kill Video Rooms</p>
                 <p className="text-[10px] text-slate-500 mt-0.5">Disconnects active peer rooms</p>
               </div>
               <AlertTriangle className="h-4 w-4 text-red-400 group-hover:scale-110 transition-transform" />
@@ -362,11 +468,11 @@ export default function AdminDashboardPage() {
             {/* Broadcast announcements link */}
             <Link
               to="/admin/notifications"
-              className="w-full flex items-center justify-between px-4 py-3 bg-white border border-slate-200 hover:border-slate-200 transition-all rounded-xl text-left cursor-pointer group hover:-translate-y-0.5 transition-all duration-200"
+              className="w-full flex items-center justify-between px-4 py-3 bg-slate-50/50 border border-slate-100 hover:bg-slate-50 transition-all rounded-xl text-left cursor-pointer group hover:-translate-y-0.5 duration-200"
             >
               <div>
-                <p className="text-xs font-bold text-slate-800">Send Global Announcement</p>
-                <p className="text-[10px] text-slate-500 mt-0.5">Push banners to all active sellers</p>
+                <p className="text-xs font-bold text-slate-900">Send Announcement</p>
+                <p className="text-[10px] text-slate-500 mt-0.5">Push banners to all sellers</p>
               </div>
               <Bell className="h-4 w-4 text-indigo-400 group-hover:scale-110 transition-transform" />
             </Link>
@@ -374,11 +480,11 @@ export default function AdminDashboardPage() {
             {/* Platform limits settings link */}
             <Link
               to="/admin/settings"
-              className="w-full flex items-center justify-between px-4 py-3 bg-white border border-slate-200 hover:border-slate-200 transition-all rounded-xl text-left cursor-pointer group hover:-translate-y-0.5 transition-all duration-200"
+              className="w-full flex items-center justify-between px-4 py-3 bg-slate-50/50 border border-slate-100 hover:bg-slate-50 transition-all rounded-xl text-left cursor-pointer group hover:-translate-y-0.5 duration-200"
             >
               <div>
-                <p className="text-xs font-bold text-slate-800">Adjust Dynamic SaaS Limits</p>
-                <p className="text-[10px] text-slate-500 mt-0.5">Configure billing prices & call metrics</p>
+                <p className="text-xs font-bold text-slate-900">Adjust SaaS Limits</p>
+                <p className="text-[10px] text-slate-500 mt-0.5">Configure pricing & metrics</p>
               </div>
               <Layers className="h-4 w-4 text-emerald-400 group-hover:scale-110 transition-transform" />
             </Link>
@@ -392,121 +498,131 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Grid: Infrastructure status, registrations & calls */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 lg:grid-cols-3">
         
         {/* Newly Registered Organizations */}
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Newly Registered Stores</h3>
-              <p className="text-xs text-slate-500">Shops awaiting reviews or newly active</p>
+        <div className="lg:col-span-1 space-y-6">
+          <div className="rounded-2xl border border-slate-100 bg-white shadow-sm p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">New Stores</h3>
+                <p className="text-xs text-slate-500">Shops awaiting reviews</p>
+              </div>
+              <Link 
+                to="/admin/organizations" 
+                className="flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold text-blue-400 hover:text-blue-500 transition-colors uppercase bg-blue-50 border border-blue-100 rounded-lg"
+              >
+                <span>View All</span>
+                <ArrowRight className="h-3 w-3" />
+              </Link>
             </div>
-            <Link 
-              to="/admin/organizations" 
-              className="flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold text-blue-400 hover:text-blue-350 transition-colors uppercase bg-blue-500/10 border border-blue-500/20 rounded-lg"
-            >
-              <span>View All</span>
-              <ArrowRight className="h-3 w-3" />
-            </Link>
-          </div>
 
-          <div className="divide-y divide-slate-100">
-            {recentRegistrations.map((shop) => (
-              <div key={shop.id} className="flex justify-between items-center py-3 first:pt-0 last:pb-0 text-sm">
-                <div>
-                  <p className="font-bold text-slate-900 text-xs">{shop.shop_name}</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5 font-mono">
-                    Tier: <span className="uppercase text-slate-700 font-bold">{shop.plan_name || "free"}</span>
-                  </p>
+            <div className="space-y-3.5">
+              {recentRegistrations.map((shop) => (
+                <div key={shop.id} className="flex justify-between items-center bg-slate-50/50 border border-slate-100 p-3 rounded-2xl hover:bg-slate-50 transition-all duration-300">
+                  <div>
+                    <p className="font-bold text-slate-900 text-xs">{shop.shop_name}</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5 font-mono">
+                      Tier: <span className="uppercase text-slate-700 font-bold">{shop.plan_name || "free"}</span>
+                    </p>
+                  </div>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider ${
+                    shop.is_verified
+                      ? "bg-emerald-50 text-emerald-600"
+                      : "bg-amber-50 text-amber-600"
+                  }`}>
+                    {shop.is_verified ? "Active" : "Pending"}
+                  </span>
                 </div>
-                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
-                  shop.is_verified
-                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                    : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                }`}>
-                  {shop.is_verified ? "Active" : "Pending"}
-                </span>
-              </div>
-            ))}
-            {recentRegistrations.length === 0 && (
-              <div className="py-8 text-center flex flex-col items-center">
-                <Store className="h-6 w-6 text-slate-700 mb-2 animate-pulse" />
-                <p className="text-[10px] text-slate-500 font-bold">No shops registered</p>
-              </div>
-            )}
+              ))}
+              {recentRegistrations.length === 0 && (
+                <div className="py-6 text-center flex flex-col items-center justify-center space-y-2">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-slate-500">
+                    <Store className="h-5 w-5" />
+                  </div>
+                  <p className="text-[10px] font-bold text-slate-700">No shops registered</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Recent WebRTC Calls Log */}
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Recent Platform Calls</h3>
-              <p className="text-xs text-slate-500">Live conversation histories</p>
+        <div className="lg:col-span-1 space-y-6">
+          <div className="rounded-2xl border border-slate-100 bg-white shadow-sm p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Recent Calls</h3>
+                <p className="text-xs text-slate-500">Live conversation histories</p>
+              </div>
+              <Link 
+                to="/admin/calls" 
+                className="flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold text-blue-400 hover:text-blue-500 transition-colors uppercase bg-blue-50 border border-blue-100 rounded-lg"
+              >
+                <span>View All</span>
+                <ArrowRight className="h-3 w-3" />
+              </Link>
             </div>
-            <Link 
-              to="/admin/calls" 
-              className="flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold text-blue-400 hover:text-blue-350 transition-colors uppercase bg-blue-500/10 border border-blue-500/20 rounded-lg"
-            >
-              <span>View All</span>
-              <ArrowRight className="h-3 w-3" />
-            </Link>
-          </div>
 
-          <div className="divide-y divide-slate-100">
-            {recentCalls.map((log) => (
-              <div key={log.id} className="flex justify-between items-center py-3 first:pt-0 last:pb-0 text-sm">
-                <div>
-                  <p className="font-bold text-slate-900 text-xs">{log.customer_name || "Guest User"}</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5">
-                    called <span className="text-slate-700 font-semibold">{log.shops?.shop_name || "Merchant"}</span>
-                  </p>
+            <div className="space-y-3.5">
+              {recentCalls.map((log) => (
+                <div key={log.id} className="flex justify-between items-center bg-slate-50/50 border border-slate-100 p-3 rounded-2xl hover:bg-slate-50 transition-all duration-300">
+                  <div>
+                    <p className="font-bold text-slate-900 text-xs">{log.customer_name || "Guest User"}</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">
+                      called <span className="text-slate-700 font-semibold">{log.shops?.shop_name || "Merchant"}</span>
+                    </p>
+                  </div>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider ${
+                    log.status === "connected"
+                      ? "bg-emerald-50 text-emerald-600"
+                      : "bg-rose-50 text-rose-600"
+                  }`}>
+                    {log.status}
+                  </span>
                 </div>
-                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
-                  log.status === "connected"
-                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                    : "bg-red-500/10 text-red-400 border border-red-500/20"
-                }`}>
-                  {log.status}
-                </span>
-              </div>
-            ))}
-            {recentCalls.length === 0 && (
-              <div className="py-8 text-center flex flex-col items-center">
-                <Video className="h-6 w-6 text-slate-700 mb-2 animate-pulse" />
-                <p className="text-[10px] text-slate-500 font-bold">No calls logged yet</p>
-              </div>
-            )}
+              ))}
+              {recentCalls.length === 0 && (
+                <div className="py-6 text-center flex flex-col items-center justify-center space-y-2">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-slate-500">
+                    <Video className="h-5 w-5" />
+                  </div>
+                  <p className="text-[10px] font-bold text-slate-700">No calls logged yet</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
         {/* System Health Monitor */}
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4">
-          <div>
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">System Infrastructure</h3>
-            <p className="text-xs text-slate-500">Live API and server health parameters</p>
-          </div>
-          
-          <div className="space-y-3">
-            {systemHealth.map((health) => {
-              const HealthIcon = health.icon;
-              return (
-                <div key={health.name} className="flex items-center justify-between text-xs border-b border-slate-100/50 pb-2.5 last:border-b-0 last:pb-0">
-                  <div className="flex items-center gap-2">
-                    <div className="h-7 w-7 rounded-lg bg-white shadow-sm border border-slate-200 flex items-center justify-center text-slate-500">
-                      <HealthIcon className="h-3.5 w-3.5" />
+        <div className="lg:col-span-1 space-y-6">
+          <div className="rounded-2xl border border-slate-100 bg-white shadow-sm p-6 space-y-4">
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">System Health</h3>
+              <p className="text-xs text-slate-500">Live API server health</p>
+            </div>
+            
+            <div className="space-y-3.5">
+              {systemHealth.map((health) => {
+                const HealthIcon = health.icon;
+                return (
+                  <div key={health.name} className="flex items-center justify-between bg-slate-50/50 border border-slate-100 p-3 rounded-2xl hover:bg-slate-50 transition-all duration-300 text-xs">
+                    <div className="flex items-center gap-2">
+                      <div className="h-7 w-7 rounded-lg bg-white shadow-sm border border-slate-200 flex items-center justify-center text-slate-500 shrink-0">
+                        <HealthIcon className="h-3.5 w-3.5" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-slate-700 text-[11px] truncate max-w-[90px] xl:max-w-[120px]">{health.name}</p>
+                        <p className="text-[9px] text-slate-500 mt-0.5 font-mono">{health.value}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-semibold text-slate-700 text-xs">{health.name}</p>
-                      <p className="text-[9px] text-slate-500 mt-0.5 font-mono">{health.value}</p>
-                    </div>
+                    <span className="flex items-center gap-1 text-[8px] font-bold text-emerald-600 uppercase bg-emerald-50 px-1.5 py-0.5 rounded shrink-0">
+                      Normal
+                    </span>
                   </div>
-                  <span className="flex items-center gap-1 text-[8px] font-bold text-emerald-400 uppercase bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
-                    Normal
-                  </span>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
 

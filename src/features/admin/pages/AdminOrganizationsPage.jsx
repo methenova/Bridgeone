@@ -22,9 +22,8 @@ import toast from "react-hot-toast";
 
 import { useAdminShops, useToggleShopStatus, useUpdateShopPlan, useAdminCategories } from "../hooks/useAdmin";
 import { supabase } from "@/config/supabase";
-import ProductSkeleton from "@/features/seller/components/ProductSkeleton";
+import { TableSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
-import AdminTableSkeleton from "@/features/admin/components/skeletons/AdminTableSkeleton";
 
 const PLANS = [
   { value: "free", label: "Free Plan" },
@@ -285,7 +284,7 @@ export default function AdminOrganizationsPage() {
   if (isLoading) {
     return (
       <div className="space-y-6 max-w-7xl">
-        <AdminTableSkeleton rows={8} />
+        <TableSkeleton rows={8} />
       </div>
     );
   }

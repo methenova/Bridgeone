@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 
 import { supabase } from "@/config/supabase";
 import useSellerShop from "../hooks/useSellerShop";
+import { TableSkeleton } from "@/components/skeletons";
 
 export default function SellerAgentsPage() {
   const { shop, loading: shopLoading } = useSellerShop();
@@ -218,8 +219,7 @@ export default function SellerAgentsPage() {
   if (shopLoading || loading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300" />
-        <div className="h-96 animate-pulse rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100" />
+        <TableSkeleton rows={8} />
       </div>
     );
   }

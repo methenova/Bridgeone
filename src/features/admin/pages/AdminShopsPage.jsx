@@ -11,9 +11,8 @@ import {
 import { motion } from "framer-motion";
 
 import { useAdminShops, useToggleShopStatus, useUpdateShopPlan } from "../hooks/useAdmin";
-import ProductSkeleton from "@/features/seller/components/ProductSkeleton";
-import { Button } from "@/components/ui/button";
-import AdminTableSkeleton from "@/features/admin/components/skeletons/AdminTableSkeleton";
+import { TableSkeleton } from "@/components/skeletons";
+
 
 const PLANS = [
   { value: "free", label: "Free Plan" },
@@ -74,7 +73,7 @@ export default function AdminShopsPage() {
   if (isLoading) {
     return (
       <div className="space-y-6 max-w-7xl">
-        <AdminTableSkeleton rows={8} />
+        <TableSkeleton rows={8} />
       </div>
     );
   }

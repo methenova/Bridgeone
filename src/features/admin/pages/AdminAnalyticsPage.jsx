@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { CardSkeleton, ChartSkeleton } from "@/components/skeletons";
 import { 
   BarChart3, 
   TrendingUp, 
@@ -135,8 +136,8 @@ export default function AdminAnalyticsPage() {
   if (overallLoading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-white shadow-sm" />
-        <div className="h-96 animate-pulse rounded-2xl bg-white shadow-sm border border-slate-200" />
+        <CardSkeleton count={4} />
+        <ChartSkeleton />
       </div>
     );
   }

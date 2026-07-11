@@ -1,3 +1,4 @@
+
 import { useAuthContext } from "@/context/AuthContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import PremiumLayout from "./components/PremiumLayout";
@@ -63,7 +64,7 @@ export default function AdminLayout() {
       profile={profile}
       onLogout={handleLogout}
       workspaceName="BridgeOne HQ"
-      workspaces={[{name: "BridgeOne HQ"}, {name: "BridgeOne Sandbox"}]}
+      workspaces={[{ name: "BridgeOne HQ" }, { name: "BridgeOne Sandbox" }]}
       baseRoute="/admin"
       marketplaceRoute="/"
     />
