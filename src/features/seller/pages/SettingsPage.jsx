@@ -348,8 +348,7 @@ export default function SettingsPage() {
                   <label className="text-[10px] text-slate-500 font-bold uppercase">Shop Name</label>
                   <input
                     type="text"
-                    {...register("shop_name")}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:border-blue-500"
+                    {...register("shop_name")} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all"
                   />
                   {errors.shop_name && <p className="text-xs text-red-650 font-semibold">{errors.shop_name.message}</p>}
                 </div>
@@ -358,8 +357,7 @@ export default function SettingsPage() {
                   <label className="text-[10px] text-slate-500 font-bold uppercase">Shop Email</label>
                   <input
                     type="email"
-                    {...register("email")}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none"
+                    {...register("email")} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all"
                   />
                   {errors.email && <p className="text-xs text-red-650 font-semibold">{errors.email.message}</p>}
                 </div>
@@ -368,8 +366,7 @@ export default function SettingsPage() {
                   <label className="text-[10px] text-slate-500 font-bold uppercase">Shop Contact Phone</label>
                   <input
                     type="text"
-                    {...register("phone")}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none"
+                    {...register("phone")} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all"
                   />
                   {errors.phone && <p className="text-xs text-red-650 font-semibold">{errors.phone.message}</p>}
                 </div>
@@ -379,8 +376,7 @@ export default function SettingsPage() {
                 <label className="text-[10px] text-slate-500 font-bold uppercase">Shop Description</label>
                 <textarea
                   rows={4}
-                  {...register("description")}
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:border-blue-500 resize-none leading-relaxed"
+                  {...register("description")} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:border-blue-500 resize-none leading-relaxed"
                 />
               </div>
 
@@ -391,23 +387,22 @@ export default function SettingsPage() {
               <div className="grid gap-5 sm:grid-cols-3 text-xs">
                 <div className="space-y-1.5">
                   <label className="text-[10px] text-slate-500 font-bold uppercase">City</label>
-                  <input type="text" {...register("city")} className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none" />
+                  <input type="text" {...register("city")} className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-[10px] text-slate-500 font-bold uppercase">State</label>
-                  <input type="text" {...register("state")} className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none" />
+                  <input type="text" {...register("state")} className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-[10px] text-slate-500 font-bold uppercase">Country</label>
-                  <input type="text" {...register("country")} className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none" />
+                  <input type="text" {...register("country")} className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all" />
                 </div>
               </div>
 
               <div className="flex justify-end pt-3">
                 <button
                   type="submit"
-                  disabled={updateMutation.isPending}
-                  className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-2xl font-bold text-white transition-all text-xs cursor-pointer"
+                  disabled={updateMutation.isPending} className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-2xl font-bold text-white transition-all text-xs cursor-pointer hover:bg-blue-500 active:scale-[0.98] shadow-lg shadow-blue-500/10"
                 >
                   <Save className="h-4 w-4" /> Save Profile
                 </button>
@@ -428,8 +423,7 @@ export default function SettingsPage() {
                   type="text"
                   value={businessHours}
                   onChange={(e) => setBusinessHours(e.target.value)}
-                  placeholder="e.g. Mon-Fri: 09:00 - 18:00"
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none"
+                  placeholder="e.g. Mon-Fri: 09:00 - 18:00" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none"
                 />
               </div>
 
@@ -439,8 +433,7 @@ export default function SettingsPage() {
                   <label className="text-[10px] text-slate-500 font-bold uppercase">Business Time Zone</label>
                   <select
                     value={timezone}
-                    onChange={(e) => setTimezone(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none cursor-pointer font-semibold text-xs"
+                    onChange={(e) => setTimezone(e.target.value)} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none cursor-pointer font-semibold text-xs"
                   >
                     <option value="UTC">UTC (Universal Coordinated)</option>
                     <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
@@ -457,8 +450,7 @@ export default function SettingsPage() {
                     type="text"
                     value={holidaysText}
                     onChange={(e) => setHolidaysText(e.target.value)}
-                    placeholder="e.g. 2026-07-09, 2026-12-25"
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none"
+                    placeholder="e.g. 2026-07-09, 2026-12-25" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none"
                   />
                 </div>
               </div>
@@ -501,8 +493,7 @@ export default function SettingsPage() {
               </div>
 
               <button
-                onClick={handleSaveHours}
-                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-2xl font-bold text-white text-xs cursor-pointer"
+                onClick={handleSaveHours} className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-2xl font-bold text-white text-xs cursor-pointer hover:bg-blue-500 transition-all active:scale-[0.98] shadow-lg shadow-blue-500/10"
               >
                 <Save className="h-4 w-4" /> Save Operations Config
               </button>
@@ -522,8 +513,7 @@ export default function SettingsPage() {
                     <label className="text-[10px] text-slate-500 font-bold uppercase">Routing Mode Algorithm</label>
                     <select
                       value={routingRules.mode}
-                      onChange={(e) => setRoutingRules({ ...routingRules, mode: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none cursor-pointer"
+                      onChange={(e) => setRoutingRules({ ...routingRules, mode: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none cursor-pointer"
                     >
                       <option value="round_robin">Round Robin (Even Distribution)</option>
                       <option value="least_busy">Least Busy Agent</option>
@@ -537,8 +527,7 @@ export default function SettingsPage() {
                       <input 
                         type="checkbox" 
                         checked={routingRules.priority_routing}
-                        onChange={(e) => setRoutingRules({ ...routingRules, priority_routing: e.target.checked })}
-                        className="h-4 w-4 rounded border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 text-blue-600 focus:ring-blue-600"
+                        onChange={(e) => setRoutingRules({ ...routingRules, priority_routing: e.target.checked })} className="h-4 w-4 rounded border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 text-blue-600 focus:ring-blue-600"
                       />
                       <div>
                         <span className="font-bold text-slate-900 block">Priority Customer Routing</span>
@@ -550,8 +539,7 @@ export default function SettingsPage() {
                       <input 
                         type="checkbox" 
                         checked={routingRules.respect_business_hours}
-                        onChange={(e) => setRoutingRules({ ...routingRules, respect_business_hours: e.target.checked })}
-                        className="h-4 w-4 rounded border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 text-blue-600 focus:ring-blue-600"
+                        onChange={(e) => setRoutingRules({ ...routingRules, respect_business_hours: e.target.checked })} className="h-4 w-4 rounded border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 text-blue-600 focus:ring-blue-600"
                       />
                       <div>
                         <span className="font-bold text-slate-900 block">Respect Business Hours</span>
@@ -561,8 +549,7 @@ export default function SettingsPage() {
                   </div>
 
                   <button
-                    onClick={handleSaveRouting}
-                    className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-2xl font-bold text-white text-xs cursor-pointer w-fit"
+                    onClick={handleSaveRouting} className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-2xl font-bold text-white text-xs cursor-pointer w-fit hover:bg-blue-500 transition-all active:scale-[0.98] shadow-lg shadow-blue-500/10"
                   >
                     <Save className="h-4 w-4" /> Save Routing Rules
                   </button>
@@ -618,8 +605,7 @@ export default function SettingsPage() {
                   </div>
                   
                   <span 
-                    style={{ backgroundColor: shop.widget_color || "#2563eb" }}
-                    className="h-6 w-6 rounded-full border border-slate-200" 
+                    style={{ backgroundColor: shop.widget_color || "#2563eb" }} className="h-6 w-6 rounded-full border border-slate-200" 
                   />
                 </div>
 
@@ -637,8 +623,7 @@ export default function SettingsPage() {
               </div>
 
               <button
-                onClick={() => navigate("/seller/widget")}
-                className="flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 hover:border-slate-300 px-4 py-2.5 rounded-2xl font-bold text-slate-900 text-xs cursor-pointer"
+                onClick={() => navigate("/seller/widget")} className="flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 hover:border-slate-300 px-4 py-2.5 rounded-2xl font-bold text-slate-900 text-xs cursor-pointer"
               >
                 <span>Open Customizer page</span>
                 <ArrowRight className="h-4 w-4" />
@@ -697,8 +682,7 @@ export default function SettingsPage() {
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Enter new secure password..."
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:border-blue-500 font-mono"
+                    placeholder="Enter new secure password..." className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 outline-none focus:border-blue-500 font-mono"
                     required
                   />
                   <KeyRound className="absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
@@ -707,8 +691,7 @@ export default function SettingsPage() {
 
               <button
                 type="submit"
-                disabled={changingPassword}
-                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-2xl font-bold text-white text-xs cursor-pointer"
+                disabled={changingPassword} className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-5 py-2.5 rounded-2xl font-bold text-white text-xs cursor-pointer hover:bg-blue-500 transition-all active:scale-[0.98] shadow-lg shadow-blue-500/10"
               >
                 {changingPassword ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 <span>Update Password</span>
@@ -739,8 +722,7 @@ export default function SettingsPage() {
               </div>
 
               <button
-                onClick={() => navigate("/seller/integrations")}
-                className="flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 hover:border-slate-300 px-4 py-2.5 rounded-2xl font-bold text-slate-900 text-xs cursor-pointer"
+                onClick={() => navigate("/seller/integrations")} className="flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 hover:border-slate-300 px-4 py-2.5 rounded-2xl font-bold text-slate-900 text-xs cursor-pointer"
               >
                 <span>Manage Integrations dashboard</span>
                 <ArrowRight className="h-4 w-4" />

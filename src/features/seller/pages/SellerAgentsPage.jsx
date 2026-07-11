@@ -240,8 +240,7 @@ export default function SellerAgentsPage() {
             setSelectedRole("agent");
             setSelectedDept("Sales");
             setIsInviteOpen(true);
-          }}
-          className="flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10 transition-all active:scale-[0.98]"
+          }} className="flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10 transition-all active:scale-[0.98]"
         >
           <UserPlus className="h-4 w-4" />
           <span>Invite Agent</span>
@@ -260,8 +259,7 @@ export default function SellerAgentsPage() {
             type="text"
             placeholder="Search team agents by name or email..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-2xl border border-slate-200 bg-white pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/8 transition-colors"
+            onChange={(e) => setSearchQuery(e.target.value)} className="w-full rounded-2xl border border-slate-200 bg-white pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/8 transition-colors"
           />
         </div>
 
@@ -271,8 +269,7 @@ export default function SellerAgentsPage() {
             <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Status:</span>
             <select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-2xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-blue-500"
+              onChange={(e) => setStatusFilter(e.target.value)} className="rounded-2xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-blue-500"
             >
               <option value="all">All States</option>
               <option value="Available">Available</option>
@@ -290,8 +287,7 @@ export default function SellerAgentsPage() {
             <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Dept:</span>
             <select
               value={deptFilter}
-              onChange={(e) => setDeptFilter(e.target.value)}
-              className="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-1.5 text-xs text-slate-350 outline-none focus:border-slate-850"
+              onChange={(e) => setDeptFilter(e.target.value)} className="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-1.5 text-xs text-slate-350 outline-none focus:border-slate-850"
             >
               <option value="all">All Depts</option>
               <option value="Sales">Sales</option>
@@ -307,13 +303,13 @@ export default function SellerAgentsPage() {
       <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
-            <thead className="border-b border-slate-100 bg-slate-50/50 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+            <thead className="border-slate-100 bg-slate-50/50 text-[10px] font-bold px-6 py-4 text-left text-slate-500 uppercase tracking-wider border-b">
               <tr>
-                <th className="px-6 py-4.5">Agent Details</th>
-                <th className="px-6 py-4.5">Assigned Role</th>
-                <th className="px-6 py-4.5">Department</th>
-                <th className="px-6 py-4.5">Online Status</th>
-                <th className="px-6 py-4.5 text-right">Roster Actions</th>
+                <th className="py-4.5 px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Agent Details</th>
+                <th className="py-4.5 px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Assigned Role</th>
+                <th className="py-4.5 px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Department</th>
+                <th className="py-4.5 px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Online Status</th>
+                <th className="py-4.5 text-right px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Roster Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-600">
@@ -326,11 +322,10 @@ export default function SellerAgentsPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.03 }}
-                    key={ag.id} 
-                    className="hover:bg-slate-50/50 transition-colors"
+                    key={ag.id} className="hover:bg-slate-50/50 transition-colors"
                   >
                     {/* Details details */}
-                    <td className="px-6 py-4 flex items-center gap-3">
+                    <td className="flex items-center gap-3 px-6 py-5 align-middle">
                       <div className="h-8 w-8 rounded-full bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 flex items-center justify-center font-bold text-slate-500">
                         {name.split(" ").map(n => n[0]).join("")}
                       </div>
@@ -341,11 +336,10 @@ export default function SellerAgentsPage() {
                     </td>
 
                     {/* Role selector */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5 align-middle">
                       <select
                         value={ag.role}
-                        onChange={(e) => handleUpdateField(ag.id, "role", e.target.value)}
-                        className="rounded-2xl border border-slate-100 bg-slate-50 px-2 py-1 text-xs outline-none text-slate-600 font-semibold"
+                        onChange={(e) => handleUpdateField(ag.id, "role", e.target.value)} className="rounded-2xl border border-slate-100 bg-slate-50 px-2 py-1 text-xs outline-none text-slate-600 font-semibold"
                       >
                         <option value="agent">Agent</option>
                         <option value="manager">Manager</option>
@@ -353,11 +347,10 @@ export default function SellerAgentsPage() {
                     </td>
 
                     {/* Department selector */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5 align-middle">
                       <select
                         value={ag.department}
-                        onChange={(e) => handleUpdateField(ag.id, "department", e.target.value)}
-                        className="rounded-2xl border border-slate-100 bg-slate-50 px-2 py-1 text-xs outline-none text-slate-600 font-semibold"
+                        onChange={(e) => handleUpdateField(ag.id, "department", e.target.value)} className="rounded-2xl border border-slate-100 bg-slate-50 px-2 py-1 text-xs outline-none text-slate-600 font-semibold"
                       >
                         <option value="Sales">Sales</option>
                         <option value="Support">Support</option>
@@ -366,7 +359,7 @@ export default function SellerAgentsPage() {
                     </td>
 
                     {/* Status switcher */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5 align-middle">
                       <select
                         value={ag.status || "Offline"}
                         onChange={(e) => handleUpdateStatus(ag.id, e.target.value)}
@@ -391,10 +384,9 @@ export default function SellerAgentsPage() {
                     </td>
 
                     {/* Deletion action */}
-                    <td className="px-6 py-4 text-right">
+                    <td className="text-right px-6 py-5 align-middle">
                       <button
-                        onClick={() => handleRemoveAgent(ag.id)}
-                        className="text-slate-500 hover:text-red-600 transition-colors cursor-pointer"
+                        onClick={() => handleRemoveAgent(ag.id)} className="text-slate-500 hover:text-red-600 transition-colors cursor-pointer"
                         title="Remove Agent"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -421,8 +413,7 @@ export default function SellerAgentsPage() {
         <div className="flex justify-between items-center bg-slate-50 p-4 border border-slate-100 rounded-2xl text-xs">
           <button
             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-            disabled={currentPage === 1}
-            className="px-4 py-2 border border-slate-100 rounded-2xl hover:border-slate-300 disabled:opacity-50 text-slate-500 font-bold cursor-pointer"
+            disabled={currentPage === 1} className="px-4 py-2 border border-slate-100 rounded-2xl hover:border-slate-300 disabled:opacity-50 text-slate-500 font-bold cursor-pointer"
           >
             Previous
           </button>
@@ -433,8 +424,7 @@ export default function SellerAgentsPage() {
 
           <button
             onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2 border border-slate-100 rounded-2xl hover:border-slate-300 disabled:opacity-50 text-slate-500 font-bold cursor-pointer"
+            disabled={currentPage === totalPages} className="px-4 py-2 border border-slate-100 rounded-2xl hover:border-slate-300 disabled:opacity-50 text-slate-500 font-bold cursor-pointer"
           >
             Next
           </button>
@@ -447,14 +437,12 @@ export default function SellerAgentsPage() {
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="w-full max-w-md rounded-2xl border border-slate-100 bg-slate-50 p-6 space-y-6 shadow-2xl"
+              animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md rounded-2xl border border-slate-100 bg-slate-50 p-6 space-y-6 shadow-2xl"
             >
               <div className="flex justify-between items-center pb-3 border-b border-slate-100">
                 <h2 className="text-base font-bold text-slate-900 uppercase tracking-wider">Invite store agent</h2>
                 <button 
-                  onClick={() => setIsInviteOpen(false)}
-                  className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
+                  onClick={() => setIsInviteOpen(false)} className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -467,8 +455,7 @@ export default function SellerAgentsPage() {
                   <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Select platform profile</label>
                   <select
                     value={selectedProfileId}
-                    onChange={(e) => setSelectedProfileId(e.target.value)}
-                    className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-semibold"
+                    onChange={(e) => setSelectedProfileId(e.target.value)} className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-semibold"
                     required
                   >
                     <option value="">-- Choose User Profile --</option>
@@ -483,8 +470,7 @@ export default function SellerAgentsPage() {
                   <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Select Team role</label>
                   <select
                     value={selectedRole}
-                    onChange={(e) => setSelectedRole(e.target.value)}
-                    className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-semibold"
+                    onChange={(e) => setSelectedRole(e.target.value)} className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-semibold"
                   >
                     <option value="agent">Agent (Answer Calls only)</option>
                     <option value="manager">Manager (Full edit store catalog access)</option>
@@ -496,8 +482,7 @@ export default function SellerAgentsPage() {
                   <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Service department</label>
                   <select
                     value={selectedDept}
-                    onChange={(e) => setSelectedDept(e.target.value)}
-                    className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-semibold"
+                    onChange={(e) => setSelectedDept(e.target.value)} className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-semibold"
                   >
                     <option value="Sales">Sales</option>
                     <option value="Support">Support</option>
@@ -508,16 +493,14 @@ export default function SellerAgentsPage() {
                 <div className="border-t border-slate-100 pt-4 flex gap-3 justify-end text-xs font-semibold">
                   <button
                     type="button"
-                    onClick={() => setIsInviteOpen(false)}
-                    className="px-4 py-2 border border-slate-100 rounded-2xl text-slate-500 hover:text-slate-900 cursor-pointer"
+                    onClick={() => setIsInviteOpen(false)} className="px-4 py-2 border border-slate-100 rounded-2xl text-slate-500 hover:text-slate-900 cursor-pointer"
                   >
                     Cancel
                   </button>
                   
                   <button
                     type="submit"
-                    disabled={submittingInvite}
-                    className="flex items-center gap-1 bg-blue-600 hover:bg-blue-550 text-white px-4 py-2 rounded-2xl font-bold cursor-pointer transition-all active:scale-[0.98]"
+                    disabled={submittingInvite} className="flex items-center gap-1 bg-blue-600 hover:bg-blue-550 text-white px-4 py-2 rounded-2xl font-bold cursor-pointer transition-all active:scale-[0.98] hover:bg-blue-500 shadow-lg shadow-blue-500/10"
                   >
                     {submittingInvite && <Loader2 className="h-3 w-3 animate-spin" />}
                     Invite

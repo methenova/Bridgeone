@@ -93,8 +93,7 @@ export default function ChatInboxPage() {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
               <input
                 type="text"
-                placeholder="Search conversations..."
-                className="w-full rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 py-2 pl-9 pr-4 text-xs text-slate-900 placeholder-slate-400 outline-none"
+                placeholder="Search conversations..." className="w-full rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 py-2 pl-9 pr-4 text-xs text-slate-900 placeholder-slate-400 outline-none focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500"
               />
             </div>
           </div>
@@ -199,8 +198,7 @@ export default function ChatInboxPage() {
                     <span>Image attachment loaded</span>
                     <button
                       type="button"
-                      onClick={() => setAttachmentUrl("")}
-                      className="absolute right-1 top-1 text-slate-500 hover:text-slate-900"
+                      onClick={() => setAttachmentUrl("")} className="absolute right-1 top-1 text-slate-500 hover:text-slate-900"
                     >
                       ✕
                     </button>
@@ -210,8 +208,7 @@ export default function ChatInboxPage() {
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={handleAttachImage}
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 text-slate-500 hover:text-slate-900"
+                    onClick={handleAttachImage} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 text-slate-500 hover:text-slate-900 transition-all duration-200"
                     title="Attach Mock Image"
                   >
                     <Paperclip className="h-4.5 w-4.5" />
@@ -221,13 +218,11 @@ export default function ChatInboxPage() {
                     type="text"
                     value={messageText}
                     onChange={(e) => setMessageText(e.target.value)}
-                    placeholder="Type a message..."
-                    className="flex-1 rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 px-4 py-2.5 text-xs text-slate-900 outline-none focus:border-blue-500 placeholder-slate-600"
+                    placeholder="Type a message..." className="flex-1 rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 px-4 py-2.5 text-xs text-slate-900 outline-none focus:border-blue-500 placeholder-slate-600"
                   />
 
                   <button
-                    type="submit"
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white hover:bg-blue-500 transition-colors"
+                    type="submit" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white hover:bg-blue-500 transition-colors transition-all active:scale-[0.98] shadow-lg shadow-blue-500/10"
                   >
                     <Send className="h-4.5 w-4.5" />
                   </button>

@@ -181,8 +181,7 @@ export default function SellerNotificationsPage() {
 
         {notifications.length > 0 && (
           <button
-            onClick={handleClearAll}
-            className="flex items-center gap-1.5 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 hover:border-slate-300 text-xs font-bold text-slate-500 hover:text-slate-900 px-4 py-2 rounded-2xl cursor-pointer"
+            onClick={handleClearAll} className="flex items-center gap-1.5 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 hover:border-slate-300 text-xs font-bold text-slate-500 hover:text-slate-900 px-4 py-2 rounded-2xl cursor-pointer"
           >
             <Trash2 className="h-3.5 w-3.5" />
             <span>Clear All</span>
@@ -272,8 +271,7 @@ export default function SellerNotificationsPage() {
                     {/* Actions */}
                     {isUnread && (
                       <button
-                        onClick={() => handleMarkRead(n.id)}
-                        className="h-7 w-7 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50/20 transition-all shadow-xs cursor-pointer shrink-0"
+                        onClick={() => handleMarkRead(n.id)} className="h-7 w-7 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50/20 transition-all shadow-xs cursor-pointer shrink-0"
                         title="Mark as Read"
                       >
                         <Check className="h-3.5 w-3.5" />
@@ -372,29 +370,25 @@ export default function SellerNotificationsPage() {
 
             <div className="grid gap-2 grid-cols-2 text-[10px] uppercase font-bold tracking-wider">
               <button
-                onClick={() => handleCreateTestNotification("incoming_call")}
-                className="py-2.5 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 rounded-2xl hover:border-slate-300 hover:text-slate-900 text-slate-500 transition-colors"
+                onClick={() => handleCreateTestNotification("incoming_call")} className="py-2.5 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 rounded-2xl hover:border-slate-300 hover:text-slate-900 text-slate-500 transition-colors"
               >
                 Trigger call
               </button>
               
               <button
-                onClick={() => handleCreateTestNotification("missed_call")}
-                className="py-2.5 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 rounded-2xl hover:border-slate-300 hover:text-slate-900 text-slate-500 transition-colors"
+                onClick={() => handleCreateTestNotification("missed_call")} className="py-2.5 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 rounded-2xl hover:border-slate-300 hover:text-slate-900 text-slate-500 transition-colors"
               >
                 Trigger missed
               </button>
 
               <button
-                onClick={() => handleCreateTestNotification("callback_reminder")}
-                className="py-2.5 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 rounded-2xl hover:border-slate-300 hover:text-slate-900 text-slate-500 transition-colors"
+                onClick={() => handleCreateTestNotification("callback_reminder")} className="py-2.5 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 rounded-2xl hover:border-slate-300 hover:text-slate-900 text-slate-500 transition-colors"
               >
                 Trigger callback
               </button>
 
               <button
-                onClick={() => handleCreateTestNotification("system")}
-                className="py-2.5 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 rounded-2xl hover:border-slate-300 hover:text-slate-900 text-slate-500 transition-colors"
+                onClick={() => handleCreateTestNotification("system")} className="py-2.5 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 rounded-2xl hover:border-slate-300 hover:text-slate-900 text-slate-500 transition-colors"
               >
                 Trigger system
               </button>

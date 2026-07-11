@@ -173,8 +173,7 @@ export default function CallHistoryPage() {
 
         {calls.length > 0 && (
           <button
-            onClick={handleClearHistory}
-            className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-rose-650 font-semibold hover:text-rose-350 bg-rose-50 border border-rose-100/50 hover:bg-rose-500/20 border-rose-500/20 rounded-2xl transition-all cursor-pointer"
+            onClick={handleClearHistory} className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-rose-650 font-semibold hover:text-rose-350 bg-rose-50 border border-rose-100/50 hover:bg-rose-500/20 border-rose-500/20 rounded-2xl transition-all cursor-pointer"
           >
             <Trash2 className="h-3.5 w-3.5" />
             Clear All History
@@ -234,13 +233,13 @@ export default function CallHistoryPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
-                <th className="px-6 py-4">Customer</th>
-                <th className="px-6 py-4">Email</th>
-                <th className="px-6 py-4">Phone</th>
-                <th className="px-6 py-4">Date & Time</th>
-                <th className="px-6 py-4">Duration</th>
-                <th className="px-6 py-4">Status</th>
+              <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] uppercase font-bold text-slate-500 tracking-wider hover:bg-slate-50/50 transition-colors group">
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Customer</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Email</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Phone</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Date & Time</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Duration</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -249,15 +248,14 @@ export default function CallHistoryPage() {
                 return (
                   <tr 
                     key={call.id} 
-                    onClick={() => handleOpenDetails(call)}
-                    className="border-b border-slate-100 hover:bg-slate-50 text-sm text-slate-600 cursor-pointer transition-colors"
+                    onClick={() => handleOpenDetails(call)} className="border-b border-slate-100 hover:bg-slate-50 text-sm text-slate-600 cursor-pointer transition-colors"
                   >
-                    <td className="px-6 py-4.5 font-semibold text-slate-900">{call.customer_name}</td>
-                    <td className="px-6 py-4.5 text-slate-500">{call.customer_email || "-"}</td>
-                    <td className="px-6 py-4.5 text-slate-500">{call.customer_phone || "-"}</td>
-                    <td className="px-6 py-4.5 text-xs text-slate-500 font-medium">{formatDateTime(call.created_at)}</td>
-                    <td className="px-6 py-4.5 font-mono text-xs">{formatDuration(call.duration)}</td>
-                    <td className="px-6 py-4.5">
+                    <td className="py-4.5 font-semibold text-slate-900 px-6 py-5 align-middle">{call.customer_name}</td>
+                    <td className="py-4.5 text-slate-500 px-6 py-5 align-middle">{call.customer_email || "-"}</td>
+                    <td className="py-4.5 text-slate-500 px-6 py-5 align-middle">{call.customer_phone || "-"}</td>
+                    <td className="py-4.5 text-xs text-slate-500 font-medium px-6 py-5 align-middle">{formatDateTime(call.created_at)}</td>
+                    <td className="py-4.5 font-mono text-xs px-6 py-5 align-middle">{formatDuration(call.duration)}</td>
+                    <td className="py-4.5 px-6 py-5 align-middle">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                         isMissed
                           ? "bg-rose-500/10 text-rose-450 border border-rose-500/20"
@@ -287,8 +285,7 @@ export default function CallHistoryPage() {
                       <p className="text-[10px] text-slate-500 font-mono mt-0.5">Call Ref: #{selectedCall.id.substring(0,8).toUpperCase()}</p>
                     </div>
                     <button 
-                      onClick={() => setSelectedCall(null)}
-                      className="text-slate-500 hover:text-slate-900 cursor-pointer"
+                      onClick={() => setSelectedCall(null)} className="text-slate-500 hover:text-slate-900 cursor-pointer"
                     >
                       <X className="h-5 w-5" />
                     </button>
@@ -336,8 +333,7 @@ export default function CallHistoryPage() {
                       <input 
                         type="number"
                         value={editingRevenue}
-                        onChange={(e) => setEditingRevenue(e.target.value)}
-                        className="w-24 bg-slate-50 border border-slate-100 rounded-2xl px-2 py-1 text-xs text-right outline-none text-slate-900 font-mono"
+                        onChange={(e) => setEditingRevenue(e.target.value)} className="w-24 bg-slate-50 border border-slate-100 rounded-2xl px-2 py-1 text-xs text-right outline-none text-slate-900 font-mono"
                       />
                     </div>
                   </div>
@@ -358,8 +354,7 @@ export default function CallHistoryPage() {
                     <label className="text-[10px] text-slate-500 font-bold uppercase block">Resolution Status</label>
                     <select
                       value={editingResolution}
-                      onChange={(e) => setEditingResolution(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-3 py-2 text-xs text-slate-900 outline-none cursor-pointer font-semibold"
+                      onChange={(e) => setEditingResolution(e.target.value)} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-3 py-2 text-xs text-slate-900 outline-none cursor-pointer font-semibold"
                     >
                       <option value="Resolved">Resolved (Assisted checkouts)</option>
                       <option value="Follow-up Required">Follow-up Required</option>
@@ -375,8 +370,7 @@ export default function CallHistoryPage() {
                       {[1, 2, 3, 4, 5].map(star => (
                         <button 
                           key={star}
-                          onClick={() => setEditingCSAT(star)}
-                          className="text-slate-500 hover:text-amber-400 cursor-pointer"
+                          onClick={() => setEditingCSAT(star)} className="text-slate-500 hover:text-amber-400 cursor-pointer"
                         >
                           <Star className={`h-6 w-6 ${editingCSAT >= star ? "text-amber-400 fill-amber-400" : "text-slate-650"}`} />
                         </button>
@@ -390,8 +384,7 @@ export default function CallHistoryPage() {
                 {/* Footer Save Button */}
                 <button
                   onClick={handleSaveCallDetails}
-                  disabled={savingCallDetails}
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-550 rounded-2xl font-bold text-white text-xs flex items-center justify-center gap-1.5 cursor-pointer mt-4 transition-all active:scale-[0.98]"
+                  disabled={savingCallDetails} className="w-full py-3 bg-blue-600 hover:bg-blue-550 rounded-2xl font-bold text-white text-xs flex items-center justify-center gap-1.5 cursor-pointer mt-4 transition-all active:scale-[0.98] hover:bg-blue-500 shadow-lg shadow-blue-500/10"
                 >
                   {savingCallDetails ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                   <span>Save Call Telemetry</span>

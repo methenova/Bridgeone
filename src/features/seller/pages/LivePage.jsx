@@ -861,8 +861,7 @@ export default function LivePage() {
                         if (el) el.srcObject = connectedViewerStream;
                       }}
                       autoPlay
-                      playsInline
-                      className="h-full w-full object-cover"
+                      playsInline className="h-full w-full object-cover"
                     />
                     <div className="absolute top-1.5 left-1.5 bg-blue-600/90 text-[8px] font-bold text-white px-2 py-0.5 rounded-full backdrop-blur-sm">
                       Speaker
@@ -876,8 +875,7 @@ export default function LivePage() {
                 <div className="flex items-end gap-1.5 h-16">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
                     <div
-                      key={i}
-                      className="w-2.5 bg-blue-500 rounded-full animate-bounce"
+                      key={i} className="w-2.5 bg-blue-500 rounded-full animate-bounce"
                       style={{ height: `${Math.random() * 100}%`, animationDelay: `${i * 0.15}s` }}
                     />
                   ))}
@@ -923,8 +921,7 @@ export default function LivePage() {
                       <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Camera Source</label>
                       <select
                         value={selectedVideo}
-                        onChange={(e) => setSelectedVideo(e.target.value)}
-                        className="w-full rounded-xl border border-white/10 bg-slate-100/80 px-3 py-2 text-xs text-slate-900 outline-none cursor-pointer"
+                        onChange={(e) => setSelectedVideo(e.target.value)} className="w-full rounded-xl border border-white/10 bg-slate-100/80 px-3 py-2 text-xs text-slate-900 outline-none cursor-pointer"
                       >
                         {videoDevices.map((d) => (
                           <option key={d.deviceId} value={d.deviceId} className="bg-white shadow-sm text-slate-900">
@@ -937,8 +934,7 @@ export default function LivePage() {
 
                   {/* Go Live Action */}
                   <button
-                    onClick={handleToggleLive}
-                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-[0.98] py-3 text-xs font-bold text-white uppercase tracking-wider transition-all duration-150 shadow-lg shadow-blue-600/30 cursor-pointer"
+                    onClick={handleToggleLive} className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-[0.98] py-3 text-xs font-bold text-white uppercase tracking-wider transition-all duration-150 shadow-lg shadow-blue-600/30 cursor-pointer shadow-blue-500/10"
                   >
                     <Video className="h-4 w-4" />
                     <span>Start Stream</span>
@@ -951,8 +947,7 @@ export default function LivePage() {
             <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
               {hearts.map((h) => (
                 <div
-                  key={h.id}
-                  className="absolute bottom-4 flex flex-col items-center text-red-500 text-3xl animate-float-heart"
+                  key={h.id} className="absolute bottom-4 flex flex-col items-center text-red-500 text-3xl animate-float-heart"
                   style={{ left: `${h.left}%` }}
                 >
                   ❤️
@@ -1006,8 +1001,7 @@ export default function LivePage() {
 
               <button
                 onClick={handleToggleStreamScreenShare}
-                title="Share Screen"
-                className="flex h-9 w-9 items-center justify-center rounded-full transition-all hover:scale-105 border bg-white/10 text-slate-900 border-white/10 hover:bg-white/20"
+                title="Share Screen" className="flex h-9 w-9 items-center justify-center rounded-full transition-all hover:scale-105 border bg-white/10 text-slate-900 border-white/10 hover:bg-white/20"
               >
                 <MonitorUp size={16} />
               </button>
@@ -1016,8 +1010,7 @@ export default function LivePage() {
 
               <button
                 onClick={handleToggleFullscreen}
-                title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
-                className="flex h-9 w-9 items-center justify-center rounded-full transition-all hover:scale-105 border bg-white/10 text-slate-900 border-white/10 hover:bg-white/20"
+                title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"} className="flex h-9 w-9 items-center justify-center rounded-full transition-all hover:scale-105 border bg-white/10 text-slate-900 border-white/10 hover:bg-white/20"
               >
                 {isFullscreen ? <Minimize size={16} /> : <Maximize size={16} />}
               </button>
@@ -1057,15 +1050,13 @@ export default function LivePage() {
                     <span className="font-semibold text-slate-900 truncate max-w-[120px]">{req.senderName}</span>
                     <div className="flex gap-1.5 shrink-0">
                       <button
-                        onClick={() => handleApproveSpeak(req)}
-                        className="flex h-7 w-7 items-center justify-center rounded-2xl bg-green-600 text-white hover:bg-green-500 transition-colors"
+                        onClick={() => handleApproveSpeak(req)} className="flex h-7 w-7 items-center justify-center rounded-2xl bg-green-600 text-white hover:bg-green-500 transition-colors"
                         title="Approve to Speak"
                       >
                         <Check className="h-3.5 w-3.5" />
                       </button>
                       <button
-                        onClick={() => handleDeclineSpeak(req)}
-                        className="flex h-7 w-7 items-center justify-center rounded-2xl bg-slate-850 text-slate-500 hover:text-slate-900 transition-colors"
+                        onClick={() => handleDeclineSpeak(req)} className="flex h-7 w-7 items-center justify-center rounded-2xl bg-slate-850 text-slate-500 hover:text-slate-900 transition-colors"
                         title="Dismiss Request"
                       >
                         <X className="h-3.5 w-3.5" />
@@ -1141,8 +1132,7 @@ export default function LivePage() {
               <button
                 key={reply}
                 type="button"
-                onClick={() => handleQuickReply(reply)}
-                className="text-[10px] font-semibold text-slate-600 bg-white border border-slate-150 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 rounded-full px-3 py-1.5 transition-all shrink-0 cursor-pointer"
+                onClick={() => handleQuickReply(reply)} className="text-[10px] font-semibold text-slate-600 bg-white border border-slate-150 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 rounded-full px-3 py-1.5 transition-all shrink-0 cursor-pointer"
               >
                 {reply}
               </button>
@@ -1155,12 +1145,10 @@ export default function LivePage() {
               type="text"
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
-              placeholder="Type message to stream..."
-              className="flex-1 rounded-xl border border-slate-200 bg-white shadow-xs px-3.5 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 placeholder-slate-400"
+              placeholder="Type message to stream..." className="flex-1 rounded-xl border border-slate-200 bg-white shadow-xs px-3.5 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 placeholder-slate-400"
             />
             <button
-              type="submit"
-              className="flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-blue-600 hover:bg-blue-500 text-white transition-colors cursor-pointer shrink-0 shadow-sm shadow-blue-600/10"
+              type="submit" className="flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-blue-600 hover:bg-blue-500 text-white transition-colors cursor-pointer shrink-0 shadow-sm shadow-blue-600/10 transition-all active:scale-[0.98] shadow-lg shadow-blue-500/10"
             >
               <Send className="h-3.5 w-3.5" />
             </button>
@@ -1192,8 +1180,7 @@ export default function LivePage() {
                   {p.thumbnail_url ? (
                     <img 
                       src={p.thumbnail_url} 
-                      alt="" 
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                      alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" 
                     />
                   ) : (
                     <span className="text-2xl">📦</span>
@@ -1271,14 +1258,12 @@ export default function LivePage() {
             </div>
             <div className="flex w-full gap-3">
               <button
-                onClick={handleDeclineCall}
-                className="flex-1 rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 py-3 text-xs font-bold text-slate-600 hover:bg-slate-850 hover:text-slate-900 transition-colors"
+                onClick={handleDeclineCall} className="flex-1 rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 py-3 text-xs font-bold text-slate-600 hover:bg-slate-850 hover:text-slate-900 transition-colors"
               >
                 Decline
               </button>
               <button
-                onClick={handleAcceptCall}
-                className="flex-1 rounded-2xl bg-blue-600 py-3 text-xs font-bold text-white hover:bg-blue-500 shadow-lg shadow-blue-600/10 transition-colors"
+                onClick={handleAcceptCall} className="flex-1 rounded-2xl bg-blue-600 py-3 text-xs font-bold text-white hover:bg-blue-500 shadow-lg shadow-blue-600/10 transition-colors transition-all active:scale-[0.98] shadow-blue-500/10"
               >
                 Accept
               </button>
@@ -1316,8 +1301,7 @@ export default function LivePage() {
                   <video
                     ref={callRemoteVideoRef}
                     autoPlay
-                    playsInline
-                    className="w-full h-full object-cover"
+                    playsInline className="w-full h-full object-cover"
                   />
                 ) : (
                   <div className="flex flex-col items-center gap-5 text-center p-8">
@@ -1388,8 +1372,7 @@ export default function LivePage() {
                   {/* End call */}
                   <button
                     onClick={handleDeclineCall}
-                    title="End Call"
-                    className="flex h-11 px-6 items-center justify-center gap-2 rounded-full bg-red-600 hover:bg-red-500 hover:scale-105 active:scale-95 transition-all text-white font-bold text-xs shadow-lg shadow-red-600/30"
+                    title="End Call" className="flex h-11 px-6 items-center justify-center gap-2 rounded-full bg-red-600 hover:bg-red-500 hover:scale-105 active:scale-95 transition-all text-white font-bold text-xs shadow-lg shadow-red-600/30"
                   >
                     <PhoneOff className="h-4 w-4" />
                     <span>End Call</span>
@@ -1445,8 +1428,7 @@ export default function LivePage() {
                           rows={4}
                           value={callNotes}
                           onChange={(e) => setCallNotes(e.target.value)}
-                          placeholder="Jot down notes during consultation..."
-                          className="w-full rounded-2xl border border-white/10 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-3 text-slate-900 outline-none focus:border-blue-500 resize-none text-[11px] leading-relaxed"
+                          placeholder="Jot down notes during consultation..." className="w-full rounded-2xl border border-white/10 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-3 text-slate-900 outline-none focus:border-blue-500 resize-none text-[11px] leading-relaxed"
                         />
                         <button
                           onClick={async () => {
@@ -1464,8 +1446,7 @@ export default function LivePage() {
                             } catch (err) {
                               toast.error("Failed to save notes to database");
                             }
-                          }}
-                          className="w-full py-2 bg-blue-600 hover:bg-blue-500 rounded-2xl text-white font-bold transition-all text-[10px] uppercase tracking-wider cursor-pointer"
+                          }} className="w-full py-2 bg-blue-600 hover:bg-blue-500 rounded-2xl text-white font-bold transition-all text-[10px] uppercase tracking-wider cursor-pointer"
                         >
                           Save Notes
                         </button>
@@ -1475,15 +1456,14 @@ export default function LivePage() {
                       <div className="space-y-2 bg-slate-50 p-4 rounded-2xl border border-white/5">
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Transfer Consultation</span>
                         <div className="flex gap-2">
-                          <select className="flex-1 rounded-2xl border border-white/10 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-2 text-slate-900 outline-none font-semibold text-[10px]">
+                          <select className="flex-1 rounded-2xl border border-white/10 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-2 text-slate-900 outline-none font-semibold text-[10px] focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500">
                             <option value="">-- Select Active Agent --</option>
                             {agentsList.map(a => (
                               <option key={a.id} value={a.id}>{a.profiles?.full_name || "Team Member"}</option>
                             ))}
                           </select>
                           <button
-                            onClick={() => toast.success("Transferring WebRTC peer credentials to team member...")}
-                            className="px-3 py-2 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-white/10 hover:border-white/20 rounded-2xl text-slate-900 font-bold text-[9px] uppercase tracking-wider"
+                            onClick={() => toast.success("Transferring WebRTC peer credentials to team member...")} className="px-3 py-2 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-white/10 hover:border-white/20 rounded-2xl text-slate-900 font-bold text-[9px] uppercase tracking-wider"
                           >
                             Transfer
                           </button>

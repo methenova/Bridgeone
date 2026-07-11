@@ -33,8 +33,7 @@ function NoShopWarning() {
         My Shop section to get started.
       </p>
       <a
-        href="/seller/shop"
-        className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-blue-500"
+        href="/seller/shop" className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-blue-500 active:scale-[0.98] shadow-lg shadow-blue-500/10"
       >
         Create My Shop
       </a>
@@ -56,8 +55,7 @@ function ProductDrawer({ isOpen, product, shopId, shopName, onClose }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+            onClick={onClose} className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
           />
 
           {/* Drawer */}
@@ -66,8 +64,7 @@ function ProductDrawer({ isOpen, product, shopId, shopName, onClose }) {
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 350, damping: 35 }}
-            className="fixed right-0 top-0 z-50 flex h-full w-full max-w-2xl flex-col border-l border-slate-200 bg-slate-50 shadow-2xl"
+            transition={{ type: "spring", stiffness: 350, damping: 35 }} className="fixed right-0 top-0 z-50 flex h-full w-full max-w-2xl flex-col border-l border-slate-200 bg-slate-50 shadow-2xl"
           >
             {/* Drawer header */}
             <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-5">
@@ -83,8 +80,7 @@ function ProductDrawer({ isOpen, product, shopId, shopName, onClose }) {
               </div>
 
               <button
-                onClick={onClose}
-                className="flex h-8 w-8 items-center justify-center rounded-2xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-2xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -231,8 +227,7 @@ export default function ProductsPage() {
         </div>
 
         <button
-          onClick={openAddDrawer}
-          className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/20 active:scale-95"
+          onClick={openAddDrawer} className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/20 active:scale-95 active:scale-[0.98] shadow-lg shadow-blue-500/10"
         >
           <Plus className="h-4 w-4" />
           Add Product

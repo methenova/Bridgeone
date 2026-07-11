@@ -343,8 +343,7 @@ export default function AnalyticsPage() {
             <Calendar className="h-3.5 w-3.5 text-slate-500" />
             <select
               value={dateRange}
-              onChange={(e) => setDateRange(e.target.value)}
-              className="bg-transparent text-slate-900 outline-none font-bold"
+              onChange={(e) => setDateRange(e.target.value)} className="bg-transparent text-slate-900 outline-none font-bold"
             >
               <option value="7">Last 7 Days</option>
               <option value="30">Last 30 Days</option>
@@ -353,8 +352,7 @@ export default function AnalyticsPage() {
           </div>
 
           <button
-            onClick={handleExportCSV}
-            className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-4 py-2 rounded-2xl text-xs font-bold text-white transition-all cursor-pointer"
+            onClick={handleExportCSV} className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 px-4 py-2 rounded-2xl text-xs font-bold text-white transition-all cursor-pointer hover:bg-blue-500 active:scale-[0.98] shadow-lg shadow-blue-500/10"
           >
             <Download className="h-3.5 w-3.5" />
             <span>Export CSV</span>

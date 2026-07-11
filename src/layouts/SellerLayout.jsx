@@ -173,7 +173,7 @@ export default function SellerLayout() {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50 text-slate-800 overflow-x-hidden">
+    <div className="admin-theme flex min-h-screen bg-slate-50 text-slate-900 overflow-x-hidden selection:bg-blue-600/30 selection:text-blue-200">
       {/* Sidebar - responsive desktop fixed / mobile sliding overlay */}
       <SellerSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 

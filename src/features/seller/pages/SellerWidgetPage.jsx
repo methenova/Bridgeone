@@ -311,14 +311,12 @@ export default function SellerWidgetPage() {
                     <input
                       type="color"
                       value={widgetColor}
-                      onChange={(e) => setWidgetColor(e.target.value)}
-                      className="h-10 w-16 bg-transparent border border-slate-100 rounded-2xl cursor-pointer"
+                      onChange={(e) => setWidgetColor(e.target.value)} className="h-10 w-16 bg-transparent border border-slate-100 rounded-2xl cursor-pointer"
                     />
                     <input
                       type="text"
                       value={widgetColor}
-                      onChange={(e) => setWidgetColor(e.target.value)}
-                      className="flex-1 rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2 text-slate-900 outline-none focus:border-blue-500 font-mono"
+                      onChange={(e) => setWidgetColor(e.target.value)} className="flex-1 rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2 text-slate-900 outline-none focus:border-blue-500 font-mono"
                     />
                   </div>
                 </div>
@@ -328,8 +326,7 @@ export default function SellerWidgetPage() {
                   <label className="text-[10px] text-slate-500 font-bold uppercase">Screen Position Alignment</label>
                   <select
                     value={widgetPosition}
-                    onChange={(e) => setWidgetPosition(e.target.value)}
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-semibold"
+                    onChange={(e) => setWidgetPosition(e.target.value)} className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-semibold"
                   >
                     <option value="bottom-right">Bottom Right alignment</option>
                     <option value="bottom-left">Bottom Left alignment</option>
@@ -343,8 +340,7 @@ export default function SellerWidgetPage() {
                     type="text"
                     value={logoUrl}
                     onChange={(e) => setLogoUrl(e.target.value)}
-                    placeholder="https://bucket.merchant.com/images/widget-logo.png"
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
+                    placeholder="https://bucket.merchant.com/images/widget-logo.png" className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                   />
                 </div>
 
@@ -354,8 +350,7 @@ export default function SellerWidgetPage() {
                   <input
                     type="text"
                     value={welcomeMessage}
-                    onChange={(e) => setWelcomeMessage(e.target.value)}
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
+                    onChange={(e) => setWelcomeMessage(e.target.value)} className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                   />
                 </div>
 
@@ -365,8 +360,7 @@ export default function SellerWidgetPage() {
                   <input
                     type="text"
                     value={businessHours}
-                    onChange={(e) => setBusinessHours(e.target.value)}
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
+                    onChange={(e) => setBusinessHours(e.target.value)} className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500"
                   />
                 </div>
 
@@ -405,8 +399,7 @@ export default function SellerWidgetPage() {
               <div className="border-t border-slate-100 pt-4 flex justify-end">
                 <button
                   type="submit"
-                  disabled={saving}
-                  className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 text-white px-5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all active:scale-[0.98]"
+                  disabled={saving} className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 text-white px-5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all active:scale-[0.98] hover:bg-blue-500 shadow-lg shadow-blue-500/10"
                 >
                   {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
                   <span>Save Widget Configurations</span>
@@ -421,15 +414,13 @@ export default function SellerWidgetPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={handleRotateToken}
-                    disabled={rotatingToken}
-                    className="flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 hover:border-slate-300 px-3 py-1.5 rounded-2xl text-[9px] font-bold text-slate-500 hover:text-slate-900 uppercase cursor-pointer"
+                    disabled={rotatingToken} className="flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 hover:border-slate-300 px-3 py-1.5 rounded-2xl text-[9px] font-bold text-slate-500 hover:text-slate-900 uppercase cursor-pointer"
                   >
                     <RefreshCw className={`h-3 w-3 ${rotatingToken ? "animate-spin" : ""}`} />
                     Rotate Key
                   </button>
                   <button
-                    onClick={handleCopySnippet}
-                    className="flex items-center gap-1 bg-blue-50 border border-blue-100/50 border-blue-500/20 px-3 py-1.5 rounded-2xl text-[9px] font-bold text-blue-600 font-semibold hover:text-slate-900 uppercase transition-all cursor-pointer"
+                    onClick={handleCopySnippet} className="flex items-center gap-1 bg-blue-50 border border-blue-100/50 border-blue-500/20 px-3 py-1.5 rounded-2xl text-[9px] font-bold text-blue-600 font-semibold hover:text-slate-900 uppercase transition-all cursor-pointer"
                   >
                     {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                     <span>{copied ? "Copied" : "Copy snippet"}</span>

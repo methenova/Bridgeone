@@ -168,13 +168,13 @@ export default function CallbacksPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
-                <th className="px-6 py-4">Customer</th>
-                <th className="px-6 py-4">Email</th>
-                <th className="px-6 py-4">Phone</th>
-                <th className="px-6 py-4">Scheduled Date & Time</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-right">Actions</th>
+              <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] uppercase font-bold text-slate-500 tracking-wider hover:bg-slate-50/50 transition-colors group">
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Customer</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Email</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Phone</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Scheduled Date & Time</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Status</th>
+                <th className="text-right px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -183,10 +183,10 @@ export default function CallbacksPage() {
                 const overdue = isOverdue(c.scheduled_time, c.status);
                 return (
                   <tr key={c.id} className="border-b border-slate-100 hover:bg-slate-55 text-sm text-slate-600">
-                    <td className="px-6 py-4.5 font-semibold text-slate-900">{c.customer_name}</td>
-                    <td className="px-6 py-4.5 text-slate-500">{c.customer_email || "-"}</td>
-                    <td className="px-6 py-4.5 text-slate-500">{c.customer_phone || "-"}</td>
-                    <td className="px-6 py-4.5">
+                    <td className="py-4.5 font-semibold text-slate-900 px-6 py-5 align-middle">{c.customer_name}</td>
+                    <td className="py-4.5 text-slate-500 px-6 py-5 align-middle">{c.customer_email || "-"}</td>
+                    <td className="py-4.5 text-slate-500 px-6 py-5 align-middle">{c.customer_phone || "-"}</td>
+                    <td className="py-4.5 px-6 py-5 align-middle">
                       <div className="space-y-0.5">
                         <span className={`text-xs font-semibold ${overdue ? "text-rose-600 font-bold" : "text-slate-700"}`}>
                           {formatDateTime(c.scheduled_time)}
@@ -196,7 +196,7 @@ export default function CallbacksPage() {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4.5">
+                    <td className="py-4.5 px-6 py-5 align-middle">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                         pending
                           ? overdue
@@ -207,20 +207,18 @@ export default function CallbacksPage() {
                         {pending ? "Pending" : "Resolved"}
                       </span>
                     </td>
-                    <td className="px-6 py-4.5 text-right">
+                    <td className="py-4.5 text-right px-6 py-5 align-middle">
                       <div className="flex items-center justify-end gap-2">
                         {pending && (
                           <button
-                            onClick={() => handleResolve(c.id)}
-                            className="flex items-center gap-1 px-3 py-1.5 rounded-2xl text-xs font-semibold bg-emerald-50 border border-emerald-100/50 text-emerald-600 hover:bg-green-500/20 border-green-500/20 transition-all cursor-pointer"
+                            onClick={() => handleResolve(c.id)} className="flex items-center gap-1 px-3 py-1.5 rounded-2xl text-xs font-semibold bg-emerald-50 border border-emerald-100/50 text-emerald-600 hover:bg-green-500/20 border-green-500/20 transition-all cursor-pointer"
                           >
                             <CheckCircle2 className="h-3.5 w-3.5" />
                             Resolve
                           </button>
                         )}
                         <button
-                          onClick={() => handleDelete(c.id)}
-                          className="p-2 rounded-2xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all cursor-pointer"
+                          onClick={() => handleDelete(c.id)} className="p-2 rounded-2xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all cursor-pointer"
                           title="Delete Request"
                         >
                           <Trash2 className="h-3.5 w-3.5" />

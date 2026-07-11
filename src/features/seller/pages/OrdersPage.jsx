@@ -118,8 +118,7 @@ export default function OrdersPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by Order ID, customer, product..."
-            className="w-full rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 py-2.5 pl-9 pr-4 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500"
+            placeholder="Search by Order ID, customer, product..." className="w-full rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 py-2.5 pl-9 pr-4 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-blue-500"
           />
         </div>
       </div>
@@ -147,13 +146,13 @@ export default function OrdersPage() {
             <table className="min-w-full text-left">
               <thead>
                 <tr>
-                  <th className="px-6 py-4">Order ID</th>
-                  <th className="px-6 py-4">Date</th>
-                  <th className="px-6 py-4">Customer</th>
-                  <th className="px-6 py-4">Products</th>
-                  <th className="px-6 py-4">Value</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Order ID</th>
+                  <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Date</th>
+                  <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Customer</th>
+                  <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Products</th>
+                  <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Value</th>
+                  <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Status</th>
+                  <th className="text-right px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 bg-white shadow-sm border border-slate-100/80 hover:shadow-md transition-all duration-300">

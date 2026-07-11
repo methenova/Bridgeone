@@ -582,12 +582,12 @@ export default function SellerDashboardPage() {
         <div className="overflow-x-auto text-xs">
           <table className="w-full border-collapse text-left">
             <thead>
-              <tr className="border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50">
-                <th className="px-6 py-4">Visitor/User details</th>
-                <th className="px-6 py-4">Active Page</th>
-                <th className="px-6 py-4">Time on Site</th>
-                <th className="px-6 py-4 font-mono">Cart status</th>
-                <th className="px-6 py-4 text-right">Consult Status</th>
+              <tr className="border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 hover:bg-slate-50/50 transition-colors group">
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Visitor/User details</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Active Page</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Time on Site</th>
+                <th className="font-mono px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Cart status</th>
+                <th className="text-right px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Consult Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-transparent text-slate-600">
@@ -598,29 +598,28 @@ export default function SellerDashboardPage() {
                 return (
                   <tr 
                     key={v.id} 
-                    onClick={() => setSelectedVisitor(v)}
-                    className="hover:bg-slate-50/60 transition-colors cursor-pointer"
+                    onClick={() => setSelectedVisitor(v)} className="hover:bg-slate-50/60 transition-colors cursor-pointer"
                   >
-                    <td className="px-6 py-3.5 flex items-center gap-2">
+                    <td className="py-3.5 flex items-center gap-2 px-6 py-5 align-middle">
                       <div className="h-6 w-6 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center font-bold text-slate-500 text-[10px]">
                         {name[0]}
                       </div>
                       <span className="font-bold text-slate-900">{name}</span>
                     </td>
                     
-                    <td className="px-6 py-3.5 font-mono text-[11px] text-blue-600">
+                    <td className="py-3.5 font-mono text-[11px] text-blue-600 px-6 py-5 align-middle">
                       {v.current_page}
                     </td>
 
-                    <td className="px-6 py-3.5 text-slate-500">
+                    <td className="py-3.5 text-slate-500 px-6 py-5 align-middle">
                       {formattedTime}
                     </td>
 
-                    <td className="px-6 py-3.5 font-mono text-[10px] text-slate-500">
+                    <td className="py-3.5 font-mono text-[10px] text-slate-500 px-6 py-5 align-middle">
                       {v.cart_status}
                     </td>
 
-                    <td className="px-6 py-3.5 text-right">
+                    <td className="py-3.5 text-right px-6 py-5 align-middle">
                       {v.is_in_video_call ? (
                         <span className="px-2.5 py-1 rounded bg-emerald-50 text-emerald-600 font-bold uppercase text-[8px] border border-emerald-100">
                           In Live Call
@@ -641,7 +640,7 @@ export default function SellerDashboardPage() {
 
               {visitorSessions.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-slate-500">
+                  <td colSpan={5} className="py-12 text-center text-slate-500 px-6 py-5 align-middle">
                     <div className="flex flex-col items-center justify-center space-y-2">
                       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-slate-500">
                         <Users className="h-5 w-5" />
@@ -795,8 +794,7 @@ export default function SellerDashboardPage() {
                 <span className="text-[10px] text-slate-500 font-mono mt-0.5 block">Visitor Session Log Details</span>
               </div>
               <button 
-                onClick={() => setSelectedVisitor(null)}
-                className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
+                onClick={() => setSelectedVisitor(null)} className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -887,8 +885,7 @@ export default function SellerDashboardPage() {
             {selectedVisitor.is_waiting_assistance && (
               <div className="p-6 border-t border-slate-100 bg-white">
                 <a 
-                  href="/seller/live"
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-2xl text-white font-bold text-xs uppercase tracking-wider text-center flex items-center justify-center gap-1.5"
+                  href="/seller/live" className="w-full py-3 bg-blue-600 rounded-2xl text-white font-bold text-xs uppercase tracking-wider text-center flex items-center justify-center gap-1.5 hover:bg-blue-500 transition-all active:scale-[0.98] shadow-lg shadow-blue-500/10"
                 >
                   <Video className="h-4 w-4" />
                   <span>Answer Call Room</span>

@@ -231,14 +231,12 @@ export default function SellerIntegrationsPage() {
                     type="text"
                     value={shopifyDomain}
                     onChange={(e) => setShopifyDomain(e.target.value)}
-                    placeholder="e.g. brand-name.myshopify.com"
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2 text-slate-900 outline-none focus:border-blue-500 font-semibold"
+                    placeholder="e.g. brand-name.myshopify.com" className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2 text-slate-900 outline-none focus:border-blue-500 font-semibold"
                   />
                 </div>
                 <button
                   onClick={handleSaveSettings}
-                  disabled={saving}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-550 rounded-2xl text-white font-bold transition-all text-[10px] uppercase cursor-pointer"
+                  disabled={saving} className="px-4 py-2 bg-blue-600 hover:bg-blue-550 rounded-2xl text-white font-bold transition-all text-[10px] uppercase cursor-pointer hover:bg-blue-500 active:scale-[0.98] shadow-lg shadow-blue-500/10"
                 >
                   Save Connection
                 </button>
@@ -273,14 +271,12 @@ export default function SellerIntegrationsPage() {
                     type="text"
                     value={woocommerceUrl}
                     onChange={(e) => setWoocommerceUrl(e.target.value)}
-                    placeholder="https://merchant-store.com/wp-json/wc/v3/"
-                    className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2 text-slate-900 outline-none focus:border-blue-500 font-semibold"
+                    placeholder="https://merchant-store.com/wp-json/wc/v3/" className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2 text-slate-900 outline-none focus:border-blue-500 font-semibold"
                   />
                 </div>
                 <button
                   onClick={handleSaveSettings}
-                  disabled={saving}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-550 rounded-2xl text-white font-bold transition-all text-[10px] uppercase cursor-pointer"
+                  disabled={saving} className="px-4 py-2 bg-blue-600 hover:bg-blue-550 rounded-2xl text-white font-bold transition-all text-[10px] uppercase cursor-pointer hover:bg-blue-500 active:scale-[0.98] shadow-lg shadow-blue-500/10"
                 >
                   Save WooCommerce
                 </button>
@@ -341,14 +337,12 @@ export default function SellerIntegrationsPage() {
                 <input
                   type="text"
                   readOnly
-                  value={apiKey ? `**********************${apiKey.slice(-5)}` : "No credential generated"}
-                  className="flex-1 rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2 text-slate-900 outline-none font-mono"
+                  value={apiKey ? `**********************${apiKey.slice(-5)}` : "No credential generated"} className="flex-1 rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2 text-slate-900 outline-none font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all"
                 />
                 
                 {apiKey && (
                   <button
-                    onClick={handleCopyKey}
-                    className="px-3 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 hover:border-slate-300 rounded-2xl text-slate-500 hover:text-slate-900"
+                    onClick={handleCopyKey} className="px-3 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 hover:border-slate-300 rounded-2xl text-slate-500 hover:text-slate-900"
                   >
                     {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
                   </button>
@@ -357,8 +351,7 @@ export default function SellerIntegrationsPage() {
 
               <button
                 onClick={handleGenerateKey}
-                disabled={generatingKey}
-                className="flex items-center gap-1 bg-blue-600 hover:bg-blue-550 px-4 py-2 rounded-2xl font-bold text-white tracking-wide transition-all cursor-pointer text-[10px] uppercase"
+                disabled={generatingKey} className="flex items-center gap-1 bg-blue-600 hover:bg-blue-550 px-4 py-2 rounded-2xl font-bold text-white tracking-wide transition-all cursor-pointer text-[10px] uppercase hover:bg-blue-500 active:scale-[0.98] shadow-lg shadow-blue-500/10"
               >
                 {generatingKey ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
                 <span>{apiKey ? "Regenerate API Key" : "Generate Key"}</span>
@@ -383,16 +376,14 @@ export default function SellerIntegrationsPage() {
                   type="text"
                   value={webhookUrl}
                   onChange={(e) => setWebhookUrl(e.target.value)}
-                  placeholder="https://api.your-backend.com/webhooks/bridgeone"
-                  className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2 text-slate-900 outline-none focus:border-blue-500 font-mono"
+                  placeholder="https://api.your-backend.com/webhooks/bridgeone" className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2 text-slate-900 outline-none focus:border-blue-500 font-mono"
                 />
               </div>
 
               <div className="flex gap-2">
                 <button
                   onClick={handleSaveSettings}
-                  disabled={saving}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-550 rounded-2xl text-white font-bold transition-all text-[10px] uppercase cursor-pointer"
+                  disabled={saving} className="px-4 py-2 bg-blue-600 hover:bg-blue-550 rounded-2xl text-white font-bold transition-all text-[10px] uppercase cursor-pointer hover:bg-blue-500 active:scale-[0.98] shadow-lg shadow-blue-500/10"
                 >
                   Save Webhook URL
                 </button>
@@ -400,8 +391,7 @@ export default function SellerIntegrationsPage() {
                 <button
                   type="button"
                   onClick={handleTestWebhook}
-                  disabled={testingWebhook}
-                  className="px-4 py-2 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 hover:border-slate-300 rounded-2xl text-slate-500 hover:text-slate-900 font-bold text-[10px] uppercase"
+                  disabled={testingWebhook} className="px-4 py-2 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 hover:border-slate-300 rounded-2xl text-slate-500 hover:text-slate-900 font-bold text-[10px] uppercase"
                 >
                   {testingWebhook && <Loader2 className="h-3 w-3 animate-spin mr-1 inline" />}
                   Send Test Ping
@@ -429,8 +419,7 @@ export default function SellerIntegrationsPage() {
                 type="text"
                 value={googleAnalyticsId}
                 onChange={(e) => setGoogleAnalyticsId(e.target.value)}
-                placeholder="e.g. G-XXXXXX"
-                className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-mono"
+                placeholder="e.g. G-XXXXXX" className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-mono"
               />
             </div>
 
@@ -441,16 +430,14 @@ export default function SellerIntegrationsPage() {
                 type="text"
                 value={metaPixelId}
                 onChange={(e) => setMetaPixelId(e.target.value)}
-                placeholder="e.g. 104239857102"
-                className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-mono"
+                placeholder="e.g. 104239857102" className="w-full rounded-2xl border border-slate-100 bg-slate-50 px-3.5 py-2.5 text-slate-900 outline-none focus:border-blue-500 font-mono"
               />
             </div>
 
             <div className="border-t border-slate-100 pt-4 flex justify-end">
               <button
                 type="submit"
-                disabled={saving}
-                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 text-white px-5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all"
+                disabled={saving} className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-550 text-white px-5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all hover:bg-blue-500 active:scale-[0.98] shadow-lg shadow-blue-500/10"
               >
                 {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
                 <span>Save Pixels Timings</span>

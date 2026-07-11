@@ -383,8 +383,7 @@ export default function CustomersPage() {
               type="text"
               placeholder="Search customers by name or email..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-2xl text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
+              onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-2xl text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
             />
           </div>
 
@@ -395,8 +394,7 @@ export default function CustomersPage() {
               <span>Spent tier:</span>
               <select
                 value={spentFilter}
-                onChange={(e) => setSpentFilter(e.target.value)}
-                className="rounded-2xl border border-slate-100 bg-slate-50 px-2.5 py-1 text-xs text-slate-350 outline-none"
+                onChange={(e) => setSpentFilter(e.target.value)} className="rounded-2xl border border-slate-100 bg-slate-50 px-2.5 py-1 text-xs text-slate-350 outline-none"
               >
                 <option value="all">All value Tiers</option>
                 <option value="high">High Value (&gt; ₹5,000)</option>
@@ -411,20 +409,20 @@ export default function CustomersPage() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50">
-                <th className="px-6 py-4">Shopper Info</th>
-                <th className="px-6 py-4">Total Orders Count</th>
-                <th className="px-6 py-4">Total Value spent</th>
-                <th className="px-6 py-4">Last Checkout Date</th>
-                <th className="px-6 py-4 text-right">CRM Actions</th>
+              <tr className="border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50 hover:bg-slate-50/50 transition-colors group">
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Shopper Info</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Total Orders Count</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Total Value spent</th>
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Last Checkout Date</th>
+                <th className="text-right px-6 py-4 text-left text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">CRM Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-transparent text-slate-600">
               {filteredCustomers.map((cust) => (
-                <tr key={cust.id} className="hover:bg-slate-50/50 transition-colors">
+                <tr key={cust.id} className="hover:bg-slate-50/50 hover:bg-slate-50/50 transition-colors group">
                   
                   {/* Info details */}
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-5 align-middle">
                     <div>
                       <span className="font-bold text-slate-900 block text-sm">{cust.name}</span>
                       <span className="text-[10px] text-slate-500 mt-0.5 block">{cust.email}</span>
@@ -432,17 +430,17 @@ export default function CustomersPage() {
                   </td>
 
                   {/* Orders */}
-                  <td className="px-6 py-4 font-semibold text-slate-600">
+                  <td className="font-semibold text-slate-600 px-6 py-5 align-middle">
                     {cust.ordersCount} checkouts
                   </td>
 
                   {/* Spent */}
-                  <td className="px-6 py-4 font-bold text-emerald-600">
+                  <td className="font-bold text-emerald-600 px-6 py-5 align-middle">
                     ₹{cust.totalSpent.toLocaleString("en-IN")}
                   </td>
 
                   {/* Date */}
-                  <td className="px-6 py-4 text-slate-500">
+                  <td className="text-slate-500 px-6 py-5 align-middle">
                     {new Date(cust.lastOrderDate).toLocaleDateString("en-IN", {
                       day: "2-digit",
                       month: "short",
@@ -451,19 +449,17 @@ export default function CustomersPage() {
                   </td>
 
                   {/* CRM details trigger */}
-                  <td className="px-6 py-4 text-right">
+                  <td className="text-right px-6 py-5 align-middle">
                     <div className="flex justify-end gap-2.5">
                       <button
-                          onClick={() => handleOpenCrm(cust)}
-                          className="inline-flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 px-2.5 py-1.5 rounded-2xl text-[10px] font-bold text-slate-500 hover:text-slate-900 uppercase"
+                          onClick={() => handleOpenCrm(cust)} className="inline-flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 px-2.5 py-1.5 rounded-2xl text-[10px] font-bold text-slate-500 hover:text-slate-900 uppercase"
                       >
                         <UserCheck className="h-3.5 w-3.5 text-blue-600 font-semibold" />
                         CRM File
                       </button>
 
                       <button
-                          onClick={() => navigate(`/seller/chat?userId=${cust.id}`)}
-                          className="inline-flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 px-2.5 py-1.5 rounded-2xl text-[10px] font-bold text-slate-500 hover:text-slate-900 uppercase"
+                          onClick={() => navigate(`/seller/chat?userId=${cust.id}`)} className="inline-flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 px-2.5 py-1.5 rounded-2xl text-[10px] font-bold text-slate-500 hover:text-slate-900 uppercase"
                       >
                         <MessageSquare className="h-3.5 w-3.5 text-emerald-600" />
                         Chat
@@ -493,8 +489,7 @@ export default function CustomersPage() {
                 <span className="text-[10px] text-slate-500 font-mono block">{selectedCust.phone}</span>
               </div>
               <button 
-                onClick={() => setSelectedCust(null)}
-                className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
+                onClick={() => setSelectedCust(null)} className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -625,15 +620,13 @@ export default function CustomersPage() {
                       rows={5}
                       value={crmNotes}
                       onChange={(e) => setCrmNotes(e.target.value)}
-                      placeholder="Write notes about custom size options, brand requests..."
-                      className="w-full rounded-2xl border border-slate-100 bg-slate-50 p-3 text-slate-900 outline-none focus:border-blue-500 resize-none leading-relaxed text-[11px]"
+                      placeholder="Write notes about custom size options, brand requests..." className="w-full rounded-2xl border border-slate-100 bg-slate-50 p-3 text-slate-900 outline-none focus:border-blue-500 resize-none leading-relaxed text-[11px]"
                     />
                   </div>
 
                   <button
                     onClick={handleSaveNotes}
-                    disabled={savingNotes}
-                    className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 rounded-2xl text-white font-bold transition-all text-xs flex items-center justify-center gap-1 cursor-pointer"
+                    disabled={savingNotes} className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 rounded-2xl text-white font-bold transition-all text-xs flex items-center justify-center gap-1 cursor-pointer active:scale-[0.98] shadow-lg shadow-blue-500/10"
                   >
                     {savingNotes && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                     Save Notes
@@ -653,16 +646,14 @@ export default function CustomersPage() {
                   <input
                     type="date"
                     value={followUpDate}
-                    onChange={(e) => setFollowUpDate(e.target.value)}
-                    className="flex-1 rounded-2xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-2 text-slate-900 outline-none text-xs"
+                    onChange={(e) => setFollowUpDate(e.target.value)} className="flex-1 rounded-2xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-2 text-slate-900 outline-none text-xs"
                   />
                   <button
                     onClick={() => {
                       if (!followUpDate) return;
                       toast.success(`Follow-up schedule created for ${followUpDate}!`);
                       setFollowUpDate("");
-                    }}
-                    className="px-4 py-2 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 hover:border-slate-300 rounded-2xl text-slate-900 text-[9px] uppercase tracking-wider cursor-pointer"
+                    }} className="px-4 py-2 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-100 hover:border-slate-300 rounded-2xl text-slate-900 text-[9px] uppercase tracking-wider cursor-pointer"
                   >
                     Schedule
                   </button>
@@ -679,8 +670,7 @@ export default function CustomersPage() {
                     if (e.target.value) {
                       toast.success(`Customer CRM file assigned successfully!`);
                     }
-                  }}
-                  className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-2 text-slate-900 outline-none text-xs font-semibold"
+                  }} className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 p-2 text-slate-900 outline-none text-xs font-semibold"
                 >
                   <option value="">-- Assign Agent Manager --</option>
                   {agents.map(a => (
