@@ -165,12 +165,12 @@ export default function AdminAuditLogsPage() {
           <table className="min-w-full text-left border-collapse">
             <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
-                <th className="px-6 py-4.5">Administrator / Actor</th>
-                <th className="px-6 py-4.5">Audit Action details</th>
-                <th className="px-6 py-4.5">Target Module</th>
-                <th className="px-6 py-4.5">Client IP / Client Browser</th>
-                <th className="px-6 py-4.5">Status</th>
-                <th className="px-6 py-4.5">Timestamp</th>
+                <th className="px-6 py-5 align-middle">Administrator / Actor</th>
+                <th className="px-6 py-5 align-middle">Audit Action details</th>
+                <th className="px-6 py-5 align-middle">Target Module</th>
+                <th className="px-6 py-5 align-middle">Client IP / Client Browser</th>
+                <th className="px-6 py-5 align-middle">Status</th>
+                <th className="px-6 py-5 align-middle">Timestamp</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
@@ -192,26 +192,26 @@ export default function AdminAuditLogsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.03 }}
                     key={log.id} 
-                    className="hover:bg-white shadow-sm/10 transition-colors"
+                    className="hover:bg-slate-50/50 transition-colors group"
                   >
                     {/* Actor profile */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5 align-middle">
                       <div className="font-semibold text-slate-900">{actorName}</div>
                       <div className="text-[10px] text-slate-500 mt-0.5">{actorEmail}</div>
                     </td>
 
                     {/* Action */}
-                    <td className="px-6 py-4 max-w-xs leading-relaxed font-bold text-slate-800">
+                    <td className="px-6 py-5 align-middle max-w-xs leading-relaxed font-bold text-slate-800">
                       {log.action}
                     </td>
 
                     {/* Target Module */}
-                    <td className="px-6 py-4 font-semibold text-slate-500">
+                    <td className="px-6 py-5 align-middle font-semibold text-slate-500">
                       {log.module}
                     </td>
 
                     {/* IP & Browser */}
-                    <td className="px-6 py-4 text-[10px] font-mono leading-normal text-slate-500">
+                    <td className="px-6 py-5 align-middle text-[10px] font-mono leading-normal text-slate-500">
                       <div className="flex items-center gap-1">
                         <Globe className="h-3 w-3" />
                         <span>IP: {log.ip_address || "127.0.0.1"}</span>
@@ -223,7 +223,7 @@ export default function AdminAuditLogsPage() {
                     </td>
 
                     {/* Status Badge */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5 align-middle">
                       <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider border ${
                         isSuccess
                           ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
@@ -242,7 +242,7 @@ export default function AdminAuditLogsPage() {
                     </td>
 
                     {/* Date */}
-                    <td className="px-6 py-4 text-slate-500 font-medium">{dateText}</td>
+                    <td className="px-6 py-5 align-middle text-slate-500 font-medium">{dateText}</td>
                   </motion.tr>
                 );
               })}

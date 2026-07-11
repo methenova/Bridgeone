@@ -197,10 +197,10 @@ export default function AdminOrgAdminsPage() {
           <table className="min-w-full text-left border-collapse">
             <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
-                <th className="px-6 py-4.5">Administrator</th>
-                <th className="px-6 py-4.5">Associated Shop / Org</th>
-                <th className="px-6 py-4.5">Joined Date</th>
-                <th className="px-6 py-4.5 text-right">Actions</th>
+                <th className="px-6 py-5 align-middle">Administrator</th>
+                <th className="px-6 py-5 align-middle">Associated Shop / Org</th>
+                <th className="px-6 py-5 align-middle">Joined Date</th>
+                <th className="px-6 py-5 align-middle text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
@@ -218,10 +218,10 @@ export default function AdminOrgAdminsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.03 }}
                     key={admin.id} 
-                    className="hover:bg-white shadow-sm/10 transition-colors"
+                    className="hover:bg-slate-50/50 transition-colors group"
                   >
                     {/* Admin profile info */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5 align-middle">
                       <div className="flex items-center gap-3">
                         <div className="h-9 w-9 rounded-xl border border-slate-200 bg-white flex items-center justify-center shrink-0">
                           <Users className="h-4 w-4 text-indigo-400" />
@@ -234,7 +234,7 @@ export default function AdminOrgAdminsPage() {
                     </td>
 
                     {/* Linked store */}
-                    <td className="px-6 py-4 font-semibold">
+                    <td className="px-6 py-5 align-middle font-semibold">
                       {linkedShop ? (
                         <div className="flex items-center gap-2 text-slate-800">
                           <Building className="h-3.5 w-3.5 text-indigo-500" />
@@ -246,10 +246,10 @@ export default function AdminOrgAdminsPage() {
                     </td>
 
                     {/* Registration Date */}
-                    <td className="px-6 py-4 text-slate-500 font-medium">{joinDate}</td>
+                    <td className="px-6 py-5 align-middle text-slate-500 font-medium">{joinDate}</td>
 
                     {/* Action buttons */}
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-5 align-middle text-right">
                       <div className="flex items-center justify-end gap-2.5">
                         <button
                           type="button"

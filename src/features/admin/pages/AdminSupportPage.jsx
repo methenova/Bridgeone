@@ -221,11 +221,11 @@ export default function AdminSupportPage() {
           <table className="min-w-full text-left border-collapse">
             <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
-                <th className="px-6 py-4.5">Ticket details</th>
-                <th className="px-6 py-4.5">Vertical Type</th>
-                <th className="px-6 py-4.5">Resolution status</th>
-                <th className="px-6 py-4.5">Report Date</th>
-                <th className="px-6 py-4.5 text-right">Actions</th>
+                <th className="px-6 py-5 align-middle">Ticket details</th>
+                <th className="px-6 py-5 align-middle">Vertical Type</th>
+                <th className="px-6 py-5 align-middle">Resolution status</th>
+                <th className="px-6 py-5 align-middle">Report Date</th>
+                <th className="px-6 py-5 align-middle text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
@@ -238,10 +238,10 @@ export default function AdminSupportPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.03 }}
                     key={t.id} 
-                    className="hover:bg-white shadow-sm/10 transition-colors"
+                    className="hover:bg-slate-50/50 transition-colors group"
                   >
                     {/* Ticket Title & Desc */}
-                    <td className="px-6 py-4 max-w-md">
+                    <td className="px-6 py-5 align-middle max-w-md">
                       <div>
                         <span className="font-bold text-slate-900 block text-sm">{t.title}</span>
                         <span className="text-[10px] text-slate-500 mt-1 block leading-normal line-clamp-2">
@@ -251,7 +251,7 @@ export default function AdminSupportPage() {
                     </td>
 
                     {/* Ticket Type */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5 align-middle">
                       <span className={`inline-flex items-center gap-1 text-[10px] font-semibold capitalize ${
                         t.type === "bug" 
                           ? "text-red-400" 
@@ -267,7 +267,7 @@ export default function AdminSupportPage() {
                     </td>
 
                     {/* Resolution Status Dropdown */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5 align-middle">
                       <select
                         value={t.status}
                         onChange={(e) => handleStatusChange(t.id, e.target.value)}
@@ -280,10 +280,10 @@ export default function AdminSupportPage() {
                     </td>
 
                     {/* Report Date */}
-                    <td className="px-6 py-4 text-slate-500 font-medium">{dateText}</td>
+                    <td className="px-6 py-5 align-middle text-slate-500 font-medium">{dateText}</td>
 
                     {/* Action buttons */}
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-5 align-middle text-right">
                       <div className="flex items-center justify-end gap-2.5">
                         <button
                           type="button"

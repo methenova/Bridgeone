@@ -183,13 +183,13 @@ export default function AdminProductsPage() {
           <table className="min-w-full text-left border-collapse">
             <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
-                <th className="px-6 py-4.5">Product</th>
-                <th className="px-6 py-4.5">Merchant Shop</th>
-                <th className="px-6 py-4.5">Category</th>
-                <th className="px-6 py-4.5">Price</th>
-                <th className="px-6 py-4.5 text-center">Featured</th>
-                <th className="px-6 py-4.5 text-center">Visibility</th>
-                <th className="px-6 py-4.5 text-right">Action</th>
+                <th className="px-6 py-5 align-middle">Product</th>
+                <th className="px-6 py-5 align-middle">Merchant Shop</th>
+                <th className="px-6 py-5 align-middle">Category</th>
+                <th className="px-6 py-5 align-middle">Price</th>
+                <th className="px-6 py-5 align-middle text-center">Featured</th>
+                <th className="px-6 py-5 align-middle text-center">Visibility</th>
+                <th className="px-6 py-5 align-middle text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
@@ -201,10 +201,10 @@ export default function AdminProductsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.02 }}
                     key={p.id} 
-                    className="hover:bg-white shadow-sm/10 transition-colors"
+                    className="hover:bg-slate-50/50 transition-colors group"
                   >
                     {/* Thumbnail + SKU */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5 align-middle">
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-white flex items-center justify-center font-bold text-slate-500">
                           {p.thumbnail_url ? (
@@ -223,22 +223,22 @@ export default function AdminProductsPage() {
                     </td>
 
                     {/* Shop Name */}
-                    <td className="px-6 py-4 text-slate-900 font-semibold">
+                    <td className="px-6 py-5 align-middle text-slate-900 font-semibold">
                       {p.shops?.name || "—"}
                     </td>
 
                     {/* Category */}
-                    <td className="px-6 py-4 text-slate-500 font-medium">
+                    <td className="px-6 py-5 align-middle text-slate-500 font-medium">
                       {p.categories?.name || "Uncategorized"}
                     </td>
 
                     {/* Price */}
-                    <td className="px-6 py-4 font-bold text-slate-900">
+                    <td className="px-6 py-5 align-middle font-bold text-slate-900">
                       ₹{displayPrice.toLocaleString()}
                     </td>
 
                     {/* Featured Star Toggle */}
-                    <td className="px-6 py-4 text-center">
+                    <td className="px-6 py-5 align-middle text-center">
                       <Button
                         onClick={() => handleToggleFeatured(p)}
                         disabled={toggleFeatured.isPending}
@@ -254,7 +254,7 @@ export default function AdminProductsPage() {
                     </td>
 
                     {/* Active Status Badge */}
-                    <td className="px-6 py-4 text-center">
+                    <td className="px-6 py-5 align-middle text-center">
                       <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider border ${
                         p.is_active
                           ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
@@ -265,7 +265,7 @@ export default function AdminProductsPage() {
                     </td>
 
                     {/* Active Toggle Switch */}
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-5 align-middle text-right">
                       <div className="flex items-center justify-end gap-2.5">
                         <button
                           type="button"

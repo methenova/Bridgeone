@@ -187,11 +187,11 @@ export default function AdminWidgetsPage() {
           <table className="min-w-full text-left border-collapse">
             <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
-                <th className="px-6 py-4.5">Widget Name</th>
-                <th className="px-6 py-4.5">Organization</th>
-                <th className="px-6 py-4.5">API Key (Shop ID)</th>
-                <th className="px-6 py-4.5">Status</th>
-                <th className="px-6 py-4.5 text-right">Integrate Actions</th>
+                <th className="px-6 py-5 align-middle">Widget Name</th>
+                <th className="px-6 py-5 align-middle">Organization</th>
+                <th className="px-6 py-5 align-middle">API Key (Shop ID)</th>
+                <th className="px-6 py-5 align-middle">Status</th>
+                <th className="px-6 py-5 align-middle text-right">Integrate Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
@@ -204,26 +204,26 @@ export default function AdminWidgetsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.03 }}
                     key={s.id} 
-                    className="hover:bg-white shadow-sm/10 transition-colors"
+                    className="hover:bg-slate-50/50 transition-colors group"
                   >
                     {/* Widget name */}
-                    <td className="px-6 py-4 font-bold text-slate-900 flex items-center gap-2">
+                    <td className="px-6 py-5 align-middle font-bold text-slate-900 flex items-center gap-2">
                       <Code className="h-4 w-4 text-indigo-400" />
                       <span>{s.shop_name} Call Widget</span>
                     </td>
 
                     {/* Org Name */}
-                    <td className="px-6 py-4 font-semibold text-slate-700">{s.shop_name}</td>
+                    <td className="px-6 py-5 align-middle font-semibold text-slate-700">{s.shop_name}</td>
 
                     {/* Api Key */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5 align-middle">
                       <code className="text-[10px] font-mono text-slate-500 bg-slate-50 px-2 py-1 rounded select-all font-bold">
                         {s.id}
                       </code>
                     </td>
 
                     {/* Status online/offline */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5 align-middle">
                       <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider border ${
                         s.is_online
                           ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
@@ -234,7 +234,7 @@ export default function AdminWidgetsPage() {
                     </td>
 
                     {/* Action buttons */}
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-5 align-middle text-right">
                       <div className="flex items-center justify-end gap-2.5">
                         
                         {/* Toggle active status */}

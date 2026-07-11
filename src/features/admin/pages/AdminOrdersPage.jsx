@@ -51,13 +51,13 @@ export default function AdminOrdersPage() {
             <table className="min-w-full text-left">
               <thead className="border-b border-slate-200 bg-slate-50/60 text-slate-700 text-sm font-semibold">
                 <tr>
-                  <th className="px-6 py-4">Order ID</th>
-                  <th className="px-6 py-4">Customer</th>
-                  <th className="px-6 py-4">Date Placed</th>
-                  <th className="px-6 py-4">Payment Method</th>
-                  <th className="px-6 py-4">Value</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-6 py-5 align-middle">Order ID</th>
+                  <th className="px-6 py-5 align-middle">Customer</th>
+                  <th className="px-6 py-5 align-middle">Date Placed</th>
+                  <th className="px-6 py-5 align-middle">Payment Method</th>
+                  <th className="px-6 py-5 align-middle">Value</th>
+                  <th className="px-6 py-5 align-middle">Status</th>
+                  <th className="px-6 py-5 align-middle text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-850 bg-white shadow-sm/10 text-sm text-slate-600">
@@ -70,23 +70,23 @@ export default function AdminOrdersPage() {
                   });
 
                   return (
-                    <tr key={o.id} className="hover:bg-slate-100/20 transition-colors">
-                      <td className="px-6 py-4 font-mono text-xs font-semibold text-slate-500">
+                    <tr key={o.id} className="hover:bg-slate-50/50 transition-colors group">
+                      <td className="px-6 py-5 align-middle font-mono text-xs font-semibold text-slate-500">
                         #{o.id.slice(0, 8).toUpperCase()}
                       </td>
-                      <td className="px-6 py-4 font-medium text-slate-900">
+                      <td className="px-6 py-5 align-middle font-medium text-slate-900">
                         {customerName}
                       </td>
-                      <td className="px-6 py-4 text-slate-500">
+                      <td className="px-6 py-5 align-middle text-slate-500">
                         {orderDate}
                       </td>
-                      <td className="px-6 py-4 text-slate-500 capitalize">
+                      <td className="px-6 py-5 align-middle text-slate-500 capitalize">
                         {o.payment_method}
                       </td>
-                      <td className="px-6 py-4 font-bold text-slate-900">
+                      <td className="px-6 py-5 align-middle font-bold text-slate-900">
                         ₹{Number(o.total).toLocaleString()}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-5 align-middle">
                         <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-bold uppercase ${
                           o.status === "pending"
                             ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
@@ -97,7 +97,7 @@ export default function AdminOrdersPage() {
                           {o.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-6 py-5 align-middle text-right">
                         <div className="flex items-center justify-end gap-2.5">
                           <button
                             type="button"

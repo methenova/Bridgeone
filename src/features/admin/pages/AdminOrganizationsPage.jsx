@@ -397,11 +397,11 @@ export default function AdminOrganizationsPage() {
           <table className="min-w-full text-left border-collapse">
             <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
-                <th className="px-6 py-4.5">Organization / brand</th>
-                <th className="px-6 py-4.5">Admin Profile</th>
-                <th className="px-6 py-4.5">Subscription Level</th>
-                <th className="px-6 py-4.5">Status</th>
-                <th className="px-6 py-4.5 text-right">Actions</th>
+                <th className="px-6 py-5 align-middle">Organization / brand</th>
+                <th className="px-6 py-5 align-middle">Admin Profile</th>
+                <th className="px-6 py-5 align-middle">Subscription Level</th>
+                <th className="px-6 py-5 align-middle">Status</th>
+                <th className="px-6 py-5 align-middle text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
@@ -416,10 +416,10 @@ export default function AdminOrganizationsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.03 }}
                     key={s.id} 
-                    className="hover:bg-white shadow-sm/10 transition-colors"
+                    className="hover:bg-slate-50/50 transition-colors group"
                   >
                     {/* Brand Info */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5 align-middle">
                       <div className="flex items-center gap-3">
                         <div 
                           onClick={() => handleOpenDetails(s)}
@@ -446,13 +446,13 @@ export default function AdminOrganizationsPage() {
                     </td>
 
                     {/* Owner Contact */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5 align-middle">
                       <div className="font-semibold text-slate-900">{ownerName}</div>
                       <div className="text-[10px] text-slate-500 mt-0.5">{ownerEmail}</div>
                     </td>
 
                     {/* Subscription Select Dropdown */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5 align-middle">
                       <select
                         value={s.plan_name || "free"}
                         onChange={(e) => handlePlanChange(s.id, e.target.value)}
@@ -466,7 +466,7 @@ export default function AdminOrganizationsPage() {
                     </td>
 
                     {/* Active Moderation Status Badge */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5 align-middle">
                       <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider border ${
                         isApproved
                           ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
@@ -477,7 +477,7 @@ export default function AdminOrganizationsPage() {
                     </td>
 
                     {/* Toggle and Edit Actions */}
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-5 align-middle text-right">
                       <div className="flex items-center justify-end gap-2.5">
                         {/* Suspend Status */}
                         <button

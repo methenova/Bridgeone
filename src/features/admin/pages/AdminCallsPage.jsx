@@ -308,11 +308,11 @@ export default function AdminCallsPage() {
               <table className="min-w-full text-left border-collapse">
                 <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
                   <tr>
-                    <th className="px-6 py-4.5">Client Contact</th>
-                    <th className="px-6 py-4.5">Storefront Target</th>
-                    <th className="px-6 py-4.5">Requested Call Time</th>
-                    <th className="px-6 py-4.5">Booking Status</th>
-                    <th className="px-6 py-4.5 text-right">Action</th>
+                    <th className="px-6 py-5 align-middle">Client Contact</th>
+                    <th className="px-6 py-5 align-middle">Storefront Target</th>
+                    <th className="px-6 py-5 align-middle">Requested Call Time</th>
+                    <th className="px-6 py-5 align-middle">Booking Status</th>
+                    <th className="px-6 py-5 align-middle text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
@@ -331,9 +331,9 @@ export default function AdminCallsPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.02 }}
                         key={cb.id} 
-                        className="hover:bg-white shadow-sm/10 transition-colors"
+                        className="hover:bg-slate-50/50 transition-colors group"
                       >
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-5 align-middle">
                           <div className="flex items-center gap-3">
                             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-50 border border-slate-200 text-slate-500 shrink-0 font-bold">
                               {(cb.customer_name || "G").charAt(0).toUpperCase()}
@@ -348,15 +348,15 @@ export default function AdminCallsPage() {
                           </div>
                         </td>
 
-                        <td className="px-6 py-4 text-slate-900 font-semibold">
+                        <td className="px-6 py-5 align-middle text-slate-900 font-semibold">
                           {cb.shops?.shop_name || "—"}
                         </td>
 
-                        <td className="px-6 py-4 text-slate-500 font-medium">
+                        <td className="px-6 py-5 align-middle text-slate-500 font-medium">
                           {scheduledDate}
                         </td>
 
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-5 align-middle">
                           <select
                             value={cb.status || "pending"}
                             onChange={(e) => handleCallbackStatus(cb.id, e.target.value)}
@@ -369,7 +369,7 @@ export default function AdminCallsPage() {
                           </select>
                         </td>
 
-                        <td className="px-6 py-4 text-right">
+                        <td className="px-6 py-5 align-middle text-right">
                           <div className="flex items-center justify-end gap-2.5">
                             <button
                               type="button"
@@ -436,12 +436,12 @@ export default function AdminCallsPage() {
               <table className="min-w-full text-left border-collapse">
                 <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
                   <tr>
-                    <th className="px-6 py-4.5">Caller / Customer</th>
-                    <th className="px-6 py-4.5">Target Store</th>
-                    <th className="px-6 py-4.5">Duration</th>
-                    <th className="px-6 py-4.5">Connection Date</th>
-                    <th className="px-6 py-4.5">Call Result</th>
-                    <th className="px-6 py-4.5 text-right">Action</th>
+                    <th className="px-6 py-5 align-middle">Caller / Customer</th>
+                    <th className="px-6 py-5 align-middle">Target Store</th>
+                    <th className="px-6 py-5 align-middle">Duration</th>
+                    <th className="px-6 py-5 align-middle">Connection Date</th>
+                    <th className="px-6 py-5 align-middle">Call Result</th>
+                    <th className="px-6 py-5 align-middle text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
@@ -460,9 +460,9 @@ export default function AdminCallsPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.02 }}
                         key={c.id} 
-                        className="hover:bg-white shadow-sm/10 transition-colors"
+                        className="hover:bg-slate-50/50 transition-colors group"
                       >
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-5 align-middle">
                           <div className="flex items-center gap-3">
                             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-50 border border-slate-200 text-slate-500 shrink-0">
                               <User className="h-4 w-4" />
@@ -477,19 +477,19 @@ export default function AdminCallsPage() {
                           </div>
                         </td>
 
-                        <td className="px-6 py-4 text-slate-900 font-semibold">
+                        <td className="px-6 py-5 align-middle text-slate-900 font-semibold">
                           {c.shops?.shop_name || "—"}
                         </td>
 
-                        <td className="px-6 py-4 text-slate-500 font-mono">
+                        <td className="px-6 py-5 align-middle text-slate-500 font-mono">
                           {formatDuration(c.duration)}
                         </td>
 
-                        <td className="px-6 py-4 text-slate-500 font-medium">
+                        <td className="px-6 py-5 align-middle text-slate-500 font-medium">
                           {callDate}
                         </td>
 
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-5 align-middle">
                           <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider border ${
                             c.status === "completed"
                               ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
@@ -501,7 +501,7 @@ export default function AdminCallsPage() {
                           </span>
                         </td>
 
-                        <td className="px-6 py-4 text-right">
+                        <td className="px-6 py-5 align-middle text-right">
                           <div className="flex items-center justify-end gap-2.5">
                             <button
                               type="button"

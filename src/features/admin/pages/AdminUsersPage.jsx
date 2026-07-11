@@ -158,11 +158,11 @@ export default function AdminUsersPage() {
           <table className="min-w-full text-left border-collapse">
             <thead className="border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
-                <th className="px-6 py-4.5">Account Profile</th>
-                <th className="px-6 py-4.5">Email Address</th>
-                <th className="px-6 py-4.5">Membership Role</th>
-                <th className="px-6 py-4.5">Registration Date</th>
-                <th className="px-6 py-4.5 text-right">System Privilege Actions</th>
+                <th className="px-6 py-5 align-middle">Account Profile</th>
+                <th className="px-6 py-5 align-middle">Email Address</th>
+                <th className="px-6 py-5 align-middle">Membership Role</th>
+                <th className="px-6 py-5 align-middle">Registration Date</th>
+                <th className="px-6 py-5 align-middle text-right">System Privilege Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
@@ -180,10 +180,10 @@ export default function AdminUsersPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.02 }}
                     key={u.id} 
-                    className="hover:bg-white shadow-sm/10 transition-colors"
+                    className="hover:bg-slate-50/50 transition-colors group"
                   >
                     {/* Profile */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5 align-middle">
                       <div className="flex items-center gap-3">
                         <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-600/10 border border-blue-500/10 text-blue-450 shrink-0 font-extrabold text-[10px]">
                           {(u.full_name || "U").charAt(0).toUpperCase()}
@@ -198,12 +198,12 @@ export default function AdminUsersPage() {
                     </td>
 
                     {/* Email */}
-                    <td className="px-6 py-4 text-slate-700 font-medium">
+                    <td className="px-6 py-5 align-middle text-slate-700 font-medium">
                       {u.email || "—"}
                     </td>
 
                     {/* Role Badge */}
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5 align-middle">
                       <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider border ${
                         userRole === "admin"
                           ? "bg-red-500/10 text-red-400 border-red-500/20"
@@ -216,12 +216,12 @@ export default function AdminUsersPage() {
                     </td>
 
                     {/* Registration Date */}
-                    <td className="px-6 py-4 text-slate-500 font-medium">
+                    <td className="px-6 py-5 align-middle text-slate-500 font-medium">
                       {joinDate}
                     </td>
 
                     {/* Dropdown Change Selector */}
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-5 align-middle text-right">
                       <select
                         value={userRole}
                         onChange={(e) => handleRoleChange(u.id, e.target.value)}
