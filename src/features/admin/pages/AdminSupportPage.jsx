@@ -284,13 +284,16 @@ export default function AdminSupportPage() {
 
                     {/* Action buttons */}
                     <td className="px-6 py-4 text-right">
-                      <button
-                        onClick={() => handleDeleteTicket(t.id)}
-                        className="p-2.5 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer inline-flex items-center justify-center"
-                        title="Delete Ticket"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                      <div className="flex items-center justify-end gap-2.5">
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteTicket(t.id)}
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-red-500 hover:bg-red-50 hover:border-red-200 hover:text-red-600 cursor-pointer"
+                          title="Delete Ticket"
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </button>
+                      </div>
                     </td>
                   </motion.tr>
                 );

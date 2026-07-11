@@ -10,7 +10,8 @@ import {
   Edit,
   X,
   Mail,
-  Loader2
+  Loader2,
+  Link2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
@@ -249,12 +250,16 @@ export default function AdminOrgAdminsPage() {
 
                     {/* Action buttons */}
                     <td className="px-6 py-4 text-right">
-                      <Button
-                        onClick={() => handleOpenLink(admin)}
-                        className="text-blue-450 hover:text-white transition-colors bg-blue-500/10 px-3 py-1.5 rounded-xl border border-blue-500/20 text-[10px] font-bold uppercase tracking-wider cursor-pointer"
-                      >
-                        Map Shop
-                      </Button>
+                      <div className="flex items-center justify-end gap-2.5">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenLink(admin)}
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-blue-500 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 cursor-pointer"
+                          title="Map Shop"
+                        >
+                          <Link2 className="h-5 w-5" />
+                        </button>
+                      </div>
                     </td>
                   </motion.tr>
                 );

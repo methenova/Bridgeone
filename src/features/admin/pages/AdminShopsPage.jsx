@@ -268,18 +268,21 @@ export default function AdminShopsPage() {
 
                     {/* Verification Status Toggle Button */}
                     <td className="px-6 py-4 text-right">
-                      <Button
-                        onClick={() => handleToggleActive(s)}
-                        disabled={toggleStatus.isPending}
-                        title={isApproved ? "Suspend Shop Access" : "Approve Shop Access"}
-                        className="text-slate-500 hover:text-slate-900 transition-colors disabled:opacity-50 cursor-pointer"
-                      >
-                        {isApproved ? (
-                          <ToggleRight className="h-6 w-6 text-emerald-500" />
-                        ) : (
-                          <ToggleLeft className="h-6 w-6 text-slate-700" />
-                        )}
-                      </Button>
+                      <div className="flex items-center justify-end gap-2.5">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleActive(s)}
+                          disabled={toggleStatus.isPending}
+                          title={isApproved ? "Suspend Shop Access" : "Approve Shop Access"}
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 disabled:opacity-50 cursor-pointer"
+                        >
+                          {isApproved ? (
+                            <ToggleRight className="h-5 w-5 text-emerald-500" />
+                          ) : (
+                            <ToggleLeft className="h-5 w-5 text-slate-700" />
+                          )}
+                        </button>
+                      </div>
                     </td>
                   </motion.tr>
                 );

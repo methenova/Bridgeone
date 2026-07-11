@@ -235,37 +235,41 @@ export default function AdminWidgetsPage() {
 
                     {/* Action buttons */}
                     <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-3.5">
+                      <div className="flex items-center justify-end gap-2.5">
                         
                         {/* Toggle active status */}
-                        <Button
+                        <button
+                          type="button"
                           onClick={() => handleToggleWidget(s)}
-                          className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 cursor-pointer"
                           title="Toggle Status"
                         >
                           {s.is_online ? (
-                            <ToggleRight className="h-6 w-6 text-emerald-500" />
+                            <ToggleRight className="h-5 w-5 text-emerald-500" />
                           ) : (
-                            <ToggleLeft className="h-6 w-6 text-slate-700" />
+                            <ToggleLeft className="h-5 w-5 text-slate-700" />
                           )}
-                        </Button>
+                        </button>
 
                         {/* View Embed Code */}
-                        <Button
+                        <button
+                          type="button"
                           onClick={() => setSelectedShop(s)}
-                          className="text-slate-500 hover:text-indigo-400 transition-colors cursor-pointer flex items-center gap-1 bg-white shadow-sm border border-slate-200 px-2.5 py-1 rounded-lg hover:border-slate-200 text-[10px] font-bold uppercase tracking-wider"
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-blue-500 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 cursor-pointer"
+                          title="View Embed Code"
                         >
-                          <Eye className="h-3 w-3" /> Snippet
-                        </Button>
+                          <Eye className="h-5 w-5" />
+                        </button>
 
                         {/* Rotate Security API Key */}
-                        <Button
+                        <button
+                          type="button"
                           onClick={() => handleRegenerateKey(s.shop_name)}
-                          className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-amber-500 hover:bg-amber-50 hover:border-amber-200 hover:text-amber-600 cursor-pointer"
                           title="Rotate API Key Token"
                         >
-                          <RefreshCw className="h-3.5 w-3.5" />
-                        </Button>
+                          <RefreshCw className="h-5 w-5" />
+                        </button>
                       </div>
                     </td>
                   </motion.tr>

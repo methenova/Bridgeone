@@ -370,13 +370,16 @@ export default function AdminCallsPage() {
                         </td>
 
                         <td className="px-6 py-4 text-right">
-                          <Button
-                            onClick={() => handleDeleteCallback(cb.id)}
-                            disabled={deleteCallbackReq.isPending}
-                            className="text-slate-500 hover:text-red-400 transition-colors disabled:opacity-50 cursor-pointer"
-                          >
-                            <Trash2 className="h-4.5 w-4.5" />
-                          </Button>
+                          <div className="flex items-center justify-end gap-2.5">
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteCallback(cb.id)}
+                              disabled={deleteCallbackReq.isPending}
+                              className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-red-500 hover:bg-red-50 hover:border-red-200 hover:text-red-600 disabled:opacity-50 cursor-pointer"
+                            >
+                              <Trash2 className="h-5 w-5" />
+                            </button>
+                          </div>
                         </td>
                       </motion.tr>
                     );
@@ -499,13 +502,16 @@ export default function AdminCallsPage() {
                         </td>
 
                         <td className="px-6 py-4 text-right">
-                          <Button
-                            onClick={() => handleDeleteLog(c.id)}
-                            disabled={deleteCall.isPending}
-                            className="text-slate-500 hover:text-red-400 transition-colors disabled:opacity-50 cursor-pointer"
-                          >
-                            <Trash2 className="h-4.5 w-4.5" />
-                          </Button>
+                          <div className="flex items-center justify-end gap-2.5">
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteLog(c.id)}
+                              disabled={deleteCall.isPending}
+                              className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-red-500 hover:bg-red-50 hover:border-red-200 hover:text-red-600 disabled:opacity-50 cursor-pointer"
+                            >
+                              <Trash2 className="h-5 w-5" />
+                            </button>
+                          </div>
                         </td>
                       </motion.tr>
                     );

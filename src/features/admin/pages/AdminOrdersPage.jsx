@@ -98,12 +98,16 @@ export default function AdminOrdersPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <Button
-                          onClick={() => setSelectedOrder(o)}
-                          className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white shadow-sm text-slate-500 hover:text-slate-900 hover:border-slate-300 ml-auto"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center justify-end gap-2.5">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedOrder(o)}
+                            className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-blue-500 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 cursor-pointer"
+                            title="View Details"
+                          >
+                            <Eye className="h-5 w-5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );

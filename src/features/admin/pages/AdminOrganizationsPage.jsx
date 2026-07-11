@@ -478,37 +478,40 @@ export default function AdminOrganizationsPage() {
 
                     {/* Toggle and Edit Actions */}
                     <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-3.5">
+                      <div className="flex items-center justify-end gap-2.5">
                         {/* Suspend Status */}
-                        <Button
+                        <button
+                          type="button"
                           onClick={() => handleToggleActive(s)}
                           disabled={toggleStatus.isPending}
-                          className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 disabled:opacity-50 cursor-pointer"
                         >
                           {isApproved ? (
-                            <ToggleRight className="h-6 w-6 text-emerald-500" />
+                            <ToggleRight className="h-5 w-5 text-emerald-500" />
                           ) : (
-                            <ToggleLeft className="h-6 w-6 text-slate-700" />
+                            <ToggleLeft className="h-5 w-5 text-slate-700" />
                           )}
-                        </Button>
+                        </button>
 
                         {/* Edit details */}
-                        <Button
+                        <button
+                          type="button"
                           onClick={() => handleOpenEdit(s)}
-                          className="text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-amber-500 hover:bg-amber-50 hover:border-amber-200 hover:text-amber-600 cursor-pointer"
                           title="Edit Details"
                         >
-                          <Edit3 className="h-4 w-4" />
-                        </Button>
+                          <Edit3 className="h-5 w-5" />
+                        </button>
 
                         {/* Permanent Delete */}
-                        <Button
+                        <button
+                          type="button"
                           onClick={() => handleDeleteShop(s.id, s.shop_name)}
-                          className="text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-red-500 hover:bg-red-50 hover:border-red-200 hover:text-red-600 cursor-pointer"
                           title="Delete Organization"
                         >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                          <Trash2 className="h-5 w-5" />
+                        </button>
                       </div>
                     </td>
                   </motion.tr>
