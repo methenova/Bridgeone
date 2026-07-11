@@ -22,6 +22,11 @@ const queryClient = new QueryClient({
     },
   },
 });
+// Handle Vite dynamic import chunk load errors (happens when users load stale cache immediately after a deployment)
+window.addEventListener("vite:preloadError", (event) => {
+  console.warn("Vite chunk load error detected. Reloading page to fetch latest bundle...", event);
+  window.location.reload();
+});
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
