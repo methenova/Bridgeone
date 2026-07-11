@@ -230,6 +230,20 @@ export default function WidgetPage() {
   // Online agents list state
   const [agentsList, setAgentsList] = useState([]);
 
+  // Compute total online agents (including owner if shop is online)
+  const totalOnlineCount = onlineAgentsCount + (shop?.is_online ? 1 : 0);
+  const displayAgentsList = shop ? [
+    {
+      id: "owner-row",
+      status: shop.is_online ? "Available" : "Offline",
+      department: "Management",
+      is_online: shop.is_online,
+      profile_id: shop.owner_id,
+      profiles: { full_name: shop.shop_name || shop.name || "Store Owner" }
+    },
+    ...agentsList.filter(a => a.id !== "owner-row")
+  ] : agentsList;
+
   // Product detection states
   const [detectedProduct, setDetectedProduct] = useState(null);
   const [activeProductInquiry, setActiveProductInquiry] = useState(null);
@@ -647,7 +661,7 @@ export default function WidgetPage() {
     }
 
     // Direct routing to callback scheduler if no agents are available
-    if (onlineAgentsCount === 0) {
+    if (totalOnlineCount === 0) {
       const confirmCallback = window.confirm("All agents are currently offline. Would you like to schedule a callback appointment instead?");
       if (confirmCallback) {
         setFlowState("offline");
@@ -1304,10 +1318,10 @@ export default function WidgetPage() {
                 </h2>
 
                 <div className="flex justify-center gap-2 mt-1">
-                  {onlineAgentsCount > 0 ? (
-                    <span className="inline-flex items-center gap-1 bg-green-500/10 border border-green-500/20 text-green-400 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider">
-                      ● Active Experts Online: {onlineAgentsCount}
-                    </span>
+                  {totalOnlineCount > 0 ? (
+                    <div className="flex items-center gap-1.5 text-[10px] sm:text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full ring-1 ring-emerald-500/20">
+                      ● Active Experts Online: {totalOnlineCount}
+                    </div>
                   ) : (
                     <span className="inline-flex items-center gap-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider animate-pulse">
                       ● Queue Busy / Standby Routing Active
@@ -1321,7 +1335,7 @@ export default function WidgetPage() {
                 <div className="bg-white shadow-sm/35 border border-slate-200 rounded-xl p-3.5 space-y-1">
                   <span className="text-slate-500 uppercase tracking-wider block text-[8px]">Est. Wait Time</span>
                   <span className="font-bold text-slate-900 text-xs block">
-                    {onlineAgentsCount > 0 ? "< 2 minutes" : "< 5 minutes"}
+                    {totalOnlineCount > 0 ? "< 2 minutes" : "< 5 minutes"}
                   </span>
                 </div>
 
@@ -1375,11 +1389,11 @@ export default function WidgetPage() {
               )}
 
               {/* Roster Live Availability Grid */}
-              {agentsList && agentsList.length > 0 && (
+              {displayAgentsList && displayAgentsList.length > 0 && (
                 <div className="bg-white shadow-sm/35 border border-slate-200 rounded-xl p-3.5 space-y-2.5">
                   <span className="text-slate-500 uppercase tracking-wider block text-[8px] font-bold">Roster Availability</span>
                   <div className="space-y-2 max-h-[110px] overflow-y-auto pr-1">
-                    {agentsList.map((ag) => {
+                    {displayAgentsList.map((ag) => {
                       const name = ag.profiles?.full_name || "Agent";
                       const avatar = ag.profiles?.avatar_url;
                       const status = ag.status || "Offline";
@@ -1615,10 +1629,10 @@ export default function WidgetPage() {
                 </div>
                 <div className="flex justify-between items-center" aria-live="polite">
                   <span className="text-slate-500 font-semibold">Available Agents:</span>
-                  <span className="text-emerald-400 font-extrabold flex items-center gap-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    {onlineAgentsCount} active
-                  </span>
+                  <div className="text-[10px] font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    {totalOnlineCount} active
+                  </div>
                 </div>
               </div>
             </div>
@@ -1920,11 +1934,11 @@ export default function WidgetPage() {
             </div>
 
             {/* Offline Roster indicators */}
-            {agentsList && agentsList.length > 0 && (
+            {displayAgentsList && displayAgentsList.length > 0 && (
               <div className="bg-white shadow-sm/35 border border-slate-200 rounded-xl p-3.5 space-y-2 text-left">
                 <span className="text-slate-500 uppercase tracking-wider block text-[8px] font-bold">Roster Availability (All Offline)</span>
                 <div className="space-y-2 max-h-[90px] overflow-y-auto pr-1">
-                  {agentsList.map((ag) => {
+                  {displayAgentsList.map((ag) => {
                     const name = ag.profiles?.full_name || "Agent";
                     const avatar = ag.profiles?.avatar_url;
                     const dept = ag.department || "Consultant";
