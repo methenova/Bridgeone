@@ -263,7 +263,7 @@ table tr:last-child td:last-child {
 }
 
 .admin-theme button {
-  border-radius: 0.375rem !important;
+  border-radius: 0.5rem !important;
   /* Keep buttons standard 8px */
 }
 
@@ -271,7 +271,7 @@ table tr:last-child td:last-child {
 .admin-theme .rounded-2xl,
 .admin-theme .rounded-3xl,
 .admin-theme .rounded-xl,
-.admin-theme .rounded-\[14px\] {
+.admin-theme .rounded-\[8px\] {
   border-radius: 0.5rem !important;
 }
 

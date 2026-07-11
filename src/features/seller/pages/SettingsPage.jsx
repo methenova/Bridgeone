@@ -252,7 +252,7 @@ export default function SettingsPage() {
           <button
             onClick={() => setActiveTab("profile")}
             className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
-              activeTab === "profile" ? "bg-blue-600 text-white font-bold" : "text-slate-500 hover:text-white"
+              activeTab === "profile" ? "bg-blue-600 text-white font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
             }`}
           >
             <Store className="h-4 w-4" />
@@ -262,7 +262,7 @@ export default function SettingsPage() {
           <button
             onClick={() => setActiveTab("hours")}
             className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
-              activeTab === "hours" ? "bg-blue-600 text-white font-bold" : "text-slate-500 hover:text-white"
+              activeTab === "hours" ? "bg-blue-600 text-white font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
             }`}
           >
             <Clock className="h-4 w-4" />
@@ -272,7 +272,7 @@ export default function SettingsPage() {
           <button
             onClick={() => setActiveTab("routing")}
             className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
-              activeTab === "routing" ? "bg-blue-600 text-white font-bold" : "text-slate-500 hover:text-white"
+              activeTab === "routing" ? "bg-blue-600 text-white font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
             }`}
           >
             <Route className="h-4 w-4" />
@@ -282,7 +282,7 @@ export default function SettingsPage() {
           <button
             onClick={() => setActiveTab("widget")}
             className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
-              activeTab === "widget" ? "bg-blue-600 text-white font-bold" : "text-slate-500 hover:text-white"
+              activeTab === "widget" ? "bg-blue-600 text-white font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
             }`}
           >
             <Video className="h-4 w-4" />
@@ -292,7 +292,7 @@ export default function SettingsPage() {
           <button
             onClick={() => setActiveTab("notifications")}
             className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
-              activeTab === "notifications" ? "bg-blue-600 text-white font-bold" : "text-slate-500 hover:text-white"
+              activeTab === "notifications" ? "bg-blue-600 text-white font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
             }`}
           >
             <Bell className="h-4 w-4" />
@@ -302,7 +302,7 @@ export default function SettingsPage() {
           <button
             onClick={() => setActiveTab("security")}
             className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
-              activeTab === "security" ? "bg-blue-600 text-white font-bold" : "text-slate-500 hover:text-white"
+              activeTab === "security" ? "bg-blue-600 text-white font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
             }`}
           >
             <Shield className="h-4 w-4" />
@@ -312,7 +312,7 @@ export default function SettingsPage() {
           <button
             onClick={() => setActiveTab("integrations")}
             className={`flex items-center gap-2.5 px-4.5 py-3 rounded-xl transition-all cursor-pointer text-left ${
-              activeTab === "integrations" ? "bg-blue-600 text-white font-bold" : "text-slate-500 hover:text-white"
+              activeTab === "integrations" ? "bg-blue-600 text-white font-bold" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
             }`}
           >
             <Layers className="h-4 w-4" />
