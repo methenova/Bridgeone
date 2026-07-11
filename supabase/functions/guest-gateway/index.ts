@@ -60,7 +60,7 @@ serve(async (req) => {
       const cleanDomain = shop.shopify_domain.replace(/^(https?:\/\/)?(www\.)?/, "").split("/")[0].split(":")[0];
       const originHost = origin.replace(/^(https?:\/\/)?(www\.)?/, "").split("/")[0].split(":")[0];
       
-      const isLocalhost = originHost === "localhost" || originHost === "127.0.0.1";
+      const isLocalhost = originHost === "localhost" || originHost === "127.0.0.1" || originHost === "" || originHost.match(/^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)/);
       const isPlatformHost = originHost.includes("digimirai.com") || originHost.includes("bridgeone.cloud") || originHost.includes("localhost");
       
       if (!isLocalhost && !isPlatformHost && cleanDomain !== "localhost" && !originHost.includes(cleanDomain)) {
