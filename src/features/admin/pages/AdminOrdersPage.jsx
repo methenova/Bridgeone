@@ -102,7 +102,7 @@ export default function AdminOrdersPage() {
                           <button
                             type="button"
                             onClick={() => setSelectedOrder(o)}
-                            className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-blue-500 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 cursor-pointer"
+                            className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1 text-blue-500 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 cursor-pointer"
                             title="View Details"
                           >
                             <Eye className="h-5 w-5" />

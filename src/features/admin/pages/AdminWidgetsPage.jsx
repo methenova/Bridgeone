@@ -241,7 +241,7 @@ export default function AdminWidgetsPage() {
                         <button
                           type="button"
                           onClick={() => handleToggleWidget(s)}
-                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 cursor-pointer"
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1 text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 cursor-pointer"
                           title="Toggle Status"
                         >
                           {s.is_online ? (
@@ -255,7 +255,7 @@ export default function AdminWidgetsPage() {
                         <button
                           type="button"
                           onClick={() => setSelectedShop(s)}
-                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-blue-500 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 cursor-pointer"
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1 text-blue-500 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 cursor-pointer"
                           title="View Embed Code"
                         >
                           <Eye className="h-5 w-5" />
@@ -265,7 +265,7 @@ export default function AdminWidgetsPage() {
                         <button
                           type="button"
                           onClick={() => handleRegenerateKey(s.shop_name)}
-                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-amber-500 hover:bg-amber-50 hover:border-amber-200 hover:text-amber-600 cursor-pointer"
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1 text-amber-500 hover:bg-amber-50 hover:border-amber-200 hover:text-amber-600 cursor-pointer"
                           title="Rotate API Key Token"
                         >
                           <RefreshCw className="h-5 w-5" />

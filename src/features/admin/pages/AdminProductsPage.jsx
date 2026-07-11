@@ -272,7 +272,7 @@ export default function AdminProductsPage() {
                           onClick={() => handleToggleActive(p)}
                           disabled={toggleActive.isPending}
                           title={p.is_active ? "Deactivate Product" : "Activate Product"}
-                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 disabled:opacity-50 cursor-pointer"
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1 text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 disabled:opacity-50 cursor-pointer"
                         >
                           {p.is_active ? (
                             <ToggleRight className="h-5 w-5 text-emerald-500" />

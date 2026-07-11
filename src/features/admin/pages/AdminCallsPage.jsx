@@ -375,7 +375,7 @@ export default function AdminCallsPage() {
                               type="button"
                               onClick={() => handleDeleteCallback(cb.id)}
                               disabled={deleteCallbackReq.isPending}
-                              className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-red-500 hover:bg-red-50 hover:border-red-200 hover:text-red-600 disabled:opacity-50 cursor-pointer"
+                              className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1 text-red-500 hover:bg-red-50 hover:border-red-200 hover:text-red-600 disabled:opacity-50 cursor-pointer"
                             >
                               <Trash2 className="h-5 w-5" />
                             </button>
@@ -507,7 +507,7 @@ export default function AdminCallsPage() {
                               type="button"
                               onClick={() => handleDeleteLog(c.id)}
                               disabled={deleteCall.isPending}
-                              className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-red-500 hover:bg-red-50 hover:border-red-200 hover:text-red-600 disabled:opacity-50 cursor-pointer"
+                              className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1 text-red-500 hover:bg-red-50 hover:border-red-200 hover:text-red-600 disabled:opacity-50 cursor-pointer"
                             >
                               <Trash2 className="h-5 w-5" />
                             </button>

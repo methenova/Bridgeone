@@ -484,7 +484,7 @@ export default function AdminOrganizationsPage() {
                           type="button"
                           onClick={() => handleToggleActive(s)}
                           disabled={toggleStatus.isPending}
-                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 disabled:opacity-50 cursor-pointer"
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1 text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 disabled:opacity-50 cursor-pointer"
                         >
                           {isApproved ? (
                             <ToggleRight className="h-5 w-5 text-emerald-500" />
@@ -497,7 +497,7 @@ export default function AdminOrganizationsPage() {
                         <button
                           type="button"
                           onClick={() => handleOpenEdit(s)}
-                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-amber-500 hover:bg-amber-50 hover:border-amber-200 hover:text-amber-600 cursor-pointer"
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1 text-amber-500 hover:bg-amber-50 hover:border-amber-200 hover:text-amber-600 cursor-pointer"
                           title="Edit Details"
                         >
                           <Edit3 className="h-5 w-5" />
@@ -507,7 +507,7 @@ export default function AdminOrganizationsPage() {
                         <button
                           type="button"
                           onClick={() => handleDeleteShop(s.id, s.shop_name)}
-                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 text-red-500 hover:bg-red-50 hover:border-red-200 hover:text-red-600 cursor-pointer"
+                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1 text-red-500 hover:bg-red-50 hover:border-red-200 hover:text-red-600 cursor-pointer"
                           title="Delete Organization"
                         >
                           <Trash2 className="h-5 w-5" />
