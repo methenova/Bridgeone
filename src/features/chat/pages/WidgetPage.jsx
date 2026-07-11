@@ -297,7 +297,7 @@ export default function WidgetPage() {
       try {
         const { data, error } = await supabase
           .from("shops")
-          .select("id, name, logo_url, widget_color, is_online, plan_name, business_hours, business_hours_config, owner_id, api_key")
+          .select("id, name:shop_name, logo_url, widget_color, is_online, plan_name, business_hours, business_hours_config, owner_id, api_key")
           .eq("id", shopId)
           .single();
 
