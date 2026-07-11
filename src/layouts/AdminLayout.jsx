@@ -223,7 +223,7 @@ export default function AdminLayout() {
               end={item.path === "/admin"}
               title={sidebarCollapsed ? item.title : undefined}
               className={({ isActive }) =>
-                `flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-all duration-200 relative group overflow-hidden ${
+                `flex items-center gap-3 rounded-lg px-3.5 py-2.5 text-sm font-semibold transition-all duration-200 relative group overflow-hidden ${
                   isActive
                     ? "bg-blue-50 text-blue-700 font-bold shadow-sm"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
@@ -350,7 +350,7 @@ export default function AdminLayout() {
                     end={item.path === "/admin"}
                     onClick={() => setMobileSidebarOpen(false)}
                     className={({ isActive }) =>
-                      `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all ${
+                      `flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold transition-all ${
                         isActive
                           ? "bg-blue-600 text-white"
                           : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
