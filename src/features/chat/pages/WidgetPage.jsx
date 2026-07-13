@@ -807,6 +807,9 @@ export default function WidgetPage() {
     // Save final call duration & status in DB
     const logId = currentCallLogIdRef.current;
     if (logId) {
+      // Prevent re-entry from concurrent event triggers (e.g., button click + realtime deletion)
+      currentCallLogIdRef.current = null;
+
       const finalDuration = callStartTimeRef.current
         ? Math.round((Date.now() - callStartTimeRef.current) / 1000)
         : 0;
@@ -889,7 +892,6 @@ export default function WidgetPage() {
         window.parent.postMessage("close-widget", "*");
         resetFields();
       }
-      currentCallLogIdRef.current = null;
     } else {
       setFlowState(shop?.is_online ? "form" : "offline");
       window.parent.postMessage("close-widget", "*");
