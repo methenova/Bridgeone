@@ -153,13 +153,6 @@ export default function SellerLayout() {
           ringingCallsRef.current.set(room.id, room);
           sound.play().catch(() => {});
 
-          if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
-            new Notification("Incoming Video Call", {
-              body: `Incoming call in room: ${room.room_code}`,
-              icon: "/favicon.ico"
-            });
-          }
-
           // Don't show toast if we are already on the Live page, as it handles its own full-screen modal
           if (window.location.pathname === "/seller/live") return;
 
@@ -207,12 +200,6 @@ export default function SellerLayout() {
             // Only show missed call toast if not on the Live page (Live page shows its own)
             if (window.location.pathname !== "/seller/live") {
               toast.error("Missed Video Call", { id: `missed-${roomId}`, duration: 5000, position: "top-center" });
-              if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
-                new Notification("Missed Call", {
-                  body: `You missed a video call consultation.`,
-                  icon: "/favicon.ico"
-                });
-              }
             }
           }
         }
