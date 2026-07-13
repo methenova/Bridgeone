@@ -12,7 +12,7 @@ export default function RegisterForm() {
     email: "",
     password: "",
     confirmPassword: "",
-    role: "customer",
+    role: "seller",
   });
 
   const [loading, setLoading] = useState(false);
@@ -76,32 +76,6 @@ export default function RegisterForm() {
       <p className="mb-8 text-center text-slate-500">
         Register to continue to BridgeOne
       </p>
-
-      {/* Account Type Selector */}
-      <div className="grid grid-cols-2 gap-3 mb-6">
-        <button
-          type="button"
-          onClick={() => setFormData((prev) => ({ ...prev, role: "customer" }))}
-          className={`py-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
-            formData.role === "customer"
-              ? "border-blue-500 bg-blue-600/10 text-blue-400"
-              : "border-slate-200 bg-white shadow-sm text-slate-500 hover:text-slate-700"
-          }`}
-        >
-          🛍️ Customer Account
-        </button>
-        <button
-          type="button"
-          onClick={() => setFormData((prev) => ({ ...prev, role: "seller" }))}
-          className={`py-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
-            formData.role === "seller"
-              ? "border-blue-500 bg-blue-600/10 text-blue-400"
-              : "border-slate-200 bg-white shadow-sm text-slate-500 hover:text-slate-700"
-          }`}
-        >
-          🏪 Shop Owner (Seller)
-        </button>
-      </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="relative">
