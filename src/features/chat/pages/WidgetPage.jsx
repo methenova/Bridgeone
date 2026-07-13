@@ -680,6 +680,7 @@ export default function WidgetPage() {
       localStorage.setItem("bo_customer_name", name.trim());
       localStorage.setItem("bo_customer_email", email.trim() || "");
       localStorage.setItem("bo_customer_phone", phone.trim() || "");
+      setHasRegisteredBefore(true);
     } catch (err) {
       console.warn("[LocalStorage] Profile save skipped:", err);
     }
@@ -948,6 +949,7 @@ export default function WidgetPage() {
       localStorage.setItem("bo_customer_name", name.trim());
       localStorage.setItem("bo_customer_email", email.trim() || "");
       localStorage.setItem("bo_customer_phone", phone.trim() || "");
+      setHasRegisteredBefore(true);
     } catch (err) {
       console.warn("[LocalStorage] Profile save skipped:", err);
     }
