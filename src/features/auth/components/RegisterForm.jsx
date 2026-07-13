@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { User, Mail, Lock, ShieldCheck } from "lucide-react";
+import { User, Mail, Lock, ShieldCheck, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useAuthContext } from "@/context/AuthContext";
 
 export default function RegisterForm() {
@@ -15,40 +15,45 @@ export default function RegisterForm() {
     role: "seller",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   function handleChange(e) {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
+    if (errorMsg) setErrorMsg("");
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
 
     if (!formData.name.trim()) {
-      alert("Please enter your name.");
+      setErrorMsg("Please enter your name.");
       return;
     }
 
     if (!formData.email.trim()) {
-      alert("Please enter your email.");
+      setErrorMsg("Please enter your email.");
       return;
     }
 
     if (formData.password.length < 6) {
-      alert("Password must be at least 6 characters.");
+      setErrorMsg("Password must be at least 6 characters.");
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match.");
+      setErrorMsg("Passwords do not match.");
       return;
     }
 
     try {
       setLoading(true);
+      setErrorMsg("");
 
       await register({
         name: formData.name,
@@ -58,10 +63,9 @@ export default function RegisterForm() {
       });
 
       alert("Registration successful! Please check your email.");
-
       navigate("/login");
     } catch (error) {
-      alert(error.message);
+      setErrorMsg(error.message || "Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -77,9 +81,17 @@ export default function RegisterForm() {
         Register to continue to BridgeOne
       </p>
 
+      {errorMsg && (
+        <div className="mb-6 flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 p-4 text-xs font-semibold text-red-600">
+          <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+          <span>{errorMsg}</span>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Name */}
         <div className="relative">
-          <User className="absolute left-4 top-3.5 h-5 w-5 text-slate-500" />
+          <User className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
           <input
             type="text"
             name="name"
@@ -92,8 +104,9 @@ export default function RegisterForm() {
           />
         </div>
 
+        {/* Email */}
         <div className="relative">
-          <Mail className="absolute left-4 top-3.5 h-5 w-5 text-slate-500" />
+          <Mail className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
           <input
             type="email"
             name="email"
@@ -106,50 +119,66 @@ export default function RegisterForm() {
           />
         </div>
 
+        {/* Password */}
         <div className="relative">
-          <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-500" />
+          <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             name="password"
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
             required
             autoComplete="new-password"
-            className="w-full rounded-xl border border-slate-200 bg-slate-100/40 pl-12 pr-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-500 transition-all focus:bg-slate-100"
+            className="w-full rounded-xl border border-slate-200 bg-slate-100/40 pl-12 pr-12 py-3 text-sm text-slate-900 outline-none focus:border-blue-500 transition-all focus:bg-slate-100"
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-4 top-3.5 text-slate-400 hover:text-slate-600 transition-colors"
+          >
+            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+          </button>
         </div>
 
+        {/* Confirm Password */}
         <div className="relative">
-          <ShieldCheck className="absolute left-4 top-3.5 h-5 w-5 text-slate-500" />
+          <ShieldCheck className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
           <input
-            type="password"
+            type={showConfirmPassword ? "text" : "password"}
             name="confirmPassword"
             placeholder="Confirm Password"
             value={formData.confirmPassword}
             onChange={handleChange}
             required
             autoComplete="new-password"
-            className="w-full rounded-xl border border-slate-200 bg-slate-100/40 pl-12 pr-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-500 transition-all focus:bg-slate-100"
+            className="w-full rounded-xl border border-slate-200 bg-slate-100/40 pl-12 pr-12 py-3 text-sm text-slate-900 outline-none focus:border-blue-500 transition-all focus:bg-slate-100"
           />
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="absolute right-4 top-3.5 text-slate-400 hover:text-slate-600 transition-colors"
+          >
+            {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+          </button>
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 shadow-md shadow-blue-500/10"
         >
           {loading ? "Creating Account..." : "Create Account"}
         </button>
       </form>
 
-      <p className="mt-6 text-center text-slate-500">
+      <p className="mt-6 text-center text-slate-500 text-xs">
         Already have an account?{" "}
         <Link
           to="/login"
-          className="font-semibold text-blue-500 hover:text-blue-400"
+          className="font-semibold text-blue-500 hover:text-blue-400 transition-colors"
         >
-          Login
+          Log in
         </Link>
       </p>
     </div>
