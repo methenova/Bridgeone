@@ -1,6 +1,6 @@
 /* eslint-disable react/only-export-components */
 import { lazy, Suspense } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import ProtectedRoute from "@/components/common/ProtectedRoute";
 
 // Loadable utility wrapper
@@ -21,7 +21,7 @@ import DashboardLayout from "@/layouts/DashboardLayout";
 import SellerLayout from "@/layouts/SellerLayout";
 
 // Landing
-import LandingPage from "@/features/landing/pages/LandingPage";
+import LandingPage from "@/features/landing/LandingPage";
 
 // Authentication
 import LoginPage from "@/features/auth/pages/LoginPage";
@@ -30,10 +30,6 @@ import RegisterPage from "@/features/auth/pages/RegisterPage";
 // Dashboard
 import DashboardPage from "@/features/dashboard/DashboardPage";
 
-// Shop
-import ShopListingPage from "@/features/shop/pages/ShopListingPage";
-import ShopProfilePage from "@/features/shop/pages/ShopProfilePage";
-
 // Seller
 import SellerDashboardPage from "@/features/seller/pages/SellerDashboardPage";
 import MyShopPage from "@/features/seller/pages/MyShopPage";
@@ -41,25 +37,14 @@ import ProductsPage from "@/features/seller/pages/ProductsPage";
 import OrdersPage from "@/features/seller/pages/OrdersPage";
 import AnalyticsPage from "@/features/seller/pages/AnalyticsPage";
 
-// Marketplace — Customer
-import MarketplacePage from "@/features/customer/pages/MarketplacePage";
-import ProductDetailPage from "@/features/customer/pages/ProductDetailPage";
-import SearchPage from "@/features/customer/pages/SearchPage";
-import WishlistPage from "@/features/customer/pages/WishlistPage";
-import CustomerOrdersPage from "@/features/customer/pages/CustomerOrdersPage";
-import CustomerOrderDetailPage from "@/features/customer/pages/CustomerOrderDetailPage";
 // Lazy Load Pages
-const WatchLivePage = lazy(() => import("@/features/customer/pages/WatchLivePage"));
 const LivePage = lazy(() => import("@/features/seller/pages/LivePage"));
 const ChatInboxPage = lazy(() => import("@/features/seller/pages/ChatInboxPage"));
-const CheckoutPage = lazy(() => import("@/features/checkout/pages/CheckoutPage"));
-const OrderSuccessPage = lazy(() => import("@/features/checkout/pages/OrderSuccessPage"));
 const CustomersPage = lazy(() => import("@/features/seller/pages/CustomersPage"));
 const SettingsPage = lazy(() => import("@/features/seller/pages/SettingsPage"));
 const WidgetPage = lazy(() => import("@/features/chat/pages/WidgetPage"));
 const CallHistoryPage = lazy(() => import("@/features/seller/pages/CallHistoryPage"));
 const CallbacksPage = lazy(() => import("@/features/seller/pages/CallbacksPage"));
-
 const SellerAgentsPage = lazy(() => import("@/features/seller/pages/SellerAgentsPage"));
 const SellerWidgetPage = lazy(() => import("@/features/seller/pages/SellerWidgetPage"));
 const SellerNotificationsPage = lazy(() => import("@/features/seller/pages/SellerNotificationsPage"));
@@ -92,64 +77,6 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <LandingPage />,
-      },
-      {
-        path: "shops",
-        element: <ShopListingPage />,
-      },
-      {
-        path: "shops/:shopId",
-        element: <ShopProfilePage />,
-      },
-      {
-        path: "products",
-        element: <MarketplacePage />,
-      },
-      {
-        path: "products/:productId",
-        element: <ProductDetailPage />,
-      },
-      {
-        path: "search",
-        element: <SearchPage />,
-      },
-      {
-        path: "live/:shopId",
-        element: Loadable(WatchLivePage),
-      },
-    ],
-  },
-
-  // ============================================
-  // Protected Customer Routes
-  // ============================================
-  {
-    path: "/",
-    element: (
-      <ProtectedRoute>
-        <PublicLayout />
-      </ProtectedRoute>
-    ),
-    children: [
-      {
-        path: "wishlist",
-        element: <WishlistPage />,
-      },
-      {
-        path: "orders",
-        element: <CustomerOrdersPage />,
-      },
-      {
-        path: "orders/:orderId",
-        element: <CustomerOrderDetailPage />,
-      },
-      {
-        path: "checkout",
-        element: Loadable(CheckoutPage),
-      },
-      {
-        path: "checkout/success",
-        element: Loadable(OrderSuccessPage),
       },
     ],
   },
@@ -344,9 +271,21 @@ const router = createBrowserRouter([
       },
     ],
   },
+
+  // ============================================
+  // Widget (Embeddable, public)
+  // ============================================
   {
     path: "/widget/:shopId",
     element: Loadable(WidgetPage),
+  },
+
+  // ============================================
+  // Catch-all — redirect to home
+  // ============================================
+  {
+    path: "*",
+    element: <Navigate to="/" replace />,
   },
 ]);
 

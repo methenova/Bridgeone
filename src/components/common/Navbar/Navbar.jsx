@@ -1,29 +1,15 @@
 import { useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { Search, ShoppingCart, Heart, LogOut, LayoutDashboard, Package, ChevronDown } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { LogOut, LayoutDashboard, ChevronDown, Shield } from "lucide-react";
 
 import { Container } from "../Container";
-import CartDrawer from "@/features/cart/components/CartDrawer";
-import useCartStore from "@/store/cartStore";
 import { useAuthContext } from "@/context/AuthContext";
 import NotificationsDropdown from "@/components/common/Notifications/NotificationsDropdown";
 
 export default function Navbar() {
-  const [cartOpen, setCartOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-
   const navigate = useNavigate();
   const { user, profile, logout, isAuthenticated } = useAuthContext();
-  const itemCount = useCartStore((s) => s.itemCount);
-
-  function handleSearch(e) {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery("");
-    }
-  }
 
   async function handleLogout() {
     await logout();
@@ -31,96 +17,31 @@ export default function Navbar() {
     navigate("/");
   }
 
-  const navLinks = [
-    { to: "/", label: "Home", end: true },
-    { to: "/products", label: "Products" },
-    { to: "/shops", label: "Shops" },
-  ];
-
   return (
-    <>
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 shadow-sm backdrop-blur-md">
-        <Container>
-          <div className="flex h-16 items-center justify-between gap-4">
+    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 shadow-sm backdrop-blur-md">
+      <Container>
+        <div className="flex h-16 items-center justify-between gap-4">
 
-            {/* Logo */}
-            <Link to="/" className="flex shrink-0 items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-sm font-bold text-white">
-                B
-              </div>
-              <div className="hidden sm:block">
-                <p className="text-sm font-bold leading-none text-slate-900">BridgeOne</p>
-                <p className="text-[10px] text-slate-500">Live Commerce</p>
-              </div>
-            </Link>
+          {/* Logo */}
+          <Link to="/" className="flex shrink-0 items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-sm font-bold text-white shadow-md">
+              B
+            </div>
+            <div className="hidden sm:block">
+              <p className="text-sm font-bold leading-none text-slate-900">BridgeOne</p>
+              <p className="text-[10px] text-slate-500">Live Video Selling</p>
+            </div>
+          </Link>
 
-            {/* Nav Links — desktop */}
-            <nav className="hidden items-center gap-1 md:flex">
-              {navLinks.map((link) => (
-                <NavLink
-                  key={link.to}
-                  to={link.to}
-                  end={link.end}
-                  className={({ isActive }) =>
-                    `rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                      isActive
-                        ? "bg-blue-600/15 text-blue-400"
-                        : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
-                    }`
-                  }
-                >
-                  {link.label}
-                </NavLink>
-              ))}
-            </nav>
+          {/* Right Actions */}
+          <div className="flex items-center gap-2">
 
-            {/* Search */}
-            <form onSubmit={handleSearch} className="hidden flex-1 lg:block" style={{ maxWidth: 360 }}>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search products, shops..."
-                  className="w-full rounded-xl border border-slate-200 bg-white shadow-sm py-2 pl-9 pr-4 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-                />
-              </div>
-            </form>
-
-            {/* Right Actions */}
-            <div className="flex items-center gap-2">
-
-              {/* Wishlist */}
-              {isAuthenticated && (
-                <Link
-                  to="/wishlist"
-                  className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-red-400"
-                >
-                  <Heart className="h-5 w-5" />
-                </Link>
-              )}
-
-              {/* Cart */}
-              <button
-                onClick={() => setCartOpen(true)}
-                className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
-              >
-                <ShoppingCart className="h-5 w-5" />
-                {itemCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white">
-                    {itemCount > 9 ? "9+" : itemCount}
-                  </span>
-                )}
-              </button>
-
-              {/* Notifications */}
-              {isAuthenticated && (
+            {isAuthenticated ? (
+              <>
+                {/* Notifications */}
                 <NotificationsDropdown />
-              )}
 
-              {/* User */}
-              {isAuthenticated ? (
+                {/* User Menu */}
                 <div className="relative">
                   <button
                     onClick={() => setUserMenuOpen((v) => !v)}
@@ -141,14 +62,12 @@ export default function Navbar() {
                         className="fixed inset-0 z-10"
                         onClick={() => setUserMenuOpen(false)}
                       />
-                      <div className="absolute right-0 top-full z-20 mt-2 w-52 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-2xl">
+                      <div className="absolute right-0 top-full z-20 mt-2 w-52 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
                         <div className="border-b border-slate-200 px-4 py-3">
                           <p className="truncate text-sm font-medium text-slate-900">
                             {profile?.full_name || "My Account"}
                           </p>
-                          <p className="truncate text-xs text-slate-500">
-                            {user?.email}
-                          </p>
+                          <p className="truncate text-xs text-slate-500">{user?.email}</p>
                         </div>
 
                         <div className="py-1">
@@ -158,7 +77,7 @@ export default function Navbar() {
                               onClick={() => setUserMenuOpen(false)}
                               className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
                             >
-                              <LayoutDashboard className="h-4 w-4" />
+                              <Shield className="h-4 w-4" />
                               Admin Panel
                             </Link>
                           )}
@@ -172,22 +91,6 @@ export default function Navbar() {
                               Seller Dashboard
                             </Link>
                           )}
-                          <Link
-                            to="/wishlist"
-                            onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
-                          >
-                            <Heart className="h-4 w-4" />
-                            Wishlist
-                          </Link>
-                          <Link
-                            to="/orders"
-                            onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
-                          >
-                            <Package className="h-4 w-4" />
-                            My Orders
-                          </Link>
                         </div>
 
                         <div className="border-t border-slate-200 py-1">
@@ -203,30 +106,27 @@ export default function Navbar() {
                     </>
                   )}
                 </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <Link
-                    to="/login"
-                    className="rounded-xl border border-slate-200 px-4 py-1.5 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    to="/register"
-                    className="rounded-xl bg-blue-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-500"
-                  >
-                    Sign Up
-                  </Link>
-                </div>
-              )}
+              </>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link
+                  to="/login"
+                  className="rounded-xl border border-slate-200 px-4 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="rounded-xl bg-blue-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 shadow-sm"
+                >
+                  Get Started
+                </Link>
+              </div>
+            )}
 
-            </div>
           </div>
-        </Container>
-      </header>
-
-      {/* Cart Drawer */}
-      <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
-    </>
+        </div>
+      </Container>
+    </header>
   );
 }
