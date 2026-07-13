@@ -33,6 +33,31 @@ export default function Navbar() {
             </div>
           </Link>
 
+          {/* Center Navigation Menu (mockup structure) */}
+          <nav className="hidden lg:flex items-center gap-6">
+            <div className="relative group">
+              <button className="flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
+                Product <ChevronDown className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <a href="#how-it-works" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
+              How It Works
+            </a>
+            <div className="relative group">
+              <button className="flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
+                Solutions <ChevronDown className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <a href="#pricing" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
+              Pricing
+            </a>
+            <div className="relative group">
+              <button className="flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
+                Resources <ChevronDown className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </nav>
+
           {/* Right Actions */}
           <div className="flex items-center gap-2">
 
@@ -113,13 +138,13 @@ export default function Navbar() {
                   to="/login"
                   className="rounded-xl border border-slate-200 px-4 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100"
                 >
-                  Login
+                  Log in
                 </Link>
                 <Link
                   to="/register"
                   className="rounded-xl bg-blue-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-500 shadow-sm"
                 >
-                  Get Started
+                  Get Started Free
                 </Link>
               </div>
             )}

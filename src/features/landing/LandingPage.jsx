@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Video,
@@ -5,366 +6,988 @@ import {
   BarChart3,
   Globe,
   MessageSquare,
-  ShoppingBag,
-  CheckCircle,
-  ArrowRight,
+  Monitor,
+  Bell,
   Star,
   PlayCircle,
   Code2,
-  Bell,
   Users,
+  CheckCircle,
+  ArrowRight,
+  ChevronDown,
+  Check,
+  Phone,
+  Mic,
+  MicOff,
+  VideoOff,
+  PhoneOff,
+  Shield,
+  Layers,
+  Heart,
+  ShoppingCart
 } from "lucide-react";
 
-// ─── Feature card ─────────────────────────────────────────────────────────────
-function FeatureCard({ icon: Icon, title, description, gradient }) {
-  return (
-    <div className="group relative rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/10">
-      <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl ${gradient} shadow-md`}>
-        <Icon className="h-6 w-6 text-white" />
-      </div>
-      <h3 className="mb-2 text-base font-semibold text-slate-900">{title}</h3>
-      <p className="text-sm leading-relaxed text-slate-500">{description}</p>
-    </div>
-  );
-}
-
-// ─── Step card ────────────────────────────────────────────────────────────────
-function StepCard({ number, title, description }) {
-  return (
-    <div className="flex gap-4">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white shadow-md">
-        {number}
-      </div>
-      <div>
-        <h3 className="mb-1 text-base font-semibold text-slate-900">{title}</h3>
-        <p className="text-sm leading-relaxed text-slate-500">{description}</p>
-      </div>
-    </div>
-  );
-}
-
-// ─── Stat ─────────────────────────────────────────────────────────────────────
-function Stat({ value, label }) {
-  return (
-    <div className="text-center">
-      <p className="text-3xl font-extrabold text-blue-600">{value}</p>
-      <p className="mt-1 text-sm text-slate-500">{label}</p>
-    </div>
-  );
-}
-
-// ─── Main Landing Page ────────────────────────────────────────────────────────
 export default function LandingPage() {
-  return (
-    <div className="bg-white">
+  // --- Pricing Toggle State ---
+  const [billingCycle, setBillingCycle] = useState("monthly"); // "monthly" or "yearly"
 
-      {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 pb-24 pt-20 text-white">
-        {/* Background glow */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-blue-600/20 blur-3xl" />
-          <div className="absolute bottom-0 right-0 h-[400px] w-[400px] rounded-full bg-indigo-600/15 blur-3xl" />
+  // --- Live Call Simulator States ---
+  const [simState, setSimState] = useState("idle"); // "idle" | "calling" | "connected"
+  const [simDuration, setSimDuration] = useState(0);
+  const [simMicMuted, setSimMicMuted] = useState(false);
+  const [simVideoMuted, setSimVideoMuted] = useState(false);
+
+  useEffect(() => {
+    let timer;
+    if (simState === "connected") {
+      timer = setInterval(() => {
+        setSimDuration((prev) => prev + 1);
+      }, 1000);
+    } else {
+      setSimDuration(0);
+    }
+    return () => clearInterval(timer);
+  }, [simState]);
+
+  const handleStartSimCall = () => {
+    setSimState("calling");
+    setTimeout(() => {
+      setSimState("connected");
+    }, 2500); // Connects after 2.5s
+  };
+
+  const handleEndSimCall = () => {
+    setSimState("idle");
+  };
+
+  const formatDuration = (sec) => {
+    const mins = Math.floor(sec / 60).toString().padStart(2, "0");
+    const secs = (sec % 60).toString().padStart(2, "0");
+    return `${mins}:${secs}`;
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 font-sans selection:bg-blue-100 selection:text-blue-900">
+
+      {/* ── HERO SECTION ─────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50 to-slate-100 pb-20 pt-16 lg:pb-28 lg:pt-24">
+        {/* Glow Effects */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 right-1/4 h-[500px] w-[500px] rounded-full bg-blue-400/10 blur-3xl" />
+          <div className="absolute bottom-10 left-1/4 h-[400px] w-[400px] rounded-full bg-indigo-400/10 blur-3xl" />
         </div>
 
-        <div className="relative mx-auto max-w-5xl px-6 text-center">
-          {/* Badge */}
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-1.5 text-xs font-medium text-blue-300">
-            <Zap className="h-3 w-3" />
-            Embed in 5 minutes · Works with Shopify &amp; any website
-          </div>
-
-          <h1 className="mb-6 text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-            Turn browsers into buyers with{" "}
-            <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-              live video selling
-            </span>
-          </h1>
-
-          <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-slate-400">
-            BridgeOne drops a one-click video call widget onto your existing store.
-            Customers call you instantly. You show products, answer questions, and close deals — all in real time.
-          </p>
-
-          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link
-              to="/register"
-              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/30 transition-all hover:bg-blue-500 hover:shadow-blue-500/40 hover:-translate-y-0.5"
-            >
-              Start for free
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              to="/login"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
-            >
-              <PlayCircle className="h-4 w-4" />
-              See it in action
-            </Link>
-          </div>
-
-          {/* Hero mockup */}
-          <div className="mt-16 mx-auto max-w-3xl">
-            <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-800/60 shadow-2xl shadow-black/40 backdrop-blur-sm">
-              {/* Fake browser bar */}
-              <div className="flex items-center gap-2 border-b border-white/10 bg-slate-900/80 px-4 py-3">
-                <div className="h-3 w-3 rounded-full bg-red-500/80" />
-                <div className="h-3 w-3 rounded-full bg-yellow-500/80" />
-                <div className="h-3 w-3 rounded-full bg-green-500/80" />
-                <div className="ml-4 flex-1 rounded-md bg-slate-700/60 px-3 py-1 text-xs text-slate-400">
-                  yourshopify-store.com/products/air-max
-                </div>
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
+            
+            {/* Left Hero Text */}
+            <div className="space-y-6 lg:col-span-6">
+              <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/50 px-4 py-1.5 text-xs font-semibold text-blue-600">
+                <span className="flex h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
+                Live Video Selling Platform
               </div>
-              {/* Fake page content with floating widget */}
-              <div className="relative h-48 bg-gradient-to-br from-slate-800 to-slate-900 p-6">
-                <div className="flex gap-4">
-                  <div className="h-32 w-32 rounded-xl bg-slate-700/60" />
-                  <div className="flex-1 space-y-2 pt-2">
-                    <div className="h-4 w-48 rounded bg-slate-600/60" />
-                    <div className="h-3 w-32 rounded bg-slate-700/60" />
-                    <div className="h-3 w-56 rounded bg-slate-700/60" />
-                    <div className="mt-4 h-8 w-28 rounded-lg bg-blue-600/40" />
+
+              <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl leading-[1.1]">
+                Turn browsers <br className="hidden sm:inline" />
+                into buyers with <br />
+                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  live video selling
+                </span>
+              </h1>
+
+              <p className="max-w-xl text-lg text-slate-500 leading-relaxed">
+                BridgeOne lets you connect instantly with shoppers through live video, chat, screen sharing and more — directly on your website. No apps. No downloads. Just real conversations that convert.
+              </p>
+
+              <div className="flex flex-wrap items-center gap-4">
+                <Link
+                  to="/register"
+                  className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-500 hover:shadow-blue-500/30 transition-all duration-200 hover:-translate-y-0.5"
+                >
+                  Start for Free
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <a
+                  href="#demo"
+                  className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-all duration-200"
+                >
+                  Book a Demo
+                </a>
+              </div>
+
+              {/* Trust Indicators */}
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2 text-xs text-slate-400">
+                <span className="flex items-center gap-1.5">
+                  <Check className="h-3.5 w-3.5 text-slate-400" />
+                  No credit card required
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Check className="h-3.5 w-3.5 text-slate-400" />
+                  Setup in 5 minutes
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Check className="h-3.5 w-3.5 text-slate-400" />
+                  Cancel anytime
+                </span>
+              </div>
+            </div>
+
+            {/* Right Hero Product Call Mockup */}
+            <div className="lg:col-span-6">
+              <div className="relative mx-auto max-w-md lg:max-w-none">
+                
+                {/* Main Product Card */}
+                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-100 transition-all duration-300">
+                  {/* Browser top-bar */}
+                  <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
+                    <div className="flex gap-1.5">
+                      <div className="h-2.5 w-2.5 rounded-full bg-red-400" />
+                      <div className="h-2.5 w-2.5 rounded-full bg-yellow-400" />
+                      <div className="h-2.5 w-2.5 rounded-full bg-green-400" />
+                    </div>
+                    <div className="text-[10px] text-slate-400 font-mono bg-slate-50 px-3 py-0.5 rounded-md border border-slate-100">
+                      yourstore.com/products/air-max
+                    </div>
+                  </div>
+
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    
+                    {/* Left: Product Info */}
+                    <div className="space-y-4">
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-900 leading-tight">Wireless Headphones</h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <div className="flex text-amber-400">
+                            <Star className="h-3.5 w-3.5 fill-current" />
+                            <Star className="h-3.5 w-3.5 fill-current" />
+                            <Star className="h-3.5 w-3.5 fill-current" />
+                            <Star className="h-3.5 w-3.5 fill-current" />
+                            <Star className="h-3.5 w-3.5 fill-current animate-pulse" />
+                          </div>
+                          <span className="text-xs font-semibold text-slate-500">4.8 (320 reviews)</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-2xl font-black text-slate-900">₹2,499</span>
+                        <span className="text-sm text-slate-400 line-through">₹4,999</span>
+                        <span className="text-xs font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded-md">50% OFF</span>
+                      </div>
+
+                      <ul className="text-xs space-y-2 text-slate-500">
+                        <li className="flex items-center gap-1.5">
+                          <Check className="h-3.5 w-3.5 text-blue-600" /> Active Noise Cancellation
+                        </li>
+                        <li className="flex items-center gap-1.5">
+                          <Check className="h-3.5 w-3.5 text-blue-600" /> 30H Battery Life
+                        </li>
+                        <li className="flex items-center gap-1.5">
+                          <Check className="h-3.5 w-3.5 text-blue-600" /> Premium Sound Quality
+                        </li>
+                        <li className="flex items-center gap-1.5">
+                          <Check className="h-3.5 w-3.5 text-blue-600" /> 1 Year Warranty
+                        </li>
+                      </ul>
+
+                      {/* Mock Add to Cart */}
+                      <button className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-50 py-2.5 text-xs font-semibold text-blue-600 hover:bg-blue-100 transition-colors">
+                        <ShoppingCart className="h-3.5 w-3.5" />
+                        Add to Cart
+                      </button>
+
+                      {/* Simulated Call Action Button */}
+                      {simState === "idle" && (
+                        <button
+                          onClick={handleStartSimCall}
+                          className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 text-xs font-bold text-white shadow-md shadow-blue-500/20 hover:bg-blue-500 transition-all hover:scale-[1.02]"
+                        >
+                          <Video className="h-3.5 w-3.5 text-white" />
+                          Start Live Call
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Right: Product Image & Call Overlay */}
+                    <div className="relative flex items-center justify-center rounded-2xl bg-slate-50 p-4 border border-slate-100 min-h-[220px]">
+                      
+                      {simState === "idle" && (
+                        <>
+                          <img
+                            src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=80"
+                            alt="Wireless Headphones"
+                            className="max-h-40 object-contain hover:scale-105 transition-transform duration-300"
+                          />
+                          {/* Widget Trigger Hint */}
+                          <div className="absolute bottom-2 right-2 flex items-center gap-1 rounded-full bg-blue-600 px-2.5 py-1 text-[9px] font-bold text-white animate-bounce">
+                            <span className="h-1.5 w-1.5 rounded-full bg-white animate-ping" />
+                            Click Live Call
+                          </div>
+                        </>
+                      )}
+
+                      {/* --- Calling State --- */}
+                      {simState === "calling" && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/95 text-white rounded-2xl p-4 animate-fade-in">
+                          <div className="relative">
+                            <div className="absolute -inset-1 rounded-full bg-blue-500 animate-ping opacity-75" />
+                            <img
+                              src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80"
+                              alt="Anita S."
+                              className="relative h-14 w-14 rounded-full object-cover border-2 border-blue-500 shadow-md"
+                            />
+                          </div>
+                          <p className="mt-3 text-xs font-semibold">Anita S.</p>
+                          <p className="text-[10px] text-slate-400">Sales Expert</p>
+                          <p className="mt-4 text-[10px] text-blue-400 font-medium animate-pulse">Connecting video call...</p>
+                          
+                          <button
+                            onClick={handleEndSimCall}
+                            className="mt-4 rounded-full bg-red-500 p-2 text-white hover:bg-red-600 transition-colors"
+                          >
+                            <PhoneOff className="h-4 w-4" />
+                          </button>
+                        </div>
+                      )}
+
+                      {/* --- Connected Call State --- */}
+                      {simState === "connected" && (
+                        <div className="absolute inset-0 bg-slate-950 rounded-2xl overflow-hidden flex flex-col justify-between p-3 animate-scale-up">
+                          {/* Video Canvas Placeholder (Mocking Agent Video) */}
+                          <div className="absolute inset-0">
+                            <img
+                              src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&auto=format&fit=crop&q=80"
+                              alt="Anita"
+                              className="h-full w-full object-cover opacity-90"
+                            />
+                            {/* Gradient Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40" />
+                          </div>
+
+                          {/* Top row */}
+                          <div className="relative flex items-center justify-between">
+                            <span className="bg-emerald-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">
+                              <span className="h-1 w-1 rounded-full bg-white animate-ping" />
+                              LIVE
+                            </span>
+                            <span className="text-[10px] font-mono text-white bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded">
+                              {formatDuration(simDuration)}
+                            </span>
+                          </div>
+
+                          {/* Agent Info & Controls Row */}
+                          <div className="relative space-y-2">
+                            <div className="text-white">
+                              <p className="text-xs font-bold leading-none">Anita S.</p>
+                              <p className="text-[9px] text-slate-300">Sales Expert</p>
+                            </div>
+
+                            {/* Self PIP View */}
+                            <div className="absolute bottom-10 right-0 h-14 w-11 rounded-lg border border-white/20 bg-slate-800 overflow-hidden shadow-md">
+                              {!simVideoMuted ? (
+                                <div className="h-full w-full bg-gradient-to-br from-blue-900 to-indigo-900 flex items-center justify-center">
+                                  <span className="text-[8px] font-bold text-white/50">You</span>
+                                </div>
+                              ) : (
+                                <div className="h-full w-full bg-slate-900 flex items-center justify-center">
+                                  <VideoOff className="h-3 w-3 text-white/30" />
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Video Control Panel */}
+                            <div className="flex items-center justify-center gap-1.5 pt-1">
+                              <button
+                                onClick={() => setSimMicMuted(!simMicMuted)}
+                                className={`rounded-xl p-2 text-white transition-colors ${
+                                  simMicMuted ? "bg-red-500 hover:bg-red-600" : "bg-white/20 hover:bg-white/30"
+                                }`}
+                              >
+                                {simMicMuted ? <MicOff className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5" />}
+                              </button>
+                              <button
+                                onClick={() => setSimVideoMuted(!simVideoMuted)}
+                                className={`rounded-xl p-2 text-white transition-colors ${
+                                  simVideoMuted ? "bg-red-500 hover:bg-red-600" : "bg-white/20 hover:bg-white/30"
+                                }`}
+                              >
+                                {simVideoMuted ? <VideoOff className="h-3.5 w-3.5" /> : <Video className="h-3.5 w-3.5" />}
+                              </button>
+                              <button
+                                onClick={handleEndSimCall}
+                                className="rounded-xl bg-red-600 p-2 text-white hover:bg-red-700 transition-colors shadow-lg"
+                              >
+                                <PhoneOff className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                    <span>Powered by <span className="font-bold text-blue-600">BridgeOne</span></span>
+                    <span className="flex items-center gap-1">
+                      <Shield className="h-3 w-3" /> Secure WebRTC
+                    </span>
                   </div>
                 </div>
-                {/* Floating widget button */}
-                <div className="absolute bottom-4 right-4 flex items-center gap-2 rounded-2xl bg-blue-600 px-4 py-2.5 shadow-lg shadow-blue-600/40 animate-pulse">
-                  <Video className="h-4 w-4 text-white" />
-                  <span className="text-xs font-semibold text-white">Talk to us live</span>
-                </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>
 
-      {/* ── STATS ────────────────────────────────────────────────────────── */}
-      <section className="border-b border-slate-100 bg-slate-50 py-12">
-        <div className="mx-auto max-w-5xl px-6">
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-            <Stat value="3x" label="Higher conversion rate" />
-            <Stat value="5 min" label="Setup time" />
-            <Stat value="100%" label="Works on any store" />
-            <Stat value="24/7" label="Call monitoring" />
+      {/* ── INTEGRATIONS LOGOS ROW ─────────────────────────────────────────── */}
+      <section className="border-y border-slate-200/60 bg-white py-8">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-center">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Works with</span>
+            
+            {/* Shopify */}
+            <div className="flex items-center gap-1.5 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-200">
+              <span className="h-5 w-5 bg-green-500 rounded flex items-center justify-center text-[10px] text-white font-extrabold">S</span>
+              <span className="text-sm font-black text-slate-700">shopify</span>
+            </div>
+
+            {/* WooCommerce */}
+            <div className="flex items-center gap-1 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-200">
+              <span className="text-sm font-black text-purple-700">WOO</span>
+              <span className="text-xs font-medium text-slate-500">COMMERCE</span>
+            </div>
+
+            {/* Magento */}
+            <div className="flex items-center gap-1 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-200">
+              <span className="h-4 w-4 bg-orange-600 rounded-sm transform rotate-45 flex items-center justify-center text-[8px] text-white font-bold">M</span>
+              <span className="text-sm font-bold text-slate-700">Magento</span>
+            </div>
+
+            {/* WordPress */}
+            <div className="flex items-center gap-1.5 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-200">
+              <span className="h-5 w-5 rounded-full border-2 border-slate-600 flex items-center justify-center text-xs font-black text-slate-700">W</span>
+              <span className="text-sm font-bold text-slate-700">WORDPRESS</span>
+            </div>
+
+            <span className="text-xs font-semibold text-slate-400">&amp; any custom website</span>
           </div>
         </div>
       </section>
 
-      {/* ── FEATURES ─────────────────────────────────────────────────────── */}
-      <section className="py-20">
-        <div className="mx-auto max-w-5xl px-6">
-          <div className="mb-12 text-center">
-            <h2 className="text-3xl font-extrabold text-slate-900">
-              Everything you need to sell live
+      {/* ── VALUE PROP SECTION ─────────────────────────────────────────────── */}
+      <section id="features" className="py-20 lg:py-28">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          
+          <div className="mx-auto max-w-2xl text-center space-y-3">
+            <span className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
+              Why BridgeOne?
+            </span>
+            <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+              More conversations. More <span className="text-blue-600">trust</span>. More <span className="text-indigo-600">sales</span>.
             </h2>
-            <p className="mt-3 text-slate-500">
-              One widget. Infinite conversations. Zero friction.
+            <p className="text-base text-slate-500 leading-relaxed">
+              BridgeOne brings the power of real-time interaction to your online store. Help shoppers, answer questions, and close deals — live.
             </p>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            <FeatureCard
-              icon={Video}
-              title="Instant Video Calls"
-              description="Customers click a button on your store and connect to your team in seconds — no apps, no downloads."
-              gradient="bg-gradient-to-br from-blue-500 to-blue-700"
-            />
-            <FeatureCard
-              icon={Code2}
-              title="One-Line Embed"
-              description="Drop a single script tag into your Shopify theme, WooCommerce, or any website. That's it."
-              gradient="bg-gradient-to-br from-violet-500 to-violet-700"
-            />
-            <FeatureCard
-              icon={Globe}
-              title="Platform Agnostic"
-              description="Works with Shopify, WooCommerce, Magento, custom sites — anywhere a script tag can go."
-              gradient="bg-gradient-to-br from-cyan-500 to-cyan-700"
-            />
-            <FeatureCard
-              icon={Users}
-              title="Multi-Agent Routing"
-              description="Route calls to available agents. Set status, handle queues, and track who answered what."
-              gradient="bg-gradient-to-br from-emerald-500 to-emerald-700"
-            />
-            <FeatureCard
-              icon={Bell}
-              title="Smart Notifications"
-              description="Get real-time browser alerts, ringtones, and vibrations the moment a customer calls."
-              gradient="bg-gradient-to-br from-amber-500 to-amber-600"
-            />
-            <FeatureCard
-              icon={BarChart3}
-              title="Call Analytics"
-              description="Track call history, duration, missed calls, and customer sentiment across your whole team."
-              gradient="bg-gradient-to-br from-rose-500 to-rose-700"
-            />
-            <FeatureCard
-              icon={MessageSquare}
-              title="Chat + Callbacks"
-              description="Customers can chat, schedule a callback, or call live — all from the same familiar widget."
-              gradient="bg-gradient-to-br from-indigo-500 to-indigo-700"
-            />
-            <FeatureCard
-              icon={ShoppingBag}
-              title="Product Sharing"
-              description="Share products directly during a video call. Link, show, and close — without leaving the call."
-              gradient="bg-gradient-to-br from-pink-500 to-pink-700"
-            />
-            <FeatureCard
-              icon={Zap}
-              title="Live Streaming"
-              description="Go live to showcase new arrivals, run flash sales, or host product demos for all your visitors."
-              gradient="bg-gradient-to-br from-orange-500 to-orange-700"
-            />
+          <div className="mx-auto mt-16 max-w-5xl grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            
+            {/* Grid Item 1 */}
+            <div className="group relative rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1 transition-all duration-300">
+              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                <Video className="h-5 w-5" />
+              </div>
+              <h3 className="text-base font-bold text-slate-900 mb-2">Instant Video Calls</h3>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                Connect in one click. No apps, no downloads, and no friction for your potential buyers.
+              </p>
+            </div>
+
+            {/* Grid Item 2 */}
+            <div className="group relative rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1 transition-all duration-300">
+              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
+                <MessageSquare className="h-5 w-5" />
+              </div>
+              <h3 className="text-base font-bold text-slate-900 mb-2">Build Real Trust</h3>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                Face-to-face conversations build shopper confidence, overcome objections, and reduce purchase hesitation.
+              </p>
+            </div>
+
+            {/* Grid Item 3 */}
+            <div className="group relative rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1 transition-all duration-300">
+              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                <BarChart3 className="h-5 w-5" />
+              </div>
+              <h3 className="text-base font-bold text-slate-900 mb-2">Increase Conversions</h3>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                Stores using live video selling report up to 3x higher conversion rates and larger checkout carts.
+              </p>
+            </div>
+
+            {/* Grid Item 4 */}
+            <div className="group relative rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1 transition-all duration-300">
+              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 text-rose-600">
+                <Phone className="h-5 w-5" />
+              </div>
+              <h3 className="text-base font-bold text-slate-900 mb-2">Chat &amp; Callbacks</h3>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                Provide instant text messaging support or schedule later callbacks so you never miss an interested lead.
+              </p>
+            </div>
+
+            {/* Grid Item 5 */}
+            <div className="group relative rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1 transition-all duration-300">
+              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-50 text-cyan-600">
+                <Monitor className="h-5 w-5" />
+              </div>
+              <h3 className="text-base font-bold text-slate-900 mb-2">Screen Sharing</h3>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                Show live product catalogs, slides, sizing charts, or help docs directly during the video consultation.
+              </p>
+            </div>
+
+            {/* Grid Item 6 */}
+            <div className="group relative rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1 transition-all duration-300">
+              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+                <Bell className="h-5 w-5" />
+              </div>
+              <h3 className="text-base font-bold text-slate-900 mb-2">Smart Notifications</h3>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                Get looping ringtones and vibration cues the instant a new visitor requests a live consultation.
+              </p>
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* ── HOW IT WORKS ─────────────────────────────────────────────────── */}
-      <section className="bg-slate-50 py-20">
-        <div className="mx-auto max-w-4xl px-6">
-          <div className="mb-12 text-center">
-            <h2 className="text-3xl font-extrabold text-slate-900">Up and running in minutes</h2>
-            <p className="mt-3 text-slate-500">No developers required. No monthly maintenance.</p>
-          </div>
+      {/* ── TOOLKIT / DASHBOARD SHOWCASE SECTION ───────────────────────────── */}
+      <section className="bg-white border-y border-slate-200/50 py-20 lg:py-28">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          
+          <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
+            
+            {/* Left Content List */}
+            <div className="space-y-6 lg:col-span-4">
+              <span className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
+                All-in-one live selling toolkit
+              </span>
+              <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+                Everything you need to sell live, <span className="text-blue-600">in one platform</span>.
+              </h2>
+              
+              <ul className="space-y-4">
+                {[
+                  { title: "Video Calls", desc: "High quality, low latency peer video consultations." },
+                  { title: "Chat & Callbacks", desc: "Seamless text messaging and offline scheduler." },
+                  { title: "Screen Sharing", desc: "Share documents, slides, and shopping windows." },
+                  { title: "Product Sharing", desc: "Send product catalogs in the widget with one click." },
+                  { title: "Live Streaming", desc: "Host sales events or showcase inventory items live." },
+                  { title: "Analytics & Reports", desc: "Track conversions, durations, and agent stats." }
+                ].map((item, idx) => (
+                  <li key={idx} className="flex gap-3">
+                    <div className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                      <Check className="h-3 w-3" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-slate-900">{item.title}</p>
+                      <p className="text-xs text-slate-500">{item.desc}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
 
-          <div className="grid gap-8 sm:grid-cols-2">
-            <div className="space-y-8">
-              <StepCard
-                number="1"
-                title="Create your BridgeOne account"
-                description="Sign up as a seller and set up your shop profile in under 2 minutes."
-              />
-              <StepCard
-                number="2"
-                title="Copy your embed snippet"
-                description="Grab the one-line script from your Integrations page. No configuration needed."
-              />
-              <StepCard
-                number="3"
-                title="Paste into your store"
-                description="Add the script to your Shopify theme, website footer, or any HTML page. Save and publish."
-              />
-              <StepCard
-                number="4"
-                title="Go live and start selling"
-                description="Turn on your status in the dashboard. Customers can now call you from your store instantly."
-              />
+              <div className="pt-2">
+                <Link
+                  to="/register"
+                  className="inline-flex items-center gap-1.5 text-sm font-bold text-blue-600 hover:text-blue-500"
+                >
+                  Explore all features
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
             </div>
 
-            {/* Code snippet mockup */}
-            <div className="self-center">
-              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 shadow-xl">
-                <div className="flex items-center gap-2 border-b border-slate-700 bg-slate-800 px-4 py-3">
-                  <div className="h-2.5 w-2.5 rounded-full bg-red-500" />
-                  <div className="h-2.5 w-2.5 rounded-full bg-yellow-500" />
-                  <div className="h-2.5 w-2.5 rounded-full bg-green-500" />
-                  <span className="ml-2 text-xs text-slate-500">theme.liquid</span>
+            {/* Right Dashboard Mockup */}
+            <div className="lg:col-span-8">
+              <div className="rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-100 overflow-hidden">
+                {/* Mockup Topbar */}
+                <div className="bg-slate-900 text-white px-4 py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-5 w-5 items-center justify-center rounded bg-blue-600 text-[10px] font-bold text-white">
+                      B
+                    </div>
+                    <span className="text-xs font-semibold text-slate-200">BridgeOne Dashboard</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="h-2 w-2 rounded-full bg-slate-700" />
+                    <div className="h-2 w-2 rounded-full bg-slate-700" />
+                  </div>
                 </div>
-                <div className="p-5 font-mono text-sm">
-                  <p className="text-slate-500">{`<!-- Add before </body> -->`}</p>
-                  <p className="mt-2 text-emerald-400">{`<script`}</p>
-                  <p className="pl-4 text-blue-400">{'  src="https://cdn.bridgeone.io/widget.js"'}</p>
-                  <p className="pl-4 text-yellow-400">{'  data-shop-id="your-shop-id"'}</p>
-                  <p className="text-emerald-400">{'  async>'}</p>
-                  <p className="text-emerald-400">{'</script>'}</p>
+
+                <div className="grid grid-cols-12 bg-slate-50 min-h-[380px]">
+                  
+                  {/* Mock Sidebar */}
+                  <div className="col-span-3 border-r border-slate-200/60 bg-white p-3 space-y-4 hidden sm:block">
+                    <div className="space-y-1">
+                      <div className="bg-blue-50 text-blue-600 rounded-lg px-3 py-1.5 text-[11px] font-semibold flex items-center gap-2">
+                        <Layers className="h-3.5 w-3.5" /> Overview
+                      </div>
+                      {["Calls", "Leads", "Analytics", "Products", "Team", "Settings", "Integrations"].map((label) => (
+                        <div key={label} className="text-slate-500 hover:text-slate-800 rounded-lg px-3 py-1.5 text-[11px] font-medium flex items-center gap-2 transition-colors cursor-pointer">
+                          <span className="h-1.5 w-1.5 rounded-full bg-slate-300" /> {label}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Mock Overview Content */}
+                  <div className="col-span-12 sm:col-span-9 p-4 space-y-4">
+                    
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {[
+                        { label: "Total Calls", val: "1,248", up: "+18.5%", color: "text-green-600" },
+                        { label: "Total Leads", val: "892", up: "+21.4%", color: "text-green-600" },
+                        { label: "Conversion", val: "32.4%", up: "+8.3%", color: "text-green-600" },
+                        { label: "Avg. Duration", val: "06:42", up: "-1.2%", color: "text-red-500" }
+                      ].map((stat, idx) => (
+                        <div key={idx} className="bg-white border border-slate-200/80 rounded-xl p-3 shadow-sm">
+                          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{stat.label}</p>
+                          <p className="text-lg font-bold text-slate-800 mt-1">{stat.val}</p>
+                          <span className={`text-[9px] font-bold ${stat.color}`}>{stat.up} vs last month</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Chart & Top Agent Mini View */}
+                    <div className="grid gap-3 md:grid-cols-3">
+                      
+                      {/* Simulated Chart */}
+                      <div className="md:col-span-2 bg-white border border-slate-200/80 rounded-xl p-3 shadow-sm flex flex-col justify-between">
+                        <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Calls Over Time</p>
+                        
+                        {/* Custom SVG Line Chart */}
+                        <div className="h-28 w-full mt-2 flex items-end">
+                          <svg className="w-full h-full" viewBox="0 0 100 35" preserveAspectRatio="none">
+                            <defs>
+                              <linearGradient id="chartGlow" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.3" />
+                                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.0" />
+                              </linearGradient>
+                            </defs>
+                            {/* Area fill */}
+                            <path d="M 0 35 Q 20 15 40 28 T 80 8 T 100 3 M 100 35 Z" fill="url(#chartGlow)" />
+                            {/* Line path */}
+                            <path d="M 0 35 Q 20 15 40 28 T 80 8 T 100 3" fill="none" stroke="#2563eb" strokeWidth="2" />
+                          </svg>
+                        </div>
+                      </div>
+
+                      {/* Top Agents */}
+                      <div className="bg-white border border-slate-200/80 rounded-xl p-3 shadow-sm">
+                        <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Top Agents</p>
+                        <div className="space-y-2">
+                          {[
+                            { name: "Anita S.", calls: "348", role: "Expert" },
+                            { name: "Priya S.", calls: "186", role: "Advisor" },
+                            { name: "Rahul K.", calls: "164", role: "Support" }
+                          ].map((agent, i) => (
+                            <div key={i} className="flex items-center justify-between text-[11px]">
+                              <div className="flex items-center gap-1.5">
+                                <div className="h-5 w-5 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-[9px]">
+                                  {agent.name.charAt(0)}
+                                </div>
+                                <span className="font-semibold text-slate-700">{agent.name}</span>
+                              </div>
+                              <span className="text-[9px] text-slate-400 font-mono">{agent.calls} calls</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </div>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>
 
-      {/* ── SOCIAL PROOF ─────────────────────────────────────────────────── */}
-      <section className="py-20">
-        <div className="mx-auto max-w-5xl px-6">
-          <h2 className="mb-10 text-center text-3xl font-extrabold text-slate-900">
-            Loved by online sellers
-          </h2>
-          <div className="grid gap-5 sm:grid-cols-3">
+      {/* ── STEPS SECTION ──────────────────────────────────────────────────── */}
+      <section id="how-it-works" className="py-20 lg:py-28">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          
+          <div className="mx-auto max-w-2xl text-center space-y-3 mb-16">
+            <span className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
+              Simple as 3 steps
+            </span>
+            <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+              Get started in minutes. <br className="sm:hidden" />
+              Start selling in <span className="text-blue-600">real-time</span>.
+            </h2>
+          </div>
+
+          <div className="relative mx-auto max-w-4xl">
+            {/* Dashed Connecting Line for Desktop */}
+            <div className="absolute top-10 left-[15%] right-[15%] h-0.5 border-t-2 border-dashed border-slate-200 hidden md:block z-0" />
+            
+            <div className="grid gap-8 md:grid-cols-3 relative z-10">
+              
+              {/* Step 1 */}
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 text-center space-y-4 shadow-sm hover:shadow-md transition-shadow">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white shadow-lg shadow-blue-500/20">
+                  1
+                </div>
+                <div className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                  <Code2 className="h-4.5 w-4.5" />
+                </div>
+                <h3 className="text-base font-bold text-slate-900">Add the embed code</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Copy a single line of code and paste it on your WooCommerce, Shopify theme, or custom HTML.
+                </p>
+              </div>
+
+              {/* Step 2 */}
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 text-center space-y-4 shadow-sm hover:shadow-md transition-shadow">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white shadow-lg shadow-blue-500/20">
+                  2
+                </div>
+                <div className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                  <Video className="h-4.5 w-4.5" />
+                </div>
+                <h3 className="text-base font-bold text-slate-900">Go live instantly</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Open the seller portal on any device. You are ready to receive video consultations immediately.
+                </p>
+              </div>
+
+              {/* Step 3 */}
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 text-center space-y-4 shadow-sm hover:shadow-md transition-shadow">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white shadow-lg shadow-blue-500/20">
+                  3
+                </div>
+                <div className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                  <BarChart3 className="h-4.5 w-4.5" />
+                </div>
+                <h3 className="text-base font-bold text-slate-900">Close more deals</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Help buyers pick variants, recommend styles, build trust, and increase store cart sizes.
+                </p>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ── TESTIMONIALS SECTION ───────────────────────────────────────────── */}
+      <section className="bg-slate-100/50 py-20">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          
+          <div className="mx-auto max-w-2xl text-center space-y-3 mb-16">
+            <span className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
+              Loved by online sellers
+            </span>
+            <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+              Trusted by sellers. Loved by customers.
+            </h2>
+          </div>
+
+          <div className="mx-auto max-w-5xl grid gap-6 md:grid-cols-3">
             {[
               {
-                quote: "We increased our average order value by 40% because we can now answer questions on the spot and upsell in real time.",
+                stars: 5,
+                quote: "BridgeOne increased our conversion rate by 40%. Customers love talking to us before they buy.",
                 name: "Priya S.",
-                role: "Shopify store owner",
+                role: "Shopify Store Owner"
               },
               {
-                quote: "Setup literally took 4 minutes. My agents were handling live calls from our website the same afternoon.",
+                stars: 5,
+                quote: "Setup took literally 5 minutes. It works flawlessly on our WooCommerce store.",
                 name: "Marcus T.",
-                role: "Head of E-commerce",
+                role: "Head of E-commerce"
               },
               {
-                quote: "The missed call notifications and callbacks mean we never lose a lead even when we're busy.",
+                stars: 5,
+                quote: "The best decision we made. Our team can handle more customers and close more deals every day.",
                 name: "Anita R.",
-                role: "Founder, fashion boutique",
-              },
-            ].map((t) => (
-              <div key={t.name} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="mb-3 flex gap-0.5">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                  ))}
-                </div>
-                <p className="mb-4 text-sm leading-relaxed text-slate-600">"{t.quote}"</p>
+                role: "Founder, Fashion Boutique"
+              }
+            ].map((test, i) => (
+              <div key={i} className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col justify-between shadow-sm">
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">{t.name}</p>
-                  <p className="text-xs text-slate-400">{t.role}</p>
+                  <div className="flex text-amber-400 gap-0.5 mb-4">
+                    {[...Array(test.stars)].map((_, s) => (
+                      <Star key={s} className="h-4 w-4 fill-current" />
+                    ))}
+                  </div>
+                  <p className="text-sm text-slate-600 italic">"{test.quote}"</p>
+                </div>
+                
+                <div className="mt-6 flex items-center gap-3 pt-4 border-t border-slate-100">
+                  <div className="h-8 w-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-xs">
+                    {test.name.charAt(0)}
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-900">{test.name}</h4>
+                    <p className="text-[10px] text-slate-400">{test.role}</p>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
+
         </div>
       </section>
 
-      {/* ── CTA BANNER ───────────────────────────────────────────────────── */}
-      <section className="bg-gradient-to-br from-blue-600 to-blue-800 py-20 text-white">
-        <div className="mx-auto max-w-3xl px-6 text-center">
-          <h2 className="text-3xl font-extrabold">Ready to sell like never before?</h2>
-          <p className="mt-4 text-blue-200">
-            Join hundreds of sellers already using BridgeOne to have real conversations with their customers.
-          </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link
-              to="/register"
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-blue-700 shadow-lg transition-all hover:shadow-xl hover:-translate-y-0.5"
-            >
-              Create free account
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              to="/login"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/30 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-white/10"
-            >
-              Sign in to dashboard
-            </Link>
-          </div>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-xs text-blue-200">
-            {["No credit card required", "Free plan available", "Cancel anytime"].map((t) => (
-              <span key={t} className="flex items-center gap-1.5">
-                <CheckCircle className="h-3.5 w-3.5" />
-                {t}
+      {/* ── PRICING SECTION ────────────────────────────────────────────────── */}
+      <section id="pricing" className="py-20 lg:py-28 bg-white border-b border-slate-200/50">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          
+          <div className="mx-auto max-w-3xl text-center space-y-4 mb-16">
+            <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+              Ready to sell like never before?
+            </h2>
+            <p className="text-slate-500 max-w-xl mx-auto text-sm">
+              Join hundreds of sellers already using BridgeOne to build real connections and grow their business.
+            </p>
+
+            {/* Toggle Billing Switch */}
+            <div className="flex items-center justify-center gap-3 mt-6">
+              <span className={`text-xs font-semibold ${billingCycle === "monthly" ? "text-blue-600" : "text-slate-400"}`}>
+                Monthly Billing
               </span>
-            ))}
+              <button
+                onClick={() => setBillingCycle((prev) => (prev === "monthly" ? "yearly" : "monthly"))}
+                className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-200 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
+                style={{ backgroundColor: billingCycle === "yearly" ? "#2563eb" : "#e2e8f0" }}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    billingCycle === "yearly" ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+              <span className={`text-xs font-semibold ${billingCycle === "yearly" ? "text-blue-600" : "text-slate-400"} flex items-center gap-1.5`}>
+                Yearly Billing
+                <span className="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                  Save 20%
+                </span>
+              </span>
+            </div>
           </div>
-        </div>
-      </section>
 
-      {/* ── FOOTER ───────────────────────────────────────────────────────── */}
-      <footer className="border-t border-slate-200 bg-slate-50 py-10">
-        <div className="mx-auto max-w-5xl px-6">
-          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-600 text-xs font-bold text-white">
-                B
+          <div className="mx-auto max-w-5xl grid gap-8 md:grid-cols-3">
+            
+            {/* Starter Plan */}
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col justify-between hover:shadow-lg transition-shadow">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">Starter</h3>
+                  <p className="text-xs text-slate-400 mt-1">Perfect for small stores</p>
+                </div>
+                
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-extrabold text-slate-900">
+                    {billingCycle === "monthly" ? "$29" : "$23"}
+                  </span>
+                  <span className="text-xs text-slate-400">/month</span>
+                </div>
+
+                <hr className="border-slate-100" />
+
+                <ul className="text-xs space-y-2.5 text-slate-600">
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-blue-600 shrink-0" /> 100 Calls / month
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-blue-600 shrink-0" /> 1 Agent
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-blue-600 shrink-0" /> Basic Analytics
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-blue-600 shrink-0" /> Email Support
+                  </li>
+                </ul>
               </div>
-              <div>
-                <p className="text-sm font-bold text-slate-900">BridgeOne</p>
-                <p className="text-[10px] text-slate-400">Live Video Selling Platform</p>
+
+              <div className="mt-8">
+                <Link
+                  to="/register"
+                  className="w-full flex items-center justify-center rounded-xl border border-slate-200 bg-white py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                >
+                  Start Free
+                </Link>
               </div>
             </div>
-            <p className="text-xs text-slate-400">
-              © {new Date().getFullYear()} BridgeOne. All rights reserved.
-            </p>
+
+            {/* Pro Plan */}
+            <div className="bg-white border-2 border-blue-600 rounded-2xl p-6 flex flex-col justify-between shadow-md relative">
+              <div className="absolute top-0 right-6 -translate-y-1/2 bg-blue-600 text-white text-[9px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                Most Popular
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">Pro</h3>
+                  <p className="text-xs text-slate-400 mt-1">For growing businesses</p>
+                </div>
+                
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-extrabold text-slate-900">
+                    {billingCycle === "monthly" ? "$79" : "$63"}
+                  </span>
+                  <span className="text-xs text-slate-400">/month</span>
+                </div>
+
+                <hr className="border-slate-100" />
+
+                <ul className="text-xs space-y-2.5 text-slate-600">
+                  <li className="flex items-center gap-2 font-semibold text-slate-800">
+                    <Check className="h-4 w-4 text-blue-600 shrink-0" /> Unlimited Calls
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-blue-600 shrink-0" /> 3 Agents
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-blue-600 shrink-0" /> Advanced Analytics
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-blue-600 shrink-0" /> Priority Support
+                  </li>
+                </ul>
+              </div>
+
+              <div className="mt-8">
+                <Link
+                  to="/register"
+                  className="w-full flex items-center justify-center rounded-xl bg-blue-600 py-2.5 text-xs font-semibold text-white shadow-md shadow-blue-500/10 hover:bg-blue-500 transition-colors"
+                >
+                  Start Free
+                </Link>
+              </div>
+            </div>
+
+            {/* Business Plan */}
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col justify-between hover:shadow-lg transition-shadow">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">Business</h3>
+                  <p className="text-xs text-slate-400 mt-1">For large teams</p>
+                </div>
+                
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-extrabold text-slate-900">
+                    {billingCycle === "monthly" ? "$199" : "$159"}
+                  </span>
+                  <span className="text-xs text-slate-400">/month</span>
+                </div>
+
+                <hr className="border-slate-100" />
+
+                <ul className="text-xs space-y-2.5 text-slate-600">
+                  <li className="flex items-center gap-2 font-semibold text-slate-800">
+                    <Check className="h-4 w-4 text-blue-600 shrink-0" /> Unlimited Calls
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-blue-600 shrink-0" /> Unlimited Agents
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-blue-600 shrink-0" /> Custom Integrations
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-blue-600 shrink-0" /> Dedicated Support
+                  </li>
+                </ul>
+              </div>
+
+              <div className="mt-8">
+                <Link
+                  to="/register"
+                  className="w-full flex items-center justify-center rounded-xl border border-slate-200 bg-white py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                >
+                  Start Free
+                </Link>
+              </div>
+            </div>
+
           </div>
+        </div>
+      </section>
+
+      {/* ── FOOTER ─────────────────────────────────────────────────────────── */}
+      <footer className="bg-slate-50 border-t border-slate-200/60 py-16 text-slate-500 text-xs">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          
+          <div className="grid gap-10 md:grid-cols-4 lg:grid-cols-5 mb-12">
+            
+            {/* Col 1 Brand */}
+            <div className="space-y-4 lg:col-span-2">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-600 text-xs font-bold text-white shadow-md">
+                  B
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-900 leading-none">BridgeOne</p>
+                  <p className="text-[10px] text-slate-400">Live Video Selling</p>
+                </div>
+              </div>
+              <p className="max-w-xs text-slate-400 leading-relaxed">
+                Real-time video calling widget that helps online stores build trust, answer customer questions, and boost conversion rates directly on the product detail pages.
+              </p>
+            </div>
+
+            {/* Col 2 Product */}
+            <div className="space-y-3">
+              <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Product</h4>
+              <ul className="space-y-2">
+                <li><a href="#features" className="hover:text-slate-950 transition-colors">Features</a></li>
+                <li><a href="#how-it-works" className="hover:text-slate-950 transition-colors">How It Works</a></li>
+                <li><a href="#pricing" className="hover:text-slate-950 transition-colors">Pricing</a></li>
+                <li><Link to="/seller/integrations" className="hover:text-slate-950 transition-colors">Integrations</Link></li>
+              </ul>
+            </div>
+
+            {/* Col 3 Resources */}
+            <div className="space-y-3">
+              <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Resources</h4>
+              <ul className="space-y-2">
+                <li><a href="#docs" className="hover:text-slate-950 transition-colors">Documentation</a></li>
+                <li><a href="#help" className="hover:text-slate-950 transition-colors">Help Center</a></li>
+                <li><a href="#blog" className="hover:text-slate-950 transition-colors">Blog</a></li>
+                <li><a href="#changelog" className="hover:text-slate-950 transition-colors">Changelog</a></li>
+              </ul>
+            </div>
+
+            {/* Col 4 Company */}
+            <div className="space-y-3">
+              <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Company</h4>
+              <ul className="space-y-2">
+                <li><a href="#about" className="hover:text-slate-950 transition-colors">About Us</a></li>
+                <li><a href="#careers" className="hover:text-slate-950 transition-colors">Careers</a></li>
+                <li><a href="#contact" className="hover:text-slate-950 transition-colors">Contact Us</a></li>
+                <li><a href="#privacy" className="hover:text-slate-950 transition-colors">Privacy Policy</a></li>
+              </ul>
+            </div>
+
+          </div>
+
+          <div className="border-t border-slate-200/60 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400">
+            <p>© {new Date().getFullYear()} BridgeOne. All rights reserved.</p>
+            <div className="flex gap-4">
+              <span className="hover:text-slate-600 cursor-pointer">Twitter</span>
+              <span className="hover:text-slate-600 cursor-pointer">LinkedIn</span>
+              <span className="hover:text-slate-600 cursor-pointer">GitHub</span>
+            </div>
+          </div>
+
         </div>
       </footer>
 
