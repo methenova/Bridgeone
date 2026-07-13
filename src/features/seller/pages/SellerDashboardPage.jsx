@@ -203,14 +203,8 @@ export default function SellerDashboardPage() {
         setCallbacks(scheduled?.length || 0);
         setWaitingCustomers(scheduled?.length || 0);
 
-        // 4. Sales Assisted (Completed orders)
-        const { data: items } = await supabase
-          .from("order_items")
-          .select("price, quantity, orders!inner(status)")
-          .eq("shop_id", shopId)
-          .neq("orders.status", "cancelled");
-        const salesTotal = items?.reduce((acc, item) => acc + Number(item.price || 0) * (item.quantity || 1), 0) || 0;
-        setSalesAssisted(salesTotal);
+        // 4. Sales Assisted — marketplace orders removed, set to 0
+        setSalesAssisted(0);
 
         // 4.5. Online Agents count & list
         const { data: onlineAgs } = await supabase
@@ -221,19 +215,9 @@ export default function SellerDashboardPage() {
         setOnlineAgents(onlineAgs?.length || 0);
         setAvailableAgentsList(onlineAgs || []);
 
-        // 4.6. Conversions Today & Revenue Today (Orders completed today)
-        const { data: todayItems } = await supabase
-          .from("order_items")
-          .select("order_id, price, quantity, orders!inner(status, created_at)")
-          .eq("shop_id", shopId)
-          .neq("orders.status", "cancelled")
-          .gte("orders.created_at", todayStart.toISOString());
-        
-        const uniqueOrdersToday = new Set(todayItems?.map(item => item.order_id) || []);
-        setConversionsToday(uniqueOrdersToday.size);
-
-        const todayRevenueSum = todayItems?.reduce((acc, item) => acc + Number(item.price || 0) * (item.quantity || 1), 0) || 0;
-        setRevenueToday(todayRevenueSum);
+        // 4.6. Conversions / Revenue — marketplace orders removed, set to 0
+        setConversionsToday(0);
+        setRevenueToday(0);
 
         // 4.7. Top Shared Products
         const { data: callProducts } = await supabase

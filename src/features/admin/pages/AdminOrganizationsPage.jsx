@@ -101,18 +101,10 @@ export default function AdminOrganizationsPage() {
         .select("id", { count: "exact", head: true })
         .eq("shop_id", shop.id);
 
-      // Get orders volume
-      const { data: orderData } = await supabase
-        .from("orders")
-        .select("total")
-        .eq("shop_id", shop.id);
-      
-      const ordersTotal = orderData?.reduce((acc, o) => acc + Number(o.total || 0), 0) || 0;
-
       setSelectedShopUsage({
         calls: callCount || 0,
         products: prodCount || 0,
-        orders: ordersTotal
+        orders: 0  // marketplace orders removed
       });
     } catch (err) {
       console.error("Failed to load shop usage details:", err);

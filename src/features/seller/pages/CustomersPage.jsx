@@ -23,7 +23,6 @@ import toast from "react-hot-toast";
 import { supabase } from "@/config/supabase";
 import useSellerShop from "../hooks/useSellerShop";
 import { TableSkeleton, CardSkeleton } from "@/components/skeletons";
-import { getSellerOrderItems } from "../services/order.service";
 import { motion } from "framer-motion";
 
 export default function CustomersPage() {
@@ -142,21 +141,7 @@ export default function CustomersPage() {
         });
       });
 
-      // 3. Fetch checkout orders (from orders)
-      const { data: orders } = await supabase
-        .from("orders")
-        .select("*, order_items!inner(*)")
-        .eq("order_items.shop_id", shopId)
-        .eq("user_id", cust.id);
-
-      orders?.forEach(o => {
-        items.push({
-          type: "order",
-          title: "Order Placed",
-          body: `Invoice #${o.id.substring(0,8).toUpperCase()} placed. Total: ₹${Number(o.total_price || 0).toLocaleString()}`,
-          time: new Date(o.created_at),
-        });
-      });
+      // 3. Checkout orders removed (marketplace module dropped)
 
       // 4. Fetch callbacks (from callback_requests)
       const { data: callbacks } = await supabase

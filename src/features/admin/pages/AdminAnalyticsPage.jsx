@@ -60,17 +60,8 @@ export default function AdminAnalyticsPage() {
           setAvgCallDuration("2m 14s"); // Fallback mock average
         }
 
-        // 2. Fetch Orders for revenue metrics
-        const { data: orders } = await supabase
-          .from("orders")
-          .select("total, status");
-        
-        const totalSales = orders?.reduce((acc, o) => acc + Number(o.total || 0), 0) || 0;
-        const platformCommissions = Math.round(totalSales * 0.05); // 5% flat default platform fee
-        setRevenueStats({
-          total: totalSales,
-          commissions: platformCommissions
-        });
+        // 2. Revenue metrics — marketplace orders removed, set to 0
+        setRevenueStats({ total: 0, commissions: 0 });
 
         // 3. Compile Leaderboard: Top Shops by call counts
         const shopCountsMap = {};
@@ -83,19 +74,7 @@ export default function AdminAnalyticsPage() {
           shopCountsMap[c.shop_id].calls += 1;
         });
 
-        // Add revenue to leaderboard map
-        const { data: orderShopInfo } = await supabase
-          .from("order_items")
-          .select("shop_id, total, shops(shop_name)");
-        
-        orderShopInfo?.forEach(o => {
-          if (!o.shop_id) return;
-          const sName = o.shops?.shop_name || "Merchant Shop";
-          if (!shopCountsMap[o.shop_id]) {
-            shopCountsMap[o.shop_id] = { name: sName, calls: 0, revenue: 0 };
-          }
-          shopCountsMap[o.shop_id].revenue += Number(o.total || 0);
-        });
+        // Revenue leaderboard via order_items removed (marketplace module dropped)
 
         const compiledLeaderboard = Object.values(shopCountsMap)
           .sort((a,b) => b.calls - a.calls)

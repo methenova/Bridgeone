@@ -98,9 +98,8 @@ export default function SellerWidgetPage() {
         const avgResponseStr = `${Math.min(15, Math.max(5, Math.round(avgDuration * 0.05)))}s`;
         const avgWaitStr = `${Math.min(45, Math.max(10, Math.round(avgDuration * 0.12)))}s`;
 
-        const { data: items } = await supabase.from("order_items").select("order_id, orders!inner(status)").eq("shop_id", shopId).neq("orders.status", "cancelled");
-        const uniqueOrderIds = new Set(items?.map(item => item.order_id) || []);
-        const conversionRateVal = callRequests > 0 ? `${((uniqueOrderIds.size / callRequests) * 100).toFixed(1)}%` : "0.0%";
+        // Conversion rate via orders removed (marketplace module dropped)
+        const conversionRateVal = "0.0%";
 
         const pageCounts = {};
         sessions?.forEach(s => { pageCounts[s.current_page || "/"] = (pageCounts[s.current_page || "/"] || 0) + 1; });

@@ -39,25 +39,9 @@ export default function AdminSubscriptionsPage() {
   const [editCommission, setEditCommission] = useState("5.0");
   const [submitting, setSubmitting] = useState(false);
 
-  // Load completed orders as billing invoice histories
+  // Invoices via marketplace orders removed (orders table dropped)
   useEffect(() => {
-    async function loadInvoices() {
-      try {
-        setLoadingInvoices(true);
-        const { data } = await supabase
-          .from("orders")
-          .select("*, order_items(shops(shop_name))")
-          .eq("status", "completed")
-          .order("created_at", { ascending: false });
-        
-        setInvoices(data || []);
-      } catch (err) {
-        console.error("Failed to load invoice histories:", err);
-      } finally {
-        setLoadingInvoices(false);
-      }
-    }
-    loadInvoices();
+    setInvoices([]);
   }, []);
 
   // Sync plan totals

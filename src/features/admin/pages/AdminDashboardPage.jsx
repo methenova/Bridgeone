@@ -119,13 +119,8 @@ export default function AdminDashboardPage() {
           .limit(5);
         setRecentCalls(calls || []);
 
-        // 5. Fetch Recent Payments (Orders completed)
-        const { data: orders } = await supabase
-          .from("orders")
-          .select("*")
-          .order("created_at", { ascending: false })
-          .limit(5);
-        setRecentPayments(orders || []);
+        // 5. Recent Payments \u2014 marketplace orders removed
+        setRecentPayments([]);
 
       } catch (err) {
         console.error("[PlatformDashboard] Load metrics error:", err);

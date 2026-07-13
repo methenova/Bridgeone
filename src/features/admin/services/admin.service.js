@@ -8,24 +8,18 @@ export async function getAdminStats() {
     { count: usersCount },
     { count: shopsCount },
     { count: productsCount },
-    { count: ordersCount },
-    { data: ordersData },
   ] = await Promise.all([
     supabase.from("profiles").select("*", { count: "exact", head: true }),
     supabase.from("shops").select("*", { count: "exact", head: true }),
     supabase.from("products").select("*", { count: "exact", head: true }),
-    supabase.from("orders").select("*", { count: "exact", head: true }),
-    supabase.from("orders").select("total").neq("status", "cancelled"),
   ]);
-
-  const totalRevenue = ordersData?.reduce((sum, o) => sum + Number(o.total), 0) ?? 0;
 
   return {
     totalUsers: usersCount ?? 0,
     totalShops: shopsCount ?? 0,
     totalProducts: productsCount ?? 0,
-    totalOrders: ordersCount ?? 0,
-    totalRevenue,
+    totalOrders: 0,     // marketplace orders removed
+    totalRevenue: 0,    // marketplace orders removed
   };
 }
 
@@ -213,25 +207,11 @@ export async function deleteCategory(id) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// ORDERS MANAGEMENT
+// ORDERS MANAGEMENT — marketplace removed
 // ─────────────────────────────────────────────────────────────
 export async function getAdminOrders() {
-  const { data, error } = await supabase
-    .from("orders")
-    .select(`
-      *,
-      profiles:user_id ( full_name, email ),
-      addresses:address_id ( * ),
-      order_items (
-        *,
-        products ( name ),
-        shops ( name:shop_name )
-      )
-    `)
-    .order("created_at", { ascending: false });
-
-  if (error) throw error;
-  return data ?? [];
+  // Orders table dropped — marketplace module removed
+  return [];
 }
 
 // ─────────────────────────────────────────────────────────────
