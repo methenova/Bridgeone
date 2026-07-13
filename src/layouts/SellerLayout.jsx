@@ -34,6 +34,7 @@ const menu = [
 export default function SellerLayout() {
   const { profile, loading, logout } = useAuthContext();
   const { shop, loading: shopLoading } = useSellerShop();
+  const ringingCallsRef = useRef(new Map());
   const shopId = shop?.id;
   const location = useLocation();
   const navigate = useNavigate();
@@ -149,6 +150,7 @@ export default function SellerLayout() {
           const room = payload.new;
           if (room.status !== "live") return;
           
+          ringingCallsRef.current.set(room.id, room);
           sound.play().catch(() => {});
 
           if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
@@ -166,14 +168,53 @@ export default function SellerLayout() {
               <div className="font-bold text-sm text-slate-900">Incoming Video Call!</div>
               <div className="text-xs text-slate-500">A customer is requesting a live consultation.</div>
               <div className="flex gap-2 mt-2">
-                <button onClick={() => toast.dismiss(t.id)} className="flex-1 px-3 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Dismiss</button>
                 <button onClick={() => {
                   toast.dismiss(t.id);
+                  ringingCallsRef.current.delete(room.id);
+                }} className="flex-1 px-3 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Dismiss</button>
+                <button onClick={() => {
+                  toast.dismiss(t.id);
+                  ringingCallsRef.current.delete(room.id);
                   navigate("/seller/live");
                 }} className="flex-1 px-3 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg shadow-sm shadow-emerald-500/20 transition-all active:scale-95">Answer Call</button>
               </div>
             </div>
-          ), { duration: 20000, id: `call-${room.id}`, position: "top-center" });
+          ), { duration: 30000, id: `call-${room.id}`, position: "top-center" });
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "video_rooms", filter: `shop_id=eq.${shopId}` },
+        (payload) => {
+          const room = payload.new;
+          if (room.answer) {
+            // Call was accepted
+            ringingCallsRef.current.delete(room.id);
+            toast.dismiss(`call-${room.id}`);
+          }
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: "video_rooms", filter: `shop_id=eq.${shopId}` },
+        (payload) => {
+          const roomId = payload.old.id;
+          if (ringingCallsRef.current.has(roomId)) {
+            // Call was never answered, so it's a missed call
+            ringingCallsRef.current.delete(roomId);
+            toast.dismiss(`call-${roomId}`);
+            
+            // Only show missed call toast if not on the Live page (Live page shows its own)
+            if (window.location.pathname !== "/seller/live") {
+              toast.error("Missed Video Call", { id: `missed-${roomId}`, duration: 5000, position: "top-center" });
+              if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+                new Notification("Missed Call", {
+                  body: `You missed a video call consultation.`,
+                  icon: "/favicon.ico"
+                });
+              }
+            }
+          }
         }
       )
       .subscribe();
