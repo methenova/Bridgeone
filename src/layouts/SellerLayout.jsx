@@ -184,6 +184,9 @@ export default function SellerLayout() {
             // Call was accepted
             ringingCallsRef.current.delete(room.id);
             toast.dismiss(`call-${room.id}`);
+            
+            // Clean up the transient incoming call database notification
+            supabase.from("notifications").delete().match({ shop_id: shopId, type: "incoming_call" }).then();
           }
         }
       )
@@ -196,6 +199,9 @@ export default function SellerLayout() {
             // Call was never answered, so it's a missed call
             ringingCallsRef.current.delete(roomId);
             toast.dismiss(`call-${roomId}`);
+            
+            // Clean up the transient incoming call database notification since it's now a missed call
+            supabase.from("notifications").delete().match({ shop_id: shopId, type: "incoming_call" }).then();
             
             // Only show missed call toast if not on the Live page (Live page shows its own)
             if (window.location.pathname !== "/seller/live") {

@@ -725,7 +725,7 @@ export default function WidgetPage() {
             customerName: name.trim(),
             customerEmail: email.trim() || null,
             customerPhone: phone.trim() || null,
-            status: "missed",
+            status: "ringing",
             duration: 0,
             productsShared: productToInquire ? [productToInquire.name] : null,
           }
@@ -740,7 +740,7 @@ export default function WidgetPage() {
             customer_name: name.trim(),
             customer_email: email.trim() || null,
             customer_phone: phone.trim() || null,
-            status: "missed",
+            status: "ringing",
             products_shared: productToInquire ? [productToInquire.name] : null
           })
           .select();

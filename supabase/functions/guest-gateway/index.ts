@@ -131,6 +131,10 @@ serve(async (req) => {
       const { roomId } = body;
       await supabaseAdmin.from("video_candidates").delete().eq("room_id", roomId);
       const { data, error } = await supabaseAdmin.from("video_rooms").delete().eq("id", roomId).select();
+      
+      // Clean up any transient incoming call notifications for this shop
+      await supabaseAdmin.from("notifications").delete().match({ shop_id: shopId, type: "incoming_call" });
+      
       result = resolveSingle(data);
       writeError = error;
 
@@ -158,6 +162,10 @@ serve(async (req) => {
         .update({ duration, status, notes, csat_score: csatScore, call_rating: callRating })
         .eq("id", id)
         .select();
+        
+      // Clean up any transient incoming call notifications
+      await supabaseAdmin.from("notifications").delete().match({ shop_id: shopId, type: "incoming_call" });
+      
       result = resolveSingle(data);
       writeError = error;
 
