@@ -903,10 +903,7 @@ export default function WidgetPage() {
   }
 
   function resetFields() {
-    // Reset identity fields
-    setName("");
-    setEmail("");
-    setPhone("");
+    // DO NOT reset identity fields (name, email, phone) so the user doesn't have to re-register for subsequent calls
     setCallbackTime("");
     setCallbackDate("");
     setCallbackTimeOnly("");
