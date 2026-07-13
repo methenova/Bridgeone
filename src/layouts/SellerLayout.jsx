@@ -56,8 +56,12 @@ export default function SellerLayout() {
   useEffect(() => {
     if (!shopId || !profile?.id) return;
 
-    // sound chime alert
-    const sound = new Audio("https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav");
+    // sound chime alert for general notifications
+    const chime = new Audio("https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav");
+    
+    // professional looped ringtone for incoming calls
+    const ringtone = new Audio("https://assets.mixkit.co/active_storage/sfx/2870/2870-84.wav");
+    ringtone.loop = true;
 
     // Subscription A: Table notifications (Incoming/Missed calls, callbacks)
     const notifSub = supabase.channel(`global-notif-insert-${shopId}`)
@@ -69,7 +73,7 @@ export default function SellerLayout() {
           if (notif.is_read) return;
           if (notif.type === "incoming_call") return; // Handled dynamically by callsSub to allow auto-closing
 
-          sound.play().catch(() => {});
+          chime.play().catch(() => {});
 
           if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
             new Notification(notif.title || "BridgeOne Alert", {
@@ -90,7 +94,7 @@ export default function SellerLayout() {
           const msg = payload.new;
           if (msg.sender_id === profile.id) return; // Ignore own messages
 
-          sound.play().catch(() => {});
+          chime.play().catch(() => {});
 
           // Fetch sender details
           const { data: senderProf } = await supabase
@@ -122,7 +126,7 @@ export default function SellerLayout() {
           if (newAgent.profile_id === profile.id) return; // Ignore self updates
           if (oldAgent && oldAgent.status === newAgent.status) return; // Ignore if status is identical
 
-          sound.play().catch(() => {});
+          chime.play().catch(() => {});
 
           // Fetch agent details
           const { data: agentProf } = await supabase
@@ -153,7 +157,12 @@ export default function SellerLayout() {
           if (room.status !== "live") return;
           
           ringingCallsRef.current.set(room.id, room);
-          sound.play().catch(() => {});
+          
+          ringtone.play().catch(() => {});
+          if (navigator.vibrate) {
+            // Professional vibration pattern for incoming calls
+            navigator.vibrate([1000, 500, 1000, 500, 1000, 500, 1000, 500, 1000, 500]);
+          }
 
           if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
             const n = new Notification("Incoming Video Call", {
@@ -195,6 +204,13 @@ export default function SellerLayout() {
             ringingCallsRef.current.delete(room.id);
             toast.dismiss(`call-${room.id}`);
             
+            // Stop ringtone and vibration if no other calls are ringing
+            if (ringingCallsRef.current.size === 0) {
+              ringtone.pause();
+              ringtone.currentTime = 0;
+              if (navigator.vibrate) navigator.vibrate(0);
+            }
+            
             const n = activeNotificationsRef.current.get(room.id);
             if (n) {
               n.close();
@@ -215,6 +231,13 @@ export default function SellerLayout() {
             // Call was never answered, so it's a missed call
             ringingCallsRef.current.delete(roomId);
             toast.dismiss(`call-${roomId}`);
+            
+            // Stop ringtone and vibration if no other calls are ringing
+            if (ringingCallsRef.current.size === 0) {
+              ringtone.pause();
+              ringtone.currentTime = 0;
+              if (navigator.vibrate) navigator.vibrate(0);
+            }
             
             const n = activeNotificationsRef.current.get(roomId);
             if (n) {
