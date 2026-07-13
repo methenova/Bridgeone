@@ -59,10 +59,10 @@ serve(async (req) => {
     if (shop.shopify_domain && shop.shopify_domain !== "*") {
       const cleanDomain = shop.shopify_domain.replace(/^(https?:\/\/)?(www\.)?/, "").split("/")[0].split(":")[0];
       const originHost = origin.replace(/^(https?:\/\/)?(www\.)?/, "").split("/")[0].split(":")[0];
-      
+
       const isLocalhost = originHost === "localhost" || originHost === "127.0.0.1" || originHost === "" || originHost.match(/^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)/);
       const isPlatformHost = originHost.includes("digimirai.com") || originHost.includes("bridgeone.cloud") || originHost.includes("localhost");
-      
+
       if (!isLocalhost && !isPlatformHost && cleanDomain !== "localhost" && !originHost.includes(cleanDomain)) {
         return new Response(
           JSON.stringify({ error: `Unauthorized origin: ${origin}` }),
@@ -73,15 +73,15 @@ serve(async (req) => {
 
     // 6. Database-Backed IP & Shop Rate Limiting
     const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "127.0.0.1";
-    
+
     // Clean expired limits first
     await supabaseAdmin.from("rate_limits").delete().lt("expiry", new Date().toISOString());
 
     // IP limits check (Max 40 requests per minute)
     const ipKey = `ip:${clientIp}`;
-    const { data: ipLimit } = await supabaseAdmin.rpc("increment_rate_limit", { 
-      rate_key: ipKey, 
-      window_seconds: 60 
+    const { data: ipLimit } = await supabaseAdmin.rpc("increment_rate_limit", {
+      rate_key: ipKey,
+      window_seconds: 60
     });
     if (ipLimit && ipLimit > 40) {
       return new Response(
@@ -92,9 +92,9 @@ serve(async (req) => {
 
     // Shop limits check (Max 150 requests per minute)
     const shopKey = `shop:${shopId}`;
-    const { data: shopLimit } = await supabaseAdmin.rpc("increment_rate_limit", { 
-      rate_key: shopKey, 
-      window_seconds: 60 
+    const { data: shopLimit } = await supabaseAdmin.rpc("increment_rate_limit", {
+      rate_key: shopKey,
+      window_seconds: 60
     });
     if (shopLimit && shopLimit > 150) {
       return new Response(
@@ -138,12 +138,12 @@ serve(async (req) => {
       const { customerName, customerEmail, customerPhone, status, duration, productsShared } = body;
       const { data, error } = await supabaseAdmin
         .from("call_logs")
-        .insert({ 
-          shop_id: shopId, 
-          customer_name: customerName, 
-          customer_email: customerEmail, 
-          customer_phone: customerPhone, 
-          status, 
+        .insert({
+          shop_id: shopId,
+          customer_name: customerName,
+          customer_email: customerEmail,
+          customer_phone: customerPhone,
+          status,
           duration,
           products_shared: productsShared
         })
