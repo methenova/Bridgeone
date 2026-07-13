@@ -598,6 +598,20 @@ export default function LivePage() {
   }
 
   async function handleDeclineCall() {
+    // If this was an active consultation (call was answered), mark the call_log as completed
+    // before destroying the room. This is a safety net so the customer side doesn't accidentally
+    // mark it as "missed" due to race conditions.
+    if (activeConsultation && activeCallLogId) {
+      try {
+        await supabase
+          .from("call_logs")
+          .update({ status: "completed", duration: consultationDuration })
+          .eq("id", activeCallLogId);
+      } catch (err) {
+        console.warn("[LivePage] Failed to mark call as completed:", err);
+      }
+    }
+
     // Destroy peer
     if (viewerPeerRef.current) {
       viewerPeerRef.current.destroy();
