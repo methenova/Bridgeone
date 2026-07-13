@@ -77,6 +77,21 @@ export async function getRoom(roomCode) {
 
 export async function deleteRoom(roomId) {
     if (!roomId) return;
+    
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        const apiKey = window.BridgeOneShopApiKey || "";
+        const shopId = window.BridgeOneShopId || "";
+        return supabase.functions.invoke("guest-gateway", {
+            body: {
+                action: "delete_room",
+                shopId,
+                apiKey,
+                roomId
+            }
+        });
+    }
+
     await supabase.from("video_candidates").delete().eq("room_id", roomId);
     await supabase.from("video_rooms").delete().eq("id", roomId);
 }

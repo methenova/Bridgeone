@@ -127,6 +127,13 @@ serve(async (req) => {
       result = data;
       writeError = error;
 
+    } else if (action === "delete_room") {
+      const { roomId } = body;
+      await supabaseAdmin.from("video_candidates").delete().eq("room_id", roomId);
+      const { data, error } = await supabaseAdmin.from("video_rooms").delete().eq("id", roomId).select();
+      result = resolveSingle(data);
+      writeError = error;
+
     } else if (action === "create_call_log") {
       const { customerName, customerEmail, customerPhone, status, duration, productsShared } = body;
       const { data, error } = await supabaseAdmin
