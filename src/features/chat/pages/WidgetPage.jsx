@@ -875,14 +875,20 @@ export default function WidgetPage() {
           setFeedbackText("");
         } else {
           setFlowState(shop?.is_online ? "form" : "offline");
+          window.parent.postMessage("close-widget", "*");
+          resetFields();
         }
       } catch (err) {
         console.warn("[Widget] Failed to process call summary details:", err);
         setFlowState(shop?.is_online ? "form" : "offline");
+        window.parent.postMessage("close-widget", "*");
+        resetFields();
       }
       currentCallLogIdRef.current = null;
     } else {
       setFlowState(shop?.is_online ? "form" : "offline");
+      window.parent.postMessage("close-widget", "*");
+      resetFields();
     }
 
     // Destroy peer session
@@ -890,10 +896,9 @@ export default function WidgetPage() {
       peerRef.current.destroy();
       peerRef.current = null;
     }
+  }
 
-    // Notify parent frame loader to collapse the widget iframe
-    window.parent.postMessage("close-widget", "*");
-
+  function resetFields() {
     // Reset identity fields
     setName("");
     setEmail("");
@@ -2335,10 +2340,14 @@ export default function WidgetPage() {
               <div className="space-y-3 pt-2 w-full">
                 <p className="text-xs text-green-400 font-bold">✓ Feedback recorded. Thank you!</p>
                 <button
-                  onClick={() => setFlowState(shop?.is_online ? "form" : "offline")}
+                  onClick={() => {
+                    setFlowState(shop?.is_online ? "form" : "offline");
+                    window.parent.postMessage("close-widget", "*");
+                    resetFields();
+                  }}
                   className="w-full rounded-xl bg-white shadow-sm hover:bg-slate-100 border border-slate-200 text-xs font-bold py-3 text-slate-700 hover:text-slate-900 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
                 >
-                  Return to Dashboard
+                  Close & Return
                 </button>
               </div>
             )}
