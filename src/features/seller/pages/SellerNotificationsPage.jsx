@@ -117,8 +117,11 @@ export default function SellerNotificationsPage() {
   // Filtered notifications calculation
   const filteredNotifications = useMemo(() => {
     return notifications.filter(n => {
+      // Never show incoming_call in the history log (it's transient)
+      if (n.type === "incoming_call") return false;
+      
       if (activeTab === "unread") return !n.is_read;
-      if (activeTab === "calls") return n.type === "incoming_call" || n.type === "missed_call";
+      if (activeTab === "calls") return n.type === "missed_call";
       if (activeTab === "callbacks") return n.type === "callback_reminder";
       if (activeTab === "system") return n.type === "system";
       return true;

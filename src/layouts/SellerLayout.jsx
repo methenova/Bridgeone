@@ -35,6 +35,7 @@ export default function SellerLayout() {
   const { profile, loading, logout } = useAuthContext();
   const { shop, loading: shopLoading } = useSellerShop();
   const ringingCallsRef = useRef(new Map());
+  const activeNotificationsRef = useRef(new Map());
   const shopId = shop?.id;
   const location = useLocation();
   const navigate = useNavigate();
@@ -66,6 +67,7 @@ export default function SellerLayout() {
         (payload) => {
           const notif = payload.new;
           if (notif.is_read) return;
+          if (notif.type === "incoming_call") return; // Handled dynamically by callsSub to allow auto-closing
 
           sound.play().catch(() => {});
 
@@ -153,6 +155,14 @@ export default function SellerLayout() {
           ringingCallsRef.current.set(room.id, room);
           sound.play().catch(() => {});
 
+          if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+            const n = new Notification("Incoming Video Call", {
+              body: `Incoming call in room: ${room.room_code}`,
+              icon: "/favicon.ico"
+            });
+            activeNotificationsRef.current.set(room.id, n);
+          }
+
           // Don't show toast if we are already on the Live page, as it handles its own full-screen modal
           if (window.location.pathname === "/seller/live") return;
 
@@ -185,6 +195,12 @@ export default function SellerLayout() {
             ringingCallsRef.current.delete(room.id);
             toast.dismiss(`call-${room.id}`);
             
+            const n = activeNotificationsRef.current.get(room.id);
+            if (n) {
+              n.close();
+              activeNotificationsRef.current.delete(room.id);
+            }
+            
             // Clean up the transient incoming call database notification
             supabase.from("notifications").delete().match({ shop_id: shopId, type: "incoming_call" }).then();
           }
@@ -199,6 +215,12 @@ export default function SellerLayout() {
             // Call was never answered, so it's a missed call
             ringingCallsRef.current.delete(roomId);
             toast.dismiss(`call-${roomId}`);
+            
+            const n = activeNotificationsRef.current.get(roomId);
+            if (n) {
+              n.close();
+              activeNotificationsRef.current.delete(roomId);
+            }
             
             // Clean up the transient incoming call database notification since it's now a missed call
             supabase.from("notifications").delete().match({ shop_id: shopId, type: "incoming_call" }).then();
