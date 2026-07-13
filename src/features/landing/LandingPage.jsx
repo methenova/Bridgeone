@@ -132,205 +132,208 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right Hero Product Call Mockup */}
+            {/* Right Hero: BridgeOne Agent Console Mockup (B2B SaaS UI Showcase) */}
             <div className="lg:col-span-6">
-              <div className="relative mx-auto max-w-md lg:max-w-none">
+              <div className="relative mx-auto max-w-lg">
                 
-                {/* Main Product Card */}
-                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-100 transition-all duration-300">
-                  {/* Browser top-bar */}
-                  <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-5">
-                    <div className="flex gap-1.5">
-                      <div className="h-2.5 w-2.5 rounded-full bg-red-400" />
-                      <div className="h-2.5 w-2.5 rounded-full bg-yellow-400" />
-                      <div className="h-2.5 w-2.5 rounded-full bg-green-400" />
-                    </div>
-                    <div className="text-[10px] text-slate-400 font-mono bg-slate-50 px-3 py-0.5 rounded-md border border-slate-100">
-                      yourstore.com/products/air-max
-                    </div>
-                  </div>
-
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    
-                    {/* Left: Product Info */}
-                    <div className="space-y-4">
+                {/* Outer Console Window */}
+                <div className="rounded-2xl border border-slate-200 bg-slate-900 text-slate-100 shadow-2xl overflow-hidden transition-all duration-300">
+                  
+                  {/* Console Header */}
+                  <div className="bg-slate-950/80 px-4 py-3 flex items-center justify-between border-b border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <div className="flex h-5.5 w-5.5 items-center justify-center rounded-lg bg-blue-600 text-xs font-black text-white shadow-sm">
+                        B
+                      </div>
                       <div>
-                        <h3 className="text-xl font-bold text-slate-900 leading-tight">Wireless Headphones</h3>
-                        <div className="flex items-center gap-2 mt-1">
-                          <div className="flex text-amber-400">
-                            <Star className="h-3.5 w-3.5 fill-current" />
-                            <Star className="h-3.5 w-3.5 fill-current" />
-                            <Star className="h-3.5 w-3.5 fill-current" />
-                            <Star className="h-3.5 w-3.5 fill-current" />
-                            <Star className="h-3.5 w-3.5 fill-current animate-pulse" />
-                          </div>
-                          <span className="text-xs font-semibold text-slate-500">4.8 (320 reviews)</span>
-                        </div>
+                        <span className="text-xs font-bold text-slate-200">BridgeOne Agent Console</span>
+                        <span className="ml-2 text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700/50">v2.4</span>
                       </div>
-
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-2xl font-black text-slate-900">₹2,499</span>
-                        <span className="text-sm text-slate-400 line-through">₹4,999</span>
-                        <span className="text-xs font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded-md">50% OFF</span>
-                      </div>
-
-                      <ul className="text-xs space-y-2 text-slate-500">
-                        <li className="flex items-center gap-1.5">
-                          <Check className="h-3.5 w-3.5 text-blue-600" /> Active Noise Cancellation
-                        </li>
-                        <li className="flex items-center gap-1.5">
-                          <Check className="h-3.5 w-3.5 text-blue-600" /> 30H Battery Life
-                        </li>
-                        <li className="flex items-center gap-1.5">
-                          <Check className="h-3.5 w-3.5 text-blue-600" /> Premium Sound Quality
-                        </li>
-                        <li className="flex items-center gap-1.5">
-                          <Check className="h-3.5 w-3.5 text-blue-600" /> 1 Year Warranty
-                        </li>
-                      </ul>
-
-                      {/* Mock Add to Cart */}
-                      <button className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-50 py-2.5 text-xs font-semibold text-blue-600 hover:bg-blue-100 transition-colors">
-                        <ShoppingCart className="h-3.5 w-3.5" />
-                        Add to Cart
-                      </button>
-
-                      {/* Simulated Call Action Button */}
-                      {simState === "idle" && (
-                        <button
-                          onClick={handleStartSimCall}
-                          className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 text-xs font-bold text-white shadow-md shadow-blue-500/20 hover:bg-blue-500 transition-all hover:scale-[1.02]"
-                        >
-                          <Video className="h-3.5 w-3.5 text-white" />
-                          Start Live Call
-                        </button>
-                      )}
                     </div>
-
-                    {/* Right: Product Image & Call Overlay */}
-                    <div className="relative flex items-center justify-center rounded-2xl bg-slate-50 p-4 border border-slate-100 min-h-[220px]">
-                      
-                      {simState === "idle" && (
-                        <>
-                          <img
-                            src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=80"
-                            alt="Wireless Headphones"
-                            className="max-h-40 object-contain hover:scale-105 transition-transform duration-300"
-                          />
-                          {/* Widget Trigger Hint */}
-                          <div className="absolute bottom-2 right-2 flex items-center gap-1 rounded-full bg-blue-600 px-2.5 py-1 text-[9px] font-bold text-white animate-bounce">
-                            <span className="h-1.5 w-1.5 rounded-full bg-white animate-ping" />
-                            Click Live Call
-                          </div>
-                        </>
-                      )}
-
-                      {/* --- Calling State --- */}
-                      {simState === "calling" && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/95 text-white rounded-2xl p-4 animate-fade-in">
-                          <div className="relative">
-                            <div className="absolute -inset-1 rounded-full bg-blue-500 animate-ping opacity-75" />
-                            <img
-                              src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80"
-                              alt="Anita S."
-                              className="relative h-14 w-14 rounded-full object-cover border-2 border-blue-500 shadow-md"
-                            />
-                          </div>
-                          <p className="mt-3 text-xs font-semibold">Anita S.</p>
-                          <p className="text-[10px] text-slate-400">Sales Expert</p>
-                          <p className="mt-4 text-[10px] text-blue-400 font-medium animate-pulse">Connecting video call...</p>
-                          
-                          <button
-                            onClick={handleEndSimCall}
-                            className="mt-4 rounded-full bg-red-500 p-2 text-white hover:bg-red-600 transition-colors"
-                          >
-                            <PhoneOff className="h-4 w-4" />
-                          </button>
-                        </div>
-                      )}
-
-                      {/* --- Connected Call State --- */}
-                      {simState === "connected" && (
-                        <div className="absolute inset-0 bg-slate-950 rounded-2xl overflow-hidden flex flex-col justify-between p-3 animate-scale-up">
-                          {/* Video Canvas Placeholder (Mocking Agent Video) */}
-                          <div className="absolute inset-0">
-                            <img
-                              src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&auto=format&fit=crop&q=80"
-                              alt="Anita"
-                              className="h-full w-full object-cover opacity-90"
-                            />
-                            {/* Gradient Overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40" />
-                          </div>
-
-                          {/* Top row */}
-                          <div className="relative flex items-center justify-between">
-                            <span className="bg-emerald-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">
-                              <span className="h-1 w-1 rounded-full bg-white animate-ping" />
-                              LIVE
-                            </span>
-                            <span className="text-[10px] font-mono text-white bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded">
-                              {formatDuration(simDuration)}
-                            </span>
-                          </div>
-
-                          {/* Agent Info & Controls Row */}
-                          <div className="relative space-y-2">
-                            <div className="text-white">
-                              <p className="text-xs font-bold leading-none">Anita S.</p>
-                              <p className="text-[9px] text-slate-300">Sales Expert</p>
-                            </div>
-
-                            {/* Self PIP View */}
-                            <div className="absolute bottom-10 right-0 h-14 w-11 rounded-lg border border-white/20 bg-slate-800 overflow-hidden shadow-md">
-                              {!simVideoMuted ? (
-                                <div className="h-full w-full bg-gradient-to-br from-blue-900 to-indigo-900 flex items-center justify-center">
-                                  <span className="text-[8px] font-bold text-white/50">You</span>
-                                </div>
-                              ) : (
-                                <div className="h-full w-full bg-slate-900 flex items-center justify-center">
-                                  <VideoOff className="h-3 w-3 text-white/30" />
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Video Control Panel */}
-                            <div className="flex items-center justify-center gap-1.5 pt-1">
-                              <button
-                                onClick={() => setSimMicMuted(!simMicMuted)}
-                                className={`rounded-xl p-2 text-white transition-colors ${
-                                  simMicMuted ? "bg-red-500 hover:bg-red-600" : "bg-white/20 hover:bg-white/30"
-                                }`}
-                              >
-                                {simMicMuted ? <MicOff className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5" />}
-                              </button>
-                              <button
-                                onClick={() => setSimVideoMuted(!simVideoMuted)}
-                                className={`rounded-xl p-2 text-white transition-colors ${
-                                  simVideoMuted ? "bg-red-500 hover:bg-red-600" : "bg-white/20 hover:bg-white/30"
-                                }`}
-                              >
-                                {simVideoMuted ? <VideoOff className="h-3.5 w-3.5" /> : <Video className="h-3.5 w-3.5" />}
-                              </button>
-                              <button
-                                onClick={handleEndSimCall}
-                                className="rounded-xl bg-red-600 p-2 text-white hover:bg-red-700 transition-colors shadow-lg"
-                              >
-                                <PhoneOff className="h-3.5 w-3.5" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      )}
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="text-[10px] text-slate-400 font-medium">Agent Online</span>
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
-                    <span>Powered by <span className="font-bold text-blue-600">BridgeOne</span></span>
+                  {/* Simulator Area */}
+                  {simState === "idle" && (
+                    <div className="p-8 text-center space-y-6 bg-slate-900 min-h-[340px] flex flex-col items-center justify-center">
+                      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                        <Monitor className="h-7 w-7" />
+                      </div>
+                      <div className="space-y-2">
+                        <h3 className="text-sm font-bold text-slate-200">Simulate Live Customer Call</h3>
+                        <p className="text-xs text-slate-400 max-w-sm mx-auto leading-relaxed">
+                          See what your store agents see when a shopper clicks the video call button on your Shopify or WooCommerce store.
+                        </p>
+                      </div>
+                      <button
+                        onClick={handleStartSimCall}
+                        className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-xs font-bold text-white shadow-md shadow-blue-500/20 hover:bg-blue-500 transition-all hover:scale-[1.02]"
+                      >
+                        <Video className="h-4 w-4" />
+                        Simulate Incoming Call
+                      </button>
+                    </div>
+                  )}
+
+                  {/* --- Calling / Ringing State --- */}
+                  {simState === "calling" && (
+                    <div className="p-8 text-center bg-slate-950/80 min-h-[340px] flex flex-col items-center justify-center space-y-6 animate-fade-in">
+                      <div className="relative">
+                        <div className="absolute -inset-2 rounded-full bg-blue-500/30 animate-ping opacity-75" />
+                        <div className="relative h-16 w-16 rounded-full bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400">
+                          <Phone className="h-8 w-8 animate-bounce" />
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <h3 className="text-base font-bold text-slate-200">Incoming Video Call</h3>
+                        <p className="text-xs text-slate-400">Customer: Sarah M. (Shopify Store)</p>
+                        <p className="text-[10px] text-blue-400 font-mono">Referrer: /products/wireless-headphones</p>
+                      </div>
+                      <div className="flex items-center justify-center gap-3 pt-2">
+                        <button
+                          onClick={handleEndSimCall}
+                          className="rounded-xl bg-slate-800 hover:bg-slate-700 px-4 py-2.5 text-xs font-bold text-slate-300 transition-colors"
+                        >
+                          Decline
+                        </button>
+                        <button
+                          onClick={() => setSimState("connected")}
+                          className="rounded-xl bg-blue-600 hover:bg-blue-500 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:scale-[1.02]"
+                        >
+                          Accept Consultation
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* --- Connected B2B Console State --- */}
+                  {simState === "connected" && (
+                    <div className="grid grid-cols-12 bg-slate-900 min-h-[340px] text-xs divide-x divide-slate-800 animate-scale-up">
+                      
+                      {/* Left: Customer Telemetry & Call Stream */}
+                      <div className="col-span-8 p-4 flex flex-col justify-between space-y-4">
+                        
+                        {/* Real-time Customer Data Card */}
+                        <div className="bg-slate-950/50 border border-slate-800/80 rounded-xl p-3 space-y-2">
+                          <div className="flex items-center justify-between text-[10px]">
+                            <span className="text-slate-400 font-bold uppercase tracking-wider">Shopper Details</span>
+                            <span className="text-blue-400 font-semibold">Live on Store</span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 text-[11px]">
+                            <div>
+                              <p className="text-slate-500">Name</p>
+                              <p className="font-semibold text-slate-300">Sarah M. (Guest)</p>
+                            </div>
+                            <div>
+                              <p className="text-slate-500">Current URL</p>
+                              <p className="font-semibold text-blue-400 truncate">/products/headphones</p>
+                            </div>
+                            <div>
+                              <p className="text-slate-500">Cart Status</p>
+                              <p className="font-semibold text-amber-500">Empty</p>
+                            </div>
+                            <div>
+                              <p className="text-slate-500">Device/OS</p>
+                              <p className="font-semibold text-slate-300">iPhone · iOS 17</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Split Video Call Interface */}
+                        <div className="grid grid-cols-2 gap-3 relative">
+                          {/* Remote Feed (Customer) */}
+                          <div className="relative aspect-video rounded-xl bg-slate-950 overflow-hidden border border-slate-800">
+                            <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-950 flex items-center justify-center">
+                              <span className="text-[10px] font-bold text-slate-600">Sarah's Camera</span>
+                            </div>
+                            <div className="absolute bottom-2 left-2 text-[9px] text-white bg-black/60 px-1.5 py-0.5 rounded">
+                              Sarah M.
+                            </div>
+                          </div>
+
+                          {/* Local Feed (Agent) */}
+                          <div className="relative aspect-video rounded-xl bg-slate-950 overflow-hidden border border-slate-800">
+                            <img
+                              src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&auto=format&fit=crop&q=80"
+                              alt="Agent Feed"
+                              className="absolute inset-0 h-full w-full object-cover opacity-90"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
+                            <div className="absolute bottom-2 left-2 text-[9px] text-white bg-black/60 px-1.5 py-0.5 rounded">
+                              You (Agent)
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Call Action Bar */}
+                        <div className="flex items-center justify-between pt-2 border-t border-slate-800/80">
+                          <span className="text-[10px] font-mono text-slate-400 bg-slate-950 px-2 py-0.5 rounded">
+                            {formatDuration(simDuration)}
+                          </span>
+                          
+                          <div className="flex gap-1.5">
+                            <button
+                              onClick={() => setSimMicMuted(!simMicMuted)}
+                              className={`rounded-lg p-2 text-white transition-colors ${
+                                simMicMuted ? "bg-red-500" : "bg-slate-800 hover:bg-slate-700"
+                              }`}
+                            >
+                              {simMicMuted ? <MicOff className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5" />}
+                            </button>
+                            <button
+                              onClick={handleEndSimCall}
+                              className="rounded-lg bg-red-600 p-2 text-white hover:bg-red-700 transition-colors shadow-lg"
+                            >
+                              <PhoneOff className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        </div>
+
+                      </div>
+
+                      {/* Right: Active Product Sharing Catalog */}
+                      <div className="col-span-4 p-4 flex flex-col justify-between space-y-4">
+                        <div className="space-y-3">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Push to Shopper</p>
+                          
+                          {/* Mini Catalog Grid */}
+                          <div className="space-y-2">
+                            {[
+                              { name: "Wireless Headphones", price: "₹2,499" },
+                              { name: "Smart Watch SE", price: "₹4,999" }
+                            ].map((prod, idx) => (
+                              <div key={idx} className="bg-slate-950/40 border border-slate-800 rounded-lg p-2 flex flex-col justify-between gap-1.5">
+                                <div>
+                                  <p className="font-semibold text-slate-300 text-[10px] truncate">{prod.name}</p>
+                                  <p className="text-[9px] text-blue-400 font-mono">{prod.price}</p>
+                                </div>
+                                <button className="w-full py-1 bg-blue-600/20 text-blue-400 rounded text-[9px] font-bold hover:bg-blue-600 hover:text-white transition-all">
+                                  Share in Call
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="text-[9px] text-slate-500 leading-normal">
+                          Pushed products float directly inside the shopper's active video call widget.
+                        </div>
+                      </div>
+
+                    </div>
+                  )}
+
+                  {/* Console Footer */}
+                  <div className="bg-slate-950/80 px-4 py-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500">
+                    <span>WebRTC Secure Encryption</span>
                     <span className="flex items-center gap-1">
-                      <Shield className="h-3 w-3" /> Secure WebRTC
+                      <Shield className="h-3 w-3" /> PCI Compliant
                     </span>
                   </div>
+
                 </div>
               </div>
             </div>
