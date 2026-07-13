@@ -798,7 +798,7 @@ export default function LandingPage() {
                 
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-extrabold text-slate-900">
-                    {billingCycle === "monthly" ? "$29" : "$23"}
+                    {billingCycle === "monthly" ? "₹1,499" : "₹1,199"}
                   </span>
                   <span className="text-xs text-slate-400">/month</span>
                 </div>
@@ -845,7 +845,7 @@ export default function LandingPage() {
                 
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-extrabold text-slate-900">
-                    {billingCycle === "monthly" ? "$79" : "$63"}
+                    {billingCycle === "monthly" ? "₹3,999" : "₹3,199"}
                   </span>
                   <span className="text-xs text-slate-400">/month</span>
                 </div>
@@ -888,7 +888,7 @@ export default function LandingPage() {
                 
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-extrabold text-slate-900">
-                    {billingCycle === "monthly" ? "$199" : "$159"}
+                    {billingCycle === "monthly" ? "₹9,999" : "₹7,999"}
                   </span>
                   <span className="text-xs text-slate-400">/month</span>
                 </div>
