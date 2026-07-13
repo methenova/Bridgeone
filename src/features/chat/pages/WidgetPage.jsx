@@ -180,7 +180,10 @@ export default function WidgetPage() {
       const storedCalls = JSON.parse(localStorage.getItem("bo_previous_calls") || "[]");
       const storedProducts = JSON.parse(localStorage.getItem("bo_previous_products") || "[]");
 
-      if (storedName) setName(storedName);
+      if (storedName) {
+        setName(storedName);
+        setHasRegisteredBefore(true);
+      }
       if (storedEmail) setEmail(storedEmail);
       if (storedPhone) setPhone(storedPhone);
       setLanguage(storedLang);
@@ -218,6 +221,7 @@ export default function WidgetPage() {
 
   // Widget flow states: 'form' | 'calling' | 'connected' | 'offline' | 'callback-submitted'
   const [flowState, setFlowState] = useState("form");
+  const [hasRegisteredBefore, setHasRegisteredBefore] = useState(false);
 
   // Caller identity form
   const [name, setName] = useState("");
@@ -1448,8 +1452,9 @@ export default function WidgetPage() {
                 </div>
               )}
 
-              <div className="space-y-3.5">
-                {/* Name */}
+              {!hasRegisteredBefore ? (
+                <div className="space-y-3.5">
+                  {/* Name */}
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
                     <User className="h-4.5 w-4.5" />
@@ -1520,6 +1525,20 @@ export default function WidgetPage() {
                   </span>
                 </div>
               </div>
+              ) : (
+                <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-4 text-center space-y-1.5 shadow-sm">
+                  <p className="text-xs text-slate-700 font-medium">
+                    Welcome back, <span className="font-bold text-slate-900">{name}</span>!
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setHasRegisteredBefore(false)}
+                    className="text-[10px] text-blue-600 font-bold hover:underline cursor-pointer focus-visible:outline-none"
+                  >
+                    Not you? Edit details
+                  </button>
+                </div>
+              )}
 
               {/* Collapsible History Section */}
               {((previousCalls && previousCalls.length > 0) || (previousProducts && previousProducts.length > 0)) && (
@@ -1578,15 +1597,27 @@ export default function WidgetPage() {
                 </div>
               )}
 
-              <button
-                type="submit"
-                style={{ backgroundColor: primaryColor }}
-                aria-label="Initiate live video consultation"
-                className="w-full rounded-xl py-3.5 text-xs font-bold text-slate-900 shadow-xl hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:outline-none"
-              >
-                <Video className="h-4.5 w-4.5" />
-                <span>Start Video Consultation</span>
-              </button>
+              <div className="space-y-2.5">
+                <button
+                  type="submit"
+                  style={{ backgroundColor: primaryColor }}
+                  aria-label="Initiate live video consultation"
+                  className="w-full rounded-xl py-3.5 text-xs font-bold text-slate-900 shadow-xl hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 focus-visible:outline-none"
+                >
+                  <Video className="h-4.5 w-4.5" />
+                  <span>Start Video Consultation</span>
+                </button>
+                {hasRegisteredBefore && (
+                  <button
+                    type="button"
+                    onClick={() => setFlowState("offline")}
+                    className="w-full rounded-xl py-3.5 text-xs font-bold text-slate-700 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:outline-none"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
+                    <span>Leave a Message</span>
+                  </button>
+                )}
+              </div>
             </form>
           );
         })()}
