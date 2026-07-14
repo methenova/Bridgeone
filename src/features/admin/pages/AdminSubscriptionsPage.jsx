@@ -42,6 +42,7 @@ export default function AdminSubscriptionsPage() {
   // Invoices via marketplace orders removed (orders table dropped)
   useEffect(() => {
     setInvoices([]);
+    setLoadingInvoices(false);
   }, []);
 
   // Sync plan totals
