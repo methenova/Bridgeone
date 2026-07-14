@@ -92,7 +92,8 @@ const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
   const pathParts = location.pathname.split("/").filter(Boolean);
   const breadcrumbs = pathParts.map((part, index) => {
     const path = `/${pathParts.slice(0, index + 1).join("/")}`;
-    const title = part.charAt(0).toUpperCase() + part.slice(1);
+    // Map base route to 'Dashboard' to avoid duplicates like 'Admin / Admin'
+    const title = path === baseRoute ? "Dashboard" : part.charAt(0).toUpperCase() + part.slice(1);
     return { title, path };
   });
 
