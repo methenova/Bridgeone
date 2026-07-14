@@ -9,6 +9,9 @@ import {
   Activity,
   RefreshCw,
   Inbox,
+  PhoneMissed,
+  PhoneCall,
+  Calendar,
 } from "lucide-react";
 import { supabase } from "@/config/supabase";
 
@@ -22,31 +25,54 @@ function timeAgo(dateStr) {
 }
 
 const typeConfig = {
+  // Admin types
   support: {
     icon: LifeBuoy,
     color: "text-amber-500",
-    bg: "bg-amber-50",
-    border: "border-amber-200",
+    bg: "bg-amber-50/50",
+    border: "border-amber-100",
     label: "Support",
   },
   signup: {
     icon: UserPlus,
     color: "text-emerald-500",
-    bg: "bg-emerald-50",
-    border: "border-emerald-200",
+    bg: "bg-emerald-50/50",
+    border: "border-emerald-100",
     label: "New User",
   },
   audit: {
     icon: Activity,
     color: "text-blue-500",
-    bg: "bg-blue-50",
-    border: "border-blue-200",
+    bg: "bg-blue-50/50",
+    border: "border-blue-100",
     label: "Activity",
+  },
+  // Seller types
+  missed_call: {
+    icon: PhoneMissed,
+    color: "text-rose-500",
+    bg: "bg-rose-50/50",
+    border: "border-rose-100",
+    label: "Missed Call",
+  },
+  incoming_call: {
+    icon: PhoneCall,
+    color: "text-emerald-500",
+    bg: "bg-emerald-50/50",
+    border: "border-emerald-100",
+    label: "Incoming Call",
+  },
+  callback_reminder: {
+    icon: Calendar,
+    color: "text-blue-500",
+    bg: "bg-blue-50/50",
+    border: "border-blue-100",
+    label: "Callback",
   },
 };
 
 /* ── component ────────────────────────────────────────── */
-export default function NotificationDrawer({ open, onClose }) {
+export default function NotificationDrawer({ open, onClose, role = "admin", shopId = null }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const drawerRef = useRef(null);
@@ -54,52 +80,75 @@ export default function NotificationDrawer({ open, onClose }) {
   async function fetchNotifications() {
     setLoading(true);
     try {
-      // 1. New support tickets (last 30)
-      const { data: tickets } = await supabase
-        .from("support_tickets")
-        .select("id, title, type, status, created_at")
-        .order("created_at", { ascending: false })
-        .limit(10);
+      if (role === "seller") {
+        if (!shopId) {
+          setItems([]);
+          return;
+        }
+        // Fetch notifications for this shop
+        const { data: notifs } = await supabase
+          .from("notifications")
+          .select("id, title, message, type, is_read, created_at")
+          .eq("shop_id", shopId)
+          .order("created_at", { ascending: false })
+          .limit(30);
 
-      // 2. New user signups (last 30)
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("id, full_name, role, created_at")
-        .order("created_at", { ascending: false })
-        .limit(10);
+        setItems((notifs || []).map((n) => ({
+          id: n.id,
+          type: n.type || "missed_call",
+          title: n.title || "Notification",
+          message: n.message || "",
+          created_at: n.created_at,
+        })));
+      } else {
+        // Admin logic
+        // 1. New support tickets (last 10)
+        const { data: tickets } = await supabase
+          .from("support_tickets")
+          .select("id, title, type, status, created_at")
+          .order("created_at", { ascending: false })
+          .limit(10);
 
-      // 3. Audit log activity (last 30)
-      const { data: audits } = await supabase
-        .from("audit_logs")
-        .select("id, action, module, status, created_at")
-        .order("created_at", { ascending: false })
-        .limit(10);
+        // 2. New user signups (last 10)
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("id, full_name, role, created_at")
+          .order("created_at", { ascending: false })
+          .limit(10);
 
-      const merged = [
-        ...(tickets || []).map((t) => ({
-          id: `ticket-${t.id}`,
-          type: "support",
-          title: t.title || "Support Ticket",
-          message: `${t.type || "General"} · Status: ${t.status || "Open"}`,
-          created_at: t.created_at,
-        })),
-        ...(profiles || []).map((p) => ({
-          id: `profile-${p.id}`,
-          type: "signup",
-          title: `New ${p.role === "seller" ? "Seller" : "User"} Registered`,
-          message: p.full_name || "Unknown User",
-          created_at: p.created_at,
-        })),
-        ...(audits || []).map((a) => ({
-          id: `audit-${a.id}`,
-          type: "audit",
-          title: a.action || "Platform Action",
-          message: `${a.module || "System"} · ${a.status || ""}`,
-          created_at: a.created_at,
-        })),
-      ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        // 3. Audit log activity (last 10)
+        const { data: audits } = await supabase
+          .from("audit_logs")
+          .select("id, action, module, status, created_at")
+          .order("created_at", { ascending: false })
+          .limit(10);
 
-      setItems(merged);
+        const merged = [
+          ...(tickets || []).map((t) => ({
+            id: `ticket-${t.id}`,
+            type: "support",
+            title: t.title || "Support Ticket",
+            message: `${t.type || "General"} · Status: ${t.status || "Open"}`,
+            created_at: t.created_at,
+          })),
+          ...(profiles || []).map((p) => ({
+            id: `profile-${p.id}`,
+            type: "signup",
+            title: `New ${p.role === "seller" ? "Seller" : "User"} Registered`,
+            message: p.full_name || "Unknown User",
+            created_at: p.created_at,
+          })),
+          ...(audits || []).map((a) => ({
+            id: `audit-${a.id}`,
+            type: "audit",
+            title: a.action || "Platform Action",
+            message: `${a.module || "System"} · ${a.status || ""}`,
+            created_at: a.created_at,
+          })),
+        ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+        setItems(merged);
+      }
     } catch (err) {
       console.error("Notification fetch error:", err);
     } finally {
@@ -152,7 +201,9 @@ export default function NotificationDrawer({ open, onClose }) {
                 </div>
                 <div>
                   <p className="text-sm font-bold text-slate-900">Notifications</p>
-                  <p className="text-[10px] text-slate-400">Platform activity feed</p>
+                  <p className="text-[10px] text-slate-400">
+                    {role === "seller" ? "Store notification log" : "Platform activity feed"}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-1">
@@ -216,7 +267,9 @@ export default function NotificationDrawer({ open, onClose }) {
             {/* Footer */}
             <div className="border-t border-slate-100 px-4 py-3 shrink-0">
               <p className="text-[10px] text-slate-400 text-center">
-                Showing last 30 events across support, signups & audit logs
+                {role === "seller"
+                  ? "Showing last 30 store notifications"
+                  : "Showing last 30 events across support, signups & audit logs"}
               </p>
             </div>
           </motion.div>

@@ -325,6 +325,7 @@ export default function SellerLayout() {
       workspaceName={shop?.shop_name || "My Store"}
       baseRoute="/seller"
       marketplaceRoute="/"
+      shopId={shopId}
     />
   );
 }

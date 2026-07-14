@@ -16,7 +16,8 @@ export default function PremiumLayout({
   workspaces = [], // [{name: 'HQ'}, {name: 'Sandbox'}]
   onWorkspaceChange,
   baseRoute = "/admin",
-  marketplaceRoute = "/"
+  marketplaceRoute = "/",
+  shopId = null
 }) {
   const handleLogout = onLogout;
   const navigate = useNavigate();
@@ -538,7 +539,12 @@ const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
           </div>
         )}
         {/* Notification Drawer */}
-        <NotificationDrawer open={notifDrawerOpen} onClose={() => setNotifDrawerOpen(false)} />
+        <NotificationDrawer 
+          open={notifDrawerOpen} 
+          onClose={() => setNotifDrawerOpen(false)} 
+          role={profile?.role}
+          shopId={shopId}
+        />
 
         {/* Profile Dropdown outside-click overlay */}
         {dropdownOpen && (
