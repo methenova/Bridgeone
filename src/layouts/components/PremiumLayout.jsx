@@ -370,8 +370,6 @@ const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
               <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-blue-600 border-2 border-white" />
             </button>
 
-            {/* Notification Drawer */}
-            <NotificationDrawer open={notifDrawerOpen} onClose={() => setNotifDrawerOpen(false)} />
 
             {/* Profile Dropdown */}
             <div className="relative">
@@ -391,7 +389,6 @@ const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
               <AnimatePresence>
                 {dropdownOpen && (
                   <>
-                    <div className="fixed inset-0 z-30" onClick={() => setDropdownOpen(false)} />
                     <motion.div 
                       initial={{ opacity: 0, y: 8, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -539,6 +536,13 @@ const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
               </div>
             </motion.div>
           </div>
+        )}
+        {/* Notification Drawer */}
+        <NotificationDrawer open={notifDrawerOpen} onClose={() => setNotifDrawerOpen(false)} />
+
+        {/* Profile Dropdown outside-click overlay */}
+        {dropdownOpen && (
+          <div className="fixed inset-0 z-30 bg-transparent" onClick={() => setDropdownOpen(false)} />
         )}
       </AnimatePresence>
 
