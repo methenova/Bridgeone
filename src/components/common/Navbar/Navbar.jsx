@@ -35,27 +35,15 @@ export default function Navbar() {
 
           {/* Center Navigation Menu (mockup structure) */}
           <nav className="hidden lg:flex items-center gap-6">
-            <div className="relative group">
-              <button className="flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
-                Product <ChevronDown className="h-3.5 w-3.5" />
-              </button>
-            </div>
+            <a href="#about" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
+              About
+            </a>
             <a href="#how-it-works" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
               How It Works
             </a>
-            <div className="relative group">
-              <button className="flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
-                Solutions <ChevronDown className="h-3.5 w-3.5" />
-              </button>
-            </div>
             <a href="#pricing" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
               Pricing
             </a>
-            <div className="relative group">
-              <button className="flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
-                Resources <ChevronDown className="h-3.5 w-3.5" />
-              </button>
-            </div>
           </nav>
 
           {/* Right Actions */}

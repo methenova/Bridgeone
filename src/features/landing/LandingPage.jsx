@@ -689,6 +689,85 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── ABOUT SECTION ───────────────────────────────────────────────────── */}
+      <section id="about" className="py-20 lg:py-28 bg-white border-y border-slate-200/50">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
+            
+            {/* Left Column: Tech Stack & Uptime Details */}
+            <div className="lg:col-span-5 space-y-6">
+              <div className="rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 p-8 shadow-sm">
+                <h3 className="text-sm font-bold text-blue-900 mb-4">Enterprise Grade Infrastructure</h3>
+                
+                <div className="space-y-4">
+                  {[
+                    { title: "Real-time WebRTC", desc: "No downloads, sub-second latency video & audio streams directly in-browser." },
+                    { title: "Supabase Backend", desc: "Secure Postgres storage, Row-Level Security, and real-time subscription synchronization." },
+                    { title: "Secure End-to-End", desc: "Fully encrypted media tunnels complying with modern data protection standards." }
+                  ].map((tech, idx) => (
+                    <div key={idx} className="flex gap-3">
+                      <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white font-bold text-[9px]">
+                        ✓
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-bold text-slate-900">{tech.title}</h4>
+                        <p className="text-[11px] text-slate-500 mt-0.5">{tech.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-8 pt-6 border-t border-blue-100 flex items-center justify-between text-center">
+                  <div>
+                    <p className="text-xl font-extrabold text-blue-600">99.9%</p>
+                    <p className="text-[10px] text-slate-400 font-semibold uppercase">Uptime SLA</p>
+                  </div>
+                  <div>
+                    <p className="text-xl font-extrabold text-indigo-600">&lt;250ms</p>
+                    <p className="text-[10px] text-slate-400 font-semibold uppercase">Latency</p>
+                  </div>
+                  <div>
+                    <p className="text-xl font-extrabold text-blue-600">256-bit</p>
+                    <p className="text-[10px] text-slate-400 font-semibold uppercase">Encryption</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Mission & Core Value */}
+            <div className="lg:col-span-7 space-y-6">
+              <span className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
+                About BridgeOne
+              </span>
+              
+              <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl leading-tight">
+                Humanizing the online shopping experience, <span className="text-blue-600">one call at a time</span>.
+              </h2>
+              
+              <p className="text-base text-slate-500 leading-relaxed">
+                At BridgeOne, our mission is to close the gap between digital convenience and physical personalization. We believe that the best e-commerce conversions don't come from aggressive popups, but from real, trust-based human relationships.
+              </p>
+
+              <p className="text-sm text-slate-500 leading-relaxed">
+                By enabling online store owners and sales agents to immediately present products, answer custom sizing questions, and address purchase hesitation via interactive live video, we help online businesses convert clicks into lifelong customers.
+              </p>
+
+              <div className="flex flex-wrap gap-4 pt-2">
+                <div className="flex items-center gap-2 text-xs font-semibold text-slate-700 bg-slate-100 px-3.5 py-2 rounded-xl">
+                  <Users className="h-4 w-4 text-blue-600" />
+                  Built for modern merchant teams
+                </div>
+                <div className="flex items-center gap-2 text-xs font-semibold text-slate-700 bg-slate-100 px-3.5 py-2 rounded-xl">
+                  <Zap className="h-4 w-4 text-indigo-600" />
+                  Ultra-lightweight script payload
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       {/* ── TESTIMONIALS SECTION ───────────────────────────────────────────── */}
       <section className="bg-slate-100/50 py-20">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
