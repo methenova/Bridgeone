@@ -63,8 +63,7 @@ export default function AdminLayout() {
       menuItems={menu}
       profile={profile}
       onLogout={handleLogout}
-      workspaceName="BridgeOne HQ"
-      workspaces={[{ name: "BridgeOne HQ" }, { name: "BridgeOne Sandbox" }]}
+      workspaceName="BridgeOne"
       baseRoute="/admin"
       marketplaceRoute="/"
     />

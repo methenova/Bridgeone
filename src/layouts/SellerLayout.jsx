@@ -323,7 +323,6 @@ export default function SellerLayout() {
       profile={profile}
       onLogout={handleLogout}
       workspaceName={shop?.shop_name || "My Store"}
-      workspaces={shop ? [{ name: shop.shop_name || "My Store" }] : []}
       baseRoute="/seller"
       marketplaceRoute="/"
     />
