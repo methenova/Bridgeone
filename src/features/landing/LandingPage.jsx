@@ -246,11 +246,14 @@ export default function LandingPage() {
                         <div className="grid grid-cols-2 gap-3 relative">
                           {/* Remote Feed (Customer) */}
                           <div className="relative aspect-video rounded-xl bg-slate-950 overflow-hidden border border-slate-800">
-                            <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-950 flex items-center justify-center">
-                              <span className="text-[10px] font-bold text-slate-600">Sarah's Camera</span>
-                            </div>
+                            <img
+                              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"
+                              alt="Shopper Feed"
+                              className="absolute inset-0 h-full w-full object-cover opacity-90"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
                             <div className="absolute bottom-2 left-2 text-[9px] text-white bg-black/60 px-1.5 py-0.5 rounded">
-                              Sarah M.
+                              Sarah M. (Shopper)
                             </div>
                           </div>
 
