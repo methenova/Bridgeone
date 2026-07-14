@@ -1,12 +1,9 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import { 
   Users, 
   Search, 
   MessageSquare, 
-  IndianRupee, 
-  ShoppingBag, 
   X, 
   Clock, 
   Video, 
@@ -49,12 +46,28 @@ export default function CustomersPage() {
   const [timelineItems, setTimelineItems] = useState([]);
   const [loadingTimeline, setLoadingTimeline] = useState(false);
 
-  // Query order items for this shop
-  const { data: orderItems = [], isLoading: itemsLoading, refetch: refetchOrders } = useQuery({
-    queryKey: ["seller-order-items", shopId],
-    queryFn: () => getSellerOrderItems(shopId),
-    enabled: !!shopId,
-  });
+  // Load customers from call_logs (marketplace orders removed)
+  const [callCustomers, setCallCustomers] = useState([]);
+  const [itemsLoading, setItemsLoading] = useState(false);
+
+  async function loadCallCustomers() {
+    if (!shopId) return;
+    setItemsLoading(true);
+    try {
+      const { data } = await supabase
+        .from("call_logs")
+        .select("*")
+        .eq("shop_id", shopId)
+        .order("created_at", { ascending: false });
+      setCallCustomers(data || []);
+    } catch (e) {
+      console.warn("Failed to load call customers:", e);
+    } finally {
+      setItemsLoading(false);
+    }
+  }
+
+  useEffect(() => { loadCallCustomers(); }, [shopId]);
 
   // Fetch agents list
   useEffect(() => {
@@ -188,51 +201,36 @@ export default function CustomersPage() {
     }
   }
 
-  // Aggregate customer metrics
+  // Aggregate customer metrics from call_logs (marketplace orders removed)
   const customerList = useMemo(() => {
-    if (!orderItems.length) return [];
+    if (!callCustomers.length) return [];
 
     const agg = {};
-    orderItems.forEach((item) => {
-      const order = item.orders;
-      if (!order) return;
-      const profile = order.profiles;
-      const customerId = order.user_id;
+    callCustomers.forEach((log) => {
+      const key = log.customer_email || log.customer_name || log.caller_id;
+      if (!key) return;
 
-      if (!customerId) return;
-
-      const itemTotal = (item.price || 0) * (item.quantity || 1);
-
-      if (!agg[customerId]) {
-        agg[customerId] = {
-          id: customerId,
-          name: profile?.full_name || "Unknown Customer",
-          email: profile?.email || "No Email",
-          phone: profile?.phone || "No phone",
-          ordersCount: 0,
+      if (!agg[key]) {
+        agg[key] = {
+          id: key,
+          name: log.customer_name || log.caller_id || "Unknown",
+          email: log.customer_email || "—",
+          phone: log.customer_phone || "—",
+          callsCount: 0,
           totalSpent: 0,
-          lastOrderDate: order.created_at,
-          orderIds: new Set(),
-          items: [],
-          notes: profile?.notes || "",
-          createdAt: profile?.created_at
+          lastOrderDate: log.created_at,
+          notes: "",
+          createdAt: log.created_at,
         };
       }
-
-      agg[customerId].orderIds.add(order.id);
-      agg[customerId].totalSpent += itemTotal;
-      agg[customerId].items.push(item);
-
-      if (new Date(order.created_at) > new Date(agg[customerId].lastOrderDate)) {
-        agg[customerId].lastOrderDate = order.created_at;
+      agg[key].callsCount += 1;
+      if (new Date(log.created_at) > new Date(agg[key].lastOrderDate)) {
+        agg[key].lastOrderDate = log.created_at;
       }
     });
 
-    return Object.values(agg).map((cust) => ({
-      ...cust,
-      ordersCount: cust.orderIds.size,
-    }));
-  }, [orderItems]);
+    return Object.values(agg);
+  }, [callCustomers]);
 
   // Filtered CRM Customers
   const filteredCustomers = useMemo(() => {
@@ -250,17 +248,13 @@ export default function CustomersPage() {
     });
   }, [customerList, searchTerm, spentFilter]);
 
-  // Aggregated scorecards
+  // Aggregated scorecards (based on call_logs)
   const stats = useMemo(() => {
     const totalCustomers = customerList.length;
-    const totalSales = customerList.reduce((sum, c) => sum + c.totalSpent, 0);
-    const totalOrders = customerList.reduce((sum, c) => sum + c.ordersCount, 0);
-    const avgOrderValue = totalOrders > 0 ? totalSales / totalOrders : 0;
-
+    const totalCalls = customerList.reduce((sum, c) => sum + (c.callsCount || 0), 0);
     return {
       totalCustomers,
-      totalSales,
-      avgOrderValue,
+      totalCalls,
     };
   }, [customerList]);
 
@@ -279,7 +273,7 @@ export default function CustomersPage() {
       
       // Update local state
       setSelectedCust(prev => ({ ...prev, notes: crmNotes }));
-      refetchOrders();
+      loadCallCustomers();
     } catch (err) {
       toast.error(err.message || "Failed to update notes");
     } finally {
@@ -323,7 +317,7 @@ export default function CustomersPage() {
           <div>
             <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Total CRM Contacts</span>
             <h3 className="text-2xl font-black mt-2">{stats.totalCustomers}</h3>
-            <p className="text-[10px] text-slate-500 mt-1">Unique platform shoppers</p>
+            <p className="text-[10px] text-slate-500 mt-1">Unique callers tracked</p>
           </div>
           <div className="h-10 w-10 rounded-2xl bg-blue-50 border border-blue-100/50 text-blue-600 font-semibold flex items-center justify-center shrink-0">
             <Users className="h-5 w-5" />
@@ -332,23 +326,25 @@ export default function CustomersPage() {
 
         <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 p-6 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Accumulated Purchases</span>
-            <h3 className="text-2xl font-black mt-2">₹{stats.totalSales.toLocaleString("en-IN")}</h3>
-            <p className="text-[10px] text-slate-500 mt-1">Sum of checkout totals</p>
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Total Video Calls</span>
+            <h3 className="text-2xl font-black mt-2">{stats.totalCalls}</h3>
+            <p className="text-[10px] text-slate-500 mt-1">Consultation sessions logged</p>
           </div>
           <div className="h-10 w-10 rounded-2xl bg-emerald-50 border border-emerald-100/50 text-emerald-600 font-semibold flex items-center justify-center shrink-0">
-            <IndianRupee className="h-5 w-5" />
+            <Video className="h-5 w-5" />
           </div>
         </div>
 
         <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 p-6 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Average Customer LTV</span>
-            <h3 className="text-2xl font-black mt-2">₹{Math.round(stats.avgOrderValue).toLocaleString("en-IN")}</h3>
-            <p className="text-[10px] text-slate-500 mt-1">Assisted sales flow average</p>
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Avg Calls / Shopper</span>
+            <h3 className="text-2xl font-black mt-2">
+              {stats.totalCustomers > 0 ? (stats.totalCalls / stats.totalCustomers).toFixed(1) : 0}
+            </h3>
+            <p className="text-[10px] text-slate-500 mt-1">Engagement depth per contact</p>
           </div>
           <div className="h-10 w-10 rounded-2xl bg-purple-50 border border-purple-100/50 text-purple-650 font-semibold flex items-center justify-center shrink-0">
-            <ShoppingBag className="h-5 w-5" />
+            <Activity className="h-5 w-5" />
           </div>
         </div>
       </div>
@@ -396,9 +392,8 @@ export default function CustomersPage() {
             <thead className="sticky top-0 z-10 border-b border-slate-100 bg-white shadow-sm/40 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
               <tr>
                 <th className="px-6 py-5 align-middle">Shopper Info</th>
-                <th className="px-6 py-5 align-middle">Total Orders Count</th>
-                <th className="px-6 py-5 align-middle">Total Value spent</th>
-                <th className="px-6 py-5 align-middle">Last Checkout Date</th>
+                <th className="px-6 py-5 align-middle">Video Calls</th>
+                <th className="px-6 py-5 align-middle">Last Call Date</th>
                 <th className="px-6 py-5 align-middle text-right">CRM Actions</th>
               </tr>
             </thead>
@@ -420,14 +415,9 @@ export default function CustomersPage() {
                     </div>
                   </td>
 
-                  {/* Orders */}
+                  {/* Calls */}
                   <td className="px-6 py-5 align-middle text-sm font-bold text-slate-600">
-                    {cust.ordersCount} checkouts
-                  </td>
-
-                  {/* Spent */}
-                  <td className="px-6 py-5 align-middle text-sm font-bold text-emerald-600">
-                    ₹{cust.totalSpent.toLocaleString("en-IN")}
+                    {cust.callsCount} call{cust.callsCount !== 1 ? "s" : ""}
                   </td>
 
                   {/* Date */}
