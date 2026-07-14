@@ -32,7 +32,7 @@ export default function LandingPage() {
   const [billingCycle, setBillingCycle] = useState("monthly"); // "monthly" or "yearly"
 
   // --- Live Call Simulator States ---
-  const [simState, setSimState] = useState("idle"); // "idle" | "calling" | "connected"
+  const [simState, setSimState] = useState("connected"); // "idle" | "calling" | "connected"
   const [simDuration, setSimDuration] = useState(0);
   const [simMicMuted, setSimMicMuted] = useState(false);
   const [simVideoMuted, setSimVideoMuted] = useState(false);
@@ -252,7 +252,16 @@ export default function LandingPage() {
                               className="absolute inset-0 h-full w-full object-cover opacity-90"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
-                            <div className="absolute bottom-2 left-2 text-[9px] text-white bg-black/60 px-1.5 py-0.5 rounded">
+                            
+                            {/* Speaking Indicator Waveform overlay */}
+                            <div className="absolute top-2 right-2 flex items-center gap-0.5 bg-black/40 backdrop-blur-sm px-1.5 py-0.5 rounded text-[8px] text-white">
+                              <span className="h-1.5 w-0.5 bg-blue-400 animate-pulse" />
+                              <span className="h-3.5 w-0.5 bg-blue-400 animate-pulse delay-75" />
+                              <span className="h-2.5 w-0.5 bg-blue-400 animate-pulse delay-150" />
+                            </div>
+
+                            <div className="absolute bottom-2 left-2 text-[9px] text-white bg-black/60 px-1.5 py-0.5 rounded flex items-center gap-1">
+                              <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-ping" />
                               Sarah M. (Shopper)
                             </div>
                           </div>
@@ -265,7 +274,16 @@ export default function LandingPage() {
                               className="absolute inset-0 h-full w-full object-cover opacity-90"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
-                            <div className="absolute bottom-2 left-2 text-[9px] text-white bg-black/60 px-1.5 py-0.5 rounded">
+                            
+                            {/* Mic Status Indicator overlay */}
+                            <div className="absolute top-2 right-2 flex items-center gap-0.5 bg-black/40 backdrop-blur-sm px-1.5 py-0.5 rounded text-[8px] text-white">
+                              <span className="h-2.5 w-0.5 bg-indigo-400 animate-pulse" />
+                              <span className="h-1.5 w-0.5 bg-indigo-400 animate-pulse delay-100" />
+                              <span className="h-3 w-0.5 bg-indigo-400 animate-pulse delay-75" />
+                            </div>
+
+                            <div className="absolute bottom-2 left-2 text-[9px] text-white bg-black/60 px-1.5 py-0.5 rounded flex items-center gap-1">
+                              <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-ping" />
                               You (Agent)
                             </div>
                           </div>
