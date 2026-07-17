@@ -256,13 +256,37 @@ export async function getPlatformSettings() {
     .single();
 
   if (error) throw error;
-  return data;
+  return { ...data, ...(data.settings || {}) };
 }
 
-export async function updatePlatformSettings(settings) {
+export async function updatePlatformSettings(settingsUpdates) {
+  const standardKeys = [
+    "maintenance_mode", 
+    "allow_registration", 
+    "default_plan_id", 
+    "max_call_duration_seconds", 
+    "global_widget_enabled"
+  ];
+  
+  const { data: existing } = await supabase
+    .from("platform_settings")
+    .select("settings")
+    .eq("id", "global")
+    .single();
+    
+  const payload = { settings: { ...(existing?.settings || {}) } };
+  
+  for (const [key, value] of Object.entries(settingsUpdates)) {
+    if (standardKeys.includes(key)) {
+      payload[key] = value;
+    } else {
+      payload.settings[key] = value;
+    }
+  }
+
   const { data, error } = await supabase
     .from("platform_settings")
-    .update(settings)
+    .update(payload)
     .eq("id", "global")
     .select()
     .single();
@@ -272,7 +296,7 @@ export async function updatePlatformSettings(settings) {
     throw error;
   }
   await writeAuditLog("Updated global platform settings", "Settings", "success");
-  return data;
+  return { ...data, ...(data.settings || {}) };
 }
 
 export async function getSubscriptionPlans() {
