@@ -80,9 +80,9 @@ export default function AdminSettingsPage() {
   // Sync general settings from DB
   useEffect(() => {
     if (settings) {
-      setPlatformFee(settings.platform_fee.toString());
-      setMinPayout(settings.min_payout.toString());
-      setSupportEmail(settings.support_email);
+      setPlatformFee(settings.platform_fee?.toString() ?? "5.0");
+      setMinPayout(settings.min_payout?.toString() ?? "1000");
+      setSupportEmail(settings.support_email ?? "admin@bridgeone.com");
       setTerms(settings.terms || "");
     }
   }, [settings]);
@@ -169,10 +169,10 @@ export default function AdminSettingsPage() {
   // Plan editor handlers
   function handleStartEditPlan(plan) {
     setEditingPlanId(plan.id);
-    setEditPrice(plan.price.toString());
-    setEditCallLimit(plan.call_limit === -1 ? "100" : plan.call_limit.toString());
+    setEditPrice(plan.monthly_price?.toString() ?? "0");
+    setEditCallLimit(plan.call_limit === -1 ? "100" : (plan.call_limit?.toString() ?? "10"));
     setEditUnlimitedCalls(plan.call_limit === -1);
-    setEditCommission(plan.commission_rate.toString());
+    setEditCommission(plan.commission_rate?.toString() ?? "5.0");
   }
 
   async function handleSavePlan(e) {
@@ -182,7 +182,7 @@ export default function AdminSettingsPage() {
     await updatePlan.mutateAsync({
       planId: editingPlanId,
       updates: {
-        price: parseFloat(editPrice) || 0,
+        monthly_price: parseFloat(editPrice) || 0,
         call_limit: finalCallLimit,
         commission_rate: parseFloat(editCommission) || 0
       }
@@ -437,7 +437,7 @@ export default function AdminSettingsPage() {
                     <div key={plan.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4 hover:border-slate-300 transition-colors">
                       <div>
                         <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{plan.display_name}</h4>
-                        <p className="text-2xl font-black text-slate-900 tracking-tight mt-1">₹{plan.price}<span className="text-sm font-medium text-slate-500">/mo</span></p>
+                        <p className="text-2xl font-black text-slate-900 tracking-tight mt-1">₹{plan.monthly_price}<span className="text-sm font-medium text-slate-500">/mo</span></p>
                       </div>
                       <div className="text-[10px] text-slate-500 border-t border-slate-100 pt-3 space-y-1.5">
                         <p className="flex justify-between">Call Limit: <span className="text-slate-900 font-bold">{plan.call_limit === -1 ? "Unlimited" : plan.call_limit}</span></p>

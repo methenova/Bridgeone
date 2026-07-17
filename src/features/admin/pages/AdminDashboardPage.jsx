@@ -62,17 +62,21 @@ export default function AdminDashboardPage() {
         // 1. Fetch Shops (Organizations) Breakdown
         const { data: shops, error: shopsErr } = await supabase
           .from("shops")
-          .select("id, is_verified, is_online, created_at, shop_name, plan_name");
+          .select("id, is_verified, widget_enabled, created_at, shop_name, shop_subscriptions ( plan_id )");
         
         if (shopsErr) throw shopsErr;
 
         setTotalOrgs(shops?.length || 0);
         setActiveOrgs(shops?.filter(s => s.is_verified).length || 0);
         setSuspendedOrgs(shops?.filter(s => !s.is_verified).length || 0);
-        setActiveWidgets(shops?.filter(s => s.is_online).length || 0);
+        setActiveWidgets(shops?.filter(s => s.widget_enabled).length || 0);
 
         // Subscriptions count (shops with basic or pro plan)
-        setActiveSubs(shops?.filter(s => s.plan_name === "basic" || s.plan_name === "pro").length || 0);
+        setActiveSubs(shops?.filter(s => {
+          const planArray = Array.isArray(s.shop_subscriptions) ? s.shop_subscriptions : [s.shop_subscriptions];
+          const planId = planArray[0]?.plan_id;
+          return planId === "basic" || planId === "pro";
+        }).length || 0);
 
         // Set Recent Registrations
         const sortedShops = [...(shops || [])].sort((a,b) => new Date(b.created_at) - new Date(a.created_at));

@@ -192,7 +192,7 @@ export async function getLiveRooms() {
     .select(`
       *,
       shops ( shop_name ),
-      profiles:agent_id ( full_name )
+      shop_agents:agent_id ( display_name )
     `);
 
   if (error) throw error;

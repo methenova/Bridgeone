@@ -41,17 +41,17 @@ export default function AdminAnalyticsPage() {
       try {
         setLoading(true);
         // 1. Fetch Call Logs stats
-        const { data: calls } = await supabase
+        const { data: calls, error: callsErr } = await supabase
           .from("call_logs")
-          .select("id, duration, status, shop_id, shops(shop_name)");
+          .select("id, duration_seconds, status, shop_id, shops(shop_name)");
         
         const count = calls?.length || 0;
         setTotalCalls(count);
 
         // Calculate average call duration (where connected)
-        const connectedCalls = calls?.filter(c => c.status === "connected" && c.duration) || [];
+        const connectedCalls = calls?.filter(c => c.status === "completed" || c.status === "connected") || [];
         if (connectedCalls.length > 0) {
-          const totalSec = connectedCalls.reduce((acc, c) => acc + parseInt(c.duration || 0), 0);
+          const totalSec = connectedCalls.reduce((acc, c) => acc + parseInt(c.duration_seconds || 0), 0);
           const avgSec = Math.round(totalSec / connectedCalls.length);
           const m = Math.floor(avgSec / 60);
           const s = avgSec % 60;
