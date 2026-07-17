@@ -50,20 +50,48 @@ export default function SellerAgentsPage() {
     if (!shopId) return;
     try {
       setLoading(true);
-      // 1. Fetch store agents joined with profiles
-      const { data: team, error } = await supabase
-        .from("shop_agents")
+
+      // 1. Fetch shop_members for this shop, joined with their shop_agents and profiles
+      const { data: members, error } = await supabase
+        .from("shop_members")
         .select(`
-          *,
-          profiles:profile_id ( full_name, email, avatar_url )
+          id,
+          profile_id,
+          role,
+          is_active,
+          joined_at,
+          profiles:profile_id ( id, full_name, email, avatar_url ),
+          shop_agents ( id, display_name, status, max_active_conversations, last_seen_at )
         `)
         .eq("shop_id", shopId);
 
       if (error) throw error;
-      setAgents(team || []);
 
-      // 2. Fetch all profiles that are not already agents for inviting dropdown
-      const existingAgentIds = (team || []).map(a => a.profile_id);
+      // Flatten into a unified agent list for the UI
+      const teamList = (members || []).map(m => {
+        const agent = m.shop_agents?.[0] || null;
+        return {
+          // Use shop_agents.id if exists, otherwise shop_members.id
+          id: agent?.id || m.id,
+          member_id: m.id,
+          profile_id: m.profile_id,
+          role: m.role || "agent",
+          status: agent?.status || "offline",
+          display_name: agent?.display_name || m.profiles?.full_name || "Agent",
+          max_active_conversations: agent?.max_active_conversations || 1,
+          last_seen_at: agent?.last_seen_at,
+          is_active: m.is_active,
+          joined_at: m.joined_at,
+          has_agent_record: !!agent,
+          // Profile info for display
+          profiles: m.profiles,
+        };
+      });
+
+      setAgents(teamList);
+
+      // 2. Fetch all profiles that are not already members for inviting dropdown
+      const existingProfileIds = (members || []).map(m => m.profile_id);
       const { data: profiles, error: pError } = await supabase
         .from("profiles")
         .select("id, full_name, email")
@@ -71,7 +99,7 @@ export default function SellerAgentsPage() {
 
       if (pError) throw pError;
       
-      const unassigned = (profiles || []).filter(p => !existingAgentIds.includes(p.id));
+      const unassigned = (profiles || []).filter(p => !existingProfileIds.includes(p.id));
       setAvailableProfiles(unassigned);
 
     } catch (err) {
@@ -94,6 +122,17 @@ export default function SellerAgentsPage() {
           event: "*",
           schema: "public",
           table: "shop_agents",
+        },
+        () => {
+          loadTeamData();
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "shop_members",
           filter: `shop_id=eq.${shopId}`
         },
         () => {
@@ -107,7 +146,7 @@ export default function SellerAgentsPage() {
     };
   }, [shopId]);
 
-  // Invite Agent trigger
+  // Invite Agent — creates a shop_member first, then a shop_agent record
   async function handleInviteAgent(e) {
     e.preventDefault();
     if (!selectedProfileId) {
@@ -116,18 +155,32 @@ export default function SellerAgentsPage() {
     }
     setSubmittingInvite(true);
     try {
-      const { error } = await supabase
-        .from("shop_agents")
+      // Step 1: Create shop_member
+      const { data: member, error: memberError } = await supabase
+        .from("shop_members")
         .insert({
           shop_id: shopId,
           profile_id: selectedProfileId,
           role: selectedRole,
-          department: selectedDept,
-          is_online: false,
-          status: "Offline"
+          is_active: true,
+        })
+        .select()
+        .single();
+
+      if (memberError) throw memberError;
+
+      // Step 2: Create shop_agent linked to the new member
+      const { error: agentError } = await supabase
+        .from("shop_agents")
+        .insert({
+          shop_member_id: member.id,
+          display_name: null,
+          status: "offline",
+          max_active_conversations: 3,
         });
 
-      if (error) throw error;
+      if (agentError) throw agentError;
+
       toast.success("Agent invited to team successfully!");
       setIsInviteOpen(false);
       setSelectedProfileId("");
@@ -139,16 +192,26 @@ export default function SellerAgentsPage() {
     }
   }
 
-  // Remove Agent
-  async function handleRemoveAgent(agentId) {
+  // Remove Agent — removes both shop_agent and shop_member records
+  async function handleRemoveAgent(ag) {
     if (!window.confirm("Are you sure you want to remove this agent from your store?")) return;
     try {
-      const { error } = await supabase
-        .from("shop_agents")
-        .delete()
-        .eq("id", agentId);
+      // Delete shop_agent first (if exists)
+      if (ag.has_agent_record) {
+        const { error: agError } = await supabase
+          .from("shop_agents")
+          .delete()
+          .eq("id", ag.id);
+        if (agError) throw agError;
+      }
 
-      if (error) throw error;
+      // Delete shop_member
+      const { error: memError } = await supabase
+        .from("shop_members")
+        .delete()
+        .eq("id", ag.member_id);
+      if (memError) throw memError;
+
       toast.success("Agent removed from team");
       loadTeamData();
     } catch (err) {
@@ -156,16 +219,16 @@ export default function SellerAgentsPage() {
     }
   }
 
-  // Update status dropdown
-  async function handleUpdateStatus(agentId, newStatus) {
-    const isOnline = ["Available", "Busy", "In Call", "Away", "Break", "Meeting"].includes(newStatus);
+  // Update agent status (on shop_agents table)
+  async function handleUpdateStatus(ag, newStatus) {
     try {
-      const { error } = await supabase
-        .from("shop_agents")
-        .update({ status: newStatus, is_online: isOnline })
-        .eq("id", agentId);
-
-      if (error) throw error;
+      if (ag.has_agent_record) {
+        const { error } = await supabase
+          .from("shop_agents")
+          .update({ status: newStatus })
+          .eq("id", ag.id);
+        if (error) throw error;
+      }
       toast.success(`Agent status updated to ${newStatus}`);
       loadTeamData();
     } catch (err) {
@@ -173,19 +236,18 @@ export default function SellerAgentsPage() {
     }
   }
 
-  // Mutate Role or Department from table inline selector
-  async function handleUpdateField(agentId, field, value) {
+  // Update role (on shop_members table)
+  async function handleUpdateRole(ag, newRole) {
     try {
       const { error } = await supabase
-        .from("shop_agents")
-        .update({ [field]: value })
-        .eq("id", agentId);
-
+        .from("shop_members")
+        .update({ role: newRole })
+        .eq("id", ag.member_id);
       if (error) throw error;
-      toast.success(`Agent ${field} updated`);
+      toast.success(`Agent role updated to ${newRole}`);
       loadTeamData();
     } catch (err) {
-      toast.error(err.message || `Failed to update ${field}`);
+      toast.error(err.message || "Failed to update role");
     }
   }
 
@@ -199,14 +261,13 @@ export default function SellerAgentsPage() {
         email.toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesRole = roleFilter === "all" || ag.role === roleFilter;
-      const matchesDept = deptFilter === "all" || ag.department === deptFilter;
       const matchesStatus = 
         statusFilter === "all" || 
         ag.status?.toLowerCase() === statusFilter.toLowerCase();
 
-      return matchesSearch && matchesRole && matchesDept && matchesStatus;
+      return matchesSearch && matchesRole && matchesStatus;
     });
-  }, [agents, searchQuery, roleFilter, deptFilter, statusFilter]);
+  }, [agents, searchQuery, roleFilter, statusFilter]);
 
   // Paginated list calculation
   const paginatedAgents = useMemo(() => {
@@ -215,6 +276,16 @@ export default function SellerAgentsPage() {
   }, [filteredAgents, currentPage]);
 
   const totalPages = Math.ceil(filteredAgents.length / itemsPerPage);
+
+  // Status color helper
+  function statusStyle(status) {
+    switch (status) {
+      case "online": return "bg-emerald-500/10 text-emerald-500 border-emerald-500/20";
+      case "busy": return "bg-rose-500/10 text-rose-500 border-rose-500/20";
+      case "away": return "bg-amber-500/10 text-amber-500 border-amber-500/20";
+      default: return "bg-slate-500/10 text-slate-500 border-slate-500/20";
+    }
+  }
 
   if (shopLoading || loading) {
     return (
@@ -231,7 +302,7 @@ export default function SellerAgentsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight">Team Management</h1>
-          <p className="mt-1 text-xs text-slate-500">Invite call agents, assign service departments, toggle availability, and monitor performance.</p>
+          <p className="mt-1 text-xs text-slate-500">Invite call agents, assign roles, toggle availability, and monitor performance.</p>
         </div>
         
         <button
@@ -274,28 +345,25 @@ export default function SellerAgentsPage() {
               className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
             >
               <option value="all">All States</option>
-              <option value="Available">Available</option>
-              <option value="Busy">Busy</option>
-              <option value="In Call">In Call</option>
-              <option value="Away">Away</option>
-              <option value="Offline">Offline</option>
-              <option value="Break">Break</option>
-              <option value="Meeting">Meeting</option>
+              <option value="online">Online</option>
+              <option value="busy">Busy</option>
+              <option value="away">Away</option>
+              <option value="offline">Offline</option>
             </select>
           </div>
 
-          {/* Department filter */}
+          {/* Role filter */}
           <div className="flex items-center gap-2">
-            <span className="text-[10px] text-slate-550 uppercase font-bold tracking-wider">Dept:</span>
+            <span className="text-[10px] text-slate-550 uppercase font-bold tracking-wider">Role:</span>
             <select
-              value={deptFilter}
-              onChange={(e) => setDeptFilter(e.target.value)} 
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)} 
               className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
             >
-              <option value="all">All Depts</option>
-              <option value="Sales">Sales</option>
-              <option value="Support">Support</option>
-              <option value="Billing">Billing</option>
+              <option value="all">All Roles</option>
+              <option value="owner">Owner</option>
+              <option value="manager">Manager</option>
+              <option value="agent">Agent</option>
             </select>
           </div>
         </div>
@@ -310,14 +378,13 @@ export default function SellerAgentsPage() {
               <tr>
                 <th className="px-6 py-5 align-middle">Agent Details</th>
                 <th className="px-6 py-5 align-middle">Assigned Role</th>
-                <th className="px-6 py-5 align-middle">Department</th>
                 <th className="px-6 py-5 align-middle">Online Status</th>
                 <th className="px-6 py-5 align-middle text-right">Roster Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-transparent text-xs text-slate-700">
               {paginatedAgents.map((ag, idx) => {
-                const name = ag.profiles?.full_name || "Agent User";
+                const name = ag.profiles?.full_name || ag.display_name || "Agent User";
                 const email = ag.profiles?.email || "";
 
                 return (
@@ -328,7 +395,7 @@ export default function SellerAgentsPage() {
                     key={ag.id} 
                     className="hover:bg-slate-50/50 transition-colors group"
                   >
-                    {/* Details details */}
+                    {/* Agent details */}
                     <td className="px-6 py-5 align-middle">
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 rounded-xl bg-white shadow-sm border border-slate-200 flex items-center justify-center font-bold text-slate-500">
@@ -345,7 +412,7 @@ export default function SellerAgentsPage() {
                     <td className="px-6 py-5 align-middle">
                       <select
                         value={ag.role}
-                        onChange={(e) => handleUpdateField(ag.id, "role", e.target.value)} 
+                        onChange={(e) => handleUpdateRole(ag, e.target.value)} 
                         className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs outline-none text-slate-700 font-bold transition-all focus:border-slate-200"
                       >
                         <option value="agent">Agent</option>
@@ -353,41 +420,17 @@ export default function SellerAgentsPage() {
                       </select>
                     </td>
 
-                    {/* Department selector */}
-                    <td className="px-6 py-5 align-middle">
-                      <select
-                        value={ag.department}
-                        onChange={(e) => handleUpdateField(ag.id, "department", e.target.value)} 
-                        className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs outline-none text-slate-700 font-bold transition-all focus:border-slate-200"
-                      >
-                        <option value="Sales">Sales</option>
-                        <option value="Support">Support</option>
-                        <option value="Billing">Billing</option>
-                      </select>
-                    </td>
-
                     {/* Status switcher */}
                     <td className="px-6 py-5 align-middle">
                       <select
-                        value={ag.status || "Offline"}
-                        onChange={(e) => handleUpdateStatus(ag.id, e.target.value)}
-                        className={`rounded-xl border px-3 py-1.5 text-xs outline-none font-bold uppercase tracking-wider cursor-pointer transition-all ${
-                          ag.status === "Available" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
-                          ag.status === "Busy" ? "bg-rose-500/10 text-rose-400 border-rose-500/20" :
-                          ag.status === "In Call" ? "bg-purple-500/10 text-purple-400 border-purple-500/20" :
-                          ag.status === "Away" ? "bg-amber-500/10 text-amber-400 border-amber-500/20" :
-                          ag.status === "Break" ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/20" :
-                          ag.status === "Meeting" ? "bg-indigo-500/10 text-indigo-400 border-indigo-500/20" :
-                          "bg-slate-500/10 text-slate-500 border-slate-500/20"
-                        }`}
+                        value={ag.status || "offline"}
+                        onChange={(e) => handleUpdateStatus(ag, e.target.value)}
+                        className={`rounded-xl border px-3 py-1.5 text-xs outline-none font-bold uppercase tracking-wider cursor-pointer transition-all ${statusStyle(ag.status)}`}
                       >
-                        <option value="Available" className="bg-white text-emerald-700">Available</option>
-                        <option value="Busy" className="bg-white text-rose-700 font-semibold">Busy</option>
-                        <option value="In Call" className="bg-white text-purple-700 font-semibold">In Call</option>
-                        <option value="Away" className="bg-white text-amber-700 font-semibold">Away</option>
-                        <option value="Break" className="bg-white text-yellow-700">Break</option>
-                        <option value="Meeting" className="bg-white text-indigo-700 font-semibold">Meeting</option>
-                        <option value="Offline" className="bg-white text-slate-500">Offline</option>
+                        <option value="online">Online</option>
+                        <option value="busy">Busy</option>
+                        <option value="away">Away</option>
+                        <option value="offline">Offline</option>
                       </select>
                     </td>
 
@@ -395,7 +438,7 @@ export default function SellerAgentsPage() {
                     <td className="px-6 py-5 align-middle text-right">
                       <div className="flex items-center justify-end gap-2.5">
                         <button
-                          onClick={() => handleRemoveAgent(ag.id)} 
+                          onClick={() => handleRemoveAgent(ag)} 
                           title="Remove Agent"
                           className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1 text-red-500 hover:bg-red-50 hover:border-red-200 hover:text-red-600 cursor-pointer"
                         >
@@ -485,19 +528,6 @@ export default function SellerAgentsPage() {
                   >
                     <option value="agent">Agent (Answer Calls only)</option>
                     <option value="manager">Manager (Full edit store catalog access)</option>
-                  </select>
-                </div>
-
-                {/* Department */}
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">Service department</label>
-                  <select
-                    value={selectedDept}
-                    onChange={(e) => setSelectedDept(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500"
-                  >
-                    <option value="Sales">Sales</option>
-                    <option value="Support">Support</option>
-                    <option value="Billing">Billing</option>
                   </select>
                 </div>
 
