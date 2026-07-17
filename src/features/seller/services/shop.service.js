@@ -15,11 +15,11 @@ export async function getMyShop(userId) {
       )
     `)
     .eq("owner_id", userId)
-    .maybeSingle();
+    .limit(1);
 
   if (error) throw error;
 
-  return data;
+  return data && data.length > 0 ? data[0] : null;
 }
 
 /**
@@ -37,11 +37,11 @@ export async function getShopByOwner(userId) {
       )
     `)
     .eq("owner_id", userId)
-    .maybeSingle();
+    .limit(1);
 
   if (error) throw error;
 
-  return data;
+  return data && data.length > 0 ? data[0] : null;
 }
 
 /**
