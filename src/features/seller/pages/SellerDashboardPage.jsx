@@ -174,14 +174,14 @@ export default function SellerDashboardPage() {
         // Total Calls
         const { data: allCalls } = await supabase
           .from("call_logs")
-          .select("id, status, duration, created_at")
+          .select("id, status, duration_seconds, created_at")
           .eq("shop_id", shopId);
         const callsCount = allCalls?.length || 0;
         setTotalCallsCount(callsCount);
 
         // Average call duration and Today's calls
-        const completedCalls = allCalls?.filter(c => c.status === "completed" && c.duration) || [];
-        const totalDuration = completedCalls.reduce((acc, c) => acc + Number(c.duration), 0);
+        const completedCalls = allCalls?.filter(c => c.status === "completed" && c.duration_seconds) || [];
+        const totalDuration = completedCalls.reduce((acc, c) => acc + Number(c.duration_seconds), 0);
         const avgDuration = completedCalls.length > 0 ? Math.round(totalDuration / completedCalls.length) : 0;
         setAvgCallDuration(avgDuration);
 
@@ -249,19 +249,19 @@ export default function SellerDashboardPage() {
         setFollowUpCustomers(followUps || []);
 
         // 5. Recent Activities
-        const { data: recentCalls } = await supabase
+        const { data: latestCallsData } = await supabase
           .from("call_logs")
-          .select("id, created_at, status, duration")
+          .select("id, created_at, status, duration_seconds")
           .eq("shop_id", shopId)
           .order("created_at", { ascending: false })
-          .limit(3);
+          .limit(4);
 
-        const activities = (recentCalls || []).map(c => ({
+        const activities = (latestCallsData || []).map(c => ({
           id: c.id,
-          type: "call",
-          title: `Consultation Call (${c.status})`,
-          time: new Date(c.created_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
-          desc: c.status === "missed" ? "Missed customer call alert" : `Connected session: ${Math.round((c.duration || 0) / 60)}m`
+          title: c.status === "missed" ? "Missed Call" : "Customer Consultation",
+          time: new Date(c.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          type: c.status === "missed" ? "alert" : "success",
+          desc: c.status === "missed" ? "Missed customer call alert" : `Connected session: ${Math.round((c.duration_seconds || 0) / 60)}m`
         }));
 
         setRecentActivities(activities);

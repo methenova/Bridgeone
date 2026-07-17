@@ -85,7 +85,7 @@ export default function SellerWidgetPage() {
       try {
         setLoadingAnalytics(true);
         const { data: sessions } = await supabase.from("visitor_sessions").select("id, current_page, cart_status, time_on_site, created_at").eq("shop_id", shopId);
-        const { data: calls } = await supabase.from("call_logs").select("id, status, duration, created_at").eq("shop_id", shopId);
+        const { data: calls } = await supabase.from("call_logs").select("id, status, duration_seconds, created_at").eq("shop_id", shopId);
 
         const totalViews = sessions?.length || 0;
         const totalOpens = sessions?.filter(s => s.time_on_site > 10 || s.cart_status !== "empty")?.length || 0;

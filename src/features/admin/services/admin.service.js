@@ -56,8 +56,7 @@ export async function getAdminShops() {
     .from("shops")
     .select(`
       *,
-      profiles:owner_id ( full_name, email ),
-      categories ( name )
+      profiles:owner_id ( full_name, email )
     `)
     .order("created_at", { ascending: false });
 
@@ -160,51 +159,8 @@ export async function toggleProductActive(productId, isActive) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// CATEGORIES MANAGEMENT
+// CATEGORIES MANAGEMENT (Removed - table doesn't exist)
 // ─────────────────────────────────────────────────────────────
-export async function getAdminCategories() {
-  const { data, error } = await supabase
-    .from("categories")
-    .select("*")
-    .order("name");
-
-  if (error) throw error;
-  return data ?? [];
-}
-
-export async function createCategory(catData) {
-  const slug = catData.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-  const { data, error } = await supabase
-    .from("categories")
-    .insert({ ...catData, slug })
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-}
-
-export async function updateCategory(id, catData) {
-  const slug = catData.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-  const { data, error } = await supabase
-    .from("categories")
-    .update({ ...catData, slug })
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-}
-
-export async function deleteCategory(id) {
-  const { error } = await supabase
-    .from("categories")
-    .delete()
-    .eq("id", id);
-
-  if (error) throw error;
-}
 
 // ─────────────────────────────────────────────────────────────
 // ORDERS MANAGEMENT — marketplace removed
@@ -236,7 +192,7 @@ export async function getLiveRooms() {
     .select(`
       *,
       shops ( shop_name ),
-      profiles:seller_id ( full_name )
+      profiles:agent_id ( full_name )
     `);
 
   if (error) throw error;
@@ -323,7 +279,7 @@ export async function getSubscriptionPlans() {
   const { data, error } = await supabase
     .from("subscription_plans")
     .select("*")
-    .order("price", { ascending: true });
+    .order("monthly_price", { ascending: true });
 
   if (error) throw error;
   return data ?? [];
