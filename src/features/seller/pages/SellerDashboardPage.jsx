@@ -160,7 +160,7 @@ export default function SellerDashboardPage() {
           .from("video_rooms")
           .select("id")
           .eq("shop_id", shopId)
-          .eq("status", "live");
+          .eq("status", "connected");
         setLiveCalls(rooms?.length || 0);
 
         // 2. Missed Calls

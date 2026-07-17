@@ -154,7 +154,7 @@ export default function SellerLayout() {
         { event: "INSERT", schema: "public", table: "video_rooms", filter: `shop_id=eq.${shopId}` },
         (payload) => {
           const room = payload.new;
-          if (room.status !== "live") return;
+          if (room.status !== "connected") return;
           
           ringingCallsRef.current.set(room.id, room);
           

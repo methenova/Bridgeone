@@ -96,7 +96,7 @@ export default function AdminDashboardPage() {
         const { count: liveCount, error: liveErr } = await supabase
           .from("video_rooms")
           .select("id", { count: "exact", head: true })
-          .eq("status", "live");
+          .eq("status", "connected");
         
         if (liveErr) throw liveErr;
         setLiveCalls(liveCount || 0);
@@ -143,7 +143,7 @@ export default function AdminDashboardPage() {
       const { error } = await supabase
         .from("video_rooms")
         .update({ status: "ended" })
-        .eq("status", "live");
+        .eq("status", "connected");
 
       if (error) throw error;
       setLiveCalls(0);

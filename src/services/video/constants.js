@@ -41,6 +41,6 @@ export async function fetchTurnConfig() {
 
 export const ROOM_STATUS = {
     WAITING: "waiting",
-    LIVE: "live",
+    LIVE: "connected",
     ENDED: "ended",
 };

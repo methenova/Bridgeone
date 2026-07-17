@@ -50,7 +50,7 @@ export async function createRoom(roomCode, shopId, sellerId, offer) {
             room_code: roomCode,
             shop_id: shopId,
             seller_id: sellerId,
-            status: "live",
+            status: "connected",
             offer,
         })
         .select()
@@ -69,7 +69,7 @@ export async function getRoom(roomCode) {
         .from("video_rooms")
         .select("*")
         .eq("room_code", roomCode)
-        .eq("status", "live")
+        .eq("status", "connected")
         .maybeSingle();
 
     return data;

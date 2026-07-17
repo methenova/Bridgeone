@@ -291,7 +291,7 @@ export default function LivePage() {
       // 3.5. Broadcast Incoming Call ( shopper calling the seller directly for instant popup )
       .on("broadcast", { event: "incoming_call" }, ({ payload }) => {
         const room = payload.room;
-        if (room && room.shop_id === shopId && room.room_code.startsWith("call_") && room.status === "live") {
+        if (room && room.shop_id === shopId && room.room_code.startsWith("call_") && room.status === "connected") {
           if (incomingCallRef.current?.id === room.id) return;
           console.log("[LivePage] Incoming call broadcast received:", room);
           setIncomingCall(room);
@@ -309,7 +309,7 @@ export default function LivePage() {
         (payload) => {
           const room = payload.new;
           // Filter by shop_id in JS for robustness
-          if (room.shop_id === shopId && room.room_code.startsWith("call_") && room.status === "live") {
+          if (room.shop_id === shopId && room.room_code.startsWith("call_") && room.status === "connected") {
             // Ignore if we already have this call pending
             if (incomingCallRef.current?.id === room.id) return;
             console.log("[LivePage] Incoming call room detected:", room);
@@ -364,7 +364,7 @@ export default function LivePage() {
           .from("video_rooms")
           .select("*")
           .eq("shop_id", shopId)
-          .eq("status", "live");
+          .eq("status", "connected");
 
         if (error) throw error;
 
