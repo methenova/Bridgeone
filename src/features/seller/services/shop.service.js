@@ -50,7 +50,7 @@ export async function getShopByOwner(userId) {
 export async function createShop(shopData) {
   const { data, error } = await supabase
     .from("shops")
-    .insert(shopData)
+    .upsert(shopData, { onConflict: "owner_id" })
     .select()
     .single();
 
