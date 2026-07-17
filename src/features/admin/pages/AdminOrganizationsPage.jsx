@@ -20,7 +20,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 
-import { useAdminShops, useToggleShopStatus, useUpdateShopPlan, useAdminCategories } from "../hooks/useAdmin";
+import { useAdminShops, useToggleShopStatus, useUpdateShopPlan } from "../hooks/useAdmin";
 import { supabase } from "@/config/supabase";
 import { TableSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
@@ -33,7 +33,6 @@ const PLANS = [
 
 export default function AdminOrganizationsPage() {
   const { data: shops = [], isLoading, refetch } = useAdminShops();
-  const { data: categories = [] } = useAdminCategories();
   const toggleStatus = useToggleShopStatus();
   const updatePlan = useUpdateShopPlan();
 

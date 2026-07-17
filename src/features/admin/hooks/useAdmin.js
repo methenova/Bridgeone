@@ -11,10 +11,6 @@ import {
   getAdminProducts,
   toggleProductFeatured,
   toggleProductActive,
-  getAdminCategories,
-  createCategory,
-  updateCategory,
-  deleteCategory,
   getAdminOrders,
   getAdminCalls,
   getLiveRooms,
@@ -34,7 +30,6 @@ const adminKeys = {
   users: () => [...adminKeys.all, "users"],
   shops: () => [...adminKeys.all, "shops"],
   products: () => [...adminKeys.all, "products"],
-  categories: () => [...adminKeys.all, "categories"],
   orders: () => [...adminKeys.all, "orders"],
   calls: () => [...adminKeys.all, "calls"],
   liveRooms: () => [...adminKeys.all, "liveRooms"],
@@ -128,49 +123,6 @@ export function useToggleProductActive() {
       toast.success("Product status updated");
     },
     onError: (err) => toast.error(err.message || "Failed to update status"),
-  });
-}
-
-export function useAdminCategories() {
-  return useQuery({
-    queryKey: adminKeys.categories(),
-    queryFn: getAdminCategories,
-  });
-}
-
-export function useCreateCategory() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: createCategory,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: adminKeys.categories() });
-      toast.success("Category created successfully");
-    },
-    onError: (err) => toast.error(err.message || "Failed to create category"),
-  });
-}
-
-export function useUpdateCategory() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, data }) => updateCategory(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: adminKeys.categories() });
-      toast.success("Category updated successfully");
-    },
-    onError: (err) => toast.error(err.message || "Failed to update category"),
-  });
-}
-
-export function useDeleteCategory() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: deleteCategory,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: adminKeys.categories() });
-      toast.success("Category deleted");
-    },
-    onError: (err) => toast.error(err.message || "Failed to delete category"),
   });
 }
 
