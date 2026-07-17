@@ -6,14 +6,7 @@ import { supabase } from "@/config/supabase";
 export async function getMyShop(userId) {
   const { data, error } = await supabase
     .from("shops")
-    .select(`
-      *,
-      categories (
-        id,
-        name,
-        slug
-      )
-    `)
+    .select("*")
     .eq("owner_id", userId)
     .limit(1);
 
@@ -28,14 +21,7 @@ export async function getMyShop(userId) {
 export async function getShopByOwner(userId) {
   const { data, error } = await supabase
     .from("shops")
-    .select(`
-      *,
-      categories (
-        id,
-        name,
-        slug
-      )
-    `)
+    .select("*")
     .eq("owner_id", userId)
     .limit(1);
 
@@ -48,9 +34,30 @@ export async function getShopByOwner(userId) {
  * Create Shop
  */
 export async function createShop(shopData) {
+  // Check if a shop already exists for this owner
+  const { data: existing } = await supabase
+    .from("shops")
+    .select("id")
+    .eq("owner_id", shopData.owner_id)
+    .limit(1);
+
+  if (existing && existing.length > 0) {
+    // Update the existing shop instead of inserting a duplicate
+    const { data, error } = await supabase
+      .from("shops")
+      .update(shopData)
+      .eq("id", existing[0].id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  // No existing shop — insert a new one
   const { data, error } = await supabase
     .from("shops")
-    .upsert(shopData, { onConflict: "owner_id" })
+    .insert(shopData)
     .select()
     .single();
 
