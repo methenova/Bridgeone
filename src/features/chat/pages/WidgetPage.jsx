@@ -374,29 +374,45 @@ export default function WidgetPage() {
 
         const isClosed = checkIsOutsideBusinessHours(data);
 
-        // Fetch active online agents
-        const { count: onlineAgs } = await supabase
-          .from("shop_agents")
-          .select("id", { count: "exact", head: true })
-          .eq("shop_id", shopId)
-          .eq("is_online", true);
-        setOnlineAgentsCount(onlineAgs || 0);
-
-        // Fetch all shop agents with profiles join
-        const { data: teamAgs } = await supabase
+        // Fetch active online agents via shop_members join
+        const { data: onlineAgsData } = await supabase
           .from("shop_agents")
           .select(`
             id,
             status,
-            department,
-            is_online,
-            profile_id,
-            profiles:profile_id ( full_name, avatar_url )
+            shop_member:shop_member_id (
+              shop_id
+            )
           `)
-          .eq("shop_id", shopId);
-        if (teamAgs) {
-          setAgentsList(teamAgs);
-        }
+          .eq("status", "online");
+        const filteredOnline = (onlineAgsData || []).filter(
+          a => a.shop_member && a.shop_member.shop_id === shopId
+        );
+        setOnlineAgentsCount(filteredOnline.length);
+
+        // Fetch all shop agents with display names
+        const { data: allAgsData } = await supabase
+          .from("shop_agents")
+          .select(`
+            id,
+            display_name,
+            status,
+            shop_member:shop_member_id (
+              shop_id,
+              profile_id,
+              profiles:profile_id ( full_name, avatar_url )
+            )
+          `);
+        const teamAgs = (allAgsData || []).filter(
+          a => a.shop_member && a.shop_member.shop_id === shopId
+        ).map(a => ({
+          id: a.id,
+          status: a.status,
+          is_online: a.status === "online",
+          display_name: a.display_name || a.shop_member?.profiles?.full_name || "Agent",
+          avatar_url: a.shop_member?.profiles?.avatar_url || null,
+        }));
+        setAgentsList(teamAgs);
 
         // Fetch all products for the shop to match referrer URLs
         const { data: prods } = await supabase
@@ -406,9 +422,7 @@ export default function WidgetPage() {
             name,
             price,
             is_active,
-            product_images (
-              image_url
-            )
+            image_url
           `)
           .eq("shop_id", shopId)
           .eq("is_active", true);
@@ -472,29 +486,45 @@ export default function WidgetPage() {
       .channel(`widget-agents-${shopId}`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "shop_agents", filter: `shop_id=eq.${shopId}` },
+        { event: "*", schema: "public", table: "shop_agents" },
         async () => {
-          const { count } = await supabase
-            .from("shop_agents")
-            .select("id", { count: "exact", head: true })
-            .eq("shop_id", shopId)
-            .eq("is_online", true);
-          setOnlineAgentsCount(count || 0);
-
-          const { data: teamAgs } = await supabase
+          const { data: onlineAgsData } = await supabase
             .from("shop_agents")
             .select(`
               id,
               status,
-              department,
-              is_online,
-              profile_id,
-              profiles:profile_id ( full_name, avatar_url )
+              shop_member:shop_member_id (
+                shop_id
+              )
             `)
-            .eq("shop_id", shopId);
-          if (teamAgs) {
-            setAgentsList(teamAgs);
-          }
+            .eq("status", "online");
+          const filteredOnline = (onlineAgsData || []).filter(
+            a => a.shop_member && a.shop_member.shop_id === shopId
+          );
+          setOnlineAgentsCount(filteredOnline.length);
+
+          const { data: allAgsData } = await supabase
+            .from("shop_agents")
+            .select(`
+              id,
+              display_name,
+              status,
+              shop_member:shop_member_id (
+                shop_id,
+                profile_id,
+                profiles:profile_id ( full_name, avatar_url )
+              )
+            `);
+          const teamAgs = (allAgsData || []).filter(
+            a => a.shop_member && a.shop_member.shop_id === shopId
+          ).map(a => ({
+            id: a.id,
+            status: a.status,
+            is_online: a.status === "online",
+            display_name: a.display_name || a.shop_member?.profiles?.full_name || "Agent",
+            avatar_url: a.shop_member?.profiles?.avatar_url || null,
+          }));
+          setAgentsList(teamAgs);
         }
       )
       .subscribe();
