@@ -125,15 +125,22 @@ export default function SettingsPage() {
       try {
         const { data: ags } = await supabase
           .from("shop_agents")
-          .select("id, is_online, profiles(full_name)")
-          .eq("shop_id", shop.id);
+          .select(`
+            id,
+            status,
+            shop_members!inner (
+              shop_id,
+              profiles ( full_name )
+            )
+          `)
+          .eq("shop_members.shop_id", shop.id);
         setAgents(ags || []);
 
         const { data: vis } = await supabase
-          .from("visitor_sessions")
+          .from("callback_requests")
           .select("id")
           .eq("shop_id", shop.id)
-          .eq("is_waiting_assistance", true);
+          .eq("status", "pending");
         setVisitorsWaiting(vis?.length || 0);
       } catch (err) {
         console.warn("Error fetching routing queue data", err);
@@ -558,15 +565,15 @@ export default function SettingsPage() {
                     <div className="flex justify-between items-center p-2.5 bg-slate-50 rounded-2xl border border-slate-100">
                       <span className="text-slate-500">Total Online Agents</span>
                       <span className="font-mono font-bold text-emerald-600">
-                        {agents.filter(a => a.is_online).length} / {agents.length}
+                        {agents.filter(a => a.status === 'online').length} / {agents.length}
                       </span>
                     </div>
 
                     <div className="flex justify-between items-center p-2.5 bg-slate-50 rounded-2xl border border-slate-100">
                       <span className="text-slate-500">Next Agent Up</span>
                       <span className="font-bold text-slate-900 text-[10px]">
-                        {agents.filter(a => a.is_online).length > 0 
-                          ? agents.filter(a => a.is_online)[Math.floor(Math.random() * agents.filter(a => a.is_online).length)]?.profiles?.full_name 
+                        {agents.filter(a => a.status === 'online').length > 0 
+                          ? agents.filter(a => a.status === 'online')[Math.floor(Math.random() * agents.filter(a => a.status === 'online').length)]?.shop_members?.profiles?.full_name 
                           : "No agents online"}
                       </span>
                     </div>

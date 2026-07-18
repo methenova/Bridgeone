@@ -276,11 +276,11 @@ export default function SellerLayout() {
       if (path === "/seller/live") {
         typesToMark = ["incoming_call", "missed_call"];
       } else if (path === "/seller/callbacks") {
-        typesToMark = ["callback_reminder"];
+        typesToMark = ["callback_request"];
       } else if (path === "/seller/chat") {
-        typesToMark = ["customer_message"];
+        typesToMark = ["new_message"];
       } else if (path === "/seller/agents") {
-        typesToMark = ["agent_status_change"];
+        typesToMark = ["system"];
       }
 
       if (typesToMark.length > 0) {

@@ -73,8 +73,15 @@ export default function CustomersPage() {
   useEffect(() => {
     if (shopId) {
       supabase.from("shop_agents")
-        .select("*, profiles(full_name)")
-        .eq("shop_id", shopId)
+        .select(`
+          id,
+          status,
+          shop_members!inner (
+            shop_id,
+            profiles ( full_name )
+          )
+        `)
+        .eq("shop_members.shop_id", shopId)
         .then(({ data }) => {
           setAgents(data || []);
         });

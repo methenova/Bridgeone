@@ -20,22 +20,7 @@ export async function getProducts(shopId, filters = {}) {
 
   let query = supabase
     .from("products")
-    .select(
-      `
-      *,
-      categories (
-        id,
-        name,
-        slug,
-        icon
-      ),
-      product_images (
-        id,
-        url:image_url
-      )
-    `,
-      { count: "exact" }
-    )
+    .select("*", { count: "exact" })
     .eq("shop_id", shopId);
 
   if (search.trim()) {
@@ -85,21 +70,7 @@ export async function getProducts(shopId, filters = {}) {
 export async function getProduct(productId) {
   const { data, error } = await supabase
     .from("products")
-    .select(
-      `
-      *,
-      categories (
-        id,
-        name,
-        slug,
-        icon
-      ),
-      product_images (
-        id,
-        url:image_url
-      )
-    `
-    )
+    .select("*")
     .eq("id", productId)
     .single();
 

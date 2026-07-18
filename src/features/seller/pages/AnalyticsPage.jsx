@@ -58,9 +58,12 @@ export default function AnalyticsPage() {
           .from("shop_agents")
           .select(`
             *,
-            profiles:profile_id ( full_name, email )
+            shop_members!inner (
+              shop_id,
+              profiles ( full_name, email )
+            )
           `)
-          .eq("shop_id", shopId);
+          .eq("shop_members.shop_id", shopId);
 
         if (agentError) throw agentError;
         setAgents(agentData || []);
