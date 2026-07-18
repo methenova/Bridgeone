@@ -76,7 +76,7 @@ export default function SellerDashboardPage() {
         .from("visitor_sessions")
         .select(`
           *,
-          profiles:profile_id ( id, full_name, email, phone, notes )
+          visitors:visitor_id ( id, name, email, phone )
         `)
         .eq("shop_id", shopId);
 
@@ -120,7 +120,7 @@ export default function SellerDashboardPage() {
     async function fetchVisitorCalls() {
       try {
         setLoadingVisitorCalls(true);
-        const name = selectedVisitor.profiles?.full_name || "";
+        const name = selectedVisitor.visitors?.name || "";
         if (!name) {
           setVisitorCalls([]);
           return;
@@ -209,9 +209,15 @@ export default function SellerDashboardPage() {
         // 4.5. Online Agents count & list
         const { data: onlineAgs } = await supabase
           .from("shop_agents")
-          .select("*, profiles(full_name)")
-          .eq("shop_id", shopId)
-          .eq("is_online", true);
+          .select(`
+            *,
+            shop_members!inner (
+              shop_id,
+              profiles ( full_name )
+            )
+          `)
+          .eq("shop_members.shop_id", shopId)
+          .eq("status", "online");
         setOnlineAgents(onlineAgs?.length || 0);
         setAvailableAgentsList(onlineAgs || []);
 
@@ -222,13 +228,13 @@ export default function SellerDashboardPage() {
         // 4.7. Top Shared Products
         const { data: callProducts } = await supabase
           .from("call_logs")
-          .select("products_shared")
+          .select("metadata")
           .eq("shop_id", shopId)
-          .not("products_shared", "is", null);
+          .not("metadata", "is", null);
         
         const productFreq = {};
         callProducts?.forEach(c => {
-          c.products_shared?.forEach(p => {
+          c.metadata?.products_shared?.forEach(p => {
             productFreq[p] = (productFreq[p] || 0) + 1;
           });
         });
@@ -241,9 +247,9 @@ export default function SellerDashboardPage() {
         // 4.8. Customers requiring follow-up
         const { data: followUps } = await supabase
           .from("call_logs")
-          .select("id, customer_name, customer_email, created_at, resolution_status")
+          .select("id, metadata, created_at, status")
           .eq("shop_id", shopId)
-          .or("resolution_status.eq.Follow-up Required,status.eq.missed")
+          .or("metadata->>resolution_status.eq.Follow-up Required,status.eq.missed")
           .order("created_at", { ascending: false })
           .limit(3);
         setFollowUpCustomers(followUps || []);
@@ -655,7 +661,7 @@ export default function SellerDashboardPage() {
               {availableAgentsList.map((ag) => (
                 <div key={ag.id} className="flex justify-between items-center bg-slate-50/50 border border-slate-100 p-3.5 rounded-2xl hover:bg-slate-50 transition-all duration-300">
                   <div>
-                    <span className="font-bold text-slate-900 block">{ag.profiles?.full_name || "Agent"}</span>
+                    <span className="font-bold text-slate-900 block">{ag.shop_members?.profiles?.full_name || "Agent"}</span>
                     <span className="text-[9px] text-slate-500 block uppercase font-mono mt-0.5">{ag.department || "Sales"}</span>
                   </div>
                   <span className={`px-2.5 py-1 rounded text-[8px] font-bold uppercase ${
@@ -711,9 +717,9 @@ export default function SellerDashboardPage() {
               {followUpCustomers.map((c) => (
                 <div key={c.id} className="bg-slate-50/50 border border-slate-100 p-3 rounded-2xl leading-normal hover:bg-slate-50 transition-all duration-300">
                   <div className="flex justify-between items-start">
-                    <span className="font-bold text-slate-900">{c.customer_name}</span>
+                    <span className="font-bold text-slate-900">{c.metadata?.customer_name || "Unknown"}</span>
                     <span className="text-[8px] bg-rose-50 border border-rose-100 text-rose-600 px-2 py-0.5 rounded uppercase font-bold">
-                      {c.resolution_status || "Missed"}
+                      {c.metadata?.resolution_status || "Missed"}
                     </span>
                   </div>
                   <span className="text-[9px] text-slate-500 block font-mono mt-1">Ref: #{c.id.substring(0,8).toUpperCase()}</span>
@@ -744,7 +750,7 @@ export default function SellerDashboardPage() {
             <div className="p-6 border-b border-slate-100 flex justify-between items-start">
               <div>
                 <h2 className="text-base font-black text-slate-900">
-                  {selectedVisitor.profiles?.full_name || `Visitor (${selectedVisitor.visitor_id})`}
+                  {selectedVisitor.visitors?.name || `Visitor (${selectedVisitor.visitor_id})`}
                 </h2>
                 <span className="text-[10px] text-slate-500 font-mono mt-0.5 block">Visitor Session Log Details</span>
               </div>
