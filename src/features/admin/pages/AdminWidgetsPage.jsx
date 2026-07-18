@@ -14,7 +14,8 @@ import {
   RefreshCw,
   Activity,
   Layers,
-  X
+  X,
+  Power
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
