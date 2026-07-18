@@ -177,13 +177,25 @@ export default function SettingsPage() {
         ]
       };
 
+      // Fetch existing widget_settings to preserve other settings
+      const { data: ws } = await supabase
+        .from("widget_settings")
+        .select("settings")
+        .eq("shop_id", shop.id)
+        .maybeSingle();
+      
+      const currentSettings = ws?.settings || {};
+
       const { error } = await supabase
-        .from("shops")
+        .from("widget_settings")
         .update({ 
-          business_hours: businessHours,
-          business_hours_config: compiledConfig
+          settings: {
+            ...currentSettings,
+            business_hours: businessHours,
+            business_hours_config: compiledConfig
+          }
         })
-        .eq("id", shop.id);
+        .eq("shop_id", shop.id);
 
       if (error) throw error;
       toast.success("Business hours & schedule configs saved!");
@@ -196,10 +208,23 @@ export default function SettingsPage() {
   // Update routing rules
   async function handleSaveRouting() {
     try {
+      const { data: ws } = await supabase
+        .from("widget_settings")
+        .select("settings")
+        .eq("shop_id", shop.id)
+        .maybeSingle();
+      
+      const currentSettings = ws?.settings || {};
+
       const { error } = await supabase
-        .from("shops")
-        .update({ routing_rules: routingRules })
-        .eq("id", shop.id);
+        .from("widget_settings")
+        .update({ 
+          settings: {
+            ...currentSettings,
+            routing_rules: routingRules
+          }
+        })
+        .eq("shop_id", shop.id);
 
       if (error) throw error;
       toast.success("Intelligent routing rules updated!");

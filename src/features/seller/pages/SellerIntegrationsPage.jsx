@@ -59,17 +59,32 @@ export default function SellerIntegrationsPage() {
     if (!shopId || saving) return;
     setSaving(true);
     try {
-      const { error } = await supabase
-        .from("shops")
-        .update({
-          webhook_url: webhookUrl,
-          api_key: apiKey,
-          google_analytics_id: googleAnalyticsId,
-          meta_pixel_id: metaPixelId,
-          shopify_domain: shopifyDomain,
-          woocommerce_url: woocommerceUrl
-        })
-        .eq("id", shopId);
+      const { data: existing } = await supabase
+        .from("shop_integrations")
+        .select("id, settings")
+        .eq("shop_id", shopId)
+        .eq("provider", "custom")
+        .maybeSingle();
+
+      const newSettings = {
+        ...(existing?.settings || {}),
+        webhook_url: webhookUrl,
+        api_key: apiKey,
+        google_analytics_id: googleAnalyticsId,
+        meta_pixel_id: metaPixelId,
+        shopify_domain: shopifyDomain,
+        woocommerce_url: woocommerceUrl
+      };
+
+      let error;
+      if (existing) {
+        ({ error } = await supabase.from("shop_integrations")
+          .update({ settings: newSettings })
+          .eq("id", existing.id));
+      } else {
+        ({ error } = await supabase.from("shop_integrations")
+          .insert({ shop_id: shopId, provider: "custom", status: "active", settings: newSettings }));
+      }
 
       if (error) throw error;
       toast.success("Integrations configurations saved successfully!");
@@ -86,10 +101,24 @@ export default function SellerIntegrationsPage() {
     setGeneratingKey(true);
     const mockKey = "bo_live_" + Array.from({ length: 24 }, () => Math.random().toString(36)[2]).join("");
     try {
-      const { error } = await supabase
-        .from("shops")
-        .update({ api_key: mockKey })
-        .eq("id", shopId);
+      const { data: existing } = await supabase
+        .from("shop_integrations")
+        .select("id, settings")
+        .eq("shop_id", shopId)
+        .eq("provider", "custom")
+        .maybeSingle();
+
+      const newSettings = { ...(existing?.settings || {}), api_key: mockKey };
+
+      let error;
+      if (existing) {
+        ({ error } = await supabase.from("shop_integrations")
+          .update({ settings: newSettings })
+          .eq("id", existing.id));
+      } else {
+        ({ error } = await supabase.from("shop_integrations")
+          .insert({ shop_id: shopId, provider: "custom", status: "active", settings: newSettings }));
+      }
 
       if (error) throw error;
       setApiKey(mockKey);

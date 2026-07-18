@@ -6,13 +6,40 @@ import { supabase } from "@/config/supabase";
 export async function getMyShop(userId) {
   const { data, error } = await supabase
     .from("shops")
-    .select("*")
+    .select(`
+      *,
+      widget_settings ( primary_color, widget_position, welcome_message, settings ),
+      shop_integrations ( provider, settings )
+    `)
     .eq("owner_id", userId)
     .limit(1);
 
   if (error) throw error;
 
-  return data && data.length > 0 ? data[0] : null;
+  if (data && data.length > 0) {
+    const shop = data[0];
+    const ws = shop.widget_settings?.[0] || {};
+    const customInt = shop.shop_integrations?.find(i => i.provider === 'custom')?.settings || {};
+    
+    return {
+      ...shop,
+      widget_color: ws.primary_color,
+      widget_position: ws.widget_position,
+      welcome_message: ws.welcome_message,
+      business_hours: ws.settings?.business_hours,
+      business_hours_config: ws.settings?.business_hours_config,
+      routing_rules: ws.settings?.routing_rules,
+      is_online: shop.widget_enabled,
+      webhook_url: customInt.webhook_url,
+      api_key: customInt.api_key,
+      google_analytics_id: customInt.google_analytics_id,
+      meta_pixel_id: customInt.meta_pixel_id,
+      shopify_domain: customInt.shopify_domain,
+      woocommerce_url: customInt.woocommerce_url
+    };
+  }
+  
+  return null;
 }
 
 /**
@@ -21,13 +48,40 @@ export async function getMyShop(userId) {
 export async function getShopByOwner(userId) {
   const { data, error } = await supabase
     .from("shops")
-    .select("*")
+    .select(`
+      *,
+      widget_settings ( primary_color, widget_position, welcome_message, settings ),
+      shop_integrations ( provider, settings )
+    `)
     .eq("owner_id", userId)
     .limit(1);
 
   if (error) throw error;
 
-  return data && data.length > 0 ? data[0] : null;
+  if (data && data.length > 0) {
+    const shop = data[0];
+    const ws = shop.widget_settings?.[0] || {};
+    const customInt = shop.shop_integrations?.find(i => i.provider === 'custom')?.settings || {};
+    
+    return {
+      ...shop,
+      widget_color: ws.primary_color,
+      widget_position: ws.widget_position,
+      welcome_message: ws.welcome_message,
+      business_hours: ws.settings?.business_hours,
+      business_hours_config: ws.settings?.business_hours_config,
+      routing_rules: ws.settings?.routing_rules,
+      is_online: shop.widget_enabled,
+      webhook_url: customInt.webhook_url,
+      api_key: customInt.api_key,
+      google_analytics_id: customInt.google_analytics_id,
+      meta_pixel_id: customInt.meta_pixel_id,
+      shopify_domain: customInt.shopify_domain,
+      woocommerce_url: customInt.woocommerce_url
+    };
+  }
+  
+  return null;
 }
 
 /**

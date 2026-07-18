@@ -313,13 +313,40 @@ export default function WidgetPage() {
 
     async function loadShop() {
       try {
-        const { data, error } = await supabase
+        const { data: rawData, error } = await supabase
           .from("shops")
-          .select("id, name:shop_name, logo_url, widget_color, is_online, plan_name, business_hours, business_hours_config, owner_id, api_key")
+          .select(`
+            id, 
+            name:shop_name, 
+            logo_url, 
+            widget_enabled,
+            owner_id,
+            widget_settings ( primary_color, settings ),
+            shop_subscriptions ( plan_id ),
+            shop_integrations ( provider, settings )
+          `)
           .eq("id", shopId)
           .single();
 
         if (error) throw error;
+        
+        const ws = rawData.widget_settings?.[0] || {};
+        const customInt = rawData.shop_integrations?.find(i => i.provider === 'custom')?.settings || {};
+        const sub = rawData.shop_subscriptions?.[0] || {};
+
+        const data = {
+          id: rawData.id,
+          name: rawData.name,
+          logo_url: rawData.logo_url,
+          widget_color: ws.primary_color || "#3b82f6",
+          is_online: rawData.widget_enabled,
+          plan_name: sub.plan_id || "free",
+          business_hours: ws.settings?.business_hours || "",
+          business_hours_config: ws.settings?.business_hours_config || null,
+          owner_id: rawData.owner_id,
+          api_key: customInt.api_key || ""
+        };
+
         setShop(data);
         window.BridgeOneShopId = shopId;
         window.BridgeOneShopApiKey = data.api_key || "";

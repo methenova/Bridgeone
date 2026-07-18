@@ -156,16 +156,32 @@ export default function SellerWidgetPage() {
     if (!shopId || saving || !isDirty) return;
     setSaving(true);
     try {
-      const { error } = await supabase.from("shops").update({
-        widget_color: widgetColor,
-        widget_position: widgetPosition,
-        welcome_message: welcomeMessage,
-        business_hours: businessHours,
-        is_online: isOnline,
+      // 1. Update shops table for root configuration
+      const { error: shopError } = await supabase.from("shops").update({
+        widget_enabled: isOnline,
         logo_url: logoUrl
       }).eq("id", shopId);
 
-      if (error) throw error;
+      if (shopError) throw shopError;
+
+      // 2. Fetch current widget_settings to preserve existing settings jsonb
+      const { data: ws } = await supabase.from("widget_settings")
+        .select("settings").eq("shop_id", shopId).maybeSingle();
+      
+      const currentSettings = ws?.settings || {};
+
+      // 3. Update widget_settings table for widget-specific UI configuration
+      const { error: widgetError } = await supabase.from("widget_settings").update({
+        primary_color: widgetColor,
+        widget_position: widgetPosition,
+        welcome_message: welcomeMessage,
+        settings: {
+          ...currentSettings,
+          business_hours: businessHours
+        }
+      }).eq("shop_id", shopId);
+
+      if (widgetError) throw widgetError;
       toast.success("Widget configuration updated successfully!");
       reloadShop();
     } catch (err) {

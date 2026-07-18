@@ -39,11 +39,11 @@ export default function AdminWidgetsPage() {
 
   // Toggle active widget status
   async function handleToggleWidget(shop) {
-    const nextStatus = !shop.is_online;
+    const nextStatus = !shop.widget_enabled;
     try {
       const { error } = await supabase
         .from("shops")
-        .update({ is_online: nextStatus })
+        .update({ widget_enabled: nextStatus })
         .eq("id", shop.id);
 
       if (error) throw error;
@@ -87,8 +87,8 @@ export default function AdminWidgetsPage() {
       
       const matchesStatus = 
         statusFilter === "all" ||
-        (statusFilter === "online" && shop.is_online) ||
-        (statusFilter === "offline" && !shop.is_online);
+        (statusFilter === "online" && shop.widget_enabled) ||
+        (statusFilter === "offline" && !shop.widget_enabled);
 
       return matchesSearch && matchesStatus;
     });
@@ -97,7 +97,7 @@ export default function AdminWidgetsPage() {
   // Aggregate Stats
   const stats = useMemo(() => {
     const total = shops.length;
-    const online = shops.filter(s => s.is_online).length;
+    const online = shops.filter(s => s.widget_enabled).length;
     const offline = total - online;
     return { total, online, offline };
   }, [shops]);
@@ -224,12 +224,12 @@ export default function AdminWidgetsPage() {
 
                     {/* Status online/offline */}
                     <td className="px-6 py-5 align-middle">
-                      <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider border ${
-                        s.is_online
-                          ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                          : "bg-slate-100 text-slate-500 border-slate-200"
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                        s.widget_enabled
+                          ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
+                          : "bg-slate-100 text-slate-500 border border-slate-200"
                       }`}>
-                        {s.is_online ? "Active" : "Disabled"}
+                        {s.widget_enabled ? "Active" : "Disabled"}
                       </span>
                     </td>
 
@@ -241,13 +241,14 @@ export default function AdminWidgetsPage() {
                         <button
                           type="button"
                           onClick={() => handleToggleWidget(s)}
-                          className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1 text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 cursor-pointer"
-                          title="Toggle Status"
+                          className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl border border-slate-200 ${
+                            s.widget_enabled ? "text-red-600 hover:bg-red-50" : "text-emerald-600 hover:bg-emerald-50"
+                          }`}
                         >
-                          {s.is_online ? (
-                            <ToggleRight className="h-5 w-5 text-emerald-500" />
+                          {s.widget_enabled ? (
+                            <><Power className="h-4 w-4" /> Disable</>
                           ) : (
-                            <ToggleLeft className="h-5 w-5 text-slate-700" />
+                            <><Power className="h-4 w-4" /> Enable</>
                           )}
                         </button>
 

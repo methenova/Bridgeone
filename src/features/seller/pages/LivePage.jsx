@@ -455,7 +455,6 @@ export default function LivePage() {
       setIsLive(false);
       setPinnedProduct(null);
       setConnectedViewerStream(null);
-      await supabase.from("shops").update({ is_live: false }).eq("id", shopId);
       toast.success("Stream ended");
     } else {
       // Go live
@@ -468,7 +467,6 @@ export default function LivePage() {
         await peer.start();
 
         setIsLive(true);
-        await supabase.from("shops").update({ is_live: true }).eq("id", shopId);
         toast.success("You are now live!");
       } catch (err) {
         console.error("Failed to start live stream:", err);
