@@ -15,7 +15,7 @@
   const hostUrl = scriptEl ? new URL(scriptEl.src).origin : "http://localhost:5173";
 
   // Fetch shop config from Supabase REST API
-  const fetchUrl = `${SUPABASE_URL}/rest/v1/shops?select=shop_name,widget_color,widget_position,is_online&id=eq.${config.shopId}`;
+  const fetchUrl = `${SUPABASE_URL}/rest/v1/widget_settings?select=primary_color,widget_position&shop_id=eq.${config.shopId}`;
 
   fetch(fetchUrl, {
     method: "GET",
@@ -29,7 +29,7 @@
     .then(data => {
       const shop = data && data[0];
       if (!shop) {
-        console.error(`[BridgeOne] Shop not found with ID: ${config.shopId}`);
+        console.error(`[BridgeOne] Settings not found for Shop ID: ${config.shopId}`);
         return;
       }
       initializeWidget(shop);
@@ -39,9 +39,9 @@
     });
 
   function initializeWidget(shop) {
-    const color = shop.widget_color || "#2563eb";
+    const color = shop.primary_color || "#2563eb";
     const position = shop.widget_position || "bottom-right";
-    const isOnline = !!shop.is_online;
+    const isOnline = true; // Assume online for widget UI until socket connects
 
     // Apply basic styles dynamically
     const style = document.createElement("style");
