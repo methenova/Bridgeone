@@ -544,7 +544,6 @@ export default function WidgetPage() {
     }
 
     // Subscribe to live shop broadcasts for product pin signals
-    console.log("[Widget] Subscribing to live:shopId channel for product pins...");
     const liveChannel = supabase.channel(`live:${shopId}`);
 
     liveChannel
