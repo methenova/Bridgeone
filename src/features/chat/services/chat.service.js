@@ -1,7 +1,7 @@
 import { supabase } from "@/config/supabase";
 
 // Send message
-export async function sendMessage({ senderId, receiverId, shopId, content, imageUrl = "" }) {
+export async function sendMessage({ senderId, receiverId, shopId, content, imageUrl = "", visitorId, conversationId }) {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) {
     const apiKey = window.BridgeOneShopApiKey || "";
@@ -14,21 +14,26 @@ export async function sendMessage({ senderId, receiverId, shopId, content, image
         receiverId,
         content,
         imageUrl,
+        visitorId,
+        conversationId,
       }
     });
     if (error) throw error;
     return data;
   }
 
+  // Authenticated path: insert directly
   const { data, error } = await supabase
     .from("messages")
     .insert({
-      sender_id: senderId,
-      receiver_id: receiverId,
-      shop_id: shopId,
+      conversation_id: conversationId,
+      visitor_id: visitorId || null,
+      sender_type: "business_member",
+      sender_shop_member_id: senderId || null,
+      message_type: "text",
       content,
-      image_url: imageUrl,
-      read: false,
+      metadata: imageUrl ? { image_url: imageUrl } : {},
+      is_read: false,
     })
     .select()
     .single();
@@ -37,70 +42,46 @@ export async function sendMessage({ senderId, receiverId, shopId, content, image
   return data;
 }
 
-// Fetch messages between two users
-export async function getConversationMessages(userId, otherUserId) {
+// Fetch messages for a conversation
+export async function getConversationMessages(conversationId) {
   const { data, error } = await supabase
     .from("messages")
-    .select(`
-      *,
-      sender:sender_id ( full_name, avatar_url ),
-      receiver:receiver_id ( full_name, avatar_url )
-    `)
-    .or(`and(sender_id.eq.${userId},receiver_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},receiver_id.eq.${userId})`)
+    .select("*")
+    .eq("conversation_id", conversationId)
     .order("created_at", { ascending: true });
 
   if (error) throw error;
   return data ?? [];
 }
 
-// Fetch active chat contacts list (sellers seeing customers, or customers seeing shops they chatted with)
-export async function getChatContacts(userId) {
-  // Get all messages where user is sender or receiver
+// Fetch active chat contacts list (conversations for a shop)
+export async function getChatContacts(shopId) {
   const { data, error } = await supabase
-    .from("messages")
+    .from("conversations")
     .select(`
-      *,
-      sender:sender_id ( id, full_name, avatar_url ),
-      receiver:receiver_id ( id, full_name, avatar_url ),
-      shops ( id, name:shop_name, logo_url )
+      id,
+      visitor_id,
+      channel,
+      status,
+      subject,
+      last_activity_at,
+      visitors ( id, name, email, phone, status )
     `)
-    .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
-    .order("created_at", { ascending: false });
+    .eq("shop_id", shopId)
+    .in("status", ["waiting", "assigned", "active"])
+    .order("last_activity_at", { ascending: false });
 
   if (error) throw error;
-
-  // Group by other user id
-  const contactsMap = {};
-  data.forEach((msg) => {
-    const isSender = msg.sender_id === userId;
-    const contactUser = isSender ? msg.receiver : msg.sender;
-    if (!contactUser) return;
-
-    const contactId = contactUser.id;
-    if (!contactsMap[contactId]) {
-      contactsMap[contactId] = {
-        id: contactId,
-        user: contactUser,
-        shop: msg.shops,
-        lastMessage: msg.content,
-        imageUrl: msg.image_url,
-        unread: !msg.read && msg.receiver_id === userId,
-        created_at: msg.created_at,
-      };
-    }
-  });
-
-  return Object.values(contactsMap);
+  return data ?? [];
 }
 
 // Mark messages in conversation as read
-export async function markConversationRead(senderId, receiverId) {
+export async function markConversationRead(conversationId) {
   const { error } = await supabase
     .from("messages")
-    .update({ read: true })
-    .eq("sender_id", senderId)
-    .eq("receiver_id", receiverId)
-    .eq("read", false);
+    .update({ is_read: true, read_at: new Date().toISOString() })
+    .eq("conversation_id", conversationId)
+    .eq("is_read", false);
 
   if (error) throw error;
 }

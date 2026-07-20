@@ -8,11 +8,11 @@ export async function createPeer() {
 
 export async function cleanOldRooms(roomCodePrefix) {
     try {
-        // Get room ids for this roomCode prefix (e.g. call_shopId_userId)
+        // Get room ids for this room_key prefix (e.g. call_shopId_userId)
         const { data: rooms } = await supabase
             .from("video_rooms")
             .select("id")
-            .like("room_code", `${roomCodePrefix}%`);
+            .like("room_key", `${roomCodePrefix}%`);
 
         if (rooms && rooms.length > 0) {
             const ids = rooms.map((r) => r.id);
@@ -40,17 +40,20 @@ export async function createRoom(roomCode, shopId, sellerId, offer) {
                 offer,
             }
         });
-        if (error) throw error;
+        if (error) {
+            console.warn("[webrtcService] guest-gateway invoke warning:", error);
+            return { data: null, error };
+        }
         return { data, error: null };
     }
 
     return supabase
         .from("video_rooms")
         .insert({
-            room_code: roomCode,
+            room_key: roomCode,
             shop_id: shopId,
-            seller_id: sellerId,
-            status: "connected",
+            agent_id: sellerId,
+            status: "waiting",
             offer,
         })
         .select()
@@ -61,14 +64,14 @@ export async function updateAnswer(roomCode, answer) {
     return supabase
         .from("video_rooms")
         .update({ answer })
-        .eq("room_code", roomCode);
+        .eq("room_key", roomCode);
 }
 
 export async function getRoom(roomCode) {
     const { data } = await supabase
         .from("video_rooms")
         .select("*")
-        .eq("room_code", roomCode)
+        .eq("room_key", roomCode)
         .eq("status", "connected")
         .maybeSingle();
 
@@ -113,9 +116,14 @@ export async function addCandidate(roomId, sender, candidate) {
         });
     }
 
+    // Map sender to enum: "visitor" or "business_member"
+    const senderType = (sender === "seller" || sender === "business_member")
+        ? "business_member"
+        : "visitor";
+
     return supabase.from("video_candidates").insert({
         room_id: roomId,
-        sender,
+        sender_type: senderType,
         candidate,
     });
 }

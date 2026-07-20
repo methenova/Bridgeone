@@ -71,118 +71,311 @@ serve(async (req) => {
       }
     }
 
-    // 6. Database-Backed IP & Shop Rate Limiting
-    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "127.0.0.1";
+    // 6. Database-Backed IP & Shop Rate Limiting (Fail-Safe)
+    try {
+      const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "127.0.0.1";
 
-    // Clean expired limits first
-    await supabaseAdmin.from("rate_limits").delete().lt("expiry", new Date().toISOString());
+      // Clean expired limits first
+      await supabaseAdmin.from("rate_limits").delete().lt("expiry", new Date().toISOString());
 
-    // IP limits check (Max 40 requests per minute)
-    const ipKey = `ip:${clientIp}`;
-    const { data: ipLimit } = await supabaseAdmin.rpc("increment_rate_limit", {
-      rate_key: ipKey,
-      window_seconds: 60
-    });
-    if (ipLimit && ipLimit > 40) {
-      return new Response(
-        JSON.stringify({ error: "Too many requests. IP rate limit exceeded." }),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      // IP limits check (Max 40 requests per minute)
+      const ipKey = `ip:${clientIp}`;
+      const { data: ipLimit } = await supabaseAdmin.rpc("increment_rate_limit", {
+        rate_key: ipKey,
+        window_seconds: 60
+      });
+      if (ipLimit && ipLimit > 40) {
+        return new Response(
+          JSON.stringify({ error: "Too many requests. IP rate limit exceeded." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Shop limits check (Max 150 requests per minute)
+      const shopKey = `shop:${shopId}`;
+      const { data: shopLimit } = await supabaseAdmin.rpc("increment_rate_limit", {
+        rate_key: shopKey,
+        window_seconds: 60
+      });
+      if (shopLimit && shopLimit > 150) {
+        return new Response(
+          JSON.stringify({ error: "Shop rate limit exceeded." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    } catch (_rateErr) {
+      // Graceful fallback if rate_limits table or increment_rate_limit RPC is not present
     }
 
-    // Shop limits check (Max 150 requests per minute)
-    const shopKey = `shop:${shopId}`;
-    const { data: shopLimit } = await supabaseAdmin.rpc("increment_rate_limit", {
-      rate_key: shopKey,
-      window_seconds: 60
-    });
-    if (shopLimit && shopLimit > 150) {
-      return new Response(
-        JSON.stringify({ error: "Shop rate limit exceeded." }),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    // ── Helper: Resolve or create a visitor record ──
+    async function resolveVisitor(
+      name?: string,
+      email?: string,
+      phone?: string
+    ): Promise<string> {
+      // Try to find existing visitor by email or phone
+      if (email) {
+        const { data: existing } = await supabaseAdmin
+          .from("visitors")
+          .select("id")
+          .eq("shop_id", shopId)
+          .eq("email", email)
+          .maybeSingle();
+        if (existing) {
+          // Update last_seen and name/phone if provided
+          await supabaseAdmin
+            .from("visitors")
+            .update({
+              last_seen_at: new Date().toISOString(),
+              ...(name ? { name } : {}),
+              ...(phone ? { phone } : {}),
+            })
+            .eq("id", existing.id);
+          return existing.id;
+        }
+      }
+
+      // Create new visitor
+      const visitorKey = `visitor_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      const { data: newVisitor, error: visitorErr } = await supabaseAdmin
+        .from("visitors")
+        .insert({
+          shop_id: shopId,
+          visitor_key: visitorKey,
+          name: name || "Anonymous Visitor",
+          email: email || null,
+          phone: phone || null,
+          status: "online",
+          first_seen_at: new Date().toISOString(),
+          last_seen_at: new Date().toISOString(),
+        })
+        .select("id")
+        .single();
+
+      if (visitorErr) throw visitorErr;
+      return newVisitor.id;
+    }
+
+    // ── Helper: Resolve or create a conversation ──
+    async function resolveConversation(
+      visitorId: string,
+      channel: string = "video"
+    ): Promise<string> {
+      // Check for an existing active conversation
+      const { data: existing } = await supabaseAdmin
+        .from("conversations")
+        .select("id")
+        .eq("shop_id", shopId)
+        .eq("visitor_id", visitorId)
+        .in("status", ["waiting", "assigned", "active"])
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (existing) return existing.id;
+
+      // Create a new conversation
+      const { data: newConvo, error: convoErr } = await supabaseAdmin
+        .from("conversations")
+        .insert({
+          shop_id: shopId,
+          visitor_id: visitorId,
+          channel,
+          status: "waiting",
+          started_at: new Date().toISOString(),
+          last_activity_at: new Date().toISOString(),
+        })
+        .select("id")
+        .single();
+
+      if (convoErr) throw convoErr;
+      return newConvo.id;
     }
 
     // 7. Execute Actions
-    let result = null;
-    let writeError = null;
+    let result: any = null;
+    let writeError: any = null;
 
     const resolveSingle = (data: any) => Array.isArray(data) ? data[0] : data;
 
     if (action === "create_room") {
-      const { roomCode, sellerId, offer } = body;
+      // ── Create a video room ──
+      const { roomCode, sellerId, offer, customerName, customerEmail, customerPhone } = body;
+
+      // Resolve visitor
+      const visitorId = await resolveVisitor(customerName, customerEmail, customerPhone);
+      const conversationId = await resolveConversation(visitorId, "video");
+
       const { data, error } = await supabaseAdmin
         .from("video_rooms")
-        .insert({ room_code: roomCode, shop_id: shopId, seller_id: sellerId, status: "live", offer })
+        .insert({
+          room_key: roomCode,
+          shop_id: shopId,
+          agent_id: sellerId || null,
+          visitor_id: visitorId,
+          conversation_id: conversationId,
+          status: "waiting",
+          offer,
+        })
         .select();
       result = resolveSingle(data);
       writeError = error;
 
     } else if (action === "add_candidate") {
+      // ── Add an ICE candidate ──
       const { roomId, sender, candidate } = body;
+
+      // Map sender string to enum: "visitor" or "business_member"
+      const senderType = (sender === "seller" || sender === "business_member")
+        ? "business_member"
+        : "visitor";
+
       const { data, error } = await supabaseAdmin
         .from("video_candidates")
-        .insert({ room_id: roomId, sender, candidate })
+        .insert({ room_id: roomId, sender_type: senderType, candidate })
         .select();
       result = data;
       writeError = error;
 
     } else if (action === "delete_room") {
+      // ── Delete a video room and its candidates ──
       const { roomId } = body;
       await supabaseAdmin.from("video_candidates").delete().eq("room_id", roomId);
       const { data, error } = await supabaseAdmin.from("video_rooms").delete().eq("id", roomId).select();
-      
+
       // Clean up any transient incoming call notifications for this shop
       await supabaseAdmin.from("notifications").delete().match({ shop_id: shopId, type: "incoming_call" });
-      
+
       result = resolveSingle(data);
       writeError = error;
 
     } else if (action === "create_call_log") {
+      // ── Create a call log entry ──
       const { customerName, customerEmail, customerPhone, status, duration, productsShared } = body;
+
+      // Resolve visitor
+      const visitorId = await resolveVisitor(customerName, customerEmail, customerPhone);
+      const conversationId = await resolveConversation(visitorId, "video");
+
       const { data, error } = await supabaseAdmin
         .from("call_logs")
         .insert({
           shop_id: shopId,
-          customer_name: customerName,
-          customer_email: customerEmail,
-          customer_phone: customerPhone,
-          status,
-          duration,
-          products_shared: productsShared
+          visitor_id: visitorId,
+          conversation_id: conversationId,
+          call_type: "video",
+          status: status || "ringing",
+          duration_seconds: duration || 0,
+          metadata: {
+            customer_name: customerName || null,
+            customer_email: customerEmail || null,
+            customer_phone: customerPhone || null,
+            products_shared: productsShared || null,
+          },
         })
         .select();
       result = resolveSingle(data);
       writeError = error;
 
     } else if (action === "update_call_log") {
+      // ── Update an existing call log ──
       const { id, duration, status, notes, csatScore, callRating } = body;
+
+      const updatePayload: Record<string, any> = {};
+      if (duration !== undefined) updatePayload.duration_seconds = duration;
+      if (status !== undefined) updatePayload.status = status;
+      if (notes !== undefined) updatePayload.agent_notes = notes;
+
+      // Store feedback data in metadata
+      if (csatScore !== undefined || callRating !== undefined) {
+        // Fetch existing metadata first
+        const { data: existing } = await supabaseAdmin
+          .from("call_logs")
+          .select("metadata")
+          .eq("id", id)
+          .maybeSingle();
+
+        const existingMeta = existing?.metadata || {};
+        updatePayload.metadata = {
+          ...existingMeta,
+          ...(csatScore !== undefined ? { csat_score: csatScore } : {}),
+          ...(callRating !== undefined ? { call_rating: callRating } : {}),
+        };
+      }
+
+      // Set ended_at if the call is being marked as completed or missed
+      if (status === "completed" || status === "missed") {
+        updatePayload.ended_at = new Date().toISOString();
+      }
+
       const { data, error } = await supabaseAdmin
         .from("call_logs")
-        .update({ duration, status, notes, csat_score: csatScore, call_rating: callRating })
+        .update(updatePayload)
         .eq("id", id)
         .select();
-        
+
       // Clean up any transient incoming call notifications
       await supabaseAdmin.from("notifications").delete().match({ shop_id: shopId, type: "incoming_call" });
-      
+
       result = resolveSingle(data);
       writeError = error;
 
     } else if (action === "create_callback") {
-      const { customerName, customerEmail, customerPhone, scheduledTime } = body;
+      // ── Schedule a callback request ──
+      const { customerName, customerEmail, customerPhone, scheduledTime, notes } = body;
+
+      // Resolve visitor
+      const visitorId = await resolveVisitor(customerName, customerEmail, customerPhone);
+      const conversationId = await resolveConversation(visitorId, "callback");
+
       const { data, error } = await supabaseAdmin
         .from("callback_requests")
-        .insert({ shop_id: shopId, customer_name: customerName, customer_email: customerEmail, customer_phone: customerPhone, scheduled_time: scheduledTime, status: "pending" })
+        .insert({
+          shop_id: shopId,
+          visitor_id: visitorId,
+          conversation_id: conversationId,
+          name: customerName || "Anonymous",
+          email: customerEmail || null,
+          phone: customerPhone || null,
+          scheduled_time: scheduledTime,
+          message: notes || null,
+          status: "pending",
+        })
         .select();
       result = resolveSingle(data);
       writeError = error;
 
     } else if (action === "send_message") {
-      const { senderId, receiverId, content, imageUrl } = body;
+      // ── Send a chat message ──
+      const { senderId, receiverId, content, imageUrl, visitorId: bodyVisitorId, conversationId: bodyConvoId } = body;
+
+      // Determine visitor and conversation IDs
+      let visitorId = bodyVisitorId;
+      let conversationId = bodyConvoId;
+
+      if (!visitorId) {
+        // Create/resolve visitor from sender info
+        visitorId = await resolveVisitor();
+      }
+      if (!conversationId) {
+        conversationId = await resolveConversation(visitorId, "chat");
+      }
+
       const { data, error } = await supabaseAdmin
         .from("messages")
-        .insert({ sender_id: senderId, receiver_id: receiverId, shop_id: shopId, content, image_url: imageUrl, read: false })
+        .insert({
+          conversation_id: conversationId,
+          visitor_id: visitorId,
+          sender_type: "visitor",
+          message_type: "text",
+          content,
+          metadata: {
+            ...(imageUrl ? { image_url: imageUrl } : {}),
+            ...(senderId ? { legacy_sender_id: senderId } : {}),
+            ...(receiverId ? { legacy_receiver_id: receiverId } : {}),
+          },
+          is_read: false,
+        })
         .select();
       result = resolveSingle(data);
       writeError = error;
