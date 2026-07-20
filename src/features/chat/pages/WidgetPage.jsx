@@ -835,7 +835,7 @@ export default function WidgetPage() {
 
       peer.onRoomDeleted = () => {
         console.log("[Widget] Call terminated by seller");
-        toast.info("Call ended by seller");
+        toast("Call ended by seller");
         handleHangUp();
       };
 
@@ -1440,7 +1440,7 @@ export default function WidgetPage() {
                     type="button"
                     onClick={() => {
                       if (!name.trim()) {
-                        toast.info("Please enter your name below to start!");
+                        toast("Please enter your name below to start!");
                         document.querySelector('input[placeholder="Your Name"]')?.focus();
                         return;
                       }

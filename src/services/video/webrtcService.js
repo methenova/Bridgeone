@@ -72,7 +72,7 @@ export async function getRoom(roomCode) {
         .from("video_rooms")
         .select("*")
         .eq("room_key", roomCode)
-        .eq("status", "connected")
+        .in("status", ["waiting", "ringing", "connected"])
         .maybeSingle();
 
     return data;

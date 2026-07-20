@@ -232,7 +232,7 @@ export default function CustomerChatWidget({ shop }) {
 
       peer.onRoomDeleted = () => {
         console.log("[Call] Room deleted by remote peer — ending call");
-        toast.info("Call ended by seller");
+        toast("Call ended by seller");
         handleHangUp();
       };
 

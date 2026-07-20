@@ -135,12 +135,19 @@ export default function LivePage() {
   async function updateAgentStatus(newStatus) {
     if (!shopId || !user?.id) return;
     try {
-      const isOnline = ["Available", "Busy", "In Call", "Away", "Break", "Meeting"].includes(newStatus);
-      await supabase
-        .from("shop_agents")
-        .update({ status: newStatus, is_online: isOnline })
+      const { data: mem } = await supabase
+        .from("shop_members")
+        .select("id")
         .eq("shop_id", shopId)
-        .eq("profile_id", user.id);
+        .eq("profile_id", user.id)
+        .maybeSingle();
+
+      if (mem) {
+        await supabase
+          .from("shop_agents")
+          .update({ status: newStatus, last_seen_at: new Date().toISOString() })
+          .eq("shop_member_id", mem.id);
+      }
     } catch (err) {
       console.warn("Failed to automatically update agent status:", err);
     }
@@ -149,14 +156,21 @@ export default function LivePage() {
   // Fetch agents for call transfers
   useEffect(() => {
     if (activeConsultation && shopId) {
-      supabase.from("shop_agents")
+      supabase.from("shop_members")
         .select(`
-          *,
-          profiles:profile_id ( full_name )
+          id,
+          role,
+          profiles:profile_id ( full_name ),
+          shop_agents ( id, status, display_name )
         `)
         .eq("shop_id", shopId)
         .then(({ data }) => {
-          setAgentsList(data || []);
+          const formatted = (data || []).map(m => ({
+            id: m.shop_agents?.[0]?.id || m.id,
+            display_name: m.shop_agents?.[0]?.display_name || m.profiles?.full_name || "Agent",
+            status: m.shop_agents?.[0]?.status || "offline"
+          }));
+          setAgentsList(formatted);
         });
     }
   }, [activeConsultation, shopId]);
@@ -332,7 +346,7 @@ export default function LivePage() {
           // Use ref so this callback always sees the latest incomingCall
           if (incomingCallRef.current && payload.old.id === incomingCallRef.current.id) {
             console.log("[LivePage] Incoming call cancelled by caller");
-            toast.info("Call cancelled by customer");
+            toast("Call cancelled by customer");
             setIncomingCall(null);
           }
         }
@@ -539,7 +553,7 @@ export default function LivePage() {
 
       peer.onRoomDeleted = () => {
         console.log("[LivePage] Room deleted by customer — ending call");
-        toast.info("Call ended by customer");
+        toast("Call ended by customer");
         handleDeclineCall();
       };
 
