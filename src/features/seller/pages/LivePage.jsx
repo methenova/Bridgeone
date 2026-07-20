@@ -238,7 +238,7 @@ export default function LivePage() {
     async function fetchCaller() {
       try {
         // Parse the call log ID embedded in the room code (e.g. call_shopId_logId_random)
-        const parts = incomingCall.room_code.split("_");
+        const parts = (incomingCall.room_key || incomingCall.room_code || "").split("_");
         const callLogId = parts.length >= 3 ? parts[2] : null;
 
         if (!callLogId) return;
