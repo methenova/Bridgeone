@@ -122,7 +122,7 @@ export default function SellerNotificationsPage() {
       
       if (activeTab === "unread") return !n.is_read;
       if (activeTab === "calls") return n.type === "missed_call";
-      if (activeTab === "callbacks") return n.type === "callback_reminder";
+      if (activeTab === "callbacks") return n.type === "callback_request" || n.type === "callback_reminder";
       if (activeTab === "system") return n.type === "system";
       return true;
     });
@@ -133,6 +133,7 @@ export default function SellerNotificationsPage() {
     if (!shopId) return;
     let title = "System Alert";
     let message = "A test notification trigger has fired.";
+    let validEnum = type;
     
     if (type === "incoming_call") {
       title = "Incoming Call Alert";
@@ -140,9 +141,10 @@ export default function SellerNotificationsPage() {
     } else if (type === "missed_call") {
       title = "Missed Call Alert";
       message = "You missed a live video call from Guest Customer.";
-    } else if (type === "callback_reminder") {
+    } else if (type === "callback_reminder" || type === "callback_request") {
       title = "Callback Reminder";
       message = "New callback requested for tomorrow at 11:30 AM.";
+      validEnum = "callback_request";
     }
 
     try {
@@ -152,7 +154,7 @@ export default function SellerNotificationsPage() {
           shop_id: shopId,
           title,
           message,
-          type,
+          type: validEnum,
           is_read: false
         });
 
