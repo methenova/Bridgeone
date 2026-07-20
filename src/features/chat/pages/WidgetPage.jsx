@@ -1519,6 +1519,8 @@ export default function WidgetPage() {
                   </span>
                   <input
                     required
+                    id="bo-customer-name"
+                    name="name"
                     type="text"
                     placeholder="Your Name"
                     value={name}
@@ -1534,6 +1536,8 @@ export default function WidgetPage() {
                     <Mail className="h-4.5 w-4.5" />
                   </span>
                   <input
+                    id="bo-customer-email"
+                    name="email"
                     type="email"
                     placeholder="Email Address (Optional)"
                     value={email}
@@ -1549,6 +1553,8 @@ export default function WidgetPage() {
                     <Phone className="h-4.5 w-4.5" />
                   </span>
                   <input
+                    id="bo-customer-phone"
+                    name="phone"
                     type="tel"
                     placeholder="Phone Number (Optional)"
                     value={phone}
@@ -2072,6 +2078,8 @@ export default function WidgetPage() {
                 </span>
                 <input
                   required
+                  id="bo-callback-name"
+                  name="name"
                   type="text"
                   placeholder="Your Name"
                   value={name}
@@ -2087,6 +2095,8 @@ export default function WidgetPage() {
                   <Mail className="h-4.5 w-4.5" />
                 </span>
                 <input
+                  id="bo-callback-email"
+                  name="email"
                   type="email"
                   placeholder="Email Address"
                   value={email}
@@ -2102,6 +2112,8 @@ export default function WidgetPage() {
                   <Phone className="h-4.5 w-4.5" />
                 </span>
                 <input
+                  id="bo-callback-phone"
+                  name="phone"
                   type="tel"
                   placeholder="Phone Number"
                   value={phone}
@@ -2109,13 +2121,17 @@ export default function WidgetPage() {
                   onChange={(e) => setPhone(e.target.value)}
                   className="w-full rounded-xl border border-slate-200 bg-white/60 shadow-sm pl-11 pr-4 py-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:bg-white shadow-sm focus-visible:outline-none transition-all"
                 />
-              </div>               {/* Date */}
+              </div>
+
+              {/* Date */}
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
                   <Calendar className="h-4.5 w-4.5" />
                 </span>
                 <input
                   required
+                  id="bo-callback-date"
+                  name="callback-date"
                   type="date"
                   value={callbackDate}
                   min={new Date().toISOString().split("T")[0]}
@@ -2132,6 +2148,8 @@ export default function WidgetPage() {
                 </span>
                 <input
                   required
+                  id="bo-callback-time"
+                  name="callback-time"
                   type="time"
                   value={callbackTimeOnly}
                   aria-label="Choose callback time"
