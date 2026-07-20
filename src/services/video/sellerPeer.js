@@ -215,7 +215,7 @@ export class SellerPeer {
     }
   }
 
-  /** Fetch all existing viewer ICE candidates from DB immediately after answer is applied */
+  /** Fetch ICE candidates the business member uploaded before this SellerPeer subscribed */
   async fetchExistingViewerCandidates() {
     if (this.isDestroyed || !this.roomId) return;
     try {
@@ -223,10 +223,10 @@ export class SellerPeer {
         .from("video_candidates")
         .select("*")
         .eq("room_id", this.roomId)
-        .eq("sender", "viewer");
+        .eq("sender_type", "business_member");
 
       if (candidates && candidates.length > 0) {
-        console.log(`[SellerPeer] Applying ${candidates.length} existing viewer ICE candidates immediately...`);
+        console.log(`[SellerPeer] Applying ${candidates.length} existing business member ICE candidates immediately...`);
         for (const item of candidates) {
           if (!this.appliedCandidateIds.has(item.id)) {
             this.appliedCandidateIds.add(item.id);
@@ -235,11 +235,11 @@ export class SellerPeer {
         }
       }
     } catch (err) {
-      console.error("[SellerPeer] Error fetching existing viewer candidates:", err);
+      console.error("[SellerPeer] Error fetching existing business member candidates:", err);
     }
   }
 
-  /** Poll DB directly for new viewer ICE candidates (safety net for closed Realtime sockets) */
+  /** Poll DB directly for new business member ICE candidates (safety net for closed Realtime sockets) */
   async pollForCandidates() {
     if (this.isDestroyed || !this.roomId || !this.remoteDescriptionSet) return;
     try {
@@ -247,7 +247,7 @@ export class SellerPeer {
         .from("video_candidates")
         .select("*")
         .eq("room_id", this.roomId)
-        .eq("sender", "viewer");
+        .eq("sender_type", "business_member");
 
       if (candidates && candidates.length > 0 && !this.isDestroyed) {
         for (const item of candidates) {
@@ -255,7 +255,7 @@ export class SellerPeer {
             this.appliedCandidateIds.add(item.id);
             if (this.peer) {
               await this.peer.addIceCandidate(new RTCIceCandidate(item.candidate));
-              console.log("[SellerPeer] Viewer ICE candidate added via poll");
+              console.log("[SellerPeer] Business member ICE candidate added via poll");
             }
           }
         }
@@ -313,8 +313,9 @@ export class SellerPeer {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "video_candidates", filter: `room_id=eq.${roomId}` },
         async (payload) => {
-          const { sender, candidate } = payload.new;
-          if (sender === "viewer" && this.peer && !this.isDestroyed) {
+          const { sender, sender_type, candidate } = payload.new;
+          const isFromSeller = sender_type === "business_member" || sender === "seller" || sender === "viewer";
+          if (isFromSeller && this.peer && !this.isDestroyed) {
             try {
               if (!this.remoteDescriptionSet) {
                 this.remoteCandidatesQueue.push(candidate);

@@ -135,6 +135,10 @@ export default function LivePage() {
   async function updateAgentStatus(newStatus) {
     if (!shopId || !user?.id) return;
     try {
+      const validStatus = ["online", "offline", "busy", "away"].includes(newStatus)
+        ? newStatus
+        : (newStatus === "In Call" ? "busy" : "online");
+
       const { data: mem } = await supabase
         .from("shop_members")
         .select("id")
@@ -145,7 +149,7 @@ export default function LivePage() {
       if (mem) {
         await supabase
           .from("shop_agents")
-          .update({ status: newStatus, last_seen_at: new Date().toISOString() })
+          .update({ status: validStatus, last_seen_at: new Date().toISOString() })
           .eq("shop_member_id", mem.id);
       }
     } catch (err) {
@@ -579,10 +583,20 @@ export default function LivePage() {
         const callLogId = parts.length >= 3 ? parts[2] : null;
 
         if (callLogId) {
-          await supabase
-            .from("call_logs")
-            .update({ agent_id: user.id })
-            .eq("id", callLogId);
+          const { data: memData } = await supabase
+            .from("shop_members")
+            .select("shop_agents(id)")
+            .eq("shop_id", shopId)
+            .eq("profile_id", user.id)
+            .maybeSingle();
+
+          const realAgentId = memData?.shop_agents?.[0]?.id || null;
+          if (realAgentId) {
+            await supabase
+              .from("call_logs")
+              .update({ agent_id: realAgentId })
+              .eq("id", callLogId);
+          }
           setActiveCallLogId(callLogId);
         }
       } catch (logErr) {

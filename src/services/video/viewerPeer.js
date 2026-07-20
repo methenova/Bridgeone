@@ -136,12 +136,12 @@ export class ViewerPeer {
         .from("video_candidates")
         .select("*")
         .eq("room_id", this.roomId)
-        .eq("sender", "seller");
+        .eq("sender_type", "visitor");
 
       if (error) throw error;
 
       if (candidates?.length > 0) {
-        console.log(`[ViewerPeer] Applying ${candidates.length} existing seller ICE candidates...`);
+        console.log(`[ViewerPeer] Applying ${candidates.length} existing visitor ICE candidates...`);
         for (const item of candidates) {
           this.appliedCandidateIds.add(item.id);
           if (this.peer) await this.peer.addIceCandidate(new RTCIceCandidate(item.candidate));
@@ -152,7 +152,7 @@ export class ViewerPeer {
     }
   }
 
-  /** Poll DB directly for new seller ICE candidates (safety net for closed Realtime sockets) */
+  /** Poll DB directly for new visitor ICE candidates (safety net for closed Realtime sockets) */
   async pollForCandidates() {
     if (this.isDestroyed || !this.roomId || !this.remoteDescriptionSet) return;
     try {
@@ -160,7 +160,7 @@ export class ViewerPeer {
         .from("video_candidates")
         .select("*")
         .eq("room_id", this.roomId)
-        .eq("sender", "seller");
+        .eq("sender_type", "visitor");
 
       if (candidates && candidates.length > 0 && !this.isDestroyed) {
         for (const item of candidates) {
@@ -168,7 +168,7 @@ export class ViewerPeer {
             this.appliedCandidateIds.add(item.id);
             if (this.peer) {
               await this.peer.addIceCandidate(new RTCIceCandidate(item.candidate));
-              console.log("[ViewerPeer] Seller ICE candidate added via poll");
+              console.log("[ViewerPeer] Visitor ICE candidate added via poll");
             }
           }
         }
@@ -188,17 +188,18 @@ export class ViewerPeer {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "video_candidates", filter: `room_id=eq.${roomId}` },
         async (payload) => {
-          const { sender, candidate } = payload.new;
-          if (sender === "seller" && this.peer && !this.isDestroyed) {
+          const { sender, sender_type, candidate } = payload.new;
+          const isFromVisitor = sender_type === "visitor" || sender === "visitor";
+          if (isFromVisitor && this.peer && !this.isDestroyed) {
             try {
               if (!this.remoteDescriptionSet) {
                 this.remoteCandidatesQueue.push(candidate);
               } else {
                 await this.peer.addIceCandidate(new RTCIceCandidate(candidate));
-                console.log("[ViewerPeer] Seller ICE candidate added");
+                console.log("[ViewerPeer] Visitor ICE candidate added");
               }
             } catch (err) {
-              console.error("[ViewerPeer] Error adding seller ICE candidate:", err);
+              console.error("[ViewerPeer] Error adding visitor ICE candidate:", err);
             }
           }
         }
