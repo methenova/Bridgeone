@@ -291,7 +291,8 @@ export default function LivePage() {
       // 3.5. Broadcast Incoming Call ( shopper calling the seller directly for instant popup )
       .on("broadcast", { event: "incoming_call" }, ({ payload }) => {
         const room = payload.room;
-        if (room && room.shop_id === shopId && room.room_code.startsWith("call_") && room.status === "connected") {
+        const roomCode = room?.room_key || room?.room_code || "";
+        if (room && room.shop_id === shopId && roomCode.startsWith("call_") && (room.status === "waiting" || room.status === "ringing" || room.status === "connected")) {
           if (incomingCallRef.current?.id === room.id) return;
           console.log("[LivePage] Incoming call broadcast received:", room);
           setIncomingCall(room);
@@ -308,8 +309,9 @@ export default function LivePage() {
         },
         (payload) => {
           const room = payload.new;
+          const roomCode = room?.room_key || room?.room_code || "";
           // Filter by shop_id in JS for robustness
-          if (room.shop_id === shopId && room.room_code.startsWith("call_") && room.status === "connected") {
+          if (room.shop_id === shopId && roomCode.startsWith("call_") && (room.status === "waiting" || room.status === "ringing" || room.status === "connected")) {
             // Ignore if we already have this call pending
             if (incomingCallRef.current?.id === room.id) return;
             console.log("[LivePage] Incoming call room detected:", room);
@@ -330,33 +332,19 @@ export default function LivePage() {
           // Use ref so this callback always sees the latest incomingCall
           if (incomingCallRef.current && payload.old.id === incomingCallRef.current.id) {
             console.log("[LivePage] Incoming call cancelled by caller");
+            toast.info("Call cancelled by customer");
             setIncomingCall(null);
-            incomingCallRef.current = null;
-            toast.dismiss();
           }
         }
       )
-      .subscribe((status, err) => {
-        console.log(`[LivePage] Unified Realtime channel status: ${status}`, err || "");
-      });
-
-    return () => {
-      console.log("[LivePage] Cleaning up unified Realtime channel");
-      if (channelRef.current) {
-        supabase.removeChannel(channelRef.current);
-        channelRef.current = null;
-      }
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+      .subscribe();
   }, [shopId]);
 
-  // Polling Fallback: Check for active incoming calls in DB every 4 seconds as a safety net
-  // in case the Realtime WebSocket connection drops or gets blocked.
+  // Secondary Fallback: Poll DB every 3s for any incoming calls that were missed by Realtime
   useEffect(() => {
-    if (!shopId || activeConsultation) return;
+    if (!shopId) return;
 
     const pollInterval = setInterval(async () => {
-      // Skip poll if a call is already pending in state or being accepted
       if (incomingCallRef.current || isAcceptingRef.current) return;
 
       try {
@@ -364,14 +352,15 @@ export default function LivePage() {
           .from("video_rooms")
           .select("*")
           .eq("shop_id", shopId)
-          .eq("status", "connected");
+          .in("status", ["waiting", "ringing", "connected"]);
 
         if (error) throw error;
 
         if (rooms && rooms.length > 0) {
           // Find the active incoming call (starts with 'call_')
           const callRoom = rooms.find((r) => {
-            if (!r.room_code.startsWith("call_")) return false;
+            const roomCode = r.room_key || r.room_code || "";
+            if (!roomCode.startsWith("call_")) return false;
             // Ignore if already answered by an agent
             if (r.answer) return false;
             // Filter out calls created more than 60 seconds ago to avoid stale triggers
@@ -526,8 +515,9 @@ export default function LivePage() {
       }
 
       // ViewerPeer answers the customer's offer, sending seller's stream back
+      const targetRoomCode = incomingCall.room_key || incomingCall.room_code;
       const peer = new ViewerPeer(
-        incomingCall.room_code,
+        targetRoomCode,
         (remoteStream) => {
           console.log("[LivePage] Received customer call stream");
           setCallRemoteStream(remoteStream);
@@ -560,7 +550,7 @@ export default function LivePage() {
       
       // Link the current agent to this call log
       try {
-        const parts = incomingCall.room_code.split("_");
+        const parts = (targetRoomCode || "").split("_");
         const callLogId = parts.length >= 3 ? parts[2] : null;
 
         if (callLogId) {

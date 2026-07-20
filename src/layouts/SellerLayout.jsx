@@ -154,7 +154,8 @@ export default function SellerLayout() {
         { event: "INSERT", schema: "public", table: "video_rooms", filter: `shop_id=eq.${shopId}` },
         (payload) => {
           const room = payload.new;
-          if (room.status !== "connected") return;
+          const roomCode = room.room_key || room.room_code || "";
+          if (room.status !== "waiting" && room.status !== "ringing" && room.status !== "connected") return;
           
           ringingCallsRef.current.set(room.id, room);
           
@@ -166,7 +167,7 @@ export default function SellerLayout() {
 
           if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
             const n = new Notification("Incoming Video Call", {
-              body: `Incoming call in room: ${room.room_code}`,
+              body: `Incoming call in room: ${roomCode}`,
               icon: "/favicon.ico"
             });
             activeNotificationsRef.current.set(room.id, n);
