@@ -13,7 +13,9 @@ import {
   Save, 
   ListFilter,
   Activity,
-  CalendarCheck
+  CalendarCheck,
+  ShoppingBag,
+  IndianRupee
 } from "lucide-react";
 import toast from "react-hot-toast";
 
