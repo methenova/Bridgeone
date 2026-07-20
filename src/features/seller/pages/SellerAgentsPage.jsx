@@ -219,20 +219,60 @@ export default function SellerAgentsPage() {
     }
   }
 
-  // Update agent status (on shop_agents table)
+  // Update agent status (on shop_agents table & shop online status)
   async function handleUpdateStatus(ag, newStatus) {
     try {
-      if (ag.has_agent_record) {
+      // Optimistically update React state immediately
+      setAgents(prev => prev.map(item => 
+        item.member_id === ag.member_id 
+          ? { ...item, status: newStatus, has_agent_record: true } 
+          : item
+      ));
+
+      if (ag.has_agent_record && ag.id) {
         const { error } = await supabase
           .from("shop_agents")
-          .update({ status: newStatus })
+          .update({ 
+            status: newStatus, 
+            last_seen_at: new Date().toISOString() 
+          })
           .eq("id", ag.id);
         if (error) throw error;
+      } else {
+        const { data: newAg, error } = await supabase
+          .from("shop_agents")
+          .insert({
+            shop_member_id: ag.member_id,
+            status: newStatus,
+            last_seen_at: new Date().toISOString(),
+            max_active_conversations: 3
+          })
+          .select()
+          .single();
+        if (error) throw error;
       }
+
+      // Automatically sync overall shop online status when agent status changes
+      if (shopId) {
+        const { data: onlineAgents } = await supabase
+          .from("shop_agents")
+          .select("id, shop_member:shop_member_id(shop_id)")
+          .eq("status", "online");
+
+        const hasOnline = (onlineAgents || []).some(a => a.shop_member?.shop_id === shopId) || (newStatus === "online");
+
+        await supabase
+          .from("shops")
+          .update({ is_online: hasOnline })
+          .eq("id", shopId);
+      }
+
       toast.success(`Agent status updated to ${newStatus}`);
-      loadTeamData();
+      await loadTeamData();
     } catch (err) {
+      console.error("[Agents] Status update error:", err);
       toast.error(err.message || "Failed to update agent status");
+      await loadTeamData();
     }
   }
 
