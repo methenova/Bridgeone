@@ -57,10 +57,14 @@ export default function AdminSubscriptionsPage() {
   // Open plan editor
   function handleStartEdit(plan) {
     setEditingPlan(plan);
-    setEditPrice(plan.price.toString());
-    setEditCallLimit(plan.call_limit === -1 ? "100" : plan.call_limit.toString());
-    setEditUnlimitedCalls(plan.call_limit === -1);
-    setEditCommission(plan.commission_rate.toString());
+    const priceVal = plan.monthly_price ?? plan.price ?? 0;
+    const limitVal = plan.call_limit ?? 500;
+    const commVal = plan.commission_rate ?? 0;
+
+    setEditPrice(priceVal.toString());
+    setEditCallLimit(limitVal === -1 ? "500" : limitVal.toString());
+    setEditUnlimitedCalls(limitVal === -1);
+    setEditCommission(commVal.toString());
   }
 
   // Save plan configurations
@@ -72,9 +76,8 @@ export default function AdminSubscriptionsPage() {
       await updatePlan.mutateAsync({
         planId: editingPlan.id,
         updates: {
-          price: parseFloat(editPrice) || 0,
+          monthly_price: parseFloat(editPrice) || 0,
           call_limit: finalLimit,
-          commission_rate: parseFloat(editCommission) || 0
         }
       });
       setEditingPlan(null);
@@ -295,7 +298,7 @@ export default function AdminSubscriptionsPage() {
                   <div className="flex justify-between items-start">
                     <div>
                       <h4 className="text-xs font-bold text-slate-700 uppercase">{plan.display_name}</h4>
-                      <p className="text-sm font-black text-slate-900 mt-0.5">₹{plan.price}/month</p>
+                      <p className="text-sm font-black text-slate-900 mt-0.5">₹{plan.monthly_price ?? plan.price ?? 0}/month</p>
                     </div>
                     <Button
                       onClick={() => handleStartEdit(plan)}
@@ -307,10 +310,10 @@ export default function AdminSubscriptionsPage() {
 
                   <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-500 pt-2 border-t border-slate-100/50">
                     <div>
-                      Call Limit: <strong className="text-slate-700">{plan.call_limit === -1 ? "Unlimited" : `${plan.call_limit}/mo`}</strong>
+                      Call Limit: <strong className="text-slate-700">{plan.call_limit === -1 ? "Unlimited" : `${plan.call_limit ?? 500}/mo`}</strong>
                     </div>
                     <div>
-                      Commission: <strong className="text-slate-700">{plan.commission_rate}%</strong>
+                      Commission: <strong className="text-slate-700">{plan.commission_rate ?? 0}%</strong>
                     </div>
                   </div>
                 </div>
