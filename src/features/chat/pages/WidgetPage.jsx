@@ -370,7 +370,7 @@ export default function WidgetPage() {
           .eq("id", plan)
           .maybeSingle();
 
-        const limit = planInfo ? (planInfo.call_limit === -1 ? Infinity : planInfo.call_limit) : 10;
+        const limit = planInfo ? (planInfo.call_limit === -1 ? Infinity : planInfo.call_limit) : 500;
 
         const isClosed = checkIsOutsideBusinessHours(data);
 
