@@ -113,7 +113,6 @@ serve(async (req) => {
       email?: string,
       phone?: string
     ): Promise<string> {
-      // Try to find existing visitor by email or phone
       if (email) {
         const { data: existing } = await supabaseAdmin
           .from("visitors")
@@ -122,7 +121,6 @@ serve(async (req) => {
           .eq("email", email)
           .maybeSingle();
         if (existing) {
-          // Update last_seen and name/phone if provided
           await supabaseAdmin
             .from("visitors")
             .update({
@@ -135,7 +133,6 @@ serve(async (req) => {
         }
       }
 
-      // Create new visitor
       const visitorKey = `visitor_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       const { data: newVisitor, error: visitorErr } = await supabaseAdmin
         .from("visitors")
@@ -161,7 +158,6 @@ serve(async (req) => {
       visitorId: string,
       channel: string = "video"
     ): Promise<string> {
-      // Check for an existing active conversation
       const { data: existing } = await supabaseAdmin
         .from("conversations")
         .select("id")
@@ -174,7 +170,6 @@ serve(async (req) => {
 
       if (existing) return existing.id;
 
-      // Create a new conversation
       const { data: newConvo, error: convoErr } = await supabaseAdmin
         .from("conversations")
         .insert({
@@ -192,6 +187,33 @@ serve(async (req) => {
       return newConvo.id;
     }
 
+    // ── Helper: Safely resolve agent_id for video_rooms FK constraint ──
+    async function resolveValidAgentId(givenId?: string | null): Promise<string | null> {
+      if (!givenId) return null;
+
+      // 1. Direct check: is givenId a valid shop_agents.id?
+      const { data: directAgent } = await supabaseAdmin
+        .from("shop_agents")
+        .select("id")
+        .eq("id", givenId)
+        .maybeSingle();
+
+      if (directAgent) return directAgent.id;
+
+      // 2. Profile check: is givenId a profile_id belonging to a shop_member?
+      const { data: memberAgent } = await supabaseAdmin
+        .from("shop_agents")
+        .select("id, shop_member:shop_member_id(profile_id)")
+        .maybeSingle();
+
+      if (memberAgent && (memberAgent.shop_member as any)?.profile_id === givenId) {
+        return memberAgent.id;
+      }
+
+      // If not a valid shop_agents ID, return null to avoid Foreign Key Violation (FK)
+      return null;
+    }
+
     // 7. Execute Actions
     let result: any = null;
     let writeError: any = null;
@@ -199,19 +221,18 @@ serve(async (req) => {
     const resolveSingle = (data: any) => Array.isArray(data) ? data[0] : data;
 
     if (action === "create_room") {
-      // ── Create a video room ──
       const { roomCode, sellerId, offer, customerName, customerEmail, customerPhone } = body;
 
-      // Resolve visitor
       const visitorId = await resolveVisitor(customerName, customerEmail, customerPhone);
       const conversationId = await resolveConversation(visitorId, "video");
+      const validAgentId = await resolveValidAgentId(sellerId);
 
       const { data, error } = await supabaseAdmin
         .from("video_rooms")
         .insert({
           room_key: roomCode,
           shop_id: shopId,
-          agent_id: sellerId || null,
+          agent_id: validAgentId,
           visitor_id: visitorId,
           conversation_id: conversationId,
           status: "waiting",
@@ -222,10 +243,8 @@ serve(async (req) => {
       writeError = error;
 
     } else if (action === "add_candidate") {
-      // ── Add an ICE candidate ──
       const { roomId, sender, candidate } = body;
 
-      // Map sender string to enum: "visitor" or "business_member"
       const senderType = (sender === "seller" || sender === "business_member")
         ? "business_member"
         : "visitor";
@@ -238,22 +257,18 @@ serve(async (req) => {
       writeError = error;
 
     } else if (action === "delete_room") {
-      // ── Delete a video room and its candidates ──
       const { roomId } = body;
       await supabaseAdmin.from("video_candidates").delete().eq("room_id", roomId);
       const { data, error } = await supabaseAdmin.from("video_rooms").delete().eq("id", roomId).select();
 
-      // Clean up any transient incoming call notifications for this shop
       await supabaseAdmin.from("notifications").delete().match({ shop_id: shopId, type: "incoming_call" });
 
       result = resolveSingle(data);
       writeError = error;
 
     } else if (action === "create_call_log") {
-      // ── Create a call log entry ──
       const { customerName, customerEmail, customerPhone, status, duration, productsShared } = body;
 
-      // Resolve visitor
       const visitorId = await resolveVisitor(customerName, customerEmail, customerPhone);
       const conversationId = await resolveConversation(visitorId, "video");
 
@@ -278,7 +293,6 @@ serve(async (req) => {
       writeError = error;
 
     } else if (action === "update_call_log") {
-      // ── Update an existing call log ──
       const { id, duration, status, notes, csatScore, callRating } = body;
 
       const updatePayload: Record<string, any> = {};
@@ -286,9 +300,7 @@ serve(async (req) => {
       if (status !== undefined) updatePayload.status = status;
       if (notes !== undefined) updatePayload.agent_notes = notes;
 
-      // Store feedback data in metadata
       if (csatScore !== undefined || callRating !== undefined) {
-        // Fetch existing metadata first
         const { data: existing } = await supabaseAdmin
           .from("call_logs")
           .select("metadata")
@@ -303,7 +315,6 @@ serve(async (req) => {
         };
       }
 
-      // Set ended_at if the call is being marked as completed or missed
       if (status === "completed" || status === "missed") {
         updatePayload.ended_at = new Date().toISOString();
       }
@@ -314,17 +325,14 @@ serve(async (req) => {
         .eq("id", id)
         .select();
 
-      // Clean up any transient incoming call notifications
       await supabaseAdmin.from("notifications").delete().match({ shop_id: shopId, type: "incoming_call" });
 
       result = resolveSingle(data);
       writeError = error;
 
     } else if (action === "create_callback") {
-      // ── Schedule a callback request ──
       const { customerName, customerEmail, customerPhone, scheduledTime, notes } = body;
 
-      // Resolve visitor
       const visitorId = await resolveVisitor(customerName, customerEmail, customerPhone);
       const conversationId = await resolveConversation(visitorId, "callback");
 
@@ -346,15 +354,12 @@ serve(async (req) => {
       writeError = error;
 
     } else if (action === "send_message") {
-      // ── Send a chat message ──
       const { senderId, receiverId, content, imageUrl, visitorId: bodyVisitorId, conversationId: bodyConvoId } = body;
 
-      // Determine visitor and conversation IDs
       let visitorId = bodyVisitorId;
       let conversationId = bodyConvoId;
 
       if (!visitorId) {
-        // Create/resolve visitor from sender info
         visitorId = await resolveVisitor();
       }
       if (!conversationId) {
