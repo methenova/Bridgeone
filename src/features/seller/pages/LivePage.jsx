@@ -278,7 +278,8 @@ export default function LivePage() {
 
     console.log("[LivePage] Initializing unified Realtime channel for shop ID:", shopId);
 
-    const channel = supabase.channel(`live:${shopId}`, {
+    const channelName = `live-page-${shopId}-${Date.now()}`;
+    const channel = supabase.channel(channelName, {
       config: { broadcast: { self: true } },
     });
 
@@ -351,7 +352,17 @@ export default function LivePage() {
           }
         }
       )
-      .subscribe();
+      .subscribe((status, err) => {
+        console.log(`[LivePage] Unified Realtime channel status: ${status}`, err || "");
+      });
+
+    return () => {
+      console.log("[LivePage] Cleaning up unified Realtime channel");
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
+    };
   }, [shopId]);
 
   // Secondary Fallback: Poll DB every 3s for any incoming calls that were missed by Realtime
