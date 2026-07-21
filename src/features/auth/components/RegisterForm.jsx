@@ -72,12 +72,11 @@ export default function RegisterForm() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-md rounded-2xl bg-white shadow-sm p-8 shadow-xl">
-      <h1 className="mb-2 text-center text-3xl font-bold text-slate-900">
+    <div className="w-full rounded-[2rem] bg-white/60 backdrop-blur-xl border border-white shadow-[0_8px_40px_rgba(0,0,0,0.04)] p-8 sm:p-10">
+      <h2 className="mb-2 text-3xl font-extrabold text-slate-900 tracking-tight">
         Create Account
-      </h1>
-
-      <p className="mb-8 text-center text-slate-500">
+      </h2>
+      <p className="mb-8 text-slate-500 font-medium text-sm">
         Register to continue to BridgeOne
       </p>
 
@@ -88,10 +87,10 @@ export default function RegisterForm() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-4">
         {/* Name */}
-        <div className="relative">
-          <User className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+        <div className="relative group">
+          <User className="absolute left-4 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-fuchsia-500 transition-colors" />
           <input
             type="text"
             name="name"
@@ -100,13 +99,13 @@ export default function RegisterForm() {
             onChange={handleChange}
             required
             autoComplete="name"
-            className="w-full rounded-xl border border-slate-200 bg-slate-100/40 pl-12 pr-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-500 transition-all focus:bg-slate-100"
+            className="w-full rounded-2xl border border-slate-200/80 bg-white/80 pl-12 pr-4 py-3.5 text-sm text-slate-900 font-medium outline-none focus:border-fuchsia-500 focus:ring-4 focus:ring-fuchsia-500/10 transition-all placeholder:text-slate-400"
           />
         </div>
 
         {/* Email */}
-        <div className="relative">
-          <Mail className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+        <div className="relative group">
+          <Mail className="absolute left-4 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-fuchsia-500 transition-colors" />
           <input
             type="email"
             name="email"
@@ -115,13 +114,13 @@ export default function RegisterForm() {
             onChange={handleChange}
             required
             autoComplete="email"
-            className="w-full rounded-xl border border-slate-200 bg-slate-100/40 pl-12 pr-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-500 transition-all focus:bg-slate-100"
+            className="w-full rounded-2xl border border-slate-200/80 bg-white/80 pl-12 pr-4 py-3.5 text-sm text-slate-900 font-medium outline-none focus:border-fuchsia-500 focus:ring-4 focus:ring-fuchsia-500/10 transition-all placeholder:text-slate-400"
           />
         </div>
 
         {/* Password */}
-        <div className="relative">
-          <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+        <div className="relative group">
+          <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-fuchsia-500 transition-colors" />
           <input
             type={showPassword ? "text" : "password"}
             name="password"
@@ -130,7 +129,7 @@ export default function RegisterForm() {
             onChange={handleChange}
             required
             autoComplete="new-password"
-            className="w-full rounded-xl border border-slate-200 bg-slate-100/40 pl-12 pr-12 py-3 text-sm text-slate-900 outline-none focus:border-blue-500 transition-all focus:bg-slate-100"
+            className="w-full rounded-2xl border border-slate-200/80 bg-white/80 pl-12 pr-12 py-3.5 text-sm text-slate-900 font-medium outline-none focus:border-fuchsia-500 focus:ring-4 focus:ring-fuchsia-500/10 transition-all placeholder:text-slate-400"
           />
           <button
             type="button"
@@ -142,8 +141,8 @@ export default function RegisterForm() {
         </div>
 
         {/* Confirm Password */}
-        <div className="relative">
-          <ShieldCheck className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+        <div className="relative group">
+          <ShieldCheck className="absolute left-4 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-fuchsia-500 transition-colors" />
           <input
             type={showConfirmPassword ? "text" : "password"}
             name="confirmPassword"
@@ -152,7 +151,7 @@ export default function RegisterForm() {
             onChange={handleChange}
             required
             autoComplete="new-password"
-            className="w-full rounded-xl border border-slate-200 bg-slate-100/40 pl-12 pr-12 py-3 text-sm text-slate-900 outline-none focus:border-blue-500 transition-all focus:bg-slate-100"
+            className="w-full rounded-2xl border border-slate-200/80 bg-white/80 pl-12 pr-12 py-3.5 text-sm text-slate-900 font-medium outline-none focus:border-fuchsia-500 focus:ring-4 focus:ring-fuchsia-500/10 transition-all placeholder:text-slate-400"
           />
           <button
             type="button"
@@ -166,17 +165,17 @@ export default function RegisterForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 shadow-md shadow-blue-500/10"
+          className="w-full flex items-center justify-center gap-2 rounded-2xl bg-slate-950 mt-6 py-4 font-bold text-white transition-all hover:bg-black hover:shadow-lg hover:shadow-slate-900/20 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "Creating Account..." : "Create Account"}
         </button>
       </form>
 
-      <p className="mt-6 text-center text-slate-500 text-xs">
+      <p className="mt-8 text-center text-slate-500 text-xs font-medium">
         Already have an account?{" "}
         <Link
           to="/login"
-          className="font-semibold text-blue-500 hover:text-blue-400 transition-colors"
+          className="font-bold text-fuchsia-600 hover:text-fuchsia-500 transition-colors"
         >
           Log in
         </Link>
