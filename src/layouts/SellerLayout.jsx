@@ -173,26 +173,11 @@ export default function SellerLayout() {
             activeNotificationsRef.current.set(room.id, n);
           }
 
-          // Don't show toast if we are already on the Live page, as it handles its own full-screen modal
-          if (window.location.pathname === "/seller/live") return;
-
-          toast((t) => (
-            <div className="flex flex-col gap-2 p-1 min-w-[200px]">
-              <div className="font-bold text-sm text-slate-900">Incoming Video Call!</div>
-              <div className="text-xs text-slate-500">A customer is requesting a live consultation.</div>
-              <div className="flex gap-2 mt-2">
-                <button onClick={() => {
-                  toast.dismiss(t.id);
-                  ringingCallsRef.current.delete(room.id);
-                }} className="flex-1 px-3 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Dismiss</button>
-                <button onClick={() => {
-                  toast.dismiss(t.id);
-                  ringingCallsRef.current.delete(room.id);
-                  navigate("/seller/live");
-                }} className="flex-1 px-3 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg shadow-sm shadow-emerald-500/20 transition-all active:scale-95">Answer Call</button>
-              </div>
-            </div>
-          ), { duration: 30000, id: `call-${room.id}`, position: "top-center" });
+          // Auto-navigate to Live page to accept the call immediately
+          if (window.location.pathname !== "/seller/live") {
+            toast.success("Incoming call — connecting...", { duration: 2000 });
+            navigate("/seller/live");
+          }
         }
       )
       .on(

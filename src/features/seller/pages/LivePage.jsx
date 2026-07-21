@@ -389,11 +389,11 @@ export default function LivePage() {
     };
   }, [shopId]);
 
-  // Secondary Fallback: Poll DB every 3s for any incoming calls that were missed by Realtime
+  // Secondary Fallback: Poll DB every 1.5s for any incoming calls that were missed by Realtime
   useEffect(() => {
     if (!shopId) return;
 
-    const pollInterval = setInterval(async () => {
+    const checkImmediately = async () => {
       if (incomingCallRef.current || isAcceptingRef.current) return;
 
       try {
@@ -429,7 +429,10 @@ export default function LivePage() {
       } catch (err) {
         console.warn("[LivePage] Consultation polling fallback skipped:", err.message);
       }
-    }, 4000);
+    };
+
+    checkImmediately();
+    const pollInterval = setInterval(checkImmediately, 1500);
 
     return () => clearInterval(pollInterval);
   }, [shopId, activeConsultation]);
