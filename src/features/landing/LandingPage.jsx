@@ -203,9 +203,9 @@ function CinematicHero() {
           initial={{ opacity: 0, y: 40, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-16 rounded-[32px] p-3 bg-white border border-[#E8E6E1] shadow-[0_30px_80px_-20px_rgba(15,23,42,0.08)]"
+          className="mt-16 rounded-3xl p-3 bg-white border border-[#E8E6E1] shadow-[0_30px_80px_-20px_rgba(15,23,42,0.08)]"
         >
-          <div className="rounded-[24px] bg-[#FAF9F6] border border-[#E8E6E1]/80 overflow-hidden">
+          <div className="rounded-3xl bg-[#FAF9F6] border border-[#E8E6E1]/80 overflow-hidden">
             {/* Top Window Header */}
             <div className="px-6 py-4 bg-white border-b border-[#E8E6E1] flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -631,7 +631,7 @@ function BridgeOnePlatform() {
           {pillars.map((p, idx) => (
             <div
               key={idx}
-              className="p-8 rounded-[32px] bg-white border border-[#E8E6E1] shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between space-y-6"
+              className="p-8 rounded-3xl bg-white border border-[#E8E6E1] shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between space-y-6"
             >
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
@@ -771,8 +771,8 @@ function LiveProductDemo() {
         </div>
 
         {/* Interactive Widget Box */}
-        <div className="max-w-4xl mx-auto rounded-[32px] p-4 bg-white border border-[#E8E6E1] shadow-2xl">
-          <div className="p-6 md:p-8 rounded-[24px] bg-[#FAF9F6] space-y-6">
+        <div className="max-w-4xl mx-auto rounded-3xl p-4 bg-white border border-[#E8E6E1] shadow-2xl">
+          <div className="p-6 md:p-8 rounded-3xl bg-[#FAF9F6] space-y-6">
             {/* Nav Tabs */}
             <div className="grid grid-cols-5 gap-2 p-1.5 rounded-2xl bg-white border border-[#E8E6E1] text-xs font-bold">
               {[
@@ -927,8 +927,8 @@ function DashboardShowcase() {
         </div>
 
         {/* Dashboard Mock Container */}
-        <div className="p-4 rounded-[32px] bg-white border border-[#E8E6E1] shadow-xl">
-          <div className="p-6 md:p-8 rounded-[24px] bg-[#FAF9F6] border border-[#E8E6E1] space-y-6">
+        <div className="p-4 rounded-3xl bg-white border border-[#E8E6E1] shadow-xl">
+          <div className="p-6 md:p-8 rounded-3xl bg-[#FAF9F6] border border-[#E8E6E1] space-y-6">
             <div className="flex justify-between items-center pb-4 border-b border-slate-200">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold">
@@ -1058,21 +1058,21 @@ function Analytics() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-8 rounded-[32px] bg-white border border-[#E8E6E1] shadow-sm space-y-4">
+          <div className="p-8 rounded-3xl bg-white border border-[#E8E6E1] shadow-sm space-y-4">
             <BarChart3 className="w-8 h-8 text-blue-600" />
             <h3 className="text-3xl font-extrabold text-slate-900">+38.4%</h3>
             <p className="text-xs font-bold text-slate-700">Conversion Rate Increase</p>
             <p className="text-xs text-slate-500">Average sales conversion lift on visitors who initiate live video consultations.</p>
           </div>
 
-          <div className="p-8 rounded-[32px] bg-white border border-[#E8E6E1] shadow-sm space-y-4">
+          <div className="p-8 rounded-3xl bg-white border border-[#E8E6E1] shadow-sm space-y-4">
             <Clock className="w-8 h-8 text-cyan-600" />
             <h3 className="text-3xl font-extrabold text-slate-900">3.2 Seconds</h3>
             <p className="text-xs font-bold text-slate-700">Average Response Time</p>
             <p className="text-xs text-slate-500">Fast connection velocity ensures no high-intent customer is left waiting.</p>
           </div>
 
-          <div className="p-8 rounded-[32px] bg-white border border-[#E8E6E1] shadow-sm space-y-4">
+          <div className="p-8 rounded-3xl bg-white border border-[#E8E6E1] shadow-sm space-y-4">
             <Star className="w-8 h-8 text-amber-500 fill-current" />
             <h3 className="text-3xl font-extrabold text-slate-900">4.9 / 5.0</h3>
             <p className="text-xs font-bold text-slate-700">Average CSAT Score</p>
@@ -1101,19 +1101,19 @@ function Security() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-8 rounded-[32px] bg-white border border-[#E8E6E1] space-y-3">
+          <div className="p-8 rounded-3xl bg-white border border-[#E8E6E1] space-y-3">
             <ShieldCheck className="w-8 h-8 text-emerald-600" />
             <h4 className="font-extrabold text-lg text-slate-900">SOC 2 Type II Certified</h4>
             <p className="text-xs text-slate-500">Audited security controls ensuring user privacy and data protection compliance.</p>
           </div>
 
-          <div className="p-8 rounded-[32px] bg-white border border-[#E8E6E1] space-y-3">
+          <div className="p-8 rounded-3xl bg-white border border-[#E8E6E1] space-y-3">
             <Lock className="w-8 h-8 text-blue-600" />
             <h4 className="font-extrabold text-lg text-slate-900">End-to-End Encryption</h4>
             <p className="text-xs text-slate-500">DTLS-SRTP encryption standards for all live WebRTC video and audio channels.</p>
           </div>
 
-          <div className="p-8 rounded-[32px] bg-white border border-[#E8E6E1] space-y-3">
+          <div className="p-8 rounded-3xl bg-white border border-[#E8E6E1] space-y-3">
             <Server className="w-8 h-8 text-cyan-600" />
             <h4 className="font-extrabold text-lg text-slate-900">99.99% SLA Uptime</h4>
             <p className="text-xs text-slate-500">Multi-region redundant TURN infrastructure guaranteeing high availability.</p>
@@ -1200,7 +1200,7 @@ function Testimonials() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {reviews.map((r, i) => (
-            <div key={i} className="p-8 rounded-[32px] bg-white border border-[#E8E6E1] space-y-4 shadow-sm">
+            <div key={i} className="p-8 rounded-3xl bg-white border border-[#E8E6E1] space-y-4 shadow-sm">
               <div className="flex text-amber-400 gap-1">
                 {[...Array(5)].map((_, idx) => (
                   <Star key={idx} className="w-4 h-4 fill-current" />
@@ -1311,7 +1311,7 @@ function Pricing() {
           {plans.map((p, i) => (
             <div
               key={i}
-              className={`p-8 rounded-[32px] bg-white border transition-all duration-300 flex flex-col justify-between space-y-8 relative ${
+              className={`p-8 rounded-3xl bg-white border transition-all duration-300 flex flex-col justify-between space-y-8 relative ${
                 p.popular
                   ? "border-blue-600 shadow-[0_20px_50px_rgba(37,99,235,0.12)] scale-[1.03]"
                   : "border-[#E8E6E1] shadow-sm hover:shadow-md"
