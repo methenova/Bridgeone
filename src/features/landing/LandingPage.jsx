@@ -991,43 +991,45 @@ function DashboardShowcase() {
    ═══════════════════════════════════════════════════════════════════════════ */
 function ShopifyIntegration() {
   return (
-    <section id="shopify" className="py-28 md:py-36 bg-[#F5F4F0]">
-      <div className="max-w-[1400px] mx-auto px-6 sm:px-10 space-y-16">
-        <div className="p-10 md:p-16 rounded-[32px] bg-white border border-[#E8E6E1] shadow-lg grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-6 space-y-6">
-            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-4 py-1.5 rounded-full uppercase tracking-wider">
+    <section id="shopify" className="py-16 md:py-20 bg-[#F5F4F0]">
+      <div className="max-w-[1200px] mx-auto px-6 sm:px-10">
+        <div className="p-6 md:p-10 rounded-3xl bg-white border border-[#E8E6E1] shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="lg:col-span-7 space-y-4">
+            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-3 py-1 rounded-full uppercase tracking-wider inline-block">
               1-Click Shopify Integration
             </span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
-              Installs on Shopify in 60 seconds. Zero coding required.
+            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Installs on Shopify in 60 seconds. <br className="hidden md:block"/>Zero coding required.
             </h2>
-            <p className="text-base text-slate-600 leading-relaxed">
+            <p className="text-sm text-slate-600 leading-relaxed max-w-lg">
               BridgeOne syncs automatically with your Shopify catalog, orders, and customer data using official Shopify GraphQL APIs.
             </p>
-            <div className="space-y-3">
+            <div className="space-y-2 pt-2">
               {[
                 "Instant catalog sync & product pin overlay",
                 "Direct checkout cart injection during live video calls",
                 "Automated customer identity & order history matching",
                 "Compatible with Shopify Dawn & custom liquid themes",
               ].map((item, idx) => (
-                <div key={idx} className="flex items-center gap-3 text-xs font-bold text-slate-800">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <div key={idx} className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                   <span>{item}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="lg:col-span-6 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E1] p-8 text-center space-y-6 shadow-inner">
-            <div className="h-16 w-16 rounded-2xl bg-emerald-600 text-white font-extrabold flex items-center justify-center text-2xl mx-auto shadow-lg shadow-emerald-600/20">
+          <div className="lg:col-span-5 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E1] p-6 text-center space-y-4 shadow-inner">
+            <div className="h-12 w-12 rounded-2xl bg-emerald-600 text-white font-extrabold flex items-center justify-center text-xl mx-auto shadow-md shadow-emerald-600/20">
               S
             </div>
-            <h3 className="font-extrabold text-xl text-slate-900">Available on Shopify App Store</h3>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto">
-              Rated 4.9/5 stars by top Shopify Plus merchants worldwide.
-            </p>
-            <button className="px-8 py-3.5 rounded-full bg-slate-900 text-white font-bold text-xs shadow-md hover:bg-slate-800">
+            <div>
+              <h3 className="font-extrabold text-lg text-slate-900">Available on Shopify App Store</h3>
+              <p className="text-[11px] text-slate-500 max-w-xs mx-auto mt-1">
+                Rated 4.9/5 stars by top Shopify Plus merchants worldwide.
+              </p>
+            </div>
+            <button className="px-6 py-2.5 rounded-full bg-slate-900 text-white font-bold text-xs shadow-md hover:bg-slate-800 transition-colors w-full sm:w-auto">
               Install Shopify App Now
             </button>
           </div>
