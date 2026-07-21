@@ -22,7 +22,6 @@ import SellerLayout from "@/layouts/SellerLayout";
 
 // Landing
 import LandingPage from "@/features/landing/LandingPage";
-import CinematicDemo from "@/features/landing/CinematicDemo";
 
 // Authentication
 import LoginPage from "@/features/auth/pages/LoginPage";
@@ -78,10 +77,6 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <LandingPage />,
-      },
-      {
-        path: "cinematic",
-        element: <CinematicDemo />,
       },
     ],
   },
