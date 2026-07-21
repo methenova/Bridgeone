@@ -264,6 +264,13 @@ export default function LivePage() {
     fetchCaller();
   }, [incomingCall]);
 
+  // Auto-accept incoming calls without prompting
+  useEffect(() => {
+    if (incomingCall && !activeConsultation && !isAcceptingRef.current) {
+      handleAcceptCall();
+    }
+  }, [incomingCall]);
+
   // Clean up WebRTC peers and consultation timer on unmount
   useEffect(() => {
     return () => {
@@ -328,7 +335,7 @@ export default function LivePage() {
           if (incomingCallRef.current?.id === room.id) return;
           console.log("[LivePage] Incoming call broadcast received:", room);
           setIncomingCall(room);
-          toast.success("Incoming video consultation request!", { duration: 6000 });
+          toast.success("Incoming call \u2014 auto-connecting...", { duration: 3000 });
         }
       })
       // 4. Postgres INSERT: Detect new incoming consultation calls
@@ -348,7 +355,7 @@ export default function LivePage() {
             if (incomingCallRef.current?.id === room.id) return;
             console.log("[LivePage] Incoming call room detected:", room);
             setIncomingCall(room);
-            toast.success("Incoming video consultation request!", { duration: 6000 });
+            toast.success("Incoming call \u2014 auto-connecting...", { duration: 3000 });
           }
         }
       )
@@ -416,7 +423,7 @@ export default function LivePage() {
             if (incomingCallRef.current?.id === callRoom.id) return;
             console.log("[LivePage] Incoming call room detected via polling fallback:", callRoom);
             setIncomingCall(callRoom);
-            toast.success("Incoming video consultation request!", { duration: 6000 });
+            toast.success("Incoming call \u2014 auto-connecting...", { duration: 3000 });
           }
         }
       } catch (err) {
@@ -1289,42 +1296,6 @@ export default function LivePage() {
           )}
         </div>
       </div>
-
-      {/* 1-on-1 Incoming Call Dialog */}
-      {incomingCall && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="w-full max-w-sm rounded-2xl glass-panel premium-shadow p-8 hover-lift flex flex-col items-center text-center space-y-6">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 border border-blue-100/50 text-blue-500 animate-bounce">
-              <Phone className="h-8 w-8" />
-            </div>
-            <div className="space-y-1">
-              <h3 className="text-base font-bold text-slate-900">
-                {callerDetails?.customer_name || "Incoming Consultation Call"}
-              </h3>
-              <p className="text-xs text-slate-500">
-                {callerDetails 
-                  ? `${callerDetails.customer_name} is requesting a 1-on-1 video call consultation.` 
-                  : "A customer is requesting a 1-on-1 video call consultation."}
-              </p>
-              {callerDetails?.customer_email && (
-                <p className="text-[10px] text-slate-500 font-mono mt-1">{callerDetails.customer_email}</p>
-              )}
-            </div>
-            <div className="flex w-full gap-3">
-              <button
-                onClick={handleDeclineCall} className="flex-1 rounded-xl bg-white shadow-sm border border-slate-200 py-3 text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all"
-              >
-                Decline
-              </button>
-              <button
-                onClick={handleAcceptCall} className="flex-1 rounded-xl bg-blue-600 py-3 text-xs font-bold text-white hover:bg-blue-500 shadow-lg shadow-blue-600/20 transition-all active:scale-95"
-              >
-                Accept
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* 1-on-1 Consultation Call Overlay Modal */}
       {activeConsultation && (() => {
