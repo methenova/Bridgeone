@@ -35,6 +35,10 @@ export class SellerPeer {
     this.pollForCandidatesInterval = null;
     this.appliedCandidateIds = new Set();
     this.onRoomDeleted = null;
+
+    // In 1-on-1 calls (customRoomCode set), the customer is the visitor.
+    // In live streams (no customRoomCode), the broadcaster is the seller.
+    this._candidateSender = customRoomCode ? "visitor" : "seller";
   }
 
   async start() {
@@ -97,7 +101,7 @@ export class SellerPeer {
         if (event.candidate && !this.isDestroyed) {
           if (this.roomId) {
             try {
-              await addCandidate(this.roomId, "seller", event.candidate.toJSON());
+              await addCandidate(this.roomId, this._candidateSender, event.candidate.toJSON());
               console.log("[SellerPeer] ICE candidate uploaded");
             } catch (err) {
               console.error("[SellerPeer] Failed to upload ICE candidate:", err);
@@ -134,7 +138,7 @@ export class SellerPeer {
         console.log(`[SellerPeer] Flushing ${this._localIceQueue.length} queued local ICE candidates...`);
         for (const candidate of this._localIceQueue) {
           try {
-            await addCandidate(this.roomId, "seller", candidate);
+            await addCandidate(this.roomId, this._candidateSender, candidate);
           } catch (err) {
             console.error("[SellerPeer] Failed to flush ICE candidate:", err);
           }

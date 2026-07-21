@@ -86,7 +86,7 @@ export class ViewerPeer {
       this.peer.onicecandidate = async (event) => {
         if (event.candidate && this.roomId && !this.isDestroyed) {
           try {
-            await addCandidate(this.roomId, "viewer", event.candidate.toJSON());
+            await addCandidate(this.roomId, "business_member", event.candidate.toJSON());
             console.log("[ViewerPeer] ICE candidate uploaded");
           } catch (err) {
             console.error("[ViewerPeer] Failed to upload ICE candidate:", err);
