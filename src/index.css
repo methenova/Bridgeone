@@ -6,8 +6,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --font-heading: 'Mona Sans', 'Plus Jakarta Sans', sans-serif;
+  --font-sans: 'Mona Sans', 'Plus Jakarta Sans', sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -124,13 +124,25 @@
   --sidebar-primary-foreground: oklch(1 0 0);
   --sidebar-accent: oklch(0.967 0.011 240);
   --sidebar-accent-foreground: oklch(0.205 0.018 240);
-  --sidebar-border: oklch(0.93 0.006 240);
-  --sidebar-ring: oklch(0.585 0.233 253 / 0.3);
+  /* Semantic Tokens for Bold & Dynamic SaaS UI Specification */
+  --color-text-primary: #0d0c22;
+  --color-text-secondary: #524b63;
+  --color-text-tertiary: #6e6d7a;
+  --color-border-muted: #ffffff;
+  --color-surface-base: #000000;
+  --color-surface-raised: #ecebf0;
+  --color-surface-strong: #3a3546;
+  --color-focus-ring: #0d0c22;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
+  }
+
+  *:focus-visible {
+    outline: 2px solid var(--color-focus-ring) !important;
+    outline-offset: 2px !important;
   }
 
   body {
