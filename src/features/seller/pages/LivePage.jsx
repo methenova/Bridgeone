@@ -245,12 +245,18 @@ export default function LivePage() {
 
         const { data, error } = await supabase
           .from("call_logs")
-          .select("customer_name, customer_email, customer_phone")
+          .select("visitor_id, visitors:visitor_id ( name, email, phone )")
           .eq("id", callLogId)
           .maybeSingle();
 
         if (error) throw error;
-        if (data) setCallerDetails(data);
+        if (data?.visitors) {
+          setCallerDetails({
+            customer_name: data.visitors.name,
+            customer_email: data.visitors.email,
+            customer_phone: data.visitors.phone,
+          });
+        }
       } catch (err) {
         console.warn("Failed to fetch caller details:", err);
       }
@@ -282,7 +288,14 @@ export default function LivePage() {
 
     console.log("[LivePage] Initializing unified Realtime channel for shop ID:", shopId);
 
-    const channelName = `live-page-${shopId}-${Date.now()}`;
+    const channelName = `live-page-${shopId}`;
+    
+    // Proactively remove any existing channel with the same name to prevent duplicates
+    const existingChannel = supabase.getChannels().find(c => c.topic === `realtime:${channelName}`);
+    if (existingChannel) {
+      supabase.removeChannel(existingChannel);
+    }
+
     const channel = supabase.channel(channelName, {
       config: { broadcast: { self: true } },
     });
@@ -929,7 +942,7 @@ export default function LivePage() {
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.06)_0%,transparent_75%)]" />
                 
                 {/* Center Setup Panel */}
-                <div className="relative z-10 bg-white shadow-xl rounded-2xl border border-slate-200 p-8 flex flex-col items-center max-w-sm w-full mx-4 space-y-6 text-center">
+                <div className="relative z-10 glass-panel premium-shadow rounded-2xl p-8 flex flex-col items-center max-w-sm w-full mx-4 space-y-6 text-center">
                   <div className="inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider rounded-full px-3 py-1 animate-pulse">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                     <span>Broadcaster Ready</span>
@@ -1113,7 +1126,7 @@ export default function LivePage() {
         </div>
 
         {/* Right: Comments Chat Feed */}
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm flex flex-col h-[400px] lg:h-auto overflow-hidden">
+        <div className="rounded-2xl glass-panel premium-shadow flex flex-col h-[400px] lg:h-auto overflow-hidden">
           {/* Header */}
           <div className="border-b border-slate-100 px-5 py-4 bg-slate-50/50 flex items-center justify-between">
             <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
@@ -1198,7 +1211,7 @@ export default function LivePage() {
       </div>
 
       {/* Pinned Product Selector Feed */}
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 md:p-8 space-y-6">
+      <div className="rounded-2xl glass-panel premium-shadow p-6 md:p-8 space-y-6">
         <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2 pb-3 border-b border-slate-100">
           <ShoppingBag className="h-4 w-4 text-blue-600 font-semibold" />
           Stream Products Showcase
@@ -1213,7 +1226,7 @@ export default function LivePage() {
                 className={`group relative cursor-pointer rounded-2xl border p-3 flex flex-col transition-all duration-300 ${
                   isPinned
                     ? "border-blue-500 bg-blue-50 shadow-sm ring-1 ring-blue-500/20"
-                    : "border-slate-200 bg-white shadow-sm hover:border-slate-300 hover:shadow-md transition-all"
+                    : "glass-panel premium-shadow hover-lift hover:border-slate-300 hover:shadow-md transition-all"
                 }`}
               >
                 {/* Image Showcase Container */}
@@ -1280,7 +1293,7 @@ export default function LivePage() {
       {/* 1-on-1 Incoming Call Dialog */}
       {incomingCall && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 shadow-2xl flex flex-col items-center text-center space-y-6">
+          <div className="w-full max-w-sm rounded-2xl glass-panel premium-shadow p-8 hover-lift flex flex-col items-center text-center space-y-6">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 border border-blue-100/50 text-blue-500 animate-bounce">
               <Phone className="h-8 w-8" />
             </div>
@@ -1453,7 +1466,7 @@ export default function LivePage() {
                   {activeCallTab === "info" && (
                     <div className="space-y-5">
                       {/* Customer Info Card */}
-                      <div className="space-y-2.5 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                      <div className="space-y-2.5 glass-panel premium-shadow hover-lift p-5 rounded-2xl">
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Customer Details</span>
                         <div className="space-y-1">
                           <p className="font-bold text-slate-900 text-sm">{callerDetails?.customer_name || "Guest Customer"}</p>
@@ -1463,7 +1476,7 @@ export default function LivePage() {
                       </div>
 
                       {/* Quick Notes Form */}
-                      <div className="space-y-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                      <div className="space-y-2 glass-panel premium-shadow hover-lift p-5 rounded-2xl">
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Quick Consultation Notes</span>
                         <textarea
                           rows={4}
@@ -1494,7 +1507,7 @@ export default function LivePage() {
                       </div>
 
                       {/* Transfer Call Select */}
-                      <div className="space-y-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                      <div className="space-y-2 glass-panel premium-shadow hover-lift p-5 rounded-2xl">
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Transfer Consultation</span>
                         <div className="flex gap-2">
                           <select className="flex-1 rounded-xl border border-slate-200 bg-white p-2.5 text-slate-900 outline-none font-semibold text-xs focus:border-blue-500">
@@ -1555,7 +1568,7 @@ export default function LivePage() {
                   {activeCallTab === "queue" && (
                     <div className="space-y-4">
                       {/* Queue Card */}
-                      <div className="space-y-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                      <div className="space-y-2 glass-panel premium-shadow hover-lift p-5 rounded-2xl">
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Call Queue</span>
                         <div className="py-4 text-center text-slate-600 font-bold text-[10px] uppercase">
                           No other callers in queue
@@ -1563,7 +1576,7 @@ export default function LivePage() {
                       </div>
 
                       {/* Connection Health status */}
-                      <div className="space-y-2.5 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm font-mono text-xs">
+                      <div className="space-y-2.5 glass-panel premium-shadow hover-lift p-5 rounded-2xl font-mono text-xs">
                         <span className="text-[10px] font-sans text-slate-500 font-bold uppercase tracking-wider block">Connection status</span>
                         <div className="flex justify-between">
                           <span className="text-slate-500">WebRTC ICE state</span>

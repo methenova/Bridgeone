@@ -527,7 +527,7 @@ export default function SellerDashboardPage() {
       </div>
         
       {/* Real-Time Live Visitor Tracking Table Panel */}
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <div className="rounded-2xl glass-panel premium-shadow overflow-hidden">
         <div className="p-5 border-b border-slate-100 bg-white flex justify-between items-center">
           <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
             <Eye className="h-4 w-4 text-blue-500 animate-pulse" />
@@ -623,7 +623,7 @@ export default function SellerDashboardPage() {
         {/* Left Column: Recent Logs and Online Agents */}
         <div className="lg:col-span-2 space-y-6">
           {/* Recent Activity */}
-          <div className="rounded-2xl border border-slate-100 bg-white shadow-sm p-6 space-y-4">
+          <div className="rounded-2xl glass-panel premium-shadow hover-lift p-6 space-y-4">
             <h2 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500 flex items-center gap-2">
               <Activity className="h-4 w-4 text-blue-500" />
               <span>Recent Activity Logs</span>
@@ -654,7 +654,7 @@ export default function SellerDashboardPage() {
           </div>
 
           {/* Available Agents */}
-          <div className="rounded-2xl border border-slate-100 bg-white shadow-sm p-6 space-y-4">
+          <div className="rounded-2xl glass-panel premium-shadow hover-lift p-6 space-y-4">
             <h2 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500">Available Team Agents</h2>
             
             <div className="grid gap-3.5 sm:grid-cols-2 text-xs">
@@ -687,7 +687,7 @@ export default function SellerDashboardPage() {
         {/* Right Column: Shared products, follow-ups & quick links */}
         <div className="space-y-6">
           {/* Top Shared Catalog Items */}
-          <div className="rounded-2xl border border-slate-100 bg-white shadow-sm p-6 space-y-4 text-xs">
+          <div className="rounded-2xl glass-panel premium-shadow hover-lift p-6 space-y-4 text-xs">
             <h2 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500">Most Shared Products</h2>
             
             <div className="space-y-3.5">
@@ -710,7 +710,7 @@ export default function SellerDashboardPage() {
           </div>
 
           {/* Follow-up Queue */}
-          <div className="rounded-2xl border border-slate-100 bg-white shadow-sm p-6 space-y-4 text-xs">
+          <div className="rounded-2xl glass-panel premium-shadow hover-lift p-6 space-y-4 text-xs">
             <h2 className="text-sm font-bold uppercase tracking-wider text-[10px] text-slate-500">Follow-up Queue</h2>
             
             <div className="space-y-3.5">
@@ -741,7 +741,7 @@ export default function SellerDashboardPage() {
       </div>
 
       {/* VISITOR SESSION SLIDE-OUT DRAWER */}
-      <div className={`fixed inset-y-0 right-0 z-50 w-full max-w-md border-l border-slate-100 bg-white shadow-2xl transition-transform duration-300 ease-in-out ${
+      <div className={`fixed inset-y-0 right-0 z-50 w-full max-w-md border-l border-white/50 glass-panel premium-shadow transition-transform duration-300 ease-in-out ${
         selectedVisitor ? "translate-x-0" : "translate-x-full"
       }`}>
         {selectedVisitor && (

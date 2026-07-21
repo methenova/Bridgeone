@@ -103,12 +103,12 @@ const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
   });
 
   return (
-    <div className="admin-theme flex min-h-screen font-sans bg-slate-50 text-slate-900 selection:bg-blue-600/30 selection:text-blue-200 p-4 gap-4">
+    <div className="admin-theme flex min-h-screen font-sans text-slate-900 selection:bg-blue-600/30 selection:text-blue-200 p-4 gap-4">
       
       {/* ── Left Sidebar (Desktop) ────────────────────── */}
       <div className="relative hidden md:flex shrink-0">
         <aside 
-          className={`flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 overflow-hidden relative ${
+          className={`flex flex-col rounded-2xl glass-panel premium-shadow transition-all duration-300 overflow-hidden relative ${
             sidebarCollapsed ? "w-[68px]" : "w-64"
           }`}
         >
@@ -303,10 +303,10 @@ const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
       </AnimatePresence>
 
       {/* ── Right Content ────────────────────────────── */}
-      <div className="flex flex-1 flex-col min-w-0 rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <div className="flex flex-1 flex-col min-w-0 rounded-2xl glass-panel premium-shadow overflow-hidden">
         
         {/* Sticky Header Bar */}
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-100 bg-white/80 backdrop-blur-lg px-6 sticky top-0 z-30 transition-all">
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-white/50 bg-white/40 backdrop-blur-md px-6 sticky top-0 z-30 transition-all">
           
           {/* Breadcrumbs & Title */}
           <div className="flex items-center gap-4 min-w-0">
