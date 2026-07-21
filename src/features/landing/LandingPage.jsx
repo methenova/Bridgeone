@@ -101,10 +101,41 @@ function CinematicHero() {
 
   return (
     <section className="relative pt-36 pb-24 md:pt-44 md:pb-36 overflow-hidden bg-[#FBFBF9]">
-      {/* Background Soft Pearl Gradient Orbs */}
+      {/* Cinematic Animated Background Orbs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-[20%] left-[15%] w-[600px] h-[600px] rounded-full bg-blue-100/40 blur-[130px]" />
-        <div className="absolute top-[30%] -right-[10%] w-[500px] h-[500px] rounded-full bg-cyan-100/40 blur-[120px]" />
+        {/* Animated Blue Orb */}
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.2, 1],
+            x: [0, 50, 0],
+            y: [0, -30, 0],
+          }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-[20%] left-[10%] w-[700px] h-[700px] rounded-full bg-blue-400/15 blur-[120px]" 
+        />
+        
+        {/* Animated Cyan Orb */}
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.1, 1],
+            x: [0, -40, 0],
+            y: [0, 40, 0],
+          }}
+          transition={{ duration: 22, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute top-[20%] -right-[10%] w-[600px] h-[600px] rounded-full bg-cyan-400/15 blur-[120px]" 
+        />
+
+        {/* Animated Purple/Indigo subtle accent */}
+        <motion.div 
+          animate={{ 
+            scale: [0.9, 1.2, 0.9],
+            opacity: [0.3, 0.6, 0.3],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="absolute bottom-[-10%] left-[40%] w-[500px] h-[500px] rounded-full bg-indigo-300/10 blur-[100px]" 
+        />
+
+        {/* Subtle Grid Overlay */}
         <div
           className="absolute inset-0 opacity-[0.25]"
           style={{
