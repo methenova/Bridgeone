@@ -545,33 +545,35 @@ function VisitorJourney() {
         </div>
 
         {/* Active Stage Deep Dive Frame */}
-        <div className="p-8 md:p-12 rounded-[32px] bg-white border border-[#E8E6E1] shadow-[0_20px_50px_rgba(15,23,42,0.04)] grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          <div className="lg:col-span-6 space-y-6">
-            <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-wider border border-blue-200/60">
+        <div className="py-8 px-4 md:py-12 md:px-8 rounded-3xl bg-white border border-[#E8E6E1] shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          <div className="lg:col-span-7 space-y-4">
+            <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-wider border border-blue-200/60 inline-block">
               {steps[activeStep].badge}
             </span>
-            <h3 className="text-2xl md:text-4xl font-extrabold text-slate-900">
+            <h3 className="text-3xl md:text-4xl font-extrabold text-slate-900">
               {steps[activeStep].title}
             </h3>
-            <p className="text-base text-slate-600 leading-relaxed">
+            <p className="text-sm text-slate-600 leading-relaxed max-w-lg">
               {steps[activeStep].subtitle}
             </p>
-            <p className="text-sm font-medium text-slate-700 bg-slate-50 p-4 rounded-2xl border border-slate-200/60">
+            <p className="text-xs font-medium text-slate-700 bg-slate-50 p-4 rounded-2xl border border-slate-200/60">
               💡 <span className="font-bold">Key Operational Advantage:</span> {steps[activeStep].details}
             </p>
           </div>
 
-          <div className="lg:col-span-6 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E1] p-6 shadow-inner flex flex-col justify-center items-center text-center min-h-[300px]">
-            <div className="h-16 w-16 rounded-2xl bg-blue-600 text-white flex items-center justify-center mb-4 shadow-lg shadow-blue-600/30">
+          <div className="lg:col-span-5 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E1] p-8 shadow-inner flex flex-col justify-center items-center text-center min-h-[250px] space-y-4">
+            <div className="h-12 w-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-600/20">
               {(() => {
                 const ActiveIcon = steps[activeStep].icon;
-                return <ActiveIcon className="w-8 h-8" />;
+                return <ActiveIcon className="w-6 h-6" />;
               })()}
             </div>
-            <h4 className="font-bold text-lg text-slate-900">{steps[activeStep].title}</h4>
-            <p className="text-xs text-slate-500 max-w-sm mt-2">
-              Automated telemetry & sub-100ms WebRTC event loop firing seamlessly.
-            </p>
+            <div>
+              <h4 className="font-bold text-lg text-slate-900">{steps[activeStep].title}</h4>
+              <p className="text-[11px] text-slate-500 max-w-xs mt-1">
+                Automated telemetry & sub-100ms WebRTC event loop firing seamlessly.
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -673,17 +675,17 @@ function Features() {
         {/* Feature Grid with Real Software UI Representation */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Feature 1: Live Video Engine */}
-          <div className="lg:col-span-7 p-8 md:p-10 rounded-[32px] bg-white border border-[#E8E6E1] shadow-md space-y-6">
+          <div className="lg:col-span-7 py-8 px-4 md:py-12 md:px-8 rounded-3xl bg-white border border-[#E8E6E1] shadow-sm space-y-6">
             <div className="space-y-2">
-              <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">01 • Video Engine</span>
+              <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full inline-block">01 • Video Engine</span>
               <h3 className="text-2xl font-extrabold text-slate-900">HD WebRTC 1-on-1 Video Consultation</h3>
-              <p className="text-xs text-slate-500 max-w-lg">
+              <p className="text-sm text-slate-500 max-w-lg">
                 Showcase physical products live, answer sizing queries face-to-face, and build trust in high-ticket transactions.
               </p>
             </div>
             {/* Real UI Mockup */}
             <div className="rounded-2xl bg-slate-900 p-4 text-white space-y-3 shadow-inner">
-              <div className="flex justify-between items-center text-xs">
+              <div className="flex justify-between items-center text-[10px]">
                 <span className="flex items-center gap-2 font-bold text-emerald-400">
                   <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
                   Live 1080p Stream • Sub-40ms Latency
@@ -701,15 +703,15 @@ function Features() {
           </div>
 
           {/* Feature 2: In-Call Product Push */}
-          <div className="lg:col-span-5 p-8 md:p-10 rounded-[32px] bg-white border border-[#E8E6E1] shadow-md space-y-6 flex flex-col justify-between">
+          <div className="lg:col-span-5 py-8 px-4 md:py-12 md:px-8 rounded-3xl bg-white border border-[#E8E6E1] shadow-sm space-y-6 flex flex-col justify-between">
             <div className="space-y-2">
-              <span className="text-xs font-bold text-cyan-600 uppercase tracking-widest">02 • In-Call Commerce</span>
+              <span className="text-[10px] font-bold text-cyan-600 uppercase tracking-widest bg-cyan-50 px-3 py-1 rounded-full inline-block">02 • In-Call Commerce</span>
               <h3 className="text-2xl font-extrabold text-slate-900">Push Products Direct to Screen</h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-sm text-slate-500">
                 Agents can pin items into the active call window. The customer clicks once to add to cart without hanging up.
               </p>
             </div>
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3 shadow-inner">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold">
                   <ShoppingBag className="w-6 h-6" />
@@ -992,13 +994,13 @@ function DashboardShowcase() {
 function ShopifyIntegration() {
   return (
     <section id="shopify" className="py-16 md:py-20 bg-[#F5F4F0]">
-      <div className="max-w-[1200px] mx-auto px-6 sm:px-10">
-        <div className="p-6 md:p-10 rounded-3xl bg-white border border-[#E8E6E1] shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10">
+        <div className="py-8 px-4 md:py-12 md:px-8 rounded-3xl bg-white border border-[#E8E6E1] shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           <div className="lg:col-span-7 space-y-4">
             <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-3 py-1 rounded-full uppercase tracking-wider inline-block">
               1-Click Shopify Integration
             </span>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
               Installs on Shopify in 60 seconds. <br className="hidden md:block"/>Zero coding required.
             </h2>
             <p className="text-sm text-slate-600 leading-relaxed max-w-lg">
@@ -1019,7 +1021,7 @@ function ShopifyIntegration() {
             </div>
           </div>
 
-          <div className="lg:col-span-5 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E1] p-6 text-center space-y-4 shadow-inner">
+          <div className="lg:col-span-5 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E1] p-8 text-center space-y-5 shadow-inner">
             <div className="h-12 w-12 rounded-2xl bg-emerald-600 text-white font-extrabold flex items-center justify-center text-xl mx-auto shadow-md shadow-emerald-600/20">
               S
             </div>
@@ -1127,27 +1129,29 @@ function Security() {
    ═══════════════════════════════════════════════════════════════════════════ */
 function AIAssistant() {
   return (
-    <section className="py-28 md:py-36 bg-[#FBFBF9]">
-      <div className="max-w-[1400px] mx-auto px-6 sm:px-10 space-y-16">
-        <div className="p-10 md:p-16 rounded-[32px] bg-white border border-[#E8E6E1] shadow-lg grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-6 space-y-6">
-            <span className="text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200/60 px-4 py-1.5 rounded-full uppercase tracking-wider">
+    <section className="py-16 md:py-20 bg-[#FBFBF9]">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10">
+        <div className="py-8 px-4 md:py-12 md:px-8 rounded-3xl bg-white border border-[#E8E6E1] shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          <div className="lg:col-span-7 space-y-4">
+            <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200/60 px-3 py-1 rounded-full uppercase tracking-wider inline-block">
               Autonomous AI Co-Pilot
             </span>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
               24/7 AI Assistance for off-hours inquiries.
             </h2>
-            <p className="text-base text-slate-600 leading-relaxed">
+            <p className="text-sm text-slate-600 leading-relaxed max-w-lg">
               When human agents are offline, BridgeOne AI steps in to resolve queries, collect visitor details, and schedule warm callback appointments.
             </p>
           </div>
 
-          <div className="lg:col-span-6 p-6 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E1] space-y-4">
-            <div className="flex items-center gap-3">
-              <Bot className="w-8 h-8 text-blue-600" />
+          <div className="lg:col-span-5 p-8 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E1] space-y-5 shadow-inner text-center">
+            <div className="flex flex-col items-center gap-3">
+              <div className="h-12 w-12 rounded-2xl bg-blue-600 text-white font-extrabold flex items-center justify-center mx-auto shadow-md shadow-blue-600/20">
+                <Bot className="w-6 h-6" />
+              </div>
               <div>
-                <h4 className="font-bold text-sm text-slate-900">BridgeOne Conversational AI</h4>
-                <p className="text-xs text-emerald-600 font-semibold">Active & Resolving Queries</p>
+                <h4 className="font-bold text-lg text-slate-900">BridgeOne Conversational AI</h4>
+                <p className="text-[11px] text-emerald-600 font-semibold mt-1">Active & Resolving Queries</p>
               </div>
             </div>
             <div className="p-4 rounded-xl bg-white border border-slate-200 text-xs space-y-2">
