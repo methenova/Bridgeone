@@ -14,8 +14,10 @@
   const scriptEl = document.currentScript || Array.from(document.querySelectorAll('script')).find(s => s.src.includes('widget-loader.js'));
   const hostUrl = scriptEl ? new URL(scriptEl.src).origin : "http://localhost:5173";
 
+  const cleanShopId = encodeURIComponent(String(config.shopId).trim());
+
   // Fetch shop config from Supabase REST API
-  const fetchUrl = `${SUPABASE_URL}/rest/v1/widget_settings?select=primary_color,widget_position&shop_id=eq.${config.shopId}`;
+  const fetchUrl = `${SUPABASE_URL}/rest/v1/widget_settings?select=primary_color,widget_position&shop_id=eq.${cleanShopId}`;
 
   fetch(fetchUrl, {
     method: "GET",
@@ -176,7 +178,8 @@
     const iframe = document.createElement("iframe");
     iframe.className = "b1-widget-iframe";
     iframe.src = `${hostUrl}/widget/${config.shopId}`;
-    iframe.allow = "camera; microphone; display-capture";
+    iframe.setAttribute("allow", "camera *; microphone *; display-capture *; autoplay *; fullscreen *");
+    iframe.setAttribute("allowusermedia", "true");
 
     container.appendChild(iframe);
 

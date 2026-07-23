@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Video,
   MessageSquare,
@@ -21,8 +21,7 @@ import {
   BarChart3,
   Star,
   Mic,
-  Send,
-  Play
+  Send
 } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -37,13 +36,13 @@ function FloatingNav() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       setScrolled(currentScrollY > 20);
-      
+
       if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
         setHidden(true);
       } else if (currentScrollY < lastScrollY.current) {
         setHidden(false);
       }
-      
+
       lastScrollY.current = currentScrollY;
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -53,11 +52,10 @@ function FloatingNav() {
   return (
     <header className={`fixed top-0 inset-x-0 z-50 px-4 sm:px-8 py-4 transition-transform duration-500 pointer-events-none ${hidden ? '-translate-y-full' : 'translate-y-0'}`}>
       <nav
-        className={`max-w-[1400px] mx-auto px-6 py-3.5 rounded-full transition-all duration-500 pointer-events-auto flex items-center justify-between ${
-          scrolled
+        className={`max-w-[1400px] mx-auto px-6 py-3.5 rounded-full transition-all duration-500 pointer-events-auto flex items-center justify-between ${scrolled
             ? "bg-[#FDFDFC]/90 backdrop-blur-xl border border-[#E8E6E1] shadow-[0_8px_30px_rgba(15,23,42,0.06)]"
             : "bg-[#FDFDFC]/60 backdrop-blur-md border border-[#E8E6E1]/60"
-        }`}
+          }`}
       >
         {/* Brand Identity */}
         <Link to="/" className="flex items-center gap-3 group">
@@ -111,41 +109,51 @@ function FloatingNav() {
    ═══════════════════════════════════════════════════════════════════════════ */
 function CinematicHero() {
   const [activeTab, setActiveTab] = useState("video");
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % 3);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [isPaused]);
 
   return (
     <section className="relative pt-24 pb-12 md:pt-32 md:pb-16 overflow-hidden bg-white">
       {/* Cinematic Animated Background Orbs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Animated Blue Orb */}
-        <motion.div 
-          animate={{ 
+        <motion.div
+          animate={{
             scale: [1, 1.2, 1],
             x: [0, 50, 0],
             y: [0, -30, 0],
           }}
           transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-[20%] left-[10%] w-[700px] h-[700px] rounded-full bg-blue-400/15 blur-[120px]" 
+          className="absolute -top-[20%] left-[10%] w-[700px] h-[700px] rounded-full bg-blue-400/15 blur-[120px]"
         />
-        
+
         {/* Animated Cyan Orb */}
-        <motion.div 
-          animate={{ 
+        <motion.div
+          animate={{
             scale: [1, 1.1, 1],
             x: [0, -40, 0],
             y: [0, 40, 0],
           }}
           transition={{ duration: 22, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute top-[20%] -right-[10%] w-[600px] h-[600px] rounded-full bg-cyan-400/15 blur-[120px]" 
+          className="absolute top-[20%] -right-[10%] w-[600px] h-[600px] rounded-full bg-cyan-400/15 blur-[120px]"
         />
 
         {/* Animated Purple/Indigo subtle accent */}
-        <motion.div 
-          animate={{ 
+        <motion.div
+          animate={{
             scale: [0.9, 1.2, 0.9],
             opacity: [0.3, 0.6, 0.3],
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute bottom-[-10%] left-[40%] w-[500px] h-[500px] rounded-full bg-indigo-300/10 blur-[100px]" 
+          className="absolute bottom-[-10%] left-[40%] w-[500px] h-[500px] rounded-full bg-indigo-300/10 blur-[100px]"
         />
 
         {/* Subtle Grid Overlay */}
@@ -180,7 +188,7 @@ function CinematicHero() {
             transition={{ duration: 0.7, delay: 0.1 }}
             className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-slate-900 leading-[1.05]"
           >
-            Transform Your Workflow <br/>
+            Transform Your Workflow <br />
             <span className="bg-gradient-to-r from-fuchsia-600 via-pink-500 to-rose-500 bg-clip-text text-transparent">
               Max Efficiency.
             </span>
@@ -233,201 +241,312 @@ function CinematicHero() {
           </motion.div>
         </div>
 
-        {/* ── HERO FLOATING INTERFACE SHOWCASE ── */}
-        <div className="relative w-full h-[500px] lg:h-[650px] flex items-center justify-center mt-12 lg:mt-0">
+        {/* ── HERO FLOATING INTERFACE SHOWCASE (Vertical Circular One-By-One Carousel) ── */}
+        <div
+          className="relative w-full h-[560px] lg:h-[680px] flex items-center justify-center mt-12 lg:mt-0"
+          style={{ perspective: "1400px" }}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          {/* Glowing Ambient Mesh Orbs */}
           <motion.div
             animate={{
-              scale: [1, 1.2, 1],
+              scale: [1, 1.25, 1],
               rotate: [0, 180, 360],
             }}
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-tr from-fuchsia-400/20 to-pink-300/20 rounded-[40%] blur-3xl z-0"
-          ></motion.div>
+            transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] bg-gradient-to-tr from-fuchsia-500/20 via-pink-400/20 to-purple-400/20 rounded-[45%] blur-3xl z-0 pointer-events-none"
+          />
 
-          {/* Video Feed (Top left floating) */}
-          <motion.div
-            initial={{ opacity: 0, x: -30, y: -20 }}
-            animate={{ opacity: 1, x: 0, y: 0 }}
-            whileHover={{ scale: 1.04, zIndex: 40, rotate: -1 }}
-            transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute top-0 md:top-10 left-0 w-[90%] sm:w-[420px] z-10 cursor-pointer"
-          >
-            <motion.div
-              animate={{ y: [0, -12, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-100 shadow-2xl shadow-fuchsia-500/5 space-y-6"
-            >
-            <div className="flex justify-between items-center pb-4 border-b border-slate-100">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-slate-950 text-white font-extrabold flex items-center justify-center text-sm">
-                  LUXE
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm text-slate-900">Luxe Apparel & Accessories</h4>
-                  <p className="text-xs text-slate-400">Flagship E-Commerce Store</p>
-                </div>
-              </div>
-              <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-bold">
-                Item #9482
-              </span>
-            </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="h-44 rounded-xl bg-slate-100 border border-slate-200/60 flex flex-col items-center justify-center p-4 text-center space-y-2">
-                <ShoppingBag className="w-8 h-8 text-slate-400" />
-                <span className="text-xs font-bold text-slate-700">Silk Cashmere Overcoat</span>
-                <span className="text-xs font-mono font-bold text-fuchsia-500">$1,450.00</span>
-              </div>
-              <div className="space-y-3 flex flex-col justify-center">
-                <span className="text-xs font-extrabold uppercase tracking-wider text-fuchsia-500 bg-fuchsia-50 px-2.5 py-1 rounded inline-block w-fit">
-                  In Stock • Ready to Ship
-                </span>
-                <h3 className="text-lg font-bold text-slate-900 leading-snug">
-                  Tailored Italian Wool Blend
-                </h3>
-                <p className="text-[10px] text-slate-500">
-                  Handcrafted in Milan. Requires fitting advice or live sizing consultation?
-                </p>
-              </div>
-            </div>
-          </motion.div>
 
-            </motion.div>
-          {/* Visitor Widget (Bottom right overlapping) */}
-          <motion.div 
-            initial={{ opacity: 0, x: 30, y: 30 }}
-            animate={{ opacity: 1, x: 0, y: 0 }}
-            whileHover={{ scale: 1.04, zIndex: 40, rotate: 1 }}
-            transition={{ duration: 0.9, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute bottom-0 md:bottom-10 right-0 w-[95%] sm:w-[400px] z-20 cursor-pointer"
-          >
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="bg-white p-5 rounded-2xl border border-slate-100 shadow-2xl shadow-slate-900/10 space-y-4"
-            >
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                <span className="text-xs font-bold text-slate-900">BridgeOne Visitor Widget</span>
-              </div>
-              <span className="text-[10px] font-mono text-slate-400">v2.4.0</span>
-            </div>
-
-            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-slate-100 text-[11px] font-bold">
-              {[
-                { id: "video", label: "Video", icon: Video },
-                { id: "chat", label: "Chat", icon: MessageSquare },
-                { id: "audio", label: "Audio", icon: Phone },
-              ].map((m) => (
-                <button
-                  key={m.id}
-                  onClick={() => setActiveTab(m.id)}
-                  className={`py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
-                    activeTab === m.id
-                      ? "bg-white text-fuchsia-500 shadow-sm font-extrabold"
-                      : "text-slate-600 hover:text-slate-900"
-                  }`}
+          {/* 3D Vertical Circular Stage Container */}
+          <div className="relative w-[95%] sm:w-[440px] h-[480px] flex items-center justify-center z-20">
+            <AnimatePresence mode="wait">
+              {/* SLIDE 0: Luxe Apparel Product Offer Card */}
+              {activeSlide === 0 && (
+                <motion.div
+                  key="slide-product"
+                  initial={{ opacity: 0, rotateX: 65, y: 140, scale: 0.82 }}
+                  animate={{ opacity: 1, rotateX: 0, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotateX: -65, y: -140, scale: 0.82 }}
+                  transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                  style={{ transformStyle: "preserve-3d" }}
+                  className="absolute inset-0 w-full"
                 >
-                  <m.icon className="w-3.5 h-3.5" />
-                  <span>{m.label}</span>
-                </button>
-              ))}
-            </div>
+                  <div className="bg-white/95 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl border border-white shadow-2xl shadow-fuchsia-500/15 space-y-6">
+                    <div className="flex justify-between items-center pb-4 border-b border-slate-100">
+                      <div className="flex items-center gap-3">
+                        <div className="h-11 w-11 rounded-2xl bg-slate-950 text-white font-extrabold flex items-center justify-center text-sm shadow-md">
+                          LUXE
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-sm text-slate-900">Luxe Apparel & Accessories</h4>
+                          <p className="text-xs text-slate-400">Flagship E-Commerce Store</p>
+                        </div>
+                      </div>
+                      <span className="px-3 py-1 rounded-full bg-fuchsia-50 text-fuchsia-600 text-xs font-bold border border-fuchsia-100">
+                        Item #9482
+                      </span>
+                    </div>
 
-            <div className="h-72 rounded-xl bg-slate-50 border border-slate-200/70 p-4 flex flex-col justify-between relative overflow-hidden">
-              {activeTab === "video" && (
-                <div className="space-y-3 h-full flex flex-col justify-between">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <img
-                        src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
-                        className="w-8 h-8 rounded-full object-cover border border-fuchsia-500"
-                        alt="Agent"
-                      />
-                      <div>
-                        <p className="text-xs font-bold text-slate-900">Elena Rostova</p>
-                        <p className="text-[10px] text-emerald-600 font-semibold">Live Sales Advisor</p>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="h-48 rounded-2xl bg-slate-50 border border-slate-200/60 flex flex-col items-center justify-center p-4 text-center space-y-2 shadow-inner">
+                        <ShoppingBag className="w-9 h-9 text-slate-400" />
+                        <span className="text-xs font-bold text-slate-700">Silk Cashmere Overcoat</span>
+                        <span className="text-xs font-mono font-bold text-fuchsia-500 text-sm">$1,450.00</span>
+                      </div>
+                      <div className="space-y-3 flex flex-col justify-center">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-fuchsia-600 bg-fuchsia-50 px-2.5 py-1 rounded-full inline-block w-fit border border-fuchsia-200/50">
+                          In Stock • Ready to Ship
+                        </span>
+                        <h3 className="text-lg font-extrabold text-slate-900 leading-snug">
+                          Tailored Italian Wool Blend
+                        </h3>
+                        <p className="text-[11px] text-slate-500 leading-relaxed">
+                          Handcrafted in Milan. Requires fitting advice or live sizing consultation?
+                        </p>
                       </div>
                     </div>
-                    <span className="px-2 py-0.5 rounded bg-fuchsia-100 text-fuchsia-600 text-[10px] font-bold font-mono">
-                      02:14
-                    </span>
-                  </div>
 
-                  <div className="h-44 rounded-lg bg-slate-900 relative overflow-hidden flex items-center justify-center">
-                    <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded text-[9px] text-white font-bold">
-                      Live 1080p Stream
+                    <div className="pt-2 flex items-center justify-between border-t border-slate-100 text-xs font-bold text-slate-500">
+                      <span className="flex items-center gap-1.5 text-emerald-600">
+                        <CheckCircle2 className="w-4 h-4" /> Live Fitting Advisor Online
+                      </span>
+                      <span className="text-fuchsia-500">Rotate Vertical ↻</span>
                     </div>
-                    <div className="absolute bottom-2 right-2 flex items-end gap-1">
-                      {[6, 12, 8, 14, 10].map((h, i) => (
-                        <motion.div
-                          key={i}
-                          animate={{ height: [h, h * 1.5, h] }}
-                          transition={{ duration: 0.4, repeat: Infinity, delay: i * 0.1 }}
-                          className="w-1 bg-emerald-400 rounded-full"
-                        />
+                  </div>
+                </motion.div>
+              )}
+
+              {/* SLIDE 1: BridgeOne Live Visitor Video Widget */}
+              {activeSlide === 1 && (
+                <motion.div
+                  key="slide-widget"
+                  initial={{ opacity: 0, rotateX: 65, y: 140, scale: 0.82 }}
+                  animate={{ opacity: 1, rotateX: 0, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotateX: -65, y: -140, scale: 0.82 }}
+                  transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                  style={{ transformStyle: "preserve-3d" }}
+                  className="absolute inset-0 w-full"
+                >
+                  <div className="bg-white/95 backdrop-blur-2xl p-6 sm:p-7 rounded-3xl border border-white shadow-2xl shadow-slate-900/15 space-y-4">
+                    <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-xs font-extrabold text-slate-900">BridgeOne Visitor Widget</span>
+                      </div>
+                      <span className="text-[10px] font-mono text-slate-400">v2.4.0</span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-slate-100 text-[11px] font-bold">
+                      {[
+                        { id: "video", label: "Video", icon: Video },
+                        { id: "chat", label: "Chat", icon: MessageSquare },
+                        { id: "audio", label: "Audio", icon: Phone },
+                      ].map((m) => (
+                        <button
+                          key={m.id}
+                          onClick={() => setActiveTab(m.id)}
+                          className={`py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${activeTab === m.id
+                              ? "bg-white text-fuchsia-500 shadow-sm font-extrabold"
+                              : "text-slate-600 hover:text-slate-900"
+                            }`}
+                        >
+                          <m.icon className="w-3.5 h-3.5" />
+                          <span>{m.label}</span>
+                        </button>
                       ))}
                     </div>
-                  </div>
 
-                  <div className="flex gap-2">
-                    <button className="flex-1 py-1.5 rounded-lg bg-slate-950 text-white font-bold text-xs shadow-sm hover:bg-black">
-                      Push Item to Cart
-                    </button>
-                    <button className="px-3 rounded-lg bg-slate-200 text-slate-700 font-bold text-xs">
-                      Mute
-                    </button>
-                  </div>
-                </div>
-              )}
+                    <div className="h-72 rounded-2xl bg-slate-50 border border-slate-200/70 p-4 flex flex-col justify-between relative overflow-hidden">
+                      {activeTab === "video" && (
+                        <div className="space-y-3 h-full flex flex-col justify-between">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <img
+                                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
+                                className="w-8 h-8 rounded-full object-cover border border-fuchsia-500"
+                                alt="Agent"
+                              />
+                              <div>
+                                <p className="text-xs font-bold text-slate-900">Elena Rostova</p>
+                                <p className="text-[10px] text-emerald-600 font-semibold">Live Sales Advisor</p>
+                              </div>
+                            </div>
+                            <span className="px-2 py-0.5 rounded bg-fuchsia-100 text-fuchsia-600 text-[10px] font-bold font-mono">
+                              02:14
+                            </span>
+                          </div>
 
-              {activeTab === "chat" && (
-                <div className="h-full flex flex-col justify-between space-y-2">
-                  <div className="space-y-2 text-xs">
-                    <div className="bg-slate-950 text-white p-2.5 rounded-2xl rounded-tr-none max-w-[80%] ml-auto font-medium">
-                      Hi! Does the cashmere jacket fit true to size?
+                          <div className="h-44 rounded-xl bg-slate-900 relative overflow-hidden flex items-center justify-center shadow-md">
+                            <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded text-[9px] text-white font-bold">
+                              Live 1080p Stream
+                            </div>
+                            <div className="absolute bottom-2 right-2 flex items-end gap-1">
+                              {[6, 12, 8, 14, 10].map((h, i) => (
+                                <motion.div
+                                  key={i}
+                                  animate={{ height: [h, h * 1.5, h] }}
+                                  transition={{ duration: 0.4, repeat: Infinity, delay: i * 0.1 }}
+                                  className="w-1 bg-emerald-400 rounded-full"
+                                />
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="flex gap-2">
+                            <button className="flex-1 py-2 rounded-xl bg-slate-950 text-white font-bold text-xs shadow-sm hover:bg-black transition-colors">
+                              Push Item to Cart
+                            </button>
+                            <button className="px-3 rounded-xl bg-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-300 transition-colors">
+                              Mute
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {activeTab === "chat" && (
+                        <div className="h-full flex flex-col justify-between space-y-2">
+                          <div className="space-y-2 text-xs">
+                            <div className="bg-slate-950 text-white p-2.5 rounded-2xl rounded-tr-none max-w-[80%] ml-auto font-medium">
+                              Hi! Does the cashmere jacket fit true to size?
+                            </div>
+                            <div className="bg-white border border-slate-200 text-slate-800 p-2.5 rounded-2xl rounded-tl-none max-w-[85%] font-medium shadow-xs">
+                              Hello! Yes, it features an Italian tailored fit. Would you like a live video demo?
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 pt-2 border-t border-slate-200">
+                            <input
+                              type="text"
+                              readOnly
+                              value="Yes please, show me live!"
+                              className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none"
+                            />
+                            <button className="p-2 rounded-lg bg-slate-950 text-white">
+                              <Send className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {activeTab === "audio" && (
+                        <div className="h-full flex flex-col justify-between items-center text-center p-4">
+                          <div className="w-12 h-12 rounded-full bg-fuchsia-50 border border-fuchsia-200 flex items-center justify-center text-fuchsia-500">
+                            <Phone className="w-6 h-6 animate-pulse" />
+                          </div>
+                          <div>
+                            <h5 className="font-bold text-xs text-slate-900">Crystal Clear Audio Call</h5>
+                            <p className="text-[10px] text-slate-400">Ultra-clear HD voice stream active</p>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <button className="p-2.5 rounded-full bg-slate-200 text-slate-700">
+                              <Mic className="w-4 h-4" />
+                            </button>
+                            <button className="px-4 py-2 rounded-full bg-rose-600 text-white font-bold text-xs">
+                              End Call
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <div className="bg-white border border-slate-200 text-slate-800 p-2.5 rounded-2xl rounded-tl-none max-w-[85%] font-medium shadow-xs">
-                      Hello! Yes, it features an Italian tailored fit. Would you like a live video demo of the lining?
-                    </div>
                   </div>
-                  <div className="flex items-center gap-2 pt-2 border-t border-slate-200">
-                    <input
-                      type="text"
-                      readOnly
-                      value="Yes please, show me live!"
-                      className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none"
-                    />
-                    <button className="p-2 rounded-lg bg-slate-950 text-white">
-                      <Send className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
+                </motion.div>
               )}
 
-              {activeTab === "audio" && (
-                <div className="h-full flex flex-col justify-between items-center text-center p-4">
-                  <div className="w-12 h-12 rounded-full bg-fuchsia-50 border border-fuchsia-200 flex items-center justify-center text-fuchsia-500">
-                    <Phone className="w-6 h-6 animate-pulse" />
+              {/* SLIDE 2: Merchant Sales Conversion & Agent Dispatch Console (Light Theme) */}
+              {activeSlide === 2 && (
+                <motion.div
+                  key="slide-analytics"
+                  initial={{ opacity: 0, rotateX: 65, y: 140, scale: 0.82 }}
+                  animate={{ opacity: 1, rotateX: 0, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotateX: -65, y: -140, scale: 0.82 }}
+                  transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                  style={{ transformStyle: "preserve-3d" }}
+                  className="absolute inset-0 w-full"
+                >
+                  <div className="bg-white/95 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl border border-white text-slate-900 shadow-2xl shadow-fuchsia-500/10 space-y-6">
+                    <div className="flex justify-between items-center pb-4 border-b border-slate-100">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-2xl bg-slate-950 flex items-center justify-center text-white font-bold shadow-md">
+                          <BarChart3 className="w-5 h-5 text-fuchsia-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-sm text-slate-900">Live Sales Engine</h4>
+                          <p className="text-xs text-slate-400">Real-Time Intent Routing</p>
+                        </div>
+                      </div>
+                      <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-xs font-bold border border-emerald-200/60 flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> Active
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/60 space-y-1">
+                        <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Conversion Rate</p>
+                        <p className="text-2xl font-extrabold text-fuchsia-600">+44.8%</p>
+                        <p className="text-[10px] text-emerald-600 font-semibold">↑ 12% vs text chat</p>
+                      </div>
+                      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/60 space-y-1">
+                        <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Connect Latency</p>
+                        <p className="text-2xl font-extrabold text-slate-900">3.2s</p>
+                        <p className="text-[10px] text-slate-400 font-medium">Instant Live Connection</p>
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/60 space-y-3">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="font-bold text-slate-700">Agent Dispatch Speed</span>
+                        <span className="font-mono text-fuchsia-600 font-bold">Instant</span>
+                      </div>
+                      <div className="h-2 rounded-full bg-slate-200 overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: "88%" }}
+                          transition={{ duration: 1.2, ease: "easeOut" }}
+                          className="h-full bg-gradient-to-r from-fuchsia-500 to-pink-500 rounded-full"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-2 flex items-center justify-between text-xs font-bold text-slate-400">
+                      <span>SOC 2 Type II Certified</span>
+                      <span className="text-fuchsia-500">Auto-Rotating ↻</span>
+                    </div>
                   </div>
-                  <div>
-                    <h5 className="font-bold text-xs text-slate-900">Crystal Clear Audio Call</h5>
-                    <p className="text-[10px] text-slate-400">Sub-50ms latency Opus codec active</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <button className="p-2.5 rounded-full bg-slate-200 text-slate-700">
-                      <Mic className="w-4 h-4" />
-                    </button>
-                    <button className="px-4 py-2 rounded-full bg-rose-600 text-white font-bold text-xs">
-                      End Call
-                    </button>
-                  </div>
-                </div>
+                </motion.div>
               )}
-            </div>
-            </motion.div>
-          </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Convenient Step Navigation Controls (Positioned 100% Outside Cards, Light Theme) */}
+          <div className="z-40 flex md:flex-col items-center gap-2.5 bg-white/90 backdrop-blur-xl p-2 rounded-2xl border border-slate-200/80 shadow-xl shadow-slate-900/5">
+            {[
+              { id: 0, label: "01", title: "Product Card" },
+              { id: 1, label: "02", title: "Live Widget" },
+              { id: 2, label: "03", title: "Sales Engine" },
+            ].map((slide) => (
+              <button
+                key={slide.id}
+                onClick={() => setActiveSlide(slide.id)}
+                title={slide.title}
+                className={`group relative flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-300 ${
+                  activeSlide === slide.id
+                    ? "bg-slate-900 text-white shadow-md shadow-slate-950/20 scale-105"
+                    : "bg-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-100/80"
+                }`}
+              >
+                <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-extrabold transition-colors ${
+                  activeSlide === slide.id ? "bg-fuchsia-500 text-white shadow-sm" : "bg-slate-100 text-slate-600"
+                }`}>
+                  {slide.label}
+                </span>
+                <span className="text-xs font-bold whitespace-nowrap pr-1">
+                  {slide.title}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -546,11 +665,10 @@ function VisitorJourney() {
               <button
                 key={step.id}
                 onClick={() => setActiveStep(idx)}
-                className={`p-4 md:p-5 rounded-2xl text-left transition-all duration-300 border cursor-pointer ${
-                  isActive
+                className={`p-4 md:p-5 rounded-2xl text-left transition-all duration-300 border cursor-pointer ${isActive
                     ? "bg-white border-fuchsia-600 shadow-lg shadow-fuchsia-500/5 scale-[1.02] z-10 relative"
                     : "bg-white border-[#E8E6E1] hover:bg-white hover:border-slate-300"
-                }`}
+                  }`}
               >
                 <div className="flex justify-between items-center mb-3">
                   <span className="text-[10px] font-mono font-bold text-fuchsia-500 bg-fuchsia-50 px-2 py-0.5 rounded-full border border-fuchsia-200/60">
@@ -578,7 +696,7 @@ function VisitorJourney() {
               {steps[activeStep].subtitle}
             </p>
             <p className="text-xs font-medium text-slate-700 bg-slate-50 p-4 rounded-2xl border border-slate-200/60">
-              💡 <span className="font-bold">Key Operational Advantage:</span> {steps[activeStep].details}
+              💡 <span className="font-bold">Key Operational Advantage:</span> Automated telemetry & sub-100ms video event loop firing seamlessly.
             </p>
           </div>
 
@@ -608,7 +726,7 @@ function VisitorJourney() {
 function BridgeOnePlatform() {
   const pillars = [
     {
-      title: "WebRTC Global Sub-100ms Mesh",
+      title: "Global Sub-100ms Video Mesh",
       description: "Low-latency peer-to-peer video and audio routing through 45+ global TURN edge nodes for instant connection.",
       icon: Server,
       tag: "Infrastructure",
@@ -699,7 +817,7 @@ function Features() {
           <div className="lg:col-span-7 p-6 md:p-6 rounded-3xl bg-white border border-[#E8E6E1] shadow-sm space-y-5">
             <div className="space-y-1.5">
               <span className="text-[10px] font-bold text-fuchsia-500 uppercase tracking-widest bg-fuchsia-50 px-3 py-1 rounded-full inline-block mb-2">01 • Video Engine</span>
-              <h3 className="text-xl md:text-2xl font-extrabold text-slate-900">HD WebRTC 1-on-1 Video Consultation</h3>
+              <h3 className="text-xl md:text-2xl font-extrabold text-slate-900">HD 1-on-1 Video Consultation</h3>
               <p className="text-sm text-slate-500 max-w-lg leading-relaxed">
                 Showcase physical products live, answer sizing queries face-to-face, and build trust in high-ticket transactions.
               </p>
@@ -793,134 +911,132 @@ function LiveProductDemo() {
 
         {/* Interactive Widget Box */}
         <div className="max-w-4xl mx-auto rounded-3xl p-6 md:p-8 bg-white border border-[#E8E6E1] shadow-2xl shadow-fuchsia-500/5 space-y-5">
-            {/* Nav Tabs */}
-            <div className="grid grid-cols-4 gap-2 p-1.5 rounded-2xl bg-white border border-[#E8E6E1] text-[11px] font-bold">
-              {[
-                { id: "video", label: "Live Video", icon: Video },
-                { id: "chat", label: "Live Chat", icon: MessageSquare },
-                { id: "audio", label: "Audio Call", icon: Phone },
-                { id: "callback", label: "Callback", icon: Calendar },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                    activeTab === tab.id
-                      ? "bg-slate-950 text-white shadow-sm font-extrabold"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+          {/* Nav Tabs */}
+          <div className="grid grid-cols-4 gap-2 p-1.5 rounded-2xl bg-white border border-[#E8E6E1] text-[11px] font-bold">
+            {[
+              { id: "video", label: "Live Video", icon: Video },
+              { id: "chat", label: "Live Chat", icon: MessageSquare },
+              { id: "audio", label: "Audio Call", icon: Phone },
+              { id: "callback", label: "Callback", icon: Calendar },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer ${activeTab === tab.id
+                    ? "bg-slate-950 text-white shadow-sm font-extrabold"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                   }`}
-                >
-                  <tab.icon className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">{tab.label}</span>
+              >
+                <tab.icon className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">{tab.label}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Sandbox Container */}
+          <div className="h-64 rounded-xl bg-white border border-[#E8E6E1] p-6 flex flex-col justify-between shadow-sm">
+            {activeTab === "video" && (
+              <div className="h-full flex flex-col justify-between text-center space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-bold text-emerald-600 flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                    Live Advisor Ready
+                  </span>
+                  <span className="text-xs font-mono text-slate-400">Sub-50ms WebRTC</span>
+                </div>
+                <div className="my-auto space-y-2">
+                  <Video className="w-12 h-12 text-fuchsia-500 mx-auto animate-bounce" />
+                  <h4 className="font-extrabold text-lg text-slate-900">Start 1-on-1 Video Consultation</h4>
+                  <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                    Connect face-to-face with an advisor. Camera and mic options are configurable.
+                  </p>
+                </div>
+                <button className="py-3 rounded-xl bg-slate-950 text-white font-bold text-xs shadow-lg shadow-fuchsia-500/5 hover:bg-black">
+                  Launch Test Call
                 </button>
-              ))}
-            </div>
+              </div>
+            )}
 
-            {/* Sandbox Container */}
-            <div className="h-64 rounded-xl bg-white border border-[#E8E6E1] p-6 flex flex-col justify-between shadow-sm">
-              {activeTab === "video" && (
-                <div className="h-full flex flex-col justify-between text-center space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold text-emerald-600 flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                      Live Advisor Ready
-                    </span>
-                    <span className="text-xs font-mono text-slate-400">Sub-50ms WebRTC</span>
-                  </div>
-                  <div className="my-auto space-y-2">
-                    <Video className="w-12 h-12 text-fuchsia-500 mx-auto animate-bounce" />
-                    <h4 className="font-extrabold text-lg text-slate-900">Start 1-on-1 Video Consultation</h4>
-                    <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                      Connect face-to-face with an advisor. Camera and mic options are configurable.
-                    </p>
-                  </div>
-                  <button className="py-3 rounded-xl bg-slate-950 text-white font-bold text-xs shadow-lg shadow-fuchsia-500/5 hover:bg-black">
-                    Launch Test Call
-                  </button>
-                </div>
-              )}
-
-              {activeTab === "chat" && (
-                <div className="h-full flex flex-col justify-between">
-                  <div className="space-y-3 overflow-y-auto max-h-56 pr-2">
-                    {messages.map((m, i) => (
-                      <div
-                        key={i}
-                        className={`max-w-[80%] p-3 rounded-2xl text-xs font-medium ${
-                          m.sender === "user"
-                            ? "bg-slate-950 text-white ml-auto rounded-tr-none"
-                            : "bg-slate-100 text-slate-800 rounded-tl-none border border-slate-200"
+            {activeTab === "chat" && (
+              <div className="h-full flex flex-col justify-between">
+                <div className="space-y-3 overflow-y-auto max-h-56 pr-2">
+                  {messages.map((m, i) => (
+                    <div
+                      key={i}
+                      className={`max-w-[80%] p-3 rounded-2xl text-xs font-medium ${m.sender === "user"
+                          ? "bg-slate-950 text-white ml-auto rounded-tr-none"
+                          : "bg-slate-100 text-slate-800 rounded-tl-none border border-slate-200"
                         }`}
-                      >
-                        {m.text}
-                      </div>
-                    ))}
-                  </div>
-                  <form onSubmit={handleSendMessage} className="flex gap-2 pt-3 border-t border-slate-100">
-                    <input
-                      type="text"
-                      placeholder="Type a message..."
-                      value={chatInput}
-                      onChange={(e) => setChatInput(e.target.value)}
-                      className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-fuchsia-600"
-                    />
-                    <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold text-xs">
-                      Send
-                    </button>
-                  </form>
+                    >
+                      {m.text}
+                    </div>
+                  ))}
                 </div>
-              )}
+                <form onSubmit={handleSendMessage} className="flex gap-2 pt-3 border-t border-slate-100">
+                  <input
+                    type="text"
+                    placeholder="Type a message..."
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-fuchsia-600"
+                  />
+                  <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold text-xs">
+                    Send
+                  </button>
+                </form>
+              </div>
+            )}
 
-              {activeTab === "audio" && (
-                <div className="h-full flex flex-col justify-between text-center items-center py-6">
-                  <Phone className="w-10 h-10 text-fuchsia-500 animate-pulse" />
-                  <div>
-                    <h4 className="font-bold text-base text-slate-900">High-Definition Voice Call</h4>
-                    <p className="text-xs text-slate-400 mt-1">Instant browser audio without app downloads</p>
-                  </div>
-                  <button className="px-8 py-3 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-lg shadow-fuchsia-500/5">
-                    Start Voice Call
+            {activeTab === "audio" && (
+              <div className="h-full flex flex-col justify-between text-center items-center py-6">
+                <Phone className="w-10 h-10 text-fuchsia-500 animate-pulse" />
+                <div>
+                  <h4 className="font-bold text-base text-slate-900">High-Definition Voice Call</h4>
+                  <p className="text-xs text-slate-400 mt-1">Instant browser audio without app downloads</p>
+                </div>
+                <button className="px-8 py-3 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-lg shadow-fuchsia-500/5">
+                  Start Voice Call
+                </button>
+              </div>
+            )}
+
+            {activeTab === "callback" && (
+              <div className="h-full flex flex-col justify-between text-center py-4 space-y-3">
+                <Calendar className="w-10 h-10 text-cyan-600 mx-auto" />
+                <div>
+                  <h4 className="font-bold text-base text-slate-900">Schedule Callback Appointment</h4>
+                  <p className="text-xs text-slate-500">We'll call you back at your preferred time.</p>
+                </div>
+                <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto w-full">
+                  <input
+                    type="text"
+                    placeholder="Phone Number"
+                    className="px-3 py-2 border rounded-lg text-xs"
+                    readOnly
+                    value="+1 (555) 019-2834"
+                  />
+                  <button className="py-2 bg-slate-900 text-white font-bold text-xs rounded-lg">
+                    Request Call
                   </button>
                 </div>
-              )}
+              </div>
+            )}
 
-              {activeTab === "callback" && (
-                <div className="h-full flex flex-col justify-between text-center py-4 space-y-3">
-                  <Calendar className="w-10 h-10 text-cyan-600 mx-auto" />
-                  <div>
-                    <h4 className="font-bold text-base text-slate-900">Schedule Callback Appointment</h4>
-                    <p className="text-xs text-slate-500">We'll call you back at your preferred time.</p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto w-full">
-                    <input
-                      type="text"
-                      placeholder="Phone Number"
-                      className="px-3 py-2 border rounded-lg text-xs"
-                      readOnly
-                      value="+1 (555) 019-2834"
-                    />
-                    <button className="py-2 bg-slate-900 text-white font-bold text-xs rounded-lg">
-                      Request Call
-                    </button>
-                  </div>
+            {activeTab === "ai" && (
+              <div className="h-full flex flex-col justify-between text-center py-4 space-y-3">
+                <Bot className="w-10 h-10 text-fuchsia-500 mx-auto" />
+                <div>
+                  <h4 className="font-bold text-base text-slate-900">AI Instant Support Assistant</h4>
+                  <p className="text-xs text-slate-500">Autonomous intent resolution and lead routing.</p>
                 </div>
-              )}
-
-              {activeTab === "ai" && (
-                <div className="h-full flex flex-col justify-between text-center py-4 space-y-3">
-                  <Bot className="w-10 h-10 text-fuchsia-500 mx-auto" />
-                  <div>
-                    <h4 className="font-bold text-base text-slate-900">AI Instant Support Assistant</h4>
-                    <p className="text-xs text-slate-500">Autonomous intent resolution and lead routing.</p>
-                  </div>
-                  <div className="p-3 bg-fuchsia-50 border border-fuchsia-200 rounded-xl text-xs text-blue-800 max-w-md mx-auto">
-                    "AI automatically answers 80% of common shipping & inventory questions."
-                  </div>
+                <div className="p-3 bg-fuchsia-50 border border-fuchsia-200 rounded-xl text-xs text-blue-800 max-w-md mx-auto">
+                  "AI automatically answers 80% of common shipping & inventory questions."
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
+      </div>
     </section>
   );
 }
@@ -1019,7 +1135,7 @@ function ShopifyIntegration() {
               1-Click Shopify Integration
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
-              Installs on Shopify in 60 seconds. <br className="hidden md:block"/>Zero coding required.
+              Installs on Shopify in 60 seconds. <br className="hidden md:block" />Zero coding required.
             </h2>
             <p className="text-sm text-slate-600 leading-relaxed max-w-lg">
               BridgeOne syncs automatically with your Shopify catalog, orders, and customer data using official Shopify GraphQL APIs.
@@ -1305,17 +1421,15 @@ function Pricing() {
           <div className="inline-flex items-center gap-3 p-1.5 rounded-full bg-slate-100 border border-slate-200 mt-4">
             <button
               onClick={() => setBillingCycle("monthly")}
-              className={`px-5 py-2 rounded-full text-xs font-bold transition-all ${
-                billingCycle === "monthly" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
-              }`}
+              className={`px-5 py-2 rounded-full text-xs font-bold transition-all ${billingCycle === "monthly" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
+                }`}
             >
               Monthly Billing
             </button>
             <button
               onClick={() => setBillingCycle("annual")}
-              className={`px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${
-                billingCycle === "annual" ? "bg-slate-950 text-white shadow-sm" : "text-slate-500"
-              }`}
+              className={`px-5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${billingCycle === "annual" ? "bg-slate-950 text-white shadow-sm" : "text-slate-500"
+                }`}
             >
               <span>Annual Billing</span>
               <span className="px-2 py-0.5 rounded-full bg-emerald-400 text-slate-900 text-[9px] font-black uppercase">
@@ -1329,11 +1443,10 @@ function Pricing() {
           {plans.map((p, i) => (
             <div
               key={i}
-              className={`p-6 rounded-3xl bg-white border transition-all duration-300 flex flex-col justify-between space-y-6 relative ${
-                p.popular
+              className={`p-6 rounded-3xl bg-white border transition-all duration-300 flex flex-col justify-between space-y-6 relative ${p.popular
                   ? "border-fuchsia-600 shadow-lg shadow-fuchsia-500/5 scale-[1.02]"
                   : "border-[#E8E6E1] shadow-sm hover:shadow-lg shadow-fuchsia-500/5"
-              }`}
+                }`}
             >
               {p.popular && (
                 <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-slate-950 text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-fuchsia-500/5">
@@ -1369,11 +1482,10 @@ function Pricing() {
 
               <Link
                 to="/register"
-                className={`w-full py-3.5 rounded-full text-xs font-bold text-center transition-all ${
-                  p.popular
+                className={`w-full py-3.5 rounded-full text-xs font-bold text-center transition-all ${p.popular
                     ? "bg-slate-950 text-white hover:bg-black shadow-lg shadow-fuchsia-500/5 shadow-slate-900/10"
                     : "bg-slate-100 text-slate-900 hover:bg-slate-200"
-                }`}
+                  }`}
               >
                 {p.cta}
               </Link>
@@ -1398,7 +1510,7 @@ function FAQ() {
     },
     {
       q: "Do visitors need to download any software to start a video call?",
-      a: "No! BridgeOne uses native WebRTC built directly into all modern web browsers (Safari, Chrome, Firefox, Edge, iOS, Android). Calls launch instantly in the browser.",
+      a: "No! BridgeOne works natively inside all modern web browsers (Safari, Chrome, Firefox, Edge, iOS, Android). Calls launch instantly in one click with zero downloads.",
     },
     {
       q: "How does the in-call product push feature work?",
@@ -1471,7 +1583,7 @@ function Footer() {
             </p>
             <div className="flex items-center gap-2 text-xs text-emerald-700 font-semibold bg-emerald-50 border border-emerald-200/60 px-3 py-1.5 rounded-full w-fit">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-              All WebRTC Edge Systems Operational
+              All Systems Operational
             </div>
           </div>
 
@@ -1508,7 +1620,7 @@ function Footer() {
 
         <div className="pt-8 border-t border-[#E8E6E1] flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-400">
           <p>© 2026 BridgeOne Technologies Inc. All rights reserved.</p>
-          <p className="font-mono text-[11px]">Sub-100ms Global WebRTC Network</p>
+          <p className="font-mono text-[11px]">Sub-100ms Ultra-Fast Video Network</p>
         </div>
       </div>
     </footer>

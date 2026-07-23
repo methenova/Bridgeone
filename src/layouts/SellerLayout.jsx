@@ -78,7 +78,7 @@ export default function SellerLayout() {
           if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
             new Notification(notif.title || "BridgeOne Alert", {
               body: notif.body || "",
-              icon: "/favicon.ico"
+              icon: "/favicon.svg"
             });
           }
         }
@@ -108,7 +108,7 @@ export default function SellerLayout() {
           if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
             new Notification(`New Message from ${senderName}`, {
               body: msg.content || "Sent an attachment",
-              icon: "/favicon.ico"
+              icon: "/favicon.svg"
             });
           }
         }
@@ -140,7 +140,7 @@ export default function SellerLayout() {
           if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
             new Notification("Agent Presence Update", {
               body: `${agentName} is now ${newAgent.status || "Offline"}`,
-              icon: "/favicon.ico"
+              icon: "/favicon.svg"
             });
           }
         }
@@ -160,7 +160,7 @@ export default function SellerLayout() {
           ringingCallsRef.current.set(room.id, room);
           
           ringtone.play().catch(() => {});
-          if (navigator.vibrate) {
+          if (navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive)) {
             // Professional vibration pattern for incoming calls
             navigator.vibrate([1000, 500, 1000, 500, 1000, 500, 1000, 500, 1000, 500]);
           }
@@ -168,7 +168,7 @@ export default function SellerLayout() {
           if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
             const n = new Notification("Incoming Video Call", {
               body: `Incoming call in room: ${roomCode}`,
-              icon: "/favicon.ico"
+              icon: "/favicon.svg"
             });
             activeNotificationsRef.current.set(room.id, n);
           }
@@ -194,7 +194,7 @@ export default function SellerLayout() {
             if (ringingCallsRef.current.size === 0) {
               ringtone.pause();
               ringtone.currentTime = 0;
-              if (navigator.vibrate) navigator.vibrate(0);
+              if (navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive)) navigator.vibrate(0);
             }
             
             const n = activeNotificationsRef.current.get(room.id);
@@ -222,7 +222,7 @@ export default function SellerLayout() {
             if (ringingCallsRef.current.size === 0) {
               ringtone.pause();
               ringtone.currentTime = 0;
-              if (navigator.vibrate) navigator.vibrate(0);
+              if (navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive)) navigator.vibrate(0);
             }
             
             const n = activeNotificationsRef.current.get(roomId);

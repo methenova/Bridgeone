@@ -925,7 +925,7 @@ export default function WidgetPage() {
           await supabase
             .from("call_logs")
             .update({
-              duration: finalDuration,
+              duration_seconds: finalDuration,
               status: finalDuration > 0 ? "completed" : "missed"
             })
             .eq("id", logId);

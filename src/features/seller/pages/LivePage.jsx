@@ -650,7 +650,7 @@ export default function LivePage() {
       try {
         await supabase
           .from("call_logs")
-          .update({ status: "completed", duration: consultationDuration })
+          .update({ status: "completed", duration_seconds: consultationDuration })
           .eq("id", activeCallLogId);
       } catch (err) {
         console.warn("[LivePage] Failed to mark call as completed:", err);
