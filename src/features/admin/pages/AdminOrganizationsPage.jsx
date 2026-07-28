@@ -31,6 +31,15 @@ const PLANS = [
   { value: "pro", label: "Pro Plan" },
 ];
 
+const categories = [
+  { id: "Retail / E-Commerce", name: "Retail / E-Commerce" },
+  { id: "Professional Services", name: "Professional Services" },
+  { id: "Electronics", name: "Electronics" },
+  { id: "Fashion & Apparel", name: "Fashion & Apparel" },
+  { id: "Beauty & Cosmetics", name: "Beauty & Cosmetics" },
+  { id: "Other", name: "Other" }
+];
+
 export default function AdminOrganizationsPage() {
   const { data: shops = [], isLoading, refetch } = useAdminShops();
   const toggleStatus = useToggleShopStatus();
@@ -164,7 +173,7 @@ export default function AdminOrganizationsPage() {
           city: formCity,
           country: formCountry,
           owner_id: formOwnerId,
-          category_id: formCatId || null,
+          category: formCatId || null,
           is_verified: true
         })
         .select()
@@ -206,7 +215,7 @@ export default function AdminOrganizationsPage() {
     setFormPhone(shop.phone || "");
     setFormCity(shop.city || "");
     setFormCountry(shop.country || "India");
-    setFormCatId(shop.category_id || "");
+    setFormCatId(shop.category || "");
     setIsEditOpen(true);
   }
 
@@ -229,7 +238,7 @@ export default function AdminOrganizationsPage() {
           phone: formPhone,
           city: formCity,
           country: formCountry,
-          category_id: formCatId || null
+          category: formCatId || null
         })
         .eq("id", editingShop.id);
 
