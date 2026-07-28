@@ -257,12 +257,16 @@ export default function AdminOrganizationsPage() {
   async function handleDeleteShop(shopId, shopName) {
     if (!window.confirm(`CRITICAL WARNING: Are you sure you want to permanently delete the organization "${shopName}"? This will drop all associated products, call logs, and widget profiles.`)) return;
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("shops")
         .delete()
-        .eq("id", shopId);
+        .eq("id", shopId)
+        .select();
 
       if (error) throw error;
+      if (!data || data.length === 0) {
+        throw new Error("Deletion rejected by database policies (permission denied or record not found).");
+      }
       toast.success("Organization deleted permanently");
       refetch();
     } catch (err) {
