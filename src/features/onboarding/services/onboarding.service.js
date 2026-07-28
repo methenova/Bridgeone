@@ -105,8 +105,11 @@ export async function finalizeOnboarding(userId, metadata) {
 
   try {
     // Clean up any existing shops/organizations for this owner from failed/previous runs
-    await supabase.from("shops").delete().eq("owner_id", userId);
-    await supabase.from("organizations").delete().eq("owner_id", userId);
+    const { error: delShopsErr } = await supabase.from("shops").delete().eq("owner_id", userId);
+    if (delShopsErr) throw delShopsErr;
+
+    const { error: delOrgsErr } = await supabase.from("organizations").delete().eq("owner_id", userId);
+    if (delOrgsErr) throw delOrgsErr;
 
     // 1. Create Organization
     const orgPayload = {
