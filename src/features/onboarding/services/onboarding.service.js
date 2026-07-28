@@ -104,6 +104,10 @@ export async function finalizeOnboarding(userId, metadata) {
   const now = new Date().toISOString();
 
   try {
+    // Clean up any existing shops/organizations for this owner from failed/previous runs
+    await supabase.from("shops").delete().eq("owner_id", userId);
+    await supabase.from("organizations").delete().eq("owner_id", userId);
+
     // 1. Create Organization
     const orgPayload = {
       owner_id: userId,
