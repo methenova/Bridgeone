@@ -17,23 +17,28 @@ export async function createAuditLog({
   metadata = {},
 }) {
   try {
-    const { data, error } = await supabase.functions.invoke("audit-logger", {
-      body: {
-        organizationId,
-        shopId,
+    const { data: { user } } = await supabase.auth.getUser();
+
+    const { data, error } = await supabase
+      .from("audit_logs")
+      .insert({
+        user_id: user?.id || null,
+        organization_id: organizationId || null,
+        shop_id: shopId || null,
         action,
         resource,
-        resourceId,
-        metadata,
-      },
-    });
+        resource_id: resourceId ? String(resourceId) : null,
+        metadata: metadata || {},
+      })
+      .select()
+      .maybeSingle();
 
     if (error) {
-      console.warn("createAuditLog edge function warning:", error.message);
+      console.warn("createAuditLog direct insert warning:", error.message);
       return null;
     }
 
-    return data?.log || null;
+    return data || null;
   } catch (err) {
     console.warn("createAuditLog error:", err);
     return null;

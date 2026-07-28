@@ -319,16 +319,16 @@ export async function getShops(filters = {}) {
   let query = supabase
     .from("shops")
     .select(
-      `*, categories ( id, name, slug, icon )`,
+      `*`,
       { count: "exact" }
     )
     .eq("is_verified", true);
 
   if (search.trim()) {
-    query = query.or(`name.ilike.%${search.trim()}%,description.ilike.%${search.trim()}%`);
+    query = query.or(`shop_name.ilike.%${search.trim()}%,description.ilike.%${search.trim()}%`);
   }
 
-  if (categoryId) query = query.eq("category_id", categoryId);
+  if (categoryId) query = query.eq("category", categoryId);
   if (city) query = query.ilike("city", `%${city}%`);
 
   query = query
