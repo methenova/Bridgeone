@@ -107,7 +107,7 @@ export default function AdminSupportPage() {
     setSubmitting(true);
     try {
       const { error } = await supabase.from("support_tickets").insert({
-        title: formTitle, description: formDesc, type: formType, status: "open"
+        subject: formTitle, description: formDesc, type: formType, status: "open"
       });
       if (error) throw error;
       toast.success("Support ticket registered");
@@ -124,7 +124,7 @@ export default function AdminSupportPage() {
   const filteredTickets = useMemo(() => {
     return tickets.filter(ticket => {
       const matchesSearch =
-        (ticket.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (ticket.subject || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
         (ticket.description || "").toLowerCase().includes(searchQuery.toLowerCase());
       const matchesStatus = statusFilter === "all" || ticket.status === statusFilter;
       const matchesType   = typeFilter   === "all" || ticket.type   === typeFilter;
@@ -242,7 +242,7 @@ export default function AdminSupportPage() {
                   >
                     {/* Title + Description */}
                     <td className="px-6 py-5 align-middle max-w-sm">
-                      <span className="font-bold text-slate-900 block text-sm leading-snug">{t.title}</span>
+                      <span className="font-bold text-slate-900 block text-sm leading-snug">{t.subject}</span>
                       <span className="text-[10px] text-slate-400 mt-1 block leading-relaxed line-clamp-2">
                         {t.description}
                       </span>

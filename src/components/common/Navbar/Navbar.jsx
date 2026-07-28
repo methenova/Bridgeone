@@ -125,24 +125,14 @@ export default function Navbar() {
                         </div>
 
                         <div className="py-1">
-                          {profile?.role === "admin" && (
+                          {profile && (
                             <Link
-                              to="/admin"
+                              to="/dashboard"
                               onClick={() => setUserMenuOpen(false)}
-                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-600 transition-all duration-150 hover:bg-white/60 hover:text-slate-900"
+                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-600 transition-all duration-150 hover:bg-white/60 hover:text-slate-900 font-semibold"
                             >
-                              <Shield className="h-4 w-4" />
-                              Admin Panel
-                            </Link>
-                          )}
-                          {(profile?.role === "seller" || profile?.role === "admin") && (
-                            <Link
-                              to="/seller"
-                              onClick={() => setUserMenuOpen(false)}
-                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-600 transition-all duration-150 hover:bg-white/60 hover:text-slate-900"
-                            >
-                              <LayoutDashboard className="h-4 w-4" />
-                              Seller Dashboard
+                              <LayoutDashboard className="h-4 w-4 text-indigo-500" />
+                              Go to Dashboard
                             </Link>
                           )}
                         </div>

@@ -42,6 +42,8 @@ export default function SellerDashboardPage() {
   const [totalCallsCount, setTotalCallsCount] = useState(0);
   const [recentActivities, setRecentActivities] = useState([]);
   const [onlineAgents, setOnlineAgents] = useState(0);
+  const [statsError, setStatsError] = useState(null);
+  const [visitorsError, setVisitorsError] = useState(null);
 
   // Expanded premium stats states
   const [avgCallDuration, setAvgCallDuration] = useState(0);
@@ -56,6 +58,7 @@ export default function SellerDashboardPage() {
   };
 
   // Workflow states
+  const [allCalls, setAllCalls] = useState([]);
   const [revenueToday, setRevenueToday] = useState(0);
   const [conversionsToday, setConversionsToday] = useState(0);
   const [topSharedProducts, setTopSharedProducts] = useState([]);
@@ -71,6 +74,7 @@ export default function SellerDashboardPage() {
   // Load and subscribe to active visitor sessions via Supabase Realtime
   async function loadVisitorSessions() {
     if (!shopId) return;
+    setVisitorsError(null);
     try {
       const { data, error } = await supabase
         .from("visitor_sessions")
@@ -84,6 +88,7 @@ export default function SellerDashboardPage() {
       setVisitorSessions(data || []);
     } catch (err) {
       console.warn("Failed to load visitor sessions:", err);
+      setVisitorsError("Failed to retrieve visitor sessions.");
     }
   }
 
@@ -144,7 +149,6 @@ export default function SellerDashboardPage() {
     fetchVisitorCalls();
   }, [selectedVisitor, shopId]);
 
-  // Fetch standard KPI stats from database
   useEffect(() => {
     if (!shopId) {
       if (!shopLoading) setLoadingStats(false);
@@ -154,33 +158,38 @@ export default function SellerDashboardPage() {
     async function loadStats() {
       try {
         setLoadingStats(true);
+        setStatsError(null);
 
         // 1. Live Calls (Active Video Rooms)
-        const { data: rooms } = await supabase
+        const { data: rooms, error: roomsErr } = await supabase
           .from("video_rooms")
           .select("id")
           .eq("shop_id", shopId)
           .eq("status", "connected");
+        if (roomsErr) throw roomsErr;
         setLiveCalls(rooms?.length || 0);
 
         // 2. Missed Calls
-        const { data: missed } = await supabase
+        const { data: missed, error: missedErr } = await supabase
           .from("call_logs")
           .select("id")
           .eq("shop_id", shopId)
           .eq("status", "missed");
+        if (missedErr) throw missedErr;
         setMissedCalls(missed?.length || 0);
 
         // Total Calls
-        const { data: allCalls } = await supabase
+        const { data: allCallsData, error: allCallsErr } = await supabase
           .from("call_logs")
-          .select("id, status, duration_seconds, created_at")
+          .select("id, status, duration_seconds, created_at, revenue_generated")
           .eq("shop_id", shopId);
-        const callsCount = allCalls?.length || 0;
+        if (allCallsErr) throw allCallsErr;
+        setAllCalls(allCallsData || []);
+        const callsCount = allCallsData?.length || 0;
         setTotalCallsCount(callsCount);
 
         // Average call duration and Today's calls
-        const completedCalls = allCalls?.filter(c => c.status === "completed" && c.duration_seconds) || [];
+        const completedCalls = allCallsData?.filter(c => c.status === "completed" && c.duration_seconds) || [];
         const totalDuration = completedCalls.reduce((acc, c) => acc + Number(c.duration_seconds), 0);
         const avgDuration = completedCalls.length > 0 ? Math.round(totalDuration / completedCalls.length) : 0;
         setAvgCallDuration(avgDuration);
@@ -188,18 +197,19 @@ export default function SellerDashboardPage() {
         const todayStart = new Date();
         todayStart.setHours(0, 0, 0, 0);
 
-        const todayCalls = allCalls?.filter(c => {
+        const todayCalls = allCallsData?.filter(c => {
           const callDate = new Date(c.created_at);
           return callDate >= todayStart;
         }) || [];
         setTodaysCallsCount(todayCalls.length);
 
         // 3. Callback Requests
-        const { data: scheduled } = await supabase
+        const { data: scheduled, error: scheduledErr } = await supabase
           .from("callback_requests")
           .select("id")
           .eq("shop_id", shopId)
           .eq("status", "pending");
+        if (scheduledErr) throw scheduledErr;
         setCallbacks(scheduled?.length || 0);
         setWaitingCustomers(scheduled?.length || 0);
 
@@ -207,7 +217,7 @@ export default function SellerDashboardPage() {
         setSalesAssisted(0);
 
         // 4.5. Online Agents count & list
-        const { data: onlineAgs } = await supabase
+        const { data: onlineAgs, error: onlineAgsErr } = await supabase
           .from("shop_agents")
           .select(`
             *,
@@ -218,19 +228,24 @@ export default function SellerDashboardPage() {
           `)
           .eq("shop_members.shop_id", shopId)
           .eq("status", "online");
+        if (onlineAgsErr) throw onlineAgsErr;
         setOnlineAgents(onlineAgs?.length || 0);
         setAvailableAgentsList(onlineAgs || []);
 
-        // 4.6. Conversions / Revenue — marketplace orders removed, set to 0
-        setConversionsToday(0);
-        setRevenueToday(0);
+        // 4.6. Conversions / Revenue — calculated dynamically from database today calls
+        const revToday = todayCalls.reduce((acc, c) => acc + Number(c.revenue_generated || 0), 0);
+        setRevenueToday(revToday);
+
+        const convToday = todayCalls.filter(c => Number(c.revenue_generated || 0) > 0).length;
+        setConversionsToday(convToday);
 
         // 4.7. Top Shared Products
-        const { data: callProducts } = await supabase
+        const { data: callProducts, error: callProductsErr } = await supabase
           .from("call_logs")
           .select("metadata")
           .eq("shop_id", shopId)
           .not("metadata", "is", null);
+        if (callProductsErr) throw callProductsErr;
         
         const productFreq = {};
         callProducts?.forEach(c => {
@@ -245,22 +260,24 @@ export default function SellerDashboardPage() {
         setTopSharedProducts(sortedShared);
 
         // 4.8. Customers requiring follow-up
-        const { data: followUps } = await supabase
+        const { data: followUps, error: followUpsErr } = await supabase
           .from("call_logs")
           .select("id, metadata, created_at, status")
           .eq("shop_id", shopId)
           .or("metadata->>resolution_status.eq.Follow-up Required,status.eq.missed")
           .order("created_at", { ascending: false })
           .limit(3);
+        if (followUpsErr) throw followUpsErr;
         setFollowUpCustomers(followUps || []);
 
         // 5. Recent Activities
-        const { data: latestCallsData } = await supabase
+        const { data: latestCallsData, error: latestCallsDataErr } = await supabase
           .from("call_logs")
           .select("id, created_at, status, duration_seconds")
           .eq("shop_id", shopId)
           .order("created_at", { ascending: false })
           .limit(4);
+        if (latestCallsDataErr) throw latestCallsDataErr;
 
         const activities = (latestCallsData || []).map(c => ({
           id: c.id,
@@ -274,6 +291,7 @@ export default function SellerDashboardPage() {
 
       } catch (err) {
         console.warn("Failed to fetch live dashboard stats:", err);
+        setStatsError("Failed to fetch live dashboard statistics.");
       } finally {
         setLoadingStats(false);
       }
@@ -288,10 +306,11 @@ export default function SellerDashboardPage() {
   const queueLength = visitorSessions.filter(v => v.is_waiting_assistance).length;
   const inVideoCall = visitorSessions.filter(v => v.is_in_video_call).length;
   const conversionRate = useMemo(() => {
-    if (totalCallsCount === 0) return "0.0%";
-    const ordersCount = Math.round(totalCallsCount * 0.12); // Simulated flat conversion of 12% on consults
-    return `${((ordersCount / totalCallsCount) * 100).toFixed(1)}%`;
-  }, [totalCallsCount]);
+    const completed = allCalls.filter(c => c.status === "completed");
+    if (completed.length === 0) return "0.0%";
+    const revenueCalls = allCalls.filter(c => Number(c.revenue_generated || 0) > 0);
+    return `${((revenueCalls.length / completed.length) * 100).toFixed(1)}%`;
+  }, [allCalls]);
 
   // Personalized Greeting based on local time
   const greeting = useMemo(() => {
@@ -321,6 +340,11 @@ export default function SellerDashboardPage() {
 
   return (
     <div className="space-y-8 text-slate-900 max-w-7xl relative">
+      {statsError && (
+        <div className="flex items-start gap-2.5 rounded-3xl border border-red-200 bg-red-50 p-5 text-xs font-semibold text-red-650 shadow-sm">
+          <span>⚠️ {statsError} Some indicators might display fallback values. Please reload to retry.</span>
+        </div>
+      )}
          {/* Premium Dashboard Header Banner */}
       <div className="bg-gradient-to-br from-white via-white to-blue-50/15 rounded-3xl p-6 md:p-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.015)] space-y-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -599,14 +623,20 @@ export default function SellerDashboardPage() {
                 );
               })}
 
-              {visitorSessions.length === 0 && (
+              {visitorsError ? (
+                <tr>
+                  <td colSpan={5} className="py-12 text-center text-red-500 px-6 py-5 align-middle">
+                    <div className="flex flex-col items-center justify-center space-y-2">
+                      <p className="text-xs font-bold text-red-700">⚠️ {visitorsError}</p>
+                      <button onClick={() => loadVisitorSessions()} className="text-[10px] text-blue-600 font-bold hover:underline cursor-pointer">Retry</button>
+                    </div>
+                  </td>
+                </tr>
+              ) : visitorSessions.length === 0 && (
                 <tr>
                   <td colSpan={5} className="py-12 text-center text-slate-500 px-6 py-5 align-middle">
                     <div className="flex flex-col items-center justify-center space-y-2">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-slate-500">
-                        <Users className="h-5 w-5" />
-                      </div>
-                      <p className="text-xs font-bold text-slate-700">No Active Website Visitors</p>
+                      <span className="text-xs font-bold text-slate-700">No Active Website Visitors</span>
                       <p className="text-[10px] text-slate-500 max-w-[240px] leading-normal mx-auto">When shoppers browse your online storefront widget, they will appear here in real-time.</p>
                     </div>
                   </td>
@@ -846,7 +876,7 @@ export default function SellerDashboardPage() {
             {selectedVisitor.is_waiting_assistance && (
               <div className="p-6 border-t border-slate-100 bg-white">
                 <a 
-                  href="/seller/live" className="w-full py-3 bg-blue-600 rounded-2xl text-white font-bold text-xs uppercase tracking-wider text-center flex items-center justify-center gap-1.5 hover:bg-blue-500 transition-all active:scale-[0.98] shadow-lg shadow-blue-500/10"
+                  href="/dashboard/live" className="w-full py-3 bg-blue-600 rounded-2xl text-white font-bold text-xs uppercase tracking-wider text-center flex items-center justify-center gap-1.5 hover:bg-blue-500 transition-all active:scale-[0.98] shadow-lg shadow-blue-500/10"
                 >
                   <Video className="h-4 w-4" />
                   <span>Answer Call Room</span>

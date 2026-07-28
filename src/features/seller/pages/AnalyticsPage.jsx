@@ -35,6 +35,7 @@ export default function AnalyticsPage() {
   const [calls, setCalls] = useState([]);
   const [agents, setAgents] = useState([]);
   const [loadingCalls, setLoadingCalls] = useState(true);
+  const [error, setError] = useState(null);
 
   // Fetch calls & agents
   useEffect(() => {
@@ -43,12 +44,21 @@ export default function AnalyticsPage() {
     async function loadData() {
       try {
         setLoadingCalls(true);
+        setError(null);
         
-        // 1. Fetch call logs
-        const { data: callData, error: callError } = await supabase
+        // 1. Fetch call logs matching selected date range from database
+        let query = supabase
           .from("call_logs")
           .select("*")
           .eq("shop_id", shopId);
+
+        if (dateRange !== "all") {
+          const cutOff = new Date();
+          cutOff.setDate(cutOff.getDate() - Number(dateRange));
+          query = query.gte("created_at", cutOff.toISOString());
+        }
+
+        const { data: callData, error: callError } = await query;
 
         if (callError) throw callError;
         setCalls(callData || []);
@@ -70,13 +80,14 @@ export default function AnalyticsPage() {
 
       } catch (err) {
         console.warn("[Analytics] Load error:", err);
+        setError(err.message || "Failed to load platform analytics data.");
       } finally {
         setLoadingCalls(false);
       }
     }
 
     loadData();
-  }, [shopId]);
+  }, [shopId, dateRange]);
 
   // Date Filter helper
   const filteredData = useMemo(() => {
@@ -305,6 +316,26 @@ export default function AnalyticsPage() {
       <div className="space-y-6">
         <CardSkeleton count={6} />
         <ChartSkeleton />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 border border-red-100 text-red-650 font-semibold">
+          ⚠️
+        </div>
+        <h3 className="text-xl font-bold text-slate-900">Failed to Load Analytics</h3>
+        <p className="mt-2 text-sm text-slate-500 max-w-sm">
+          {error}
+        </p>
+        <button
+          onClick={() => setDateRange(prev => prev)}
+          className="mt-6 rounded-2xl bg-slate-950 px-5 py-3 text-xs font-bold text-white shadow-sm hover:bg-slate-900 transition-all cursor-pointer"
+        >
+          Retry Load
+        </button>
       </div>
     );
   }

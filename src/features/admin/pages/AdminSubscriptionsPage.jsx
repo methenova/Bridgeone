@@ -50,7 +50,7 @@ export default function AdminSubscriptionsPage() {
     const totalActive = shops.filter(s => s.plan_name === "basic" || s.plan_name === "pro").length;
     const basicCount = shops.filter(s => s.plan_name === "basic").length;
     const proCount = shops.filter(s => s.plan_name === "pro").length;
-    const freeCount = shops.filter(s => !s.plan_name || s.plan_name === "free").length;
+    const freeCount = shops.filter(s => !s.plan_name || s.plan_name === "starter").length;
     return { totalActive, basicCount, proCount, freeCount };
   }, [shops]);
 
@@ -93,9 +93,9 @@ export default function AdminSubscriptionsPage() {
   async function handleUpdateShopPlan(shopId, newPlan) {
     try {
       const { error } = await supabase
-        .from("shops")
-        .update({ plan_name: newPlan })
-        .eq("id", shopId);
+        .from("subscriptions")
+        .update({ plan_name: newPlan, plan: newPlan })
+        .eq("shop_id", shopId);
 
       if (error) throw error;
       toast.success("Merchant subscription updated successfully");
@@ -215,16 +215,16 @@ export default function AdminSubscriptionsPage() {
                             ? "bg-purple-500/10 text-purple-400 border-purple-500/20"
                             : "bg-slate-100 text-slate-500 border-slate-200"
                         }`}>
-                          {shop.plan_name || "free"}
+                          {shop.plan_name || "starter"}
                         </span>
                       </td>
                       <td className="py-3.5 px-2 text-right">
                         <select
-                          value={shop.plan_name || "free"}
+                          value={shop.plan_name || "starter"}
                           onChange={(e) => handleUpdateShopPlan(shop.id, e.target.value)}
                           className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] outline-none text-slate-700"
                         >
-                          <option value="free">Free Tier</option>
+                          <option value="starter">Starter</option>
                           <option value="basic">Basic Tier</option>
                           <option value="pro">Pro Tier</option>
                         </select>
@@ -266,7 +266,7 @@ export default function AdminSubscriptionsPage() {
                     <p className="text-[10px] text-slate-500 font-mono mt-0.5">Inv: #{inv.id.slice(0, 8).toUpperCase()}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-extrabold text-slate-900">₹{Number(inv.total).toLocaleString()}</p>
+                    <p className="font-extrabold text-slate-900">${Number(inv.total).toLocaleString()}</p>
                     <span className="inline-flex items-center gap-1 text-[8px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded uppercase mt-0.5">
                       Paid
                     </span>
@@ -298,7 +298,7 @@ export default function AdminSubscriptionsPage() {
                   <div className="flex justify-between items-start">
                     <div>
                       <h4 className="text-xs font-bold text-slate-700 uppercase">{plan.display_name}</h4>
-                      <p className="text-sm font-black text-slate-900 mt-0.5">₹{plan.monthly_price ?? plan.price ?? 0}/month</p>
+                      <p className="text-sm font-black text-slate-900 mt-0.5">${plan.monthly_price ?? plan.price ?? 0}/month</p>
                     </div>
                     <Button
                       onClick={() => handleStartEdit(plan)}
@@ -345,7 +345,7 @@ export default function AdminSubscriptionsPage() {
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wide tracking-wider flex items-center gap-1">
                     <DollarSign className="h-3 w-3 text-indigo-400" />
-                    <span>Monthly Price (₹)</span>
+                    <span>Monthly Price ($)</span>
                   </label>
                   <input
                     type="number"

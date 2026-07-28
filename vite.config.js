@@ -7,6 +7,12 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    {
+      name: "keep-stdin-alive",
+      configureServer() {
+        process.stdin.resume();
+      },
+    },
   ],
 
   server: {

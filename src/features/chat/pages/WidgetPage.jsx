@@ -5,6 +5,9 @@ import toast from "react-hot-toast";
 
 import { supabase } from "@/config/supabase";
 import { SellerPeer } from "@/services/video/sellerPeer";
+import { CallRouter } from "@/services/routing/callRouter";
+import { CallQueueService } from "@/services/queue/callQueueService";
+import { cache } from "@/services/cache/cacheService";
 
 // Check if current time in shop timezone is outside operational hours, shifts, or holidays
 function checkIsOutsideBusinessHours(shop) {
@@ -222,6 +225,19 @@ export default function WidgetPage() {
   // Widget flow states: 'form' | 'calling' | 'connected' | 'offline' | 'callback-submitted'
   const [flowState, setFlowState] = useState("form");
   const [hasRegisteredBefore, setHasRegisteredBefore] = useState(false);
+  const [currentQueueId, setCurrentQueueId] = useState(null);
+  const [visitorSessionId] = useState(() => {
+    try {
+      let cached = localStorage.getItem("bo_visitor_session_id");
+      if (!cached) {
+        cached = `visitor_${Math.random().toString(36).substring(2, 9)}`;
+        localStorage.setItem("bo_visitor_session_id", cached);
+      }
+      return cached;
+    } catch {
+      return `visitor_${Math.random().toString(36).substring(2, 9)}`;
+    }
+  });
 
   // Caller identity form
   const [name, setName] = useState("");
@@ -313,39 +329,47 @@ export default function WidgetPage() {
 
     async function loadShop() {
       try {
-        const { data: rawData, error } = await supabase
-          .from("shops")
-          .select(`
-            id, 
-            name:shop_name, 
-            logo_url, 
-            widget_enabled,
-            owner_id,
-            widget_settings ( primary_color, settings ),
-            shop_subscriptions ( plan_id ),
-            shop_integrations ( provider, settings )
-          `)
-          .eq("id", shopId)
-          .single();
+        const cacheKey = `shop-widget-config:${shopId}`;
+        let data = await cache.get(cacheKey);
 
-        if (error) throw error;
-        
-        const ws = rawData.widget_settings?.[0] || {};
-        const customInt = rawData.shop_integrations?.find(i => i.provider === 'custom')?.settings || {};
-        const sub = rawData.shop_subscriptions?.[0] || {};
+        if (!data) {
+          const { data: rawData, error } = await supabase
+            .from("shops")
+            .select(`
+              id, 
+              name:shop_name, 
+              logo_url, 
+              widget_enabled,
+              owner_id,
+              widget_settings ( primary_color, settings ),
+              shop_subscriptions ( plan_id ),
+              shop_integrations ( provider, settings )
+            `)
+            .eq("id", shopId)
+            .single();
 
-        const data = {
-          id: rawData.id,
-          name: rawData.name,
-          logo_url: rawData.logo_url,
-          widget_color: ws.primary_color || "#3b82f6",
-          is_online: rawData.widget_enabled,
-          plan_name: sub.plan_id || "free",
-          business_hours: ws.settings?.business_hours || "",
-          business_hours_config: ws.settings?.business_hours_config || null,
-          owner_id: rawData.owner_id,
-          api_key: customInt.api_key || ""
-        };
+          if (error) throw error;
+          
+          const ws = rawData.widget_settings?.[0] || {};
+          const customInt = rawData.shop_integrations?.find(i => i.provider === 'custom')?.settings || {};
+          const sub = rawData.shop_subscriptions?.[0] || {};
+
+          data = {
+            id: rawData.id,
+            name: rawData.name,
+            logo_url: rawData.logo_url,
+            widget_color: ws.primary_color || "#3b82f6",
+            is_online: rawData.widget_enabled,
+            plan_name: sub.plan_id || "starter",
+            business_hours: ws.settings?.business_hours || "",
+            business_hours_config: ws.settings?.business_hours_config || null,
+            owner_id: rawData.owner_id,
+            api_key: customInt.api_key || ""
+          };
+
+          // Cache config for 5 minutes (300 seconds)
+          await cache.set(cacheKey, data, 300);
+        }
 
         setShop(data);
         window.BridgeOneShopId = shopId;
@@ -361,7 +385,7 @@ export default function WidgetPage() {
           .gte("created_at", firstDay);
 
         const currentCalls = callCount || 0;
-        const plan = data.plan_name || "free";
+        const plan = data.plan_name || "starter";
 
         // Query plans limit configuration from db
         const { data: planInfo } = await supabase
@@ -374,21 +398,17 @@ export default function WidgetPage() {
 
         const isClosed = checkIsOutsideBusinessHours(data);
 
-        // Fetch active online agents via shop_members join
-        const { data: onlineAgsData } = await supabase
-          .from("shop_agents")
-          .select(`
-            id,
-            status,
-            shop_member:shop_member_id (
-              shop_id
-            )
-          `)
-          .eq("status", "online");
-        const filteredOnline = (onlineAgsData || []).filter(
-          a => a.shop_member && a.shop_member.shop_id === shopId
-        );
-        setOnlineAgentsCount(filteredOnline.length);
+        // Fetch active online agents via agent_presence table (heartbeat within 90s)
+        const threshold = new Date(Date.now() - 90000).toISOString();
+        const { data: onlinePresences } = await supabase
+          .from("agent_presence")
+          .select("user_id, status, last_seen")
+          .eq("shop_id", shopId)
+          .eq("status", "online")
+          .gte("last_seen", threshold);
+        
+        const activeOnlineUserIds = new Set((onlinePresences || []).map(p => p.user_id));
+        setOnlineAgentsCount(activeOnlineUserIds.size);
 
         // Fetch all shop agents with display names
         const { data: allAgsData } = await supabase
@@ -405,13 +425,17 @@ export default function WidgetPage() {
           `);
         const teamAgs = (allAgsData || []).filter(
           a => a.shop_member && a.shop_member.shop_id === shopId
-        ).map(a => ({
-          id: a.id,
-          status: a.status,
-          is_online: a.status === "online",
-          display_name: a.display_name || a.shop_member?.profiles?.full_name || "Agent",
-          avatar_url: a.shop_member?.profiles?.avatar_url || null,
-        }));
+        ).map(a => {
+          const profileId = a.shop_member?.profile_id;
+          const isOnline = activeOnlineUserIds.has(profileId);
+          return {
+            id: a.id,
+            status: isOnline ? "online" : "offline",
+            is_online: isOnline,
+            display_name: a.display_name || a.shop_member?.profiles?.full_name || "Agent",
+            avatar_url: a.shop_member?.profiles?.avatar_url || null,
+          };
+        });
         setAgentsList(teamAgs);
 
         // Fetch all products for the shop to match referrer URLs
@@ -486,22 +510,18 @@ export default function WidgetPage() {
       .channel(`widget-agents-${shopId}`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "shop_agents" },
+        { event: "*", schema: "public", table: "agent_presence", filter: `shop_id=eq.${shopId}` },
         async () => {
-          const { data: onlineAgsData } = await supabase
-            .from("shop_agents")
-            .select(`
-              id,
-              status,
-              shop_member:shop_member_id (
-                shop_id
-              )
-            `)
-            .eq("status", "online");
-          const filteredOnline = (onlineAgsData || []).filter(
-            a => a.shop_member && a.shop_member.shop_id === shopId
-          );
-          setOnlineAgentsCount(filteredOnline.length);
+          const threshold = new Date(Date.now() - 90000).toISOString();
+          const { data: onlinePresences } = await supabase
+            .from("agent_presence")
+            .select("user_id, status, last_seen")
+            .eq("shop_id", shopId)
+            .eq("status", "online")
+            .gte("last_seen", threshold);
+          
+          const activeOnlineUserIds = new Set((onlinePresences || []).map(p => p.user_id));
+          setOnlineAgentsCount(activeOnlineUserIds.size);
 
           const { data: allAgsData } = await supabase
             .from("shop_agents")
@@ -517,13 +537,17 @@ export default function WidgetPage() {
             `);
           const teamAgs = (allAgsData || []).filter(
             a => a.shop_member && a.shop_member.shop_id === shopId
-          ).map(a => ({
-            id: a.id,
-            status: a.status,
-            is_online: a.status === "online",
-            display_name: a.display_name || a.shop_member?.profiles?.full_name || "Agent",
-            avatar_url: a.shop_member?.profiles?.avatar_url || null,
-          }));
+          ).map(a => {
+            const profileId = a.shop_member?.profile_id;
+            const isOnline = activeOnlineUserIds.has(profileId);
+            return {
+              id: a.id,
+              status: isOnline ? "online" : "offline",
+              is_online: isOnline,
+              display_name: a.display_name || a.shop_member?.profiles?.full_name || "Agent",
+              avatar_url: a.shop_member?.profiles?.avatar_url || null,
+            };
+          });
           setAgentsList(teamAgs);
         }
       )
@@ -625,37 +649,29 @@ export default function WidgetPage() {
     if (flowState !== "calling" || !shopId) return;
 
     let active = true;
-    let roomCreatedTime = null;
-    const roomRecordId = peerRef.current?.roomId;
 
     async function fetchQueuePosition() {
       if (!active) return;
       try {
-        if (!roomCreatedTime && roomRecordId) {
-          const { data: currentRoom } = await supabase
-            .from("video_rooms")
-            .select("created_at")
-            .eq("id", roomRecordId)
+        if (currentQueueId) {
+          const { data: qRecord } = await supabase
+            .from("call_queues")
+            .select("*")
+            .eq("id", currentQueueId)
             .maybeSingle();
-          if (currentRoom) {
-            roomCreatedTime = currentRoom.created_at;
+
+          if (qRecord && active) {
+            setQueuePosition(qRecord.position);
+
+            // Automatic Queue Updates: Agent answered the queue request!
+            if (qRecord.status === "answered") {
+              toast.success("An advisor is now available! Connecting...");
+              setCurrentQueueId(null); // Clear queue ID
+              
+              // Proceed with WebRTC connection
+              handleStartCall(null, activeProductInquiry);
+            }
           }
-        }
-
-        // Query all rooms created before or at the same time as our room that are not yet answered
-        let query = supabase
-          .from("video_rooms")
-          .select("id", { count: "exact" })
-          .eq("shop_id", shopId)
-          .is("answer", null);
-
-        if (roomCreatedTime) {
-          query = query.lte("created_at", roomCreatedTime);
-        }
-
-        const { count, error } = await query;
-        if (!error && active) {
-          setQueuePosition(count || 1);
         }
       } catch (err) {
         console.warn("Failed to fetch queue position:", err);
@@ -664,14 +680,12 @@ export default function WidgetPage() {
 
     fetchQueuePosition();
 
-    // Poll every 3 seconds for safety, and subscribe to video_rooms updates
-    const interval = setInterval(fetchQueuePosition, 3000);
-
+    // Subscribe to call_queues updates
     const queueChannel = supabase
       .channel(`widget-queue-${shopId}`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "video_rooms", filter: `shop_id=eq.${shopId}` },
+        { event: "*", schema: "public", table: "call_queues", filter: `shop_id=eq.${shopId}` },
         () => {
           fetchQueuePosition();
         }
@@ -680,10 +694,9 @@ export default function WidgetPage() {
 
     return () => {
       active = false;
-      clearInterval(interval);
       supabase.removeChannel(queueChannel);
     };
-  }, [flowState, shopId, peerRef.current?.roomId]);
+  }, [flowState, shopId, currentQueueId, activeProductInquiry]);
 
   // 2. Attach video elements on state changes
   useEffect(() => {
@@ -695,6 +708,16 @@ export default function WidgetPage() {
   useEffect(() => {
     if (remoteVideoRef.current && remoteStream) {
       remoteVideoRef.current.srcObject = remoteStream;
+      // BC-1 FIX: Safari (desktop + iOS) blocks autoPlay on unmuted video elements
+      // unless playback is explicitly triggered. Setting srcObject alone is not
+      // sufficient — .play() must be called after assignment.
+      // The NotAllowedError is expected on first load before user interaction and
+      // is handled gracefully; a subsequent user gesture will unblock playback.
+      remoteVideoRef.current.play().catch((err) => {
+        if (err.name !== "AbortError") {
+          console.warn("[WidgetPage] Remote video autoplay blocked (Safari):", err.name, "— will resume on user interaction");
+        }
+      });
     }
   }, [remoteStream, flowState]);
 
@@ -807,13 +830,50 @@ export default function WidgetPage() {
       if (logErr) throw logErr;
       currentCallLogIdRef.current = log.id;
 
+      // Route the call via the Call Router Engine
+      const routeResult = await CallRouter.routeCall(
+        shopId,
+        "video",
+        { name: name.trim(), email: email.trim(), phone: phone.trim(), referrer: window.location.href },
+        { strategy: shop?.widget_settings?.[0]?.settings?.routing_rules || "round-robin" }
+      );
+
+      if (!routeResult.success) {
+        let errorMsg = "No online agents are currently available to take your call";
+        if (routeResult.reason === "outside_business_hours") {
+          errorMsg = "We are currently closed. Please leave a message or request a callback.";
+        } else if (routeResult.reason === "subscription_inactive") {
+          errorMsg = "Live video consulting is temporarily suspended for this store.";
+        }
+        
+        if (routeResult.queueRequired) {
+          toast("Placing you in the queue. All advisors are busy...");
+          const res = await CallQueueService.addToQueue(shopId, visitorSessionId, "video");
+          if (res.success && res.queue) {
+            setCurrentQueueId(res.queue.id);
+            setQueuePosition(res.queue.position);
+          }
+          // Skip WebRTC peer initialization for now; they will poll queue position in the calling view
+          setFlowState("calling");
+          return;
+        }
+
+        toast.error(errorMsg);
+        if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+        setLocalStream(null);
+        setFlowState("form");
+        return;
+      }
+
+      const assignedAgentId = routeResult.agentId;
+
       // 2. Setup Unique Room Code (Embedding log.id for the LivePage to parse)
       const roomCode = `call_${shopId}_${log.id}_${Math.random().toString(36).substring(2, 9)}`;
 
       // 3. Instantiate SellerPeer (Host of Room)
       const peer = new SellerPeer(
         shopId,
-        shop?.owner_id, // Satisfy FK constraint by using the shop owner's valid profile ID
+        assignedAgentId, // Use the dynamically routed agent ID!
         mediaStream,
         // onRemoteStream callback
         (remStream) => {
@@ -853,6 +913,12 @@ export default function WidgetPage() {
 
   // 5. Handle Hanging Up Call
   async function handleHangUp() {
+    // If we have an active queue record, cancel it
+    if (currentQueueId) {
+      await CallQueueService.cancelQueue(currentQueueId);
+      setCurrentQueueId(null);
+    }
+
     // Stop local video tracks
     if (localStream) {
       localStream.getTracks().forEach((track) => track.stop());

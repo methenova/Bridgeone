@@ -53,77 +53,24 @@ export default function AdminDashboardPage() {
     async function loadMetrics() {
       try {
         setLoadingMetrics(true);
-        const today = new Date();
-        today.setHours(0,0,0,0);
-        const todayIso = today.toISOString();
 
-        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString();
+        const { data, error } = await supabase.rpc("get_admin_dashboard_stats");
+        if (error) throw error;
 
-        // 1. Fetch Shops (Organizations) Breakdown
-        const { data: shops, error: shopsErr } = await supabase
-          .from("shops")
-          .select("id, is_verified, widget_enabled, created_at, shop_name, shop_subscriptions ( plan_id )");
-        
-        if (shopsErr) throw shopsErr;
-
-        setTotalOrgs(shops?.length || 0);
-        setActiveOrgs(shops?.filter(s => s.is_verified).length || 0);
-        setSuspendedOrgs(shops?.filter(s => !s.is_verified).length || 0);
-        setActiveWidgets(shops?.filter(s => s.widget_enabled).length || 0);
-
-        // Subscriptions count (shops with basic or pro plan)
-        setActiveSubs(shops?.filter(s => {
-          const planArray = Array.isArray(s.shop_subscriptions) ? s.shop_subscriptions : [s.shop_subscriptions];
-          const planId = planArray[0]?.plan_id;
-          return planId === "basic" || planId === "pro";
-        }).length || 0);
-
-        // Set Recent Registrations
-        const sortedShops = [...(shops || [])].sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
-        setRecentRegistrations(sortedShops.slice(0, 5));
-
-        // 2. Fetch Profiles roles breakdown
-        const { data: profiles, error: profErr } = await supabase
-          .from("profiles")
-          .select("role");
-        
-        if (profErr) throw profErr;
-        setTotalAdmins(profiles?.filter(p => p.role === "seller").length || 0);
-        setTotalAgents(profiles?.filter(p => p.role === "agent" || p.role === "manager").length || 0);
-
-        // 3. Fetch Calls count
-        // Live calls count
-        const { count: liveCount, error: liveErr } = await supabase
-          .from("video_rooms")
-          .select("id", { count: "exact", head: true })
-          .eq("status", "connected");
-        
-        if (liveErr) throw liveErr;
-        setLiveCalls(liveCount || 0);
-
-        // Calls today
-        const { count: todayCount } = await supabase
-          .from("call_logs")
-          .select("id", { count: "exact", head: true })
-          .gte("created_at", todayIso);
-        setCallsToday(todayCount || 0);
-
-        // Monthly calls
-        const { count: monthCount } = await supabase
-          .from("call_logs")
-          .select("id", { count: "exact", head: true })
-          .gte("created_at", firstDayOfMonth);
-        setMonthlyCalls(monthCount || 0);
-
-        // 4. Fetch Recent Calls details
-        const { data: calls } = await supabase
-          .from("call_logs")
-          .select("*, shops(shop_name)")
-          .order("created_at", { ascending: false })
-          .limit(5);
-        setRecentCalls(calls || []);
-
-        // 5. Recent Payments \u2014 marketplace orders removed
+        if (data) {
+          setTotalOrgs(data.totalOrgs || 0);
+          setActiveOrgs(data.activeOrgs || 0);
+          setSuspendedOrgs(data.suspendedOrgs || 0);
+          setTotalAdmins(data.totalAdmins || 0);
+          setTotalAgents(data.totalAgents || 0);
+          setActiveWidgets(data.activeWidgets || 0);
+          setLiveCalls(data.liveCalls || 0);
+          setCallsToday(data.callsToday || 0);
+          setMonthlyCalls(data.monthlyCalls || 0);
+          setActiveSubs(data.activeSubs || 0);
+          setRecentCalls(data.recentCalls || []);
+          setRecentRegistrations(data.recentRegistrations || []);
+        }
         setRecentPayments([]);
 
       } catch (err) {
@@ -466,7 +413,7 @@ export default function AdminDashboardPage() {
 
             {/* Broadcast announcements link */}
             <Link
-              to="/admin/notifications"
+              to="/dashboard/notifications"
               className="w-full flex items-center justify-between px-4 py-3 bg-slate-50/50 border border-slate-100 hover:bg-slate-50 transition-all rounded-xl text-left cursor-pointer group hover:-translate-y-0.5 duration-200"
             >
               <div>
@@ -478,7 +425,7 @@ export default function AdminDashboardPage() {
 
             {/* Platform limits settings link */}
             <Link
-              to="/admin/settings"
+              to="/dashboard/settings"
               className="w-full flex items-center justify-between px-4 py-3 bg-slate-50/50 border border-slate-100 hover:bg-slate-50 transition-all rounded-xl text-left cursor-pointer group hover:-translate-y-0.5 duration-200"
             >
               <div>
@@ -508,7 +455,7 @@ export default function AdminDashboardPage() {
                 <p className="text-xs text-slate-500">Shops awaiting reviews</p>
               </div>
               <Link 
-                to="/admin/organizations" 
+                to="/dashboard/organizations" 
                 className="flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold text-blue-400 hover:text-blue-500 transition-colors uppercase bg-blue-50 border border-blue-100 rounded-lg"
               >
                 <span>View All</span>
@@ -522,7 +469,7 @@ export default function AdminDashboardPage() {
                   <div>
                     <p className="font-bold text-slate-900 text-xs">{shop.shop_name}</p>
                     <p className="text-[10px] text-slate-500 mt-0.5 font-mono">
-                      Tier: <span className="uppercase text-slate-700 font-bold">{shop.plan_name || "free"}</span>
+                      Tier: <span className="uppercase text-slate-700 font-bold">{shop.plan_name || "starter"}</span>
                     </p>
                   </div>
                   <span className={`inline-flex items-center px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider ${
@@ -555,7 +502,7 @@ export default function AdminDashboardPage() {
                 <p className="text-xs text-slate-500">Live conversation histories</p>
               </div>
               <Link 
-                to="/admin/calls" 
+                to="/dashboard/calls" 
                 className="flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold text-blue-400 hover:text-blue-500 transition-colors uppercase bg-blue-50 border border-blue-100 rounded-lg"
               >
                 <span>View All</span>

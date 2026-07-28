@@ -1,16 +1,26 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.8";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-api-key",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+const corsAllowedHeaders = "authorization, x-client-info, apikey, content-type, x-api-key";
+const corsAllowedMethods = "POST, OPTIONS";
+
+// Build CORS headers after the shop's domain is known.
+// Returns '*' only for preflight (OPTIONS) where no credentials are involved.
+function buildCorsHeaders(allowedOrigin: string): Record<string, string> {
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Headers": corsAllowedHeaders,
+    "Access-Control-Allow-Methods": corsAllowedMethods,
+  };
+}
 
 serve(async (req) => {
   // 1. CORS Preflight Handshake
+  // OPTIONS requests don't carry credentials, so '*' is acceptable here.
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+    return new Response("ok", {
+      headers: buildCorsHeaders("*")
+    });
   }
 
   try {
@@ -27,7 +37,7 @@ serve(async (req) => {
     if (!action || !shopId) {
       return new Response(
         JSON.stringify({ error: "Missing required parameters: action, shopId" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 400, headers: { ...buildCorsHeaders("null"), "Content-Type": "application/json" } }
       );
     }
 
@@ -41,7 +51,7 @@ serve(async (req) => {
     if (shopError || !shop) {
       return new Response(
         JSON.stringify({ error: "Shop not found or inactive" }),
-        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 404, headers: { ...buildCorsHeaders("null"), "Content-Type": "application/json" } }
       );
     }
 
@@ -50,25 +60,34 @@ serve(async (req) => {
     if (shop.api_key && shop.api_key !== requestKey) {
       return new Response(
         JSON.stringify({ error: "Invalid API Key" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 401, headers: { ...buildCorsHeaders("null"), "Content-Type": "application/json" } }
       );
     }
 
-    // 5. Verify Origin Domain
+    // 5. Verify Origin Domain + compute allowedOrigin for subsequent CORS headers.
+    // SEC-3 FIX: We echo back the request's origin (exact match) instead of '*',
+    // so only the verified shop domain receives a permissive CORS header.
     const origin = req.headers.get("origin") || req.headers.get("referer") || "";
+    let allowedOrigin = "null"; // default: blocked
+
     if (shop.shopify_domain && shop.shopify_domain !== "*") {
       const cleanDomain = shop.shopify_domain.replace(/^(https?:\/\/)?(www\.)?/, "").split("/")[0].split(":")[0];
       const originHost = origin.replace(/^(https?:\/\/)?(www\.)?/, "").split("/")[0].split(":")[0];
 
-      const isLocalhost = originHost === "localhost" || originHost === "127.0.0.1" || originHost === "" || originHost.match(/^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)/);
+      const isLocalhost = originHost === "localhost" || originHost === "127.0.0.1" || originHost === "" || originHost.match(/^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\./)/);
       const isPlatformHost = originHost.includes("digimirai.com") || originHost.includes("bridgeone.cloud") || originHost.includes("localhost");
 
       if (!isLocalhost && !isPlatformHost && cleanDomain !== "localhost" && !originHost.includes(cleanDomain)) {
         return new Response(
           JSON.stringify({ error: `Unauthorized origin: ${origin}` }),
-          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 403, headers: { ...buildCorsHeaders("null"), "Content-Type": "application/json" } }
         );
       }
+      // Origin is verified — echo it back so the browser accepts the response.
+      allowedOrigin = origin || "*";
+    } else {
+      // No domain restriction configured for this shop — allow any origin.
+      allowedOrigin = origin || "*";
     }
 
     // 6. Database-Backed IP & Shop Rate Limiting (Fail-Safe)
@@ -87,7 +106,7 @@ serve(async (req) => {
       if (ipLimit && ipLimit > 40) {
         return new Response(
           JSON.stringify({ error: "Too many requests. IP rate limit exceeded." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 429, headers: { ...buildCorsHeaders(allowedOrigin), "Content-Type": "application/json" } }
         );
       }
 
@@ -100,7 +119,7 @@ serve(async (req) => {
       if (shopLimit && shopLimit > 150) {
         return new Response(
           JSON.stringify({ error: "Shop rate limit exceeded." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 429, headers: { ...buildCorsHeaders(allowedOrigin), "Content-Type": "application/json" } }
         );
       }
     } catch (_rateErr) {
@@ -230,7 +249,7 @@ serve(async (req) => {
       const { data, error } = await supabaseAdmin
         .from("video_rooms")
         .insert({
-          room_key: roomCode,
+          room_code: roomCode,
           shop_id: shopId,
           agent_id: validAgentId,
           visitor_id: visitorId,
@@ -388,26 +407,26 @@ serve(async (req) => {
     } else {
       return new Response(
         JSON.stringify({ error: `Unknown action: ${action}` }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 400, headers: { ...buildCorsHeaders(allowedOrigin), "Content-Type": "application/json" } }
       );
     }
 
     if (writeError) {
       return new Response(
         JSON.stringify({ error: writeError.message }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 500, headers: { ...buildCorsHeaders(allowedOrigin), "Content-Type": "application/json" } }
       );
     }
 
     return new Response(
       JSON.stringify(result),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 200, headers: { ...buildCorsHeaders(allowedOrigin), "Content-Type": "application/json" } }
     );
 
   } catch (err) {
     return new Response(
       JSON.stringify({ error: err.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 500, headers: { ...buildCorsHeaders("null"), "Content-Type": "application/json" } }
     );
   }
 });

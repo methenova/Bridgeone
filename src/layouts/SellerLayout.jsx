@@ -15,20 +15,21 @@ import {
   Bell,
   Layers,
   Settings,
-  User
+  User,
+  Store
 } from "lucide-react";
 
 const menu = [
-  { title: "Dashboard", icon: LayoutDashboard, path: "/seller", badge: null },
-  { title: "Live Calls", icon: Video, path: "/seller/live", badge: "Live" },
-  { title: "Customers", icon: Users, path: "/seller/customers", badge: null },
-  { title: "Agents", icon: Shield, path: "/seller/agents", badge: null },
-  { title: "Widget", icon: Sliders, path: "/seller/widget", badge: null },
-  { title: "Analytics", icon: BarChart3, path: "/seller/analytics", badge: null },
-  { title: "Notifications", icon: Bell, path: "/seller/notifications", badge: null },
-  { title: "Integrations", icon: Layers, path: "/seller/integrations", badge: null },
-  { title: "Settings", icon: Settings, path: "/seller/settings", badge: null },
-  { title: "Profile", icon: User, path: "/seller/profile", badge: null },
+  { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard", badge: null },
+  { title: "Live Calls", icon: Video, path: "/dashboard/live", badge: "Live" },
+  { title: "Customers", icon: Users, path: "/dashboard/customers", badge: null },
+  { title: "Agents", icon: Shield, path: "/dashboard/agents", badge: null },
+  { title: "Widget", icon: Sliders, path: "/dashboard/widget", badge: null },
+  { title: "Analytics", icon: BarChart3, path: "/dashboard/analytics", badge: null },
+  { title: "Notifications", icon: Bell, path: "/dashboard/notifications", badge: null },
+  { title: "Integrations", icon: Layers, path: "/dashboard/integrations", badge: null },
+  { title: "Settings", icon: Settings, path: "/dashboard/settings", badge: null },
+  { title: "Shop Manager", icon: Store, path: "/dashboard/profile", badge: null },
 ];
 
 export default function SellerLayout() {
@@ -63,15 +64,15 @@ export default function SellerLayout() {
     const ringtone = new Audio("https://assets.mixkit.co/active_storage/sfx/2870/2870-84.wav");
     ringtone.loop = true;
 
-    // Subscription A: Table notifications (Incoming/Missed calls, callbacks)
-    const notifSub = supabase.channel(`global-notif-insert-${shopId}`)
+    // Single consolidated channel for all Postgres changes updates to minimize sockets and memory leaks
+    const globalSellerSub = supabase.channel(`global-seller-channel-${shopId}`)
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "notifications", filter: `shop_id=eq.${shopId}` },
         (payload) => {
           const notif = payload.new;
           if (notif.is_read) return;
-          if (notif.type === "incoming_call") return; // Handled dynamically by callsSub to allow auto-closing
+          if (notif.type === "incoming_call") return; // Handled dynamically below to allow auto-closing
 
           chime.play().catch(() => {});
 
@@ -83,10 +84,6 @@ export default function SellerLayout() {
           }
         }
       )
-      .subscribe();
-
-    // Subscription B: Table messages (Customer messages)
-    const msgSub = supabase.channel(`global-msg-insert-${shopId}`)
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "messages", filter: `shop_id=eq.${shopId}` },
@@ -113,10 +110,6 @@ export default function SellerLayout() {
           }
         }
       )
-      .subscribe();
-
-    // Subscription C: Table shop_agents (Agent Presence Updates)
-    const agentSub = supabase.channel(`global-agent-update-${shopId}`)
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "shop_agents", filter: `shop_id=eq.${shopId}` },
@@ -145,16 +138,12 @@ export default function SellerLayout() {
           }
         }
       )
-      .subscribe();
-
-    // Subscription D: Table video_rooms (Incoming Video Calls Global Popup)
-    const callsSub = supabase.channel(`global-calls-insert-${shopId}`)
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "video_rooms", filter: `shop_id=eq.${shopId}` },
         (payload) => {
           const room = payload.new;
-          const roomCode = room.room_key || room.room_code || "";
+          const roomCode = room.room_code || "";
           if (room.status !== "waiting" && room.status !== "ringing" && room.status !== "connected") return;
           
           ringingCallsRef.current.set(room.id, room);
@@ -174,9 +163,9 @@ export default function SellerLayout() {
           }
 
           // Auto-navigate to Live page to accept the call immediately
-          if (window.location.pathname !== "/seller/live") {
+          if (window.location.pathname !== "/dashboard/live") {
             toast.success("Incoming call — connecting...", { duration: 2000 });
-            navigate("/seller/live");
+            navigate("/dashboard/live");
           }
         }
       )
@@ -235,7 +224,7 @@ export default function SellerLayout() {
             supabase.from("notifications").delete().match({ shop_id: shopId, type: "incoming_call" }).then();
             
             // Only show missed call toast if not on the Live page (Live page shows its own)
-            if (window.location.pathname !== "/seller/live") {
+            if (window.location.pathname !== "/dashboard/live") {
               toast.error("Missed Video Call", { id: `missed-${roomId}`, duration: 5000, position: "top-center" });
             }
           }
@@ -244,10 +233,7 @@ export default function SellerLayout() {
       .subscribe();
 
     return () => {
-      supabase.removeChannel(notifSub);
-      supabase.removeChannel(msgSub);
-      supabase.removeChannel(agentSub);
-      supabase.removeChannel(callsSub);
+      supabase.removeChannel(globalSellerSub);
     };
   }, [shopId, profile?.id, navigate]);
 
@@ -259,13 +245,13 @@ export default function SellerLayout() {
       const path = location.pathname;
       let typesToMark = [];
 
-      if (path === "/seller/live") {
+      if (path === "/dashboard/live") {
         typesToMark = ["incoming_call", "missed_call"];
-      } else if (path === "/seller/callbacks") {
+      } else if (path === "/dashboard/callbacks") {
         typesToMark = ["callback_request"];
-      } else if (path === "/seller/chat") {
+      } else if (path === "/dashboard/chat") {
         typesToMark = ["new_message"];
-      } else if (path === "/seller/agents") {
+      } else if (path === "/dashboard/agents") {
         typesToMark = ["system"];
       }
 
@@ -294,7 +280,7 @@ export default function SellerLayout() {
     );
   }
 
-  if (profile?.role !== "seller" && profile?.role !== "admin") {
+  if (profile?.role !== "seller" && profile?.role !== "owner" && profile?.role !== "agent" && profile?.role !== "admin" && profile?.role !== "super_admin") {
     return <Navigate to="/" replace />;
   }
 
@@ -303,13 +289,22 @@ export default function SellerLayout() {
     navigate("/login");
   }
 
+  // Filter menu items for Agents
+  const filteredMenu = menu.filter(item => {
+    if (profile?.role === "agent") {
+      // Hide owner-only features from agents
+      return !["Agents", "Widget", "Integrations", "Analytics", "Notifications"].includes(item.title);
+    }
+    return true;
+  });
+
   return (
     <PremiumLayout
-      menuItems={menu}
+      menuItems={filteredMenu}
       profile={profile}
       onLogout={handleLogout}
       workspaceName={shop?.shop_name || "My Store"}
-      baseRoute="/seller"
+      baseRoute="/dashboard"
       marketplaceRoute="/"
       shopId={shopId}
     />

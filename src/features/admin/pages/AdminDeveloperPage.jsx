@@ -161,25 +161,26 @@ export default function AdminDeveloperPage() {
               
               <div className="space-y-4">
                 {webhooks.map(wh => (
-                  <div key={wh.id} className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-mono text-slate-800 text-xs font-bold truncate max-w-md">{wh.url}</p>
-                        <p className="text-[10px] text-slate-500 mt-1">Secret: <span className="font-mono">{wh.secret}</span></p>
+                  <div key={wh.id} className="rounded-xl border border-slate-200 bg-white p-4 space-y-3 overflow-hidden">
+                    <div className="flex items-start gap-3">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-mono text-slate-800 text-xs font-bold truncate">{wh.url}</p>
+                        <p className="text-[10px] text-slate-500 mt-1 truncate">Secret: <span className="font-mono">{wh.secret}</span></p>
                       </div>
                       
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 shrink-0">
                         <span className="inline-flex items-center rounded bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[9px] font-bold text-emerald-400 uppercase">
                           {wh.status}
                         </span>
                         
-                        <Button
+                        <button
+                          type="button"
                           onClick={() => handleDeleteWebhook(wh.id)}
-                          className="text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
+                          className="flex items-center justify-center h-8 w-8 rounded-lg bg-red-50 border border-red-200 text-red-500 hover:text-red-600 hover:bg-red-100 transition-colors cursor-pointer shrink-0"
                           title="Unregister Webhook"
                         >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
                       </div>
                     </div>
 
@@ -206,18 +207,18 @@ export default function AdminDeveloperPage() {
 
             <div className="space-y-3 text-xs">
               {deliveryLogs.map(log => (
-                <div key={log.id} className="flex justify-between items-center p-3 rounded-lg border border-slate-200 bg-white leading-normal">
-                  <div>
+                <div key={log.id} className="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-white leading-normal overflow-hidden">
+                  <div className="min-w-0 flex-1">
                     <p className="font-bold text-slate-900 text-xs">{log.event}</p>
-                    <p className="text-[9px] text-slate-500 font-mono mt-0.5 truncate max-w-[150px]">{log.url}</p>
+                    <p className="text-[9px] text-slate-500 font-mono mt-0.5 truncate">{log.url}</p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right shrink-0">
                     <span className={`inline-flex px-1.5 py-0.5 rounded text-[9px] font-bold ${
                       log.status === 200 ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"
                     }`}>
                       {log.status}
                     </span>
-                    <p className="text-[9px] text-slate-500 mt-1 font-mono">{log.time}</p>
+                    <p className="text-[9px] text-slate-500 mt-1 font-mono whitespace-nowrap">{log.time}</p>
                   </div>
                 </div>
               ))}

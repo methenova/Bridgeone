@@ -2,6 +2,7 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import ProtectedRoute from "@/components/common/ProtectedRoute";
+import { RoleSettingsPage, RoleCallsPage, RoleAnalyticsPage, RoleNotificationsPage } from "@/routes/RoleRouter";
 
 // Loadable utility wrapper
 const Loadable = (Component) => (
@@ -18,26 +19,26 @@ const Loadable = (Component) => (
 import PublicLayout from "@/layouts/PublicLayout";
 import AuthLayout from "@/layouts/AuthLayout";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import SellerLayout from "@/layouts/SellerLayout";
+import OnboardingLayout from "@/features/onboarding/components/OnboardingLayout";
 
 // Landing
 import LandingPage from "@/features/landing/LandingPage";
 
-// Authentication
-import LoginPage from "@/features/auth/pages/LoginPage";
-import RegisterPage from "@/features/auth/pages/RegisterPage";
-
-// Dashboard
+// Dashboard Selector
 import DashboardPage from "@/features/dashboard/DashboardPage";
 
-// Seller
-import SellerDashboardPage from "@/features/seller/pages/SellerDashboardPage";
-import MyShopPage from "@/features/seller/pages/MyShopPage";
-import ProductsPage from "@/features/seller/pages/ProductsPage";
-import OrdersPage from "@/features/seller/pages/OrdersPage";
-import AnalyticsPage from "@/features/seller/pages/AnalyticsPage";
+// Lazy Load Auth Pages
+const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
+const RegisterPage = lazy(() => import("@/features/auth/pages/RegisterPage"));
+const VerifyEmailPage = lazy(() => import("@/features/auth/pages/VerifyEmailPage"));
 
-// Lazy Load Pages
+// Lazy Load Seller Pages
+const MyShopPage = lazy(() => import("@/features/seller/pages/MyShopPage"));
+const ProductsPage = lazy(() => import("@/features/seller/pages/ProductsPage"));
+const OrdersPage = lazy(() => import("@/features/seller/pages/OrdersPage"));
+const AnalyticsPage = lazy(() => import("@/features/seller/pages/AnalyticsPage"));
+
+// Lazy Load Seller Pages
 const LivePage = lazy(() => import("@/features/seller/pages/LivePage"));
 const ChatInboxPage = lazy(() => import("@/features/seller/pages/ChatInboxPage"));
 const CustomersPage = lazy(() => import("@/features/seller/pages/CustomersPage"));
@@ -49,8 +50,16 @@ const SellerAgentsPage = lazy(() => import("@/features/seller/pages/SellerAgents
 const SellerWidgetPage = lazy(() => import("@/features/seller/pages/SellerWidgetPage"));
 const SellerNotificationsPage = lazy(() => import("@/features/seller/pages/SellerNotificationsPage"));
 const SellerIntegrationsPage = lazy(() => import("@/features/seller/pages/SellerIntegrationsPage"));
+const OnboardingProfilePage = lazy(() => import("@/features/onboarding/pages/OnboardingProfilePage"));
+const OnboardingBusinessPage = lazy(() => import("@/features/onboarding/pages/OnboardingBusinessPage"));
+const OnboardingWorkspacePage = lazy(() => import("@/features/onboarding/pages/OnboardingWorkspacePage"));
+const OnboardingSubscriptionPage = lazy(() => import("@/features/onboarding/pages/OnboardingSubscriptionPage"));
+const OnboardingCompletePage = lazy(() => import("@/features/onboarding/pages/OnboardingCompletePage"));
+const CheckoutPage = lazy(() => import("@/features/checkout/pages/CheckoutPage"));
+const ForgotPasswordPage = lazy(() => import("@/features/auth/pages/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("@/features/auth/pages/ResetPasswordPage"));
 
-const AdminLayout = lazy(() => import("@/layouts/AdminLayout"));
+// Lazy Load Admin Pages
 const AdminDashboardPage = lazy(() => import("@/features/admin/pages/AdminDashboardPage"));
 const AdminUsersPage = lazy(() => import("@/features/admin/pages/AdminUsersPage"));
 const AdminOrganizationsPage = lazy(() => import("@/features/admin/pages/AdminOrganizationsPage"));
@@ -80,6 +89,10 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: "/checkout",
+    element: Loadable(CheckoutPage),
+  },
 
   // ============================================
   // Authentication
@@ -90,24 +103,91 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <LoginPage />,
+        element: Loadable(LoginPage),
       },
     ],
   },
-
   {
     path: "/register",
     element: <AuthLayout />,
     children: [
       {
         index: true,
-        element: <RegisterPage />,
+        element: Loadable(RegisterPage),
+      },
+    ],
+  },
+  {
+    path: "/verify-email",
+    element: <AuthLayout />,
+    children: [
+      {
+        index: true,
+        element: Loadable(VerifyEmailPage),
+      },
+    ],
+  },
+  {
+    path: "/forgot-password",
+    element: <AuthLayout />,
+    children: [
+      {
+        index: true,
+        element: Loadable(ForgotPasswordPage),
+      },
+    ],
+  },
+  {
+    path: "/reset-password",
+    element: <AuthLayout />,
+    children: [
+      {
+        index: true,
+        element: Loadable(ResetPasswordPage),
       },
     ],
   },
 
   // ============================================
-  // Dashboard (Protected)
+  // Onboarding System (Protected Layout & Middleware)
+  // ============================================
+  {
+    path: "/onboarding",
+    element: (
+      <ProtectedRoute>
+        <OnboardingLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        path: "profile",
+        element: Loadable(OnboardingProfilePage),
+      },
+      {
+        path: "business",
+        element: Loadable(OnboardingBusinessPage),
+      },
+      {
+        path: "workspace",
+        element: Loadable(OnboardingWorkspacePage),
+      },
+      {
+        path: "subscription",
+        element: Loadable(OnboardingSubscriptionPage),
+      },
+      {
+        path: "complete",
+        element: Loadable(OnboardingCompletePage),
+      },
+      {
+        path: "installation",
+        element: Loadable(OnboardingCompletePage),
+      },
+    ],
+  },
+
+  // ============================================
+  // Consolidated Dashboard System (Protected & Role-Based Guarded)
   // ============================================
   {
     path: "/dashboard",
@@ -117,158 +197,210 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
+      // Central dynamic role dashboard routing page
       {
         index: true,
         element: <DashboardPage />,
       },
-    ],
-  },
 
-  // ============================================
-  // Seller Dashboard (Protected)
-  // ============================================
-  {
-    path: "/seller",
-    element: (
-      <ProtectedRoute>
-        <SellerLayout />
-      </ProtectedRoute>
-    ),
-    children: [
-      {
-        index: true,
-        element: <SellerDashboardPage />,
-      },
+      // ── Owner-Only Routes ──────────────────────────
       {
         path: "shop",
-        element: <MyShopPage />,
-      },
-      {
-        path: "profile",
-        element: <MyShopPage />,
+        element: (
+          <ProtectedRoute allowedRoles={["owner", "seller"]}>
+            {Loadable(MyShopPage)}
+          </ProtectedRoute>
+        ),
       },
       {
         path: "products",
-        element: <ProductsPage />,
-      },
-      {
-        path: "orders",
-        element: <OrdersPage />,
+        element: (
+          <ProtectedRoute allowedRoles={["owner", "seller"]}>
+            {Loadable(ProductsPage)}
+          </ProtectedRoute>
+        ),
       },
       {
         path: "analytics",
-        element: <AnalyticsPage />,
-      },
-      {
-        path: "live",
-        element: Loadable(LivePage),
-      },
-      {
-        path: "chat",
-        element: Loadable(ChatInboxPage),
-      },
-      {
-        path: "customers",
-        element: Loadable(CustomersPage),
-      },
-      {
-        path: "settings",
-        element: Loadable(SettingsPage),
-      },
-      {
-        path: "calls",
-        element: Loadable(CallHistoryPage),
-      },
-      {
-        path: "callbacks",
-        element: Loadable(CallbacksPage),
+        element: (
+          <ProtectedRoute allowedRoles={["owner", "seller"]}>
+            <RoleAnalyticsPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "agents",
-        element: Loadable(SellerAgentsPage),
+        element: (
+          <ProtectedRoute allowedRoles={["owner", "seller"]}>
+            {Loadable(SellerAgentsPage)}
+          </ProtectedRoute>
+        ),
       },
       {
         path: "widget",
-        element: Loadable(SellerWidgetPage),
+        element: (
+          <ProtectedRoute allowedRoles={["owner", "seller"]}>
+            {Loadable(SellerWidgetPage)}
+          </ProtectedRoute>
+        ),
       },
       {
         path: "notifications",
-        element: Loadable(SellerNotificationsPage),
+        element: (
+          <ProtectedRoute allowedRoles={["owner", "seller"]}>
+            <RoleNotificationsPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "integrations",
-        element: Loadable(SellerIntegrationsPage),
+        element: (
+          <ProtectedRoute allowedRoles={["owner", "seller"]}>
+            {Loadable(SellerIntegrationsPage)}
+          </ProtectedRoute>
+        ),
       },
-    ],
-  },
 
-  // ============================================
-  // Admin Panel (Protected)
-  // ============================================
-  {
-    path: "/admin",
-    element: (
-      <ProtectedRoute>
-        {Loadable(AdminLayout)}
-      </ProtectedRoute>
-    ),
-    children: [
+      // ── Shared Owner & Agent Routes ───────────────
       {
-        index: true,
-        element: Loadable(AdminDashboardPage),
+        path: "profile",
+        element: (
+          <ProtectedRoute allowedRoles={["owner", "seller", "agent"]}>
+            {Loadable(MyShopPage)}
+          </ProtectedRoute>
+        ),
       },
       {
-        path: "organizations",
-        element: Loadable(AdminOrganizationsPage),
+        path: "orders",
+        element: (
+          <ProtectedRoute allowedRoles={["owner", "seller", "agent"]}>
+            {Loadable(OrdersPage)}
+          </ProtectedRoute>
+        ),
       },
       {
-        path: "org-admins",
-        element: Loadable(AdminOrgAdminsPage),
+        path: "live",
+        element: (
+          <ProtectedRoute allowedRoles={["owner", "seller", "agent"]}>
+            {Loadable(LivePage)}
+          </ProtectedRoute>
+        ),
       },
       {
-        path: "users",
-        element: Loadable(AdminUsersPage),
+        path: "chat",
+        element: (
+          <ProtectedRoute allowedRoles={["owner", "seller", "agent"]}>
+            {Loadable(ChatInboxPage)}
+          </ProtectedRoute>
+        ),
       },
       {
-        path: "subscriptions",
-        element: Loadable(AdminSubscriptionsPage),
-      },
-      {
-        path: "widgets",
-        element: Loadable(AdminWidgetsPage),
-      },
-      {
-        path: "calls",
-        element: Loadable(AdminCallsPage),
-      },
-      {
-        path: "analytics",
-        element: Loadable(AdminAnalyticsPage),
-      },
-      {
-        path: "support",
-        element: Loadable(AdminSupportPage),
-      },
-      {
-        path: "notifications",
-        element: Loadable(AdminNotificationsPage),
-      },
-      {
-        path: "audit",
-        element: Loadable(AdminAuditLogsPage),
-      },
-      {
-        path: "developer",
-        element: Loadable(AdminDeveloperPage),
-      },
-      {
-        path: "health",
-        element: Loadable(AdminSystemHealthPage),
+        path: "customers",
+        element: (
+          <ProtectedRoute allowedRoles={["owner", "seller", "agent"]}>
+            {Loadable(CustomersPage)}
+          </ProtectedRoute>
+        ),
       },
       {
         path: "settings",
-        element: Loadable(AdminSettingsPage),
+        element: (
+          <ProtectedRoute allowedRoles={["owner", "seller", "agent"]}>
+            <RoleSettingsPage />
+          </ProtectedRoute>
+        ),
       },
+      {
+        path: "calls",
+        element: (
+          <ProtectedRoute allowedRoles={["owner", "seller", "agent"]}>
+            <RoleCallsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "callbacks",
+        element: (
+          <ProtectedRoute allowedRoles={["owner", "seller", "agent"]}>
+            {Loadable(CallbacksPage)}
+          </ProtectedRoute>
+        ),
+      },
+
+      // ── Admin & Super Admin Routes ─────────────────
+      {
+        path: "organizations",
+        element: (
+          <ProtectedRoute allowedRoles={["admin", "super_admin"]}>
+            {Loadable(AdminOrganizationsPage)}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "org-admins",
+        element: (
+          <ProtectedRoute allowedRoles={["admin", "super_admin"]}>
+            {Loadable(AdminOrgAdminsPage)}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "users",
+        element: (
+          <ProtectedRoute allowedRoles={["admin", "super_admin"]}>
+            {Loadable(AdminUsersPage)}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "subscriptions",
+        element: (
+          <ProtectedRoute allowedRoles={["admin", "super_admin"]}>
+            {Loadable(AdminSubscriptionsPage)}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "widgets",
+        element: (
+          <ProtectedRoute allowedRoles={["admin", "super_admin"]}>
+            {Loadable(AdminWidgetsPage)}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "support",
+        element: (
+          <ProtectedRoute allowedRoles={["admin", "super_admin"]}>
+            {Loadable(AdminSupportPage)}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "audit",
+        element: (
+          <ProtectedRoute allowedRoles={["admin", "super_admin"]}>
+            {Loadable(AdminAuditLogsPage)}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "developer",
+        element: (
+          <ProtectedRoute allowedRoles={["admin", "super_admin"]}>
+            {Loadable(AdminDeveloperPage)}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "health",
+        element: (
+          <ProtectedRoute allowedRoles={["admin", "super_admin"]}>
+            {Loadable(AdminSystemHealthPage)}
+          </ProtectedRoute>
+        ),
+      },
+
     ],
   },
 
@@ -281,11 +413,11 @@ const router = createBrowserRouter([
   },
 
   // ============================================
-  // Catch-all — redirect to home
+  // Catch-all — redirect to home / dashboard
   // ============================================
   {
     path: "*",
-    element: <Navigate to="/" replace />,
+    element: <Navigate to="/dashboard" replace />,
   },
 ]);
 

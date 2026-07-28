@@ -56,10 +56,11 @@ export async function getConversationMessages(conversationId) {
 
 // Fetch active chat contacts list (conversations for a shop)
 export async function getChatContacts(shopId) {
-  const { data, error } = await supabase
+  const { data: convos, error: convoErr } = await supabase
     .from("conversations")
     .select(`
       id,
+      shop_id,
       visitor_id,
       channel,
       status,
@@ -71,8 +72,27 @@ export async function getChatContacts(shopId) {
     .in("status", ["waiting", "assigned", "active"])
     .order("last_activity_at", { ascending: false });
 
-  if (error) throw error;
-  return data ?? [];
+  if (convoErr) throw convoErr;
+
+  // Fetch unread messages for this shop's conversations
+  const { data: unreadMsgs, error: msgErr } = await supabase
+    .from("messages")
+    .select("conversation_id, conversations!inner(shop_id)")
+    .eq("is_read", false)
+    .eq("sender_type", "visitor")
+    .eq("conversations.shop_id", shopId);
+
+  // If there's an error fetching messages, just return conversations as-is
+  if (msgErr || !unreadMsgs) {
+    return convos ?? [];
+  }
+
+  const unreadConvoIds = new Set(unreadMsgs.map(m => m.conversation_id));
+
+  return (convos ?? []).map(convo => ({
+    ...convo,
+    unread: unreadConvoIds.has(convo.id)
+  }));
 }
 
 // Mark messages in conversation as read

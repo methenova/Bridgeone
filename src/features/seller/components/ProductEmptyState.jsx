@@ -1,4 +1,5 @@
 import { Package, SlidersHorizontal, ArrowRight, HelpCircle } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function ProductEmptyState({ isFiltered = false, onAddProduct }) {
   if (isFiltered) {
@@ -52,7 +53,7 @@ export default function ProductEmptyState({ isFiltered = false, onAddProduct }) 
           
           <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-500 font-semibold">
             <HelpCircle className="h-3.5 w-3.5" />
-            <span>Need help? Read our <a href="#" className="text-blue-600 hover:underline">catalog setup guide</a></span>
+            <span>Need help? Read our <a href="#" onClick={(e) => { e.preventDefault(); toast.success("Catalog Guide: Go to Products -> Add Product. Fill in name, category, pricing, and images. Changes sync instantly to your shop widget."); }} className="text-blue-600 hover:underline">catalog setup guide</a></span>
           </div>
         </div>
       )}

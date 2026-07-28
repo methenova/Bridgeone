@@ -26,7 +26,7 @@ import { TableSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
 
 const PLANS = [
-  { value: "free", label: "Free Plan" },
+  { value: "starter", label: "Starter Plan" },
   { value: "basic", label: "Basic Plan" },
   { value: "pro", label: "Pro Plan" },
 ];
@@ -153,7 +153,7 @@ export default function AdminOrganizationsPage() {
     }
     setSubmittingForm(true);
     try {
-      const { error } = await supabase
+      const { data: newShop, error: shopError } = await supabase
         .from("shops")
         .insert({
           shop_name: formShopName,
@@ -165,11 +165,27 @@ export default function AdminOrganizationsPage() {
           country: formCountry,
           owner_id: formOwnerId,
           category_id: formCatId || null,
-          plan_name: "free",
           is_verified: true
+        })
+        .select()
+        .single();
+
+      if (shopError) throw shopError;
+
+      // Create matching subscription row
+      const { error: subError } = await supabase
+        .from("subscriptions")
+        .insert({
+          shop_id: newShop.id,
+          user_id: formOwnerId,
+          owner_id: formOwnerId,
+          plan: "starter",
+          plan_name: "starter",
+          status: "active"
         });
 
-      if (error) throw error;
+      if (subError) throw subError;
+
       toast.success("Organization created successfully!");
       setIsCreateOpen(false);
       refetch();
@@ -253,7 +269,7 @@ export default function AdminOrganizationsPage() {
         (shop.profiles?.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
         (shop.profiles?.email || "").toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesPlan = planFilter === "all" || (shop.plan_name || "free") === planFilter;
+      const matchesPlan = planFilter === "all" || (shop.plan_name || "starter") === planFilter;
       
       const matchesStatus = 
         statusFilter === "all" || 
@@ -358,7 +374,7 @@ export default function AdminOrganizationsPage() {
               className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
             >
               <option value="all">All Plans</option>
-              <option value="free">Free Plan</option>
+              <option value="starter">Starter Plan</option>
               <option value="basic">Basic Plan</option>
               <option value="pro">Pro Plan</option>
             </select>
@@ -444,7 +460,7 @@ export default function AdminOrganizationsPage() {
                     {/* Subscription Select Dropdown */}
                     <td className="px-6 py-5 align-middle">
                       <select
-                        value={s.plan_name || "free"}
+                        value={s.plan_name || "starter"}
                         onChange={(e) => handlePlanChange(s.id, e.target.value)}
                         disabled={updatePlan.isPending}
                         className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-900 outline-none focus:border-blue-500 disabled:opacity-50 font-bold transition-all"
@@ -559,7 +575,7 @@ export default function AdminOrganizationsPage() {
                   <div className="grid grid-cols-2 gap-4 bg-white shadow-sm p-4 rounded-xl border border-slate-200 text-xs">
                     <div>
                       <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Plan Active</p>
-                      <p className="text-slate-900 capitalize font-extrabold mt-0.5">{selectedShop.plan_name || "free"}</p>
+                      <p className="text-slate-900 capitalize font-extrabold mt-0.5">{selectedShop.plan_name || "starter"}</p>
                     </div>
                     <div>
                       <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Status</p>

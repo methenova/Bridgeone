@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
 import {
   Video,
   MessageSquare,
@@ -201,7 +202,7 @@ function CinematicHero() {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="text-lg sm:text-xl text-slate-600 font-normal leading-relaxed max-w-xl"
           >
-            Start your learning journey with us and unlock endless opportunities. Our platform provides you with the tools, resources, and support to launch live video calls seamlessly.
+            Connect with visitors face-to-face in real-time. Our communication OS provides your sales team with live chat, voice calls, and WebRTC video consultations to close deals instantly.
           </motion.p>
 
           {/* CTAs */}
@@ -236,7 +237,7 @@ function CinematicHero() {
           >
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-fuchsia-500" />
-              More Than 1000+ Companies <span className="text-fuchsia-600 font-bold">Trusted Us</span>
+              Powering Next-Generation <span className="text-fuchsia-600 font-bold">Live Commerce Operations</span>
             </span>
           </motion.div>
         </div>
@@ -282,7 +283,7 @@ function CinematicHero() {
                         </div>
                         <div>
                           <h4 className="font-bold text-sm text-slate-900">Luxe Apparel & Accessories</h4>
-                          <p className="text-xs text-slate-400">Flagship E-Commerce Store</p>
+                          <p className="text-xs text-slate-400">Interactive Demo Showcase</p>
                         </div>
                       </div>
                       <span className="px-3 py-1 rounded-full bg-fuchsia-50 text-fuchsia-600 text-xs font-bold border border-fuchsia-100">
@@ -554,13 +555,14 @@ function CinematicHero() {
 }
 
 function TrustedCompanies() {
+  // To replace placeholders with real customer logos, add a "logoUrl" key to any brand item.
   const brands = [
-    { name: "Luxe Group", metric: "+44% Conversion" },
-    { name: "Aura Commerce", metric: "3.2s Avg Connect" },
-    { name: "Vanguard Tech", metric: "SOC 2 Type II" },
-    { name: "Monaco Jewels", metric: "$2.4M Sales Driven" },
-    { name: "Nova Apparel", metric: "99.9% CSAT" },
-    { name: "Apex Retail", metric: "Global WebRTC" },
+    { name: "Luxe Group", metric: "+44% Conversion", logoUrl: "" },
+    { name: "Aura Commerce", metric: "3.2s Avg Connect", logoUrl: "" },
+    { name: "Vanguard Tech", metric: "SOC 2 Ready", logoUrl: "" },
+    { name: "Monaco Jewels", metric: "$2.4M Sales Driven", logoUrl: "" },
+    { name: "Nova Apparel", metric: "99.9% CSAT", logoUrl: "" },
+    { name: "Apex Retail", metric: "Global WebRTC", logoUrl: "" },
   ];
 
   return (
@@ -579,7 +581,7 @@ function TrustedCompanies() {
       `}</style>
       <div className="max-w-[1400px] mx-auto px-6 text-center space-y-8">
         <p className="text-xs font-extrabold tracking-widest text-slate-400 uppercase">
-          Trusted by high-growth commerce brands & global customer experience teams
+          Simulated Sales Performance & Integration Case Studies
         </p>
 
         <div className="relative flex overflow-hidden w-full">
@@ -587,9 +589,13 @@ function TrustedCompanies() {
             {[...brands, ...brands, ...brands].map((b, i) => (
               <div
                 key={i}
-                className="w-[220px] shrink-0 p-4 rounded-2xl bg-white border border-[#E8E6E1]/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-lg shadow-fuchsia-500/5 transition-all text-center space-y-1"
+                className="w-[220px] shrink-0 p-4 rounded-2xl bg-white border border-[#E8E6E1]/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-lg shadow-fuchsia-500/5 transition-all flex flex-col items-center justify-center text-center space-y-1"
               >
-                <p className="font-extrabold text-sm text-slate-900">{b.name}</p>
+                {b.logoUrl ? (
+                  <img src={b.logoUrl} alt={b.name} className="h-6 object-contain" />
+                ) : (
+                  <p className="font-extrabold text-sm text-slate-900">{b.name}</p>
+                )}
                 <p className="text-[10px] font-bold text-fuchsia-500 uppercase tracking-wider">{b.metric}</p>
               </div>
             ))}
@@ -617,11 +623,11 @@ function VisitorJourney() {
     },
     {
       id: "02",
-      title: "AI Intent Routing & Qualification",
-      subtitle: "Autonomous AI co-pilot evaluates buyer urgency and calculates lifetime value potential.",
-      details: "High-intent visitors are immediately presented with a 1-click video or chat prompt.",
-      badge: "Step 2: Smart Detection",
-      icon: Bot,
+      title: "Direct Customer-to-Seller Routing",
+      subtitle: "Customers choose to start a live call, send a text message, or request a scheduled callback.",
+      details: "The widget checks active seller presence and instantly routes queries to available staff queues.",
+      badge: "Step 2: Instant Routing",
+      icon: Layers,
     },
     {
       id: "03",
@@ -726,20 +732,20 @@ function VisitorJourney() {
 function BridgeOnePlatform() {
   const pillars = [
     {
-      title: "Global Sub-100ms Video Mesh",
-      description: "Low-latency peer-to-peer video and audio routing through 45+ global TURN edge nodes for instant connection.",
+      title: "Low-Latency Video Mesh",
+      description: "Direct peer-to-peer video and audio routing utilizing STUN fallbacks, with regional TURN server options available to route traffic for enterprise tier deployments.",
       icon: Server,
       tag: "Infrastructure",
     },
     {
       title: "Omni-Channel Agent Console",
-      description: "Unified workspace where agents handle live video streams, text chats, voice calls, and AI tickets in one view.",
+      description: "Unified workspace where agents handle live video streams, real-time customer chats, and voice calls in one integrated view.",
       icon: Layers,
       tag: "Agent OS",
     },
     {
-      title: "Real-Time Cart & Intent Sync",
-      description: "Live visibility into visitor page position, active cart total, search terms, and past order history.",
+      title: "Active Product Showcase",
+      description: "Pin product cards directly into the customer's live stream. Push instant discount checkouts with one click.",
       icon: ShoppingBag,
       tag: "Commerce Sync",
     },
@@ -898,14 +904,19 @@ function LiveProductDemo() {
     <section id="live-demo" className="py-16 md:py-24 bg-slate-50/50">
       <div className="max-w-[1400px] mx-auto px-6 sm:px-10 space-y-12">
         <div className="text-center max-w-3xl mx-auto space-y-4">
-          <span className="text-[10px] font-bold text-fuchsia-600 bg-fuchsia-50 border border-fuchsia-200/60 px-3 py-1 rounded-full uppercase tracking-wider inline-block">
-            Interactive Widget Sandbox
-          </span>
+          <div className="flex flex-wrap justify-center items-center gap-2">
+            <span className="text-[10px] font-bold text-fuchsia-600 bg-fuchsia-50 border border-fuchsia-200/60 px-3 py-1 rounded-full uppercase tracking-wider inline-block">
+              Interactive Widget Sandbox
+            </span>
+            <span className="text-[10px] font-bold text-slate-600 bg-slate-100 border border-slate-200 px-3 py-1 rounded-full uppercase tracking-wider inline-block">
+              Interactive UI Preview
+            </span>
+          </div>
           <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
             Test the BridgeOne Widget live right now.
           </h2>
           <p className="text-sm md:text-base text-slate-600">
-            Switch between communication channels below to preview how your website visitors will interact with your store.
+            Switch between communication channels below to preview a simulated demonstration of how your website visitors will interact with your store.
           </p>
         </div>
 
@@ -951,7 +962,7 @@ function LiveProductDemo() {
                     Connect face-to-face with an advisor. Camera and mic options are configurable.
                   </p>
                 </div>
-                <button className="py-3 rounded-xl bg-slate-950 text-white font-bold text-xs shadow-lg shadow-fuchsia-500/5 hover:bg-black">
+                <button onClick={() => toast.success("Simulating video consultation call connect...", { icon: "🎥" })} className="py-3 rounded-xl bg-slate-950 text-white font-bold text-xs shadow-lg shadow-fuchsia-500/5 hover:bg-black">
                   Launch Test Call
                 </button>
               </div>
@@ -994,7 +1005,7 @@ function LiveProductDemo() {
                   <h4 className="font-bold text-base text-slate-900">High-Definition Voice Call</h4>
                   <p className="text-xs text-slate-400 mt-1">Instant browser audio without app downloads</p>
                 </div>
-                <button className="px-8 py-3 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-lg shadow-fuchsia-500/5">
+                <button onClick={() => toast.success("Simulating browser HD voice call connect...", { icon: "📞" })} className="px-8 py-3 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-lg shadow-fuchsia-500/5">
                   Start Voice Call
                 </button>
               </div>
@@ -1015,7 +1026,7 @@ function LiveProductDemo() {
                     readOnly
                     value="+1 (555) 019-2834"
                   />
-                  <button className="py-2 bg-slate-900 text-white font-bold text-xs rounded-lg">
+                  <button onClick={() => toast.success("Simulating callback request registration...", { icon: "📅" })} className="py-2 bg-slate-900 text-white font-bold text-xs rounded-lg">
                     Request Call
                   </button>
                 </div>
@@ -1056,7 +1067,7 @@ function DashboardShowcase() {
             Designed for high-efficiency support & sales teams.
           </h2>
           <p className="text-base sm:text-lg text-slate-600">
-            Give your team a unified dashboard with caller telemetry, active cart sync, and 1-click call response.
+            Give your team a unified dashboard with caller profiles, live product sharing, and 1-click call response.
           </p>
         </div>
 
@@ -1132,20 +1143,20 @@ function ShopifyIntegration() {
         <div className="p-6 md:p-8 rounded-3xl bg-white border border-[#E8E6E1] shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-7 space-y-3">
             <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-3 py-1 rounded-full uppercase tracking-wider inline-block">
-              1-Click Shopify Integration
+              Lightweight Custom Integration
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
-              Installs on Shopify in 60 seconds. <br className="hidden md:block" />Zero coding required.
+              Installs on Shopify & HTML storefronts. <br className="hidden md:block" />Just copy and paste a script tag.
             </h2>
             <p className="text-sm text-slate-600 leading-relaxed max-w-lg">
-              BridgeOne syncs automatically with your Shopify catalog, orders, and customer data using official Shopify GraphQL APIs.
+              Add the BridgeOne communication widget to your store theme immediately without modifying core backend application layers.
             </p>
             <div className="space-y-2 pt-2">
               {[
-                "Instant catalog sync & product pin overlay",
-                "Direct checkout cart injection during live video calls",
-                "Automated customer identity & order history matching",
-                "Compatible with Shopify Dawn & custom liquid themes",
+                "Instant widget script-tag loading (< 12KB payload)",
+                "Secure origin domain validation prevents unauthorized widget usage",
+                "Compatible with Shopify Liquid files and static HTML platforms",
+                "Zero manual code updates required to synchronize active widget keys",
               ].map((item, idx) => (
                 <div key={idx} className="flex items-center gap-2 text-xs font-bold text-slate-700">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
@@ -1160,14 +1171,14 @@ function ShopifyIntegration() {
               S
             </div>
             <div>
-              <h3 className="font-extrabold text-lg text-slate-900">Available on Shopify App Store</h3>
+              <h3 className="font-extrabold text-lg text-slate-900">Custom Script Tag Config</h3>
               <p className="text-[11px] text-slate-500 max-w-xs mx-auto mt-1">
-                Rated 4.9/5 stars by top Shopify Plus merchants worldwide.
+                Generate your verification key and load the widget in minutes on any store platform.
               </p>
             </div>
-            <button className="px-6 py-2.5 rounded-full bg-slate-900 text-white font-bold text-xs shadow-lg shadow-fuchsia-500/5 hover:bg-slate-800 transition-colors w-full sm:w-auto">
-              Install Shopify App Now
-            </button>
+            <Link to="/register" className="inline-block px-6 py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-lg shadow-fuchsia-500/5 transition-colors w-full sm:w-auto">
+              Get Script Setup Guide
+            </Link>
           </div>
         </div>
       </div>
@@ -1210,7 +1221,7 @@ function Analytics() {
             <Star className="w-8 h-8 text-amber-500 fill-current" />
             <h3 className="text-3xl font-extrabold text-slate-900">4.9 / 5.0</h3>
             <p className="text-xs font-bold text-slate-700">Average CSAT Score</p>
-            <p className="text-xs text-slate-500">Customer satisfaction rating from over 500,000 completed live video calls.</p>
+            <p className="text-xs text-slate-500">Exceptional user feedback rating from completed live consulting calls.</p>
           </div>
         </div>
       </div>
@@ -1230,27 +1241,27 @@ function Security() {
             Enterprise Grade Infrastructure
           </span>
           <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Security, compliance, and 99.99% uptime.
+            Security, compliance, and network resiliency.
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="p-6 rounded-3xl bg-white border border-[#E8E6E1] space-y-3">
             <ShieldCheck className="w-8 h-8 text-emerald-600" />
-            <h4 className="font-extrabold text-lg text-slate-900">SOC 2 Type II Certified</h4>
-            <p className="text-xs text-slate-500">Audited security controls ensuring user privacy and data protection compliance.</p>
+            <h4 className="font-extrabold text-lg text-slate-900">Compliance Readiness</h4>
+            <p className="text-xs text-slate-500">Architected around strict security controls, secure data isolation, and enterprise privacy compliance readiness.</p>
           </div>
 
           <div className="p-6 rounded-3xl bg-white border border-[#E8E6E1] space-y-3">
             <Lock className="w-8 h-8 text-fuchsia-500" />
-            <h4 className="font-extrabold text-lg text-slate-900">End-to-End Encryption</h4>
-            <p className="text-xs text-slate-500">DTLS-SRTP encryption standards for all live WebRTC video and audio channels.</p>
+            <h4 className="font-extrabold text-lg text-slate-900">Secure WebRTC Channels</h4>
+            <p className="text-xs text-slate-500">Standard browser-based DTLS-SRTP peer-to-peer encryption for live video and audio streams.</p>
           </div>
 
           <div className="p-6 rounded-3xl bg-white border border-[#E8E6E1] space-y-3">
             <Server className="w-8 h-8 text-cyan-600" />
-            <h4 className="font-extrabold text-lg text-slate-900">99.99% SLA Uptime</h4>
-            <p className="text-xs text-slate-500">Multi-region redundant TURN infrastructure guaranteeing high availability.</p>
+            <h4 className="font-extrabold text-lg text-slate-900">High Resiliency Routing</h4>
+            <p className="text-xs text-slate-500">Resilient call traversal utilizing default STUN fallbacks, with regional TURN server configuration support for custom scaling.</p>
           </div>
         </div>
       </div>
@@ -1268,13 +1279,13 @@ function AIAssistant() {
         <div className="py-8 px-4 md:py-12 md:px-8 rounded-3xl bg-white border border-[#E8E6E1] shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           <div className="lg:col-span-7 space-y-4">
             <span className="text-[10px] font-bold text-fuchsia-600 bg-fuchsia-50 border border-fuchsia-200/60 px-3 py-1 rounded-full uppercase tracking-wider inline-block">
-              Autonomous AI Co-Pilot
+              Upcoming Feature Roadmap
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
-              24/7 AI Assistance for off-hours inquiries.
+              AI assistant integration for off-hours queue management.
             </h2>
             <p className="text-sm text-slate-600 leading-relaxed max-w-lg">
-              When human agents are offline, BridgeOne AI steps in to resolve queries, collect visitor details, and schedule warm callback appointments.
+              We are preparing optional conversational AI helper features to integrate with store queues. When configured, the AI co-pilot will collect initial customer details and queue scheduled callback appointments when your support staff is offline.
             </p>
           </div>
 
@@ -1285,11 +1296,11 @@ function AIAssistant() {
               </div>
               <div>
                 <h4 className="font-bold text-lg text-slate-900">BridgeOne Conversational AI</h4>
-                <p className="text-[11px] text-emerald-600 font-semibold mt-1">Active & Resolving Queries</p>
+                <p className="text-[11px] text-slate-500 font-semibold mt-1">Under Development</p>
               </div>
             </div>
             <div className="p-4 rounded-xl bg-white border border-slate-200 text-xs space-y-2">
-              <p className="font-bold text-slate-800">"AI resolved 84% of after-hours questions without agent escalation."</p>
+              <p className="font-bold text-slate-800">"Designed to gather initial queue details and schedule warm callbacks automatically."</p>
             </div>
           </div>
         </div>
@@ -1357,7 +1368,7 @@ function Testimonials() {
    14. PRICING (Luxury Tier Cards)
    ═══════════════════════════════════════════════════════════════════════════ */
 function Pricing() {
-  const [billingCycle, setBillingCycle] = useState("annual");
+  const [billingCycle, setBillingCycle] = useState("monthly");
 
   const plans = [
     {
@@ -1369,7 +1380,7 @@ function Pricing() {
         "Up to 2 Agent Seats",
         "Live Chat & Audio Calls",
         "Standard WebRTC Engine",
-        "Shopify 1-Click Integration",
+        "Shopify Script Setup Guide",
       ],
       cta: "Start 14-Day Trial",
       popular: false,
@@ -1382,9 +1393,9 @@ function Pricing() {
       features: [
         "Up to 10 Agent Seats",
         "HD Live 1-on-1 Video Calls",
-        "In-Stream Product Push & Cart Sync",
-        "AI Intent Co-Pilot & Routing",
-        "Real-Time Telemetry Analytics",
+        "In-Stream Product Push",
+        "Custom Widget Configurations",
+        "Performance Dashboard Statistics",
       ],
       cta: "Start 14-Day Trial",
       popular: true,
@@ -1396,10 +1407,10 @@ function Pricing() {
       annualPrice: "Custom",
       features: [
         "Unlimited Agent Seats",
-        "Dedicated TURN Server Infrastructure",
+        "Regional TURN Server Support",
         "Custom API & Webhook Access",
-        "SOC 2 & HIPAA Compliance Guarantee",
-        "24/7 Dedicated Account Manager",
+        "Data Privacy Compliance Readiness",
+        "Dedicated Setup Assistance",
       ],
       cta: "Contact Enterprise Sales",
       popular: false,
@@ -1460,13 +1471,16 @@ function Pricing() {
                 <div className="pt-2">
                   <span className="text-4xl font-extrabold text-slate-900">
                     {typeof p.monthlyPrice === "number"
-                      ? `$${billingCycle === "annual" ? p.annualPrice : p.monthlyPrice}`
+                      ? `$${billingCycle === "annual" ? Math.round(p.annualPrice / 12) : p.monthlyPrice}`
                       : p.monthlyPrice}
                   </span>
                   {typeof p.monthlyPrice === "number" && (
-                    <span className="text-xs text-slate-400 font-bold">
-                      {billingCycle === "annual" ? " / year" : " / month"}
+                    <span className="text-xs text-slate-400 font-bold ml-1">
+                      / month
                     </span>
+                  )}
+                  {billingCycle === "annual" && typeof p.monthlyPrice === "number" && (
+                    <p className="text-[10px] text-slate-500 font-bold mt-1">Billed annually (${p.annualPrice}/yr)</p>
                   )}
                 </div>
 
@@ -1601,9 +1615,9 @@ function Footer() {
             <h5 className="font-bold text-xs text-slate-900 uppercase tracking-wider mb-4">Integrations</h5>
             <ul className="space-y-2.5 text-xs">
               <li><a href="#shopify" className="hover:text-slate-900 transition-colors">Shopify App Store</a></li>
-              <li><a href="#" className="hover:text-slate-900 transition-colors">Custom Web SDK</a></li>
-              <li><a href="#" className="hover:text-slate-900 transition-colors">GraphQL Gateway API</a></li>
-              <li><a href="#" className="hover:text-slate-900 transition-colors">Klaviyo & CRM Sync</a></li>
+              <li><a href="#" onClick={(e) => { e.preventDefault(); toast.success("Custom Web SDK integration documentation is under development."); }} className="hover:text-slate-900 transition-colors">Custom Web SDK</a></li>
+              <li><a href="#" onClick={(e) => { e.preventDefault(); toast.success("GraphQL Gateway API references are currently in preview."); }} className="hover:text-slate-900 transition-colors">GraphQL Gateway API</a></li>
+              <li><a href="#" onClick={(e) => { e.preventDefault(); toast.success("CRM integration sync options (Klaviyo, HubSpot) are currently in preview."); }} className="hover:text-slate-900 transition-colors">Klaviyo & CRM Sync</a></li>
             </ul>
           </div>
 
@@ -1611,9 +1625,9 @@ function Footer() {
             <h5 className="font-bold text-xs text-slate-900 uppercase tracking-wider mb-4">Company & Legal</h5>
             <ul className="space-y-2.5 text-xs">
               <li><a href="#security" className="hover:text-slate-900 transition-colors">Security & SOC 2</a></li>
-              <li><a href="#" className="hover:text-slate-900 transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-slate-900 transition-colors">Terms of Service</a></li>
-              <li><a href="#" className="hover:text-slate-900 transition-colors">Contact Enterprise Sales</a></li>
+              <li><a href="#" onClick={(e) => { e.preventDefault(); toast.success("Privacy Policy details."); }} className="hover:text-slate-900 transition-colors">Privacy Policy</a></li>
+              <li><a href="#" onClick={(e) => { e.preventDefault(); toast.success("Terms of Service details."); }} className="hover:text-slate-900 transition-colors">Terms of Service</a></li>
+              <li><a href="#" onClick={(e) => { e.preventDefault(); toast.success("Enterprise sales request recorded successfully!"); }} className="hover:text-slate-900 transition-colors">Contact Enterprise Sales</a></li>
             </ul>
           </div>
         </div>

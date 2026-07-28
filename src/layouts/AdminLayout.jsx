@@ -1,4 +1,3 @@
-
 import { useAuthContext } from "@/context/AuthContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import PremiumLayout from "./components/PremiumLayout";
@@ -20,20 +19,20 @@ import {
 } from "lucide-react";
 
 const menu = [
-  { title: "Dashboard", icon: LayoutDashboard, path: "/admin", badge: null },
-  { title: "Organizations", icon: Store, path: "/admin/organizations", badge: null },
-  { title: "Org Admins", icon: ShieldAlert, path: "/admin/org-admins", badge: null },
-  { title: "Platform Users", icon: Users, path: "/admin/users", badge: null },
-  { title: "Subscriptions", icon: CreditCard, path: "/admin/subscriptions", badge: null },
-  { title: "Widgets", icon: Sliders, path: "/admin/widgets", badge: null },
-  { title: "Live Calls", icon: Video, path: "/admin/calls", badge: "Live" },
-  { title: "Platform Analytics", icon: BarChart3, path: "/admin/analytics", badge: null },
-  { title: "Support Center", icon: LifeBuoy, path: "/admin/support", badge: null },
-  { title: "Notifications", icon: Bell, path: "/admin/notifications", badge: null },
-  { title: "Audit Logs", icon: FileText, path: "/admin/audit", badge: null },
-  { title: "Developer", icon: Code, path: "/admin/developer", badge: null },
-  { title: "System Health", icon: Activity, path: "/admin/health", badge: null },
-  { title: "Settings", icon: Settings, path: "/admin/settings", badge: null },
+  { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard", badge: null },
+  { title: "Organizations", icon: Store, path: "/dashboard/organizations", badge: null },
+  { title: "Org Admins", icon: ShieldAlert, path: "/dashboard/org-admins", badge: null },
+  { title: "Platform Users", icon: Users, path: "/dashboard/users", badge: null },
+  { title: "Subscriptions", icon: CreditCard, path: "/dashboard/subscriptions", badge: null },
+  { title: "Widgets", icon: Sliders, path: "/dashboard/widgets", badge: null },
+  { title: "Live Calls", icon: Video, path: "/dashboard/calls", badge: "Live" },
+  { title: "Platform Analytics", icon: BarChart3, path: "/dashboard/analytics", badge: null },
+  { title: "Support Center", icon: LifeBuoy, path: "/dashboard/support", badge: null },
+  { title: "Notifications", icon: Bell, path: "/dashboard/notifications", badge: null },
+  { title: "Audit Logs", icon: FileText, path: "/dashboard/audit", badge: null },
+  { title: "Developer", icon: Code, path: "/dashboard/developer", badge: null },
+  { title: "System Health", icon: Activity, path: "/dashboard/health", badge: null },
+  { title: "Settings", icon: Settings, path: "/dashboard/settings", badge: null },
 ];
 
 export default function AdminLayout() {
@@ -49,7 +48,7 @@ export default function AdminLayout() {
     );
   }
 
-  if (profile?.role !== "admin") {
+  if (profile?.role !== "admin" && profile?.role !== "super_admin") {
     return <Navigate to="/" replace />;
   }
 
@@ -64,7 +63,7 @@ export default function AdminLayout() {
       profile={profile}
       onLogout={handleLogout}
       workspaceName="BridgeOne"
-      baseRoute="/admin"
+      baseRoute="/dashboard"
       marketplaceRoute="/"
     />
   );

@@ -105,7 +105,7 @@ export default function NotificationDrawer({ open, onClose, role = "admin", shop
         // 1. New support tickets (last 10)
         const { data: tickets } = await supabase
           .from("support_tickets")
-          .select("id, title, type, status, created_at")
+          .select("id, subject, priority, status, created_at")
           .order("created_at", { ascending: false })
           .limit(10);
 
@@ -119,7 +119,7 @@ export default function NotificationDrawer({ open, onClose, role = "admin", shop
         // 3. Audit log activity (last 10)
         const { data: audits } = await supabase
           .from("audit_logs")
-          .select("id, action, module, status, created_at")
+          .select("id, action, resource, created_at")
           .order("created_at", { ascending: false })
           .limit(10);
 
@@ -127,8 +127,8 @@ export default function NotificationDrawer({ open, onClose, role = "admin", shop
           ...(tickets || []).map((t) => ({
             id: `ticket-${t.id}`,
             type: "support",
-            title: t.title || "Support Ticket",
-            message: `${t.type || "General"} · Status: ${t.status || "Open"}`,
+            title: t.subject || "Support Ticket",
+            message: `${t.priority || "Normal"} · Status: ${t.status || "Open"}`,
             created_at: t.created_at,
           })),
           ...(profiles || []).map((p) => ({
@@ -142,7 +142,7 @@ export default function NotificationDrawer({ open, onClose, role = "admin", shop
             id: `audit-${a.id}`,
             type: "audit",
             title: a.action || "Platform Action",
-            message: `${a.module || "System"} · ${a.status || ""}`,
+            message: a.resource || "System",
             created_at: a.created_at,
           })),
         ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));

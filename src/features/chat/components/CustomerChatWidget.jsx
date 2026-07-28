@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { MessageSquare, X, Send, Paperclip, Video, VideoOff, PhoneOff, Mic, MicOff, Loader2 } from "lucide-react";
 import { useAuthContext } from "@/context/AuthContext";
-import { useChatMessages, useSendMessage } from "../hooks/useChat";
+import { useChatMessages, useSendMessage, useTypingIndicator } from "../hooks/useChat";
 import toast from "react-hot-toast";
 import { SellerPeer } from "@/services/video/sellerPeer";
 import { cleanOldRooms } from "@/services/video/webrtcService";
@@ -44,9 +44,89 @@ export default function CustomerChatWidget({ shop }) {
   const [callDuration, setCallDuration] = useState(0);        // seconds since connected
   const [iceState, setIceState] = useState(null);             // RTCIceConnectionState
 
-  const { data: messages = [], isLoading } = useChatMessages(userId, sellerId);
+  const [conversationId, setConversationId] = useState(null);
+
+  // Resolve or create conversation for visitor
+  useEffect(() => {
+    if (!userId || !shop?.id) {
+      setConversationId(null);
+      return;
+    }
+
+    async function resolveActiveConvo() {
+      try {
+        const { data: visitor } = await supabase
+          .from("visitors")
+          .select("id")
+          .eq("shop_id", shop.id)
+          .eq("email", user.email)
+          .maybeSingle();
+
+        let visitorId = visitor?.id;
+
+        if (!visitorId) {
+          const visitorKey = `visitor_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+          const { data: newVis, error: visErr } = await supabase
+            .from("visitors")
+            .insert({
+              shop_id: shop.id,
+              visitor_key: visitorKey,
+              name: user.user_metadata?.full_name || user.email || "Registered Customer",
+              email: user.email,
+              phone: user.phone || null,
+              status: "online",
+            })
+            .select("id")
+            .single();
+          if (visErr) throw visErr;
+          visitorId = newVis?.id;
+        }
+
+        if (visitorId) {
+          const { data: existing } = await supabase
+            .from("conversations")
+            .select("id")
+            .eq("shop_id", shop.id)
+            .eq("visitor_id", visitorId)
+            .in("status", ["waiting", "assigned", "active"])
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          if (existing) {
+            setConversationId(existing.id);
+          } else {
+            const { data: newConvo, error: convoErr } = await supabase
+              .from("conversations")
+              .insert({
+                shop_id: shop.id,
+                visitor_id: visitorId,
+                channel: "chat",
+                status: "waiting",
+              })
+              .select("id")
+              .single();
+            if (convoErr) throw convoErr;
+            setConversationId(newConvo?.id);
+          }
+        }
+      } catch (err) {
+        console.warn("[ChatWidget] Error resolving active conversation:", err);
+      }
+    }
+
+    resolveActiveConvo();
+  }, [userId, shop?.id, user]);
+
+  const { data: messages = [], isLoading } = useChatMessages(conversationId);
   const sendMsg = useSendMessage();
   const feedEndRef = useRef(null);
+
+  const { remoteTyping, sendTypingStatus } = useTypingIndicator(
+    conversationId,
+    userId,
+    user?.user_metadata?.full_name || user?.email || "Customer"
+  );
 
   // ── Refs ───────────────────────────────────────────────────────────────────
   const callPeerRef = useRef(null);
@@ -83,6 +163,13 @@ export default function CustomerChatWidget({ shop }) {
     if (callRemoteVideoRef.current && callRemoteStream) {
       if (callRemoteVideoRef.current.srcObject !== callRemoteStream) {
         callRemoteVideoRef.current.srcObject = callRemoteStream;
+        // BC-2 FIX: Safari blocks unmuted autoPlay. Explicitly call .play() after
+        // srcObject assignment to unblock the stream on Safari desktop and iOS.
+        callRemoteVideoRef.current.play().catch((err) => {
+          if (err.name !== "AbortError") {
+            console.warn("[CustomerChatWidget] Remote video autoplay blocked (Safari):", err.name);
+          }
+        });
       }
     }
   }, [callRemoteStream, activeCall]);
@@ -122,9 +209,12 @@ export default function CustomerChatWidget({ shop }) {
     if (!messageText.trim() && !attachmentUrl) return;
     if (!user) { toast.error("Please login to send message to seller"); return; }
     try {
+      if (conversationId) {
+        sendTypingStatus(false);
+      }
       await sendMsg.mutateAsync({
         senderId: userId,
-        receiverId: sellerId,
+        conversationId,
         shopId: shop.id,
         content: messageText.trim(),
         imageUrl: attachmentUrl,
@@ -135,6 +225,13 @@ export default function CustomerChatWidget({ shop }) {
       toast.error("Message log saved locally.");
     }
   }
+
+  const handleInputChange = (e) => {
+    setMessageText(e.target.value);
+    if (conversationId) {
+      sendTypingStatus(e.target.value.length > 0);
+    }
+  };
 
   function handleAttachImage() {
     const mockUrls = [
@@ -395,7 +492,7 @@ export default function CustomerChatWidget({ shop }) {
               </div>
             ) : (
               messages.map((m) => {
-                const isOwn = m.sender_id === userId;
+                const isOwn = m.sender_type === "visitor";
                 return (
                   <div key={m.id} className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
                     <div className={`max-w-[75%] rounded-2xl p-3 text-[11px] space-y-1 ${
@@ -416,6 +513,18 @@ export default function CustomerChatWidget({ shop }) {
                   </div>
                 );
               })
+            )}
+            {remoteTyping && (
+              <div className="flex gap-3 mb-4 select-none">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm border border-slate-200">
+                  <span className="text-[10px]">💬</span>
+                </div>
+                <div className="max-w-[75%] rounded-2xl bg-white shadow-sm border border-slate-200 px-3 py-2">
+                  <span className="text-slate-500 italic text-[10px]">
+                    {remoteTyping} is typing...
+                  </span>
+                </div>
+              </div>
             )}
             <div ref={feedEndRef} />
           </div>
@@ -441,7 +550,7 @@ export default function CustomerChatWidget({ shop }) {
               <input
                 type="text"
                 value={messageText}
-                onChange={(e) => setMessageText(e.target.value)}
+                onChange={handleInputChange}
                 placeholder="Type a message..."
                 className="flex-1 rounded-xl border border-slate-200 bg-white shadow-sm px-3 py-2 text-[11px] text-slate-900 outline-none focus:border-blue-500 placeholder-slate-600 transition-colors"
               />

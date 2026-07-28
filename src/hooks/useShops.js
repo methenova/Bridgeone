@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getShops } from "@/services/shop/shop.service";
+import { getShops } from "@/features/seller/services/shop.service";
 
 export default function useShops() {
   const [shops, setShops] = useState([]);

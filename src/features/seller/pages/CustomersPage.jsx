@@ -51,19 +51,23 @@ export default function CustomersPage() {
   // Load customers from call_logs (marketplace orders removed)
   const [callCustomers, setCallCustomers] = useState([]);
   const [itemsLoading, setItemsLoading] = useState(false);
+  const [customersError, setCustomersError] = useState(null);
 
   async function loadCallCustomers() {
     if (!shopId) return;
     setItemsLoading(true);
+    setCustomersError(null);
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("call_logs")
         .select("*")
         .eq("shop_id", shopId)
         .order("created_at", { ascending: false });
+      if (error) throw error;
       setCallCustomers(data || []);
     } catch (e) {
       console.warn("Failed to load call customers:", e);
+      setCustomersError("Failed to load customer database profiles.");
     } finally {
       setItemsLoading(false);
     }
@@ -320,6 +324,12 @@ export default function CustomersPage() {
         <p className="mt-1 text-xs text-slate-500">Track and manage customer communications timelines, checkout invoices, notes, and WebRTC calls logs.</p>
       </div>
 
+      {customersError && (
+        <div className="flex items-start gap-2.5 rounded-2xl border border-red-200 bg-red-50 p-4 text-xs font-semibold text-red-650">
+          <span>⚠️ {customersError} Please refresh to retry.</span>
+        </div>
+      )}
+
       {/* Metrics Row */}
       <div className="grid gap-6 sm:grid-cols-3">
         <div className="rounded-2xl border border-slate-100 bg-white shadow-sm border-slate-100/80 p-6 flex items-center justify-between">
@@ -450,7 +460,7 @@ export default function CustomersPage() {
                       </button>
 
                       <button
-                          onClick={() => navigate(`/seller/chat?userId=${cust.id}`)} 
+                          onClick={() => navigate(`/dashboard/chat?userId=${cust.id}`)} 
                           title="Chat"
                           className="flex items-center justify-center h-10 w-10 rounded-xl bg-white border border-slate-200 shadow-sm transition-all duration-200 shrink-0 hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-md active:scale-[0.97] active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1 text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 cursor-pointer"
                       >
@@ -461,6 +471,20 @@ export default function CustomersPage() {
 
                 </motion.tr>
               ))}
+
+              {filteredCustomers.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="py-12 text-center text-slate-500 px-6 py-5 align-middle">
+                    <div className="flex flex-col items-center justify-center space-y-2">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-slate-500">
+                        <Users className="h-5 w-5" />
+                      </div>
+                      <p className="text-xs font-bold text-slate-700">No Customers Found</p>
+                      <p className="text-[10px] text-slate-500 max-w-[240px] leading-normal mx-auto">Shopper profiles will populate here as calls are received or logs are generated.</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

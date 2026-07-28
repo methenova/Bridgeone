@@ -642,7 +642,7 @@ export default function SettingsPage() {
               </div>
 
               <button
-                onClick={() => navigate("/seller/widget")} className="flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 hover:border-slate-300 px-4 py-2.5 rounded-2xl font-bold text-slate-900 text-xs cursor-pointer"
+                onClick={() => navigate("/dashboard/widget")} className="flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 hover:border-slate-300 px-4 py-2.5 rounded-2xl font-bold text-slate-900 text-xs cursor-pointer"
               >
                 <span>Open Customizer page</span>
                 <ArrowRight className="h-4 w-4" />
@@ -741,7 +741,7 @@ export default function SettingsPage() {
               </div>
 
               <button
-                onClick={() => navigate("/seller/integrations")} className="flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 hover:border-slate-300 px-4 py-2.5 rounded-2xl font-bold text-slate-900 text-xs cursor-pointer"
+                onClick={() => navigate("/dashboard/integrations")} className="flex items-center gap-1 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-slate-200 hover:border-slate-300 px-4 py-2.5 rounded-2xl font-bold text-slate-900 text-xs cursor-pointer"
               >
                 <span>Manage Integrations dashboard</span>
                 <ArrowRight className="h-4 w-4" />

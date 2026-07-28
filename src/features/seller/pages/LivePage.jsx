@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Radio, Video, VideoOff, ShoppingBag, Eye, Send, StopCircle, Phone, PhoneOff, Mic, MicOff, Check, X, MonitorUp, Maximize, Minimize, Clock, MessageSquare } from "lucide-react";
+import { Radio, Video, VideoOff, ShoppingBag, Eye, Send, StopCircle, Phone, PhoneOff, Mic, MicOff, Check, X, MonitorUp, Maximize, Minimize, Clock, MessageSquare, Sparkles } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { supabase } from "@/config/supabase";
@@ -182,6 +182,11 @@ export default function LivePage() {
   // Viewer Speaker join states
   const [joinRequests, setJoinRequests] = useState([]);
   const [connectedViewerStream, setConnectedViewerStream] = useState(null);
+  const [screenSharing, setScreenSharing] = useState(false);
+  const [backgroundBlurred, setBackgroundBlurred] = useState(false);
+
+  const originalVideoTrackRef = useRef(null);
+  const screenStreamRef = useRef(null);
 
   const videoRef = useRef(null);
   const channelRef = useRef(null);
@@ -218,6 +223,14 @@ export default function LivePage() {
     if (callRemoteVideoRef.current && callRemoteStream) {
       if (callRemoteVideoRef.current.srcObject !== callRemoteStream) {
         callRemoteVideoRef.current.srcObject = callRemoteStream;
+        // BC-1 FIX: Safari blocks unmuted autoPlay. Explicitly call .play() after
+        // srcObject assignment. AbortError fires if srcObject changes before the
+        // previous play() resolves — this is harmless and suppressed.
+        callRemoteVideoRef.current.play().catch((err) => {
+          if (err.name !== "AbortError") {
+            console.warn("[LivePage] Remote video autoplay blocked (Safari):", err.name);
+          }
+        });
       }
     }
   }, [callRemoteStream, activeConsultation]);
@@ -238,7 +251,7 @@ export default function LivePage() {
     async function fetchCaller() {
       try {
         // Parse the call log ID embedded in the room code (e.g. call_shopId_logId_random)
-        const parts = (incomingCall.room_key || incomingCall.room_code || "").split("_");
+        const parts = (incomingCall.room_code || "").split("_");
         const callLogId = parts.length >= 3 ? parts[2] : null;
 
         if (!callLogId) return;
@@ -325,7 +338,7 @@ export default function LivePage() {
       // 3.5. Broadcast Incoming Call ( shopper calling the seller directly for instant popup )
       .on("broadcast", { event: "incoming_call" }, ({ payload }) => {
         const room = payload.room;
-        const roomCode = room?.room_key || room?.room_code || "";
+        const roomCode = room?.room_code || "";
         if (room && room.shop_id === shopId && roomCode.startsWith("call_") && (room.status === "waiting" || room.status === "ringing" || room.status === "connected")) {
           if (incomingCallRef.current?.id === room.id) return;
           console.log("[LivePage] Incoming call broadcast received:", room);
@@ -343,7 +356,7 @@ export default function LivePage() {
         },
         (payload) => {
           const room = payload.new;
-          const roomCode = room?.room_key || room?.room_code || "";
+          const roomCode = room?.room_code || "";
           // Filter by shop_id in JS for robustness
           if (room.shop_id === shopId && roomCode.startsWith("call_") && (room.status === "waiting" || room.status === "ringing" || room.status === "connected")) {
             // Ignore if we already have this call pending
@@ -384,53 +397,7 @@ export default function LivePage() {
     };
   }, [shopId]);
 
-  // Secondary Fallback: Poll DB every 1.5s for any incoming calls that were missed by Realtime
-  useEffect(() => {
-    if (!shopId) return;
 
-    const checkImmediately = async () => {
-      if (incomingCallRef.current || isAcceptingRef.current) return;
-
-      try {
-        const { data: rooms, error } = await supabase
-          .from("video_rooms")
-          .select("*")
-          .eq("shop_id", shopId)
-          .in("status", ["waiting", "ringing", "connected"]);
-
-        if (error) throw error;
-
-        if (rooms && rooms.length > 0) {
-          // Find the active incoming call (starts with 'call_')
-          const callRoom = rooms.find((r) => {
-            const roomCode = r.room_key || r.room_code || "";
-            if (!roomCode.startsWith("call_")) return false;
-            // Ignore if already answered by an agent
-            if (r.answer) return false;
-            // Filter out calls created more than 60 seconds ago to avoid stale triggers
-            const createdTime = new Date(r.created_at).getTime();
-            const now = Date.now();
-            return (now - createdTime) < 60000;
-          });
-
-          if (callRoom) {
-            // Avoid duplicate triggers
-            if (incomingCallRef.current?.id === callRoom.id) return;
-            console.log("[LivePage] Incoming call room detected via polling fallback:", callRoom);
-            setIncomingCall(callRoom);
-            toast.success("Incoming video consultation request!", { duration: 5000 });
-          }
-        }
-      } catch (err) {
-        console.warn("[LivePage] Consultation polling fallback skipped:", err.message);
-      }
-    };
-
-    checkImmediately();
-    const pollInterval = setInterval(checkImmediately, 1500);
-
-    return () => clearInterval(pollInterval);
-  }, [shopId, activeConsultation]);
 
   // Request webcam stream when live starts
   async function startStream() {
@@ -562,7 +529,7 @@ export default function LivePage() {
       }
 
       // ViewerPeer answers the customer's offer, sending seller's stream back
-      const targetRoomCode = incomingCall.room_key || incomingCall.room_code;
+      const targetRoomCode = incomingCall.room_code;
       const peer = new ViewerPeer(
         targetRoomCode,
         (remoteStream) => {
@@ -675,6 +642,15 @@ export default function LivePage() {
       activeCallRoomIdRef.current = null;
     }
 
+    // Stop screen sharing if active
+    if (screenStreamRef.current) {
+      screenStreamRef.current.getTracks().forEach((t) => t.stop());
+      screenStreamRef.current = null;
+    }
+    originalVideoTrackRef.current = null;
+    setScreenSharing(false);
+    setBackgroundBlurred(false);
+
     // If we acquired a new stream just for this consultation, release it
     if (consultationOwnedStream.current && consultationStreamRef.current) {
       consultationStreamRef.current.getTracks().forEach((t) => t.stop());
@@ -723,6 +699,73 @@ export default function LivePage() {
         setCallCamEnabled(videoTrack.enabled);
       }
     }
+  }
+
+  async function toggleScreenShare() {
+    try {
+      if (!screenSharing) {
+        // Start screen sharing
+        const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+        screenStreamRef.current = screenStream;
+        const screenTrack = screenStream.getVideoTracks()[0];
+
+        const consultStream = consultationStreamRef.current;
+        if (consultStream) {
+          const originalVideoTrack = consultStream.getVideoTracks()[0];
+          originalVideoTrackRef.current = originalVideoTrack;
+
+          // Replace track on RTCPeerConnection sender
+          const peerInstance = viewerPeerRef.current?.peer;
+          if (peerInstance) {
+            const senders = peerInstance.getSenders();
+            const videoSender = senders.find((s) => s.track && s.track.kind === "video");
+            if (videoSender) {
+              await videoSender.replaceTrack(screenTrack);
+            }
+          }
+
+          // Handle when user clicks browser's built-in "Stop Sharing" button
+          screenTrack.onended = () => {
+            stopScreenShare();
+          };
+        }
+        setScreenSharing(true);
+        toast.success("Screen sharing active");
+      } else {
+        await stopScreenShare();
+      }
+    } catch (err) {
+      console.error("Screen sharing error:", err);
+      toast.error("Could not share screen: " + err.message);
+    }
+  }
+
+  async function stopScreenShare() {
+    if (screenStreamRef.current) {
+      screenStreamRef.current.getTracks().forEach((t) => t.stop());
+      screenStreamRef.current = null;
+    }
+
+    const consultStream = consultationStreamRef.current;
+    const originalTrack = originalVideoTrackRef.current;
+    if (consultStream && originalTrack) {
+      const peerInstance = viewerPeerRef.current?.peer;
+      if (peerInstance) {
+        const senders = peerInstance.getSenders();
+        const videoSender = senders.find((s) => s.track && s.track.kind === "video");
+        if (videoSender) {
+          await videoSender.replaceTrack(originalTrack);
+        }
+      }
+    }
+    originalVideoTrackRef.current = null;
+    setScreenSharing(false);
+    toast.success("Screen sharing stopped");
+  }
+
+  function toggleBackgroundBlur() {
+    setBackgroundBlurred((b) => !b);
+    toast.success(!backgroundBlurred ? "Background blur enabled" : "Background blur disabled");
   }
 
   // Handle viewer requesting to join the live stream (Speak request)
@@ -1388,6 +1431,7 @@ export default function LivePage() {
                       playsInline
                       muted
                       className={`w-full h-full object-cover scale-x-[-1] transition-opacity duration-300 ${callCamEnabled ? "opacity-100" : "opacity-0"}`}
+                      style={{ filter: backgroundBlurred ? "blur(8px)" : "none" }}
                     />
                     {!callCamEnabled && (
                       <div className="absolute inset-0 flex flex-col items-center justify-center bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 text-slate-600 gap-1.5">
@@ -1425,6 +1469,32 @@ export default function LivePage() {
                     }`}
                   >
                     {callCamEnabled ? <Video className="h-5 w-5" /> : <VideoOff className="h-5 w-5" />}
+                  </button>
+
+                  {/* Screen Share toggle */}
+                  <button
+                    onClick={toggleScreenShare}
+                    title={screenSharing ? "Stop Screen Share" : "Share Screen"}
+                    className={`flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border ${
+                      screenSharing
+                        ? "bg-blue-500/20 text-blue-400 border-blue-500/30 hover:bg-blue-500/30"
+                        : "bg-white/10 text-slate-900 border-white/10 hover:bg-white/20"
+                    }`}
+                  >
+                    <MonitorUp className="h-5 w-5" />
+                  </button>
+
+                  {/* Background Blur toggle */}
+                  <button
+                    onClick={toggleBackgroundBlur}
+                    title={backgroundBlurred ? "Disable Background Blur" : "Enable Background Blur"}
+                    className={`flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border ${
+                      backgroundBlurred
+                        ? "bg-fuchsia-500/20 text-fuchsia-400 border-fuchsia-500/30 hover:bg-fuchsia-500/30"
+                        : "bg-white/10 text-slate-900 border-white/10 hover:bg-white/20"
+                    }`}
+                  >
+                    <Sparkles className="h-5 w-5" />
                   </button>
 
                   {/* Divider */}

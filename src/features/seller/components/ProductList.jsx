@@ -11,6 +11,8 @@ import ProductEmptyState from "./ProductEmptyState";
 export default function ProductList({
   products = [],
   isLoading = false,
+  isError = false,
+  error = null,
   isFiltered = false,
   selectedIds = [],
   onSelectChange,
@@ -98,6 +100,18 @@ export default function ProductList({
 
   // ── States ───────────────────────────────────────────────────
   if (isLoading) return <TableSkeleton rows={8} />;
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center bg-white border border-red-100 rounded-3xl p-6">
+        <AlertTriangle className="h-10 w-10 text-red-500 mb-3 animate-bounce" />
+        <h4 className="text-sm font-bold text-slate-800">Error Loading Products</h4>
+        <p className="text-xs text-slate-500 mt-1 max-w-md">
+          {error?.message || "An unexpected error occurred while communicating with the database."}
+        </p>
+      </div>
+    );
+  }
 
   if (!products.length) {
     return (

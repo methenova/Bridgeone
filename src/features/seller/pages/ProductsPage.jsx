@@ -34,7 +34,7 @@ function NoShopWarning() {
         My Shop section to get started.
       </p>
       <a
-        href="/seller/shop" className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-blue-500 active:scale-[0.98] shadow-lg shadow-blue-500/10"
+        href="/dashboard/shop" className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-blue-500 active:scale-[0.98] shadow-lg shadow-blue-500/10"
       >
         Create My Shop
       </a>
@@ -133,6 +133,8 @@ export default function ProductsPage() {
     data: productData,
     isLoading: productsLoading,
     isFetching,
+    isError,
+    error: productsError,
   } = useProducts(shopId, filters);
 
   const { data: categories = [] } = useCategories();
@@ -239,6 +241,8 @@ export default function ProductsPage() {
         <ProductList
           products={products}
           isLoading={productsLoading}
+          isError={isError}
+          error={productsError}
           isFiltered={isFiltered}
           selectedIds={selectedIds}
           onSelectChange={setSelectedIds}

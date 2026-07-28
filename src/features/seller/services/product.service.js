@@ -1,4 +1,5 @@
 import { supabase } from "@/config/supabase";
+import { executeQuery, BridgeOneError } from "@/services/api/apiHelper";
 
 // ─────────────────────────────────────────────────────────────
 // GET PRODUCTS — Filtered, Paginated
@@ -14,6 +15,11 @@ export async function getProducts(shopId, filters = {}) {
     page = 1,
     limit = 12,
   } = filters;
+
+  // Basic Input Validation
+  if (!shopId) {
+    throw new BridgeOneError("Shop ID is required to retrieve products", "VALIDATION_ERROR");
+  }
 
   const from = (page - 1) * limit;
   const to = from + limit - 1;
@@ -51,7 +57,7 @@ export async function getProducts(shopId, filters = {}) {
     .order(sortBy, { ascending: sortOrder === "asc" })
     .range(from, to);
 
-  const { data, error, count } = await query;
+  const { data, error, count } = await executeQuery(query);
 
   if (error) throw error;
 
@@ -68,11 +74,17 @@ export async function getProducts(shopId, filters = {}) {
 // GET SINGLE PRODUCT — with images
 // ─────────────────────────────────────────────────────────────
 export async function getProduct(productId) {
-  const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    .eq("id", productId)
-    .single();
+  if (!productId) {
+    throw new BridgeOneError("Product ID is required", "VALIDATION_ERROR");
+  }
+
+  const { data, error } = await executeQuery(
+    supabase
+      .from("products")
+      .select("*")
+      .eq("id", productId)
+      .single()
+  );
 
   if (error) throw error;
 
@@ -83,11 +95,17 @@ export async function getProduct(productId) {
 // CREATE PRODUCT
 // ─────────────────────────────────────────────────────────────
 export async function createProduct(values) {
-  const { data, error } = await supabase
-    .from("products")
-    .insert(values)
-    .select()
-    .single();
+  if (!values || !values.name || !values.shop_id) {
+    throw new BridgeOneError("Product name and shop ID are required", "VALIDATION_ERROR");
+  }
+
+  const { data, error } = await executeQuery(
+    supabase
+      .from("products")
+      .insert(values)
+      .select()
+      .single()
+  );
 
   if (error) throw error;
 
@@ -98,12 +116,18 @@ export async function createProduct(values) {
 // UPDATE PRODUCT
 // ─────────────────────────────────────────────────────────────
 export async function updateProduct(id, values) {
-  const { data, error } = await supabase
-    .from("products")
-    .update(values)
-    .eq("id", id)
-    .select()
-    .single();
+  if (!id) {
+    throw new BridgeOneError("Product ID is required for update", "VALIDATION_ERROR");
+  }
+
+  const { data, error } = await executeQuery(
+    supabase
+      .from("products")
+      .update(values)
+      .eq("id", id)
+      .select()
+      .single()
+  );
 
   if (error) throw error;
 
@@ -114,10 +138,16 @@ export async function updateProduct(id, values) {
 // DELETE PRODUCT
 // ─────────────────────────────────────────────────────────────
 export async function deleteProduct(id) {
-  const { error } = await supabase
-    .from("products")
-    .delete()
-    .eq("id", id);
+  if (!id) {
+    throw new BridgeOneError("Product ID is required for deletion", "VALIDATION_ERROR");
+  }
+
+  const { error } = await executeQuery(
+    supabase
+      .from("products")
+      .delete()
+      .eq("id", id)
+  );
 
   if (error) throw error;
 }
@@ -126,10 +156,16 @@ export async function deleteProduct(id) {
 // BULK DELETE PRODUCTS
 // ─────────────────────────────────────────────────────────────
 export async function bulkDeleteProducts(ids) {
-  const { error } = await supabase
-    .from("products")
-    .delete()
-    .in("id", ids);
+  if (!ids || ids.length === 0) {
+    throw new BridgeOneError("Product IDs are required for bulk deletion", "VALIDATION_ERROR");
+  }
+
+  const { error } = await executeQuery(
+    supabase
+      .from("products")
+      .delete()
+      .in("id", ids)
+  );
 
   if (error) throw error;
 }
@@ -138,10 +174,16 @@ export async function bulkDeleteProducts(ids) {
 // BULK UPDATE STATUS
 // ─────────────────────────────────────────────────────────────
 export async function bulkUpdateStatus(ids, is_active) {
-  const { error } = await supabase
-    .from("products")
-    .update({ is_active })
-    .in("id", ids);
+  if (!ids || ids.length === 0) {
+    throw new BridgeOneError("Product IDs are required for bulk status update", "VALIDATION_ERROR");
+  }
+
+  const { error } = await executeQuery(
+    supabase
+      .from("products")
+      .update({ is_active })
+      .in("id", ids)
+  );
 
   if (error) throw error;
 }
@@ -150,10 +192,12 @@ export async function bulkUpdateStatus(ids, is_active) {
 // GET CATEGORIES
 // ─────────────────────────────────────────────────────────────
 export async function getCategories() {
-  const { data, error } = await supabase
-    .from("categories")
-    .select("id, name, slug, icon")
-    .order("name");
+  const { data, error } = await executeQuery(
+    supabase
+      .from("categories")
+      .select("id, name, slug, icon")
+      .order("name")
+  );
 
   if (error) throw error;
 
@@ -192,6 +236,10 @@ export function generateSku(shopName = "") {
  * Check if SKU is unique within a shop
  */
 export async function checkSkuUnique(sku, shopId, excludeId = null) {
+  if (!sku || !shopId) {
+    throw new BridgeOneError("SKU and Shop ID are required for uniqueness check", "VALIDATION_ERROR");
+  }
+
   let query = supabase
     .from("products")
     .select("id")
@@ -202,9 +250,28 @@ export async function checkSkuUnique(sku, shopId, excludeId = null) {
     query = query.neq("id", excludeId);
   }
 
-  const { data, error } = await query;
+  const { data, error } = await executeQuery(query);
 
   if (error) throw error;
 
   return data.length === 0;
+}
+
+/**
+ * Get all products belonging to a shop (simple list)
+ */
+export async function getProductsByShop(shopId) {
+  if (!shopId) {
+    throw new BridgeOneError("Shop ID is required", "VALIDATION_ERROR");
+  }
+
+  const query = supabase
+    .from("products")
+    .select("*")
+    .eq("shop_id", shopId);
+
+  const { data, error } = await executeQuery(query);
+  if (error) throw error;
+
+  return data ?? [];
 }

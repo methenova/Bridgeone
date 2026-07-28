@@ -5,7 +5,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { getShops } from "@/services/shop/shop.service";
+import { getShops } from "@/features/seller/services/shop.service";
 
 const ShopContext = createContext();
 

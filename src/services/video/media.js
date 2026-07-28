@@ -5,9 +5,20 @@ export async function getLocalStream(deviceId = "") {
                 deviceId: {
                     exact: deviceId,
                 },
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+                frameRate: { ideal: 30 },
             }
-            : true,
-        audio: true,
+            : {
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+                frameRate: { ideal: 30 },
+            },
+        audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+        },
     };
 
     return navigator.mediaDevices.getUserMedia(constraints);

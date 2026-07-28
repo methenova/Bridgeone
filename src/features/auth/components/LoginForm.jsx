@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuthContext } from "@/context/AuthContext";
 import { Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { getNextOnboardingStep } from "@/features/onboarding/services/onboarding.service";
+import { syncUserDeviceTokenOnLogin } from "@/services/device/deviceToken.service";
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -36,15 +38,33 @@ export default function LoginForm() {
       setErrorMsg("");
 
       const result = await login(formData);
-      const userRole = result?.profile?.role || "customer";
+      const authUser = result?.user;
+      const userProfile = result?.profile;
 
-      if (userRole === "admin") {
-        navigate("/admin");
-      } else if (userRole === "seller") {
-        navigate("/seller");
-      } else {
-        navigate("/");
+      // Sync/update FCM device token on login
+      if (authUser?.id) {
+        syncUserDeviceTokenOnLogin(authUser.id);
       }
+
+      // Prevent login if email is not verified
+      if (authUser && authUser.email_confirmed_at === null) {
+        setErrorMsg("Please verify your email address before logging in.");
+        setTimeout(() => {
+          navigate("/verify-email", { replace: true });
+        }, 1200);
+        return;
+      }
+
+      // Check profiles.onboarding_completed
+      if (!userProfile || userProfile.onboarding_completed === false) {
+        // Continue onboarding from last incomplete step
+        const targetStep = await getNextOnboardingStep(authUser, userProfile);
+        navigate(targetStep, { replace: true });
+        return;
+      }
+
+      // If onboarding_completed = true -> Dashboard
+      navigate("/dashboard", { replace: true });
     } catch (error) {
       setErrorMsg(error.message || "Failed to log in. Please check your credentials.");
     } finally {
@@ -115,9 +135,9 @@ export default function LoginForm() {
             />
             <span>Remember me</span>
           </label>
-          <a href="#forgot" className="font-bold text-fuchsia-600 hover:text-fuchsia-500 transition-colors">
+          <Link to="/forgot-password" className="font-bold text-fuchsia-600 hover:text-fuchsia-500 transition-colors">
             Forgot Password?
-          </a>
+          </Link>
         </div>
 
         <button

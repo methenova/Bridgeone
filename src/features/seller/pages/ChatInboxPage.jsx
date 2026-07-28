@@ -2,20 +2,23 @@ import { useState, useEffect, useRef } from "react";
 import { Send, Image, MessageSquare, User, Search, Paperclip } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { useAuthContext } from "@/context/AuthContext";
-import { useChatContacts, useChatMessages, useSendMessage, useMarkRead } from "../../chat/hooks/useChat";
+import { useChatContacts, useChatMessages, useSendMessage, useMarkRead, useTypingIndicator } from "../../chat/hooks/useChat";
 import toast from "react-hot-toast";
 import { SidebarSkeleton } from "@/components/skeletons";
 
+import { supabase } from "@/config/supabase";
+
 export default function ChatInboxPage() {
-  const { user } = useAuthContext();
+  const { user, currentShop } = useAuthContext();
   const userId = user?.id;
   const [searchParams] = useSearchParams();
   const targetUserId = searchParams.get("userId");
 
-  const { data: contacts = [], isLoading: contactsLoading } = useChatContacts(userId);
+  const { data: contacts = [], isLoading: contactsLoading } = useChatContacts(currentShop?.id);
   const [selectedContact, setSelectedContact] = useState(null);
   const [messageText, setMessageText] = useState("");
   const [attachmentUrl, setAttachmentUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   // Pre-select contact if userId is passed in URL search params
   useEffect(() => {
@@ -27,10 +30,16 @@ export default function ChatInboxPage() {
     }
   }, [targetUserId, contacts]);
 
-  const { data: messages = [], isLoading: messagesLoading } = useChatMessages(userId, selectedContact?.id);
+  const { data: messages = [], isLoading: messagesLoading } = useChatMessages(selectedContact?.id);
   const sendMsg = useSendMessage();
   const markRead = useMarkRead();
   const chatEndRef = useRef(null);
+
+  const { remoteTyping, sendTypingStatus } = useTypingIndicator(
+    selectedContact?.id,
+    userId,
+    user?.user_metadata?.full_name || user?.email || "Seller"
+  );
 
   // Auto-scroll to bottom of chat
   useEffect(() => {
@@ -39,20 +48,24 @@ export default function ChatInboxPage() {
 
   // Mark incoming messages as read
   useEffect(() => {
-    if (selectedContact && userId) {
-      markRead.mutate({ senderId: selectedContact.id, receiverId: userId });
+    if (selectedContact && currentShop?.id) {
+      markRead.mutate({ conversationId: selectedContact.id, shopId: currentShop.id });
     }
-  }, [selectedContact, messages.length, userId, markRead]);
+  }, [selectedContact, messages.length, currentShop?.id, markRead]);
 
   async function handleSend(e) {
     e.preventDefault();
     if (!messageText.trim() && !attachmentUrl) return;
 
     try {
+      if (selectedContact?.id) {
+        sendTypingStatus(false);
+      }
+
       await sendMsg.mutateAsync({
         senderId: userId,
-        receiverId: selectedContact.id,
-        shopId: selectedContact.shop?.id || null,
+        conversationId: selectedContact.id,
+        shopId: currentShop?.id || null,
         content: messageText.trim(),
         imageUrl: attachmentUrl,
       });
@@ -65,16 +78,60 @@ export default function ChatInboxPage() {
     }
   }
 
-  // Handle mock image attachments
+  const handleInputChange = (e) => {
+    setMessageText(e.target.value);
+    if (selectedContact?.id) {
+      sendTypingStatus(e.target.value.length > 0);
+    }
+  };
+
+  // Handle production storage uploads with file validation
   function handleAttachImage() {
-    const urls = [
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500",
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500",
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500",
-    ];
-    const randomUrl = urls[Math.floor(Math.random() * urls.length)];
-    setAttachmentUrl(randomUrl);
-    toast.success("Mock image attachment loaded!");
+    if (!selectedContact?.id) {
+      toast.error("Please select a conversation first.");
+      return;
+    }
+
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.onchange = async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      // Validate size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error("File is too large. Maximum size allowed is 10MB.");
+        return;
+      }
+
+      setUploading(true);
+      const toastId = toast.loading("Uploading image securely...");
+      try {
+        const filePath = `${selectedContact.id}/${Date.now()}_${file.name}`;
+        const { data, error } = await supabase.storage
+          .from("chat-attachments")
+          .upload(filePath, file);
+
+        if (error) throw error;
+
+        // Generate time-limited signed URL for secure download validation
+        const { data: signedData, error: signedError } = await supabase.storage
+          .from("chat-attachments")
+          .createSignedUrl(filePath, 31536000); // 1 year expiry
+
+        if (signedError) throw signedError;
+
+        setAttachmentUrl(signedData.signedUrl);
+        toast.success("Image uploaded successfully!", { id: toastId });
+      } catch (err) {
+        console.error("Storage upload failed:", err);
+        toast.error("Failed to upload image. Enforced RLS storage limits.", { id: toastId });
+      } finally {
+        setUploading(false);
+      }
+    };
+    fileInput.click();
   }
 
   return (
@@ -126,7 +183,7 @@ export default function ChatInboxPage() {
                     
                     <div className="flex-1 min-w-0 text-left">
                       <div className="flex justify-between items-baseline mb-0.5">
-                        <p className={`text-xs font-bold truncate ${isActive ? "text-blue-700" : "text-slate-900"}`}>{c.user?.full_name || "Buyer"}</p>
+                        <p className={`text-xs font-bold truncate ${isActive ? "text-blue-700" : "text-slate-900"}`}>{c.visitors?.name || "Buyer"}</p>
                         {c.unread && (
                           <span className="h-2 w-2 rounded-full bg-blue-500 shrink-0" />
                         )}
@@ -166,7 +223,7 @@ export default function ChatInboxPage() {
                   </div>
                 ) : (
                   messages.map((m) => {
-                    const isOwn = m.sender_id === userId;
+                    const isOwn = m.sender_type === "business_member" || m.sender_shop_member_id === userId;
                     return (
                       <div key={m.id} className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
                         <div className={`max-w-[70%] rounded-2xl p-3.5 space-y-2 text-xs text-left shadow-xs ${
@@ -187,6 +244,18 @@ export default function ChatInboxPage() {
                       </div>
                     );
                   })
+                )}
+                {remoteTyping && (
+                  <div className="flex gap-3 mb-4 select-none">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-slate-600 shadow-sm border border-slate-200">
+                      <User className="h-4 w-4" />
+                    </div>
+                    <div className="max-w-[70%] rounded-3xl bg-slate-100 px-4 py-2.5 shadow-sm border border-slate-200">
+                      <span className="text-slate-600 italic text-[11px]">
+                        {remoteTyping} is typing...
+                      </span>
+                    </div>
+                  </div>
                 )}
                 <div ref={chatEndRef} />
               </div>
@@ -210,7 +279,7 @@ export default function ChatInboxPage() {
                   <button
                     type="button"
                     onClick={handleAttachImage} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 text-slate-500 hover:text-slate-900 transition-all duration-200"
-                    title="Attach Mock Image"
+                    title="Attach Image"
                   >
                     <Paperclip className="h-4.5 w-4.5" />
                   </button>
@@ -218,7 +287,7 @@ export default function ChatInboxPage() {
                   <input
                     type="text"
                     value={messageText}
-                    onChange={(e) => setMessageText(e.target.value)}
+                    onChange={handleInputChange}
                     placeholder="Type a message..." className="flex-1 rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 px-4 py-2.5 text-xs text-slate-900 outline-none focus:border-blue-500 placeholder-slate-600"
                   />
 

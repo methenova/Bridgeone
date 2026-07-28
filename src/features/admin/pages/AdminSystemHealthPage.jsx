@@ -3,31 +3,66 @@ import {
   Activity, 
   Cpu, 
   Database, 
-  HardDrive, 
   AlertTriangle, 
   CheckCircle2, 
   Server, 
   Clock, 
   RefreshCw,
   TrendingUp,
-  Sliders
+  Globe,
+  Wifi,
+  Smartphone,
+  Info
 } from "lucide-react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 
 export default function AdminSystemHealthPage() {
-  const [latency, setLatency] = useState(14);
-  const [cpuUsage, setCpuUsage] = useState(38);
-  const [memUsage, setMemUsage] = useState(54);
   const [refreshing, setRefreshing] = useState(false);
+  const [liveDot, setLiveDot] = useState(true);
 
-  // Simulate real-time monitoring variations
+  // Live real-time stats state
+  const [stats, setStats] = useState({
+    activeCalls: 142,
+    successRate: 99.4,
+    turnUsageCount: 26,
+    relayRatio: 18.3,
+    avgRtt: 62,
+    avgPacketLoss: 0.18,
+    avgJitter: 5.4,
+    avgBitrate: 1.45,
+    recoveryEvents: 3,
+    failedCalls: 1
+  });
+
+  // Automatically refresh stats every 3 seconds with slight variations to simulate active telemetry feeds
   useEffect(() => {
     const interval = setInterval(() => {
-      setLatency(prev => Math.max(10, Math.min(45, prev + Math.floor(Math.random() * 7) - 3)));
-      setCpuUsage(prev => Math.max(15, Math.min(85, prev + Math.floor(Math.random() * 11) - 5)));
-      setMemUsage(prev => Math.max(40, Math.min(75, prev + Math.floor(Math.random() * 5) - 2)));
+      setLiveDot(prev => !prev);
+      setStats(prev => {
+        const change = Math.floor(Math.random() * 5) - 2;
+        const newActive = Math.max(120, Math.min(180, prev.activeCalls + change));
+        
+        // Slightly fluctuate parameters
+        const newRtt = Math.max(45, Math.min(95, prev.avgRtt + (Math.floor(Math.random() * 7) - 3)));
+        const newLoss = Math.max(0.05, Math.min(0.65, prev.avgPacketLoss + (Math.random() * 0.08 - 0.04)));
+        const newJitter = Math.max(2.5, Math.min(9.5, prev.avgJitter + (Math.random() * 1.2 - 0.6)));
+        const newBitrate = Math.max(1.10, Math.min(1.85, prev.avgBitrate + (Math.random() * 0.14 - 0.07)));
+        const newRelay = Math.max(15.2, Math.min(22.8, prev.relayRatio + (Math.random() * 0.8 - 0.4)));
+        const newTurnCount = Math.round((newActive * newRelay) / 100);
+
+        return {
+          ...prev,
+          activeCalls: newActive,
+          avgRtt: newRtt,
+          avgPacketLoss: newLoss,
+          avgJitter: newJitter,
+          avgBitrate: newBitrate,
+          relayRatio: newRelay,
+          turnUsageCount: newTurnCount
+        };
+      });
     }, 3000);
     return () => clearInterval(interval);
   }, []);
@@ -36,167 +71,220 @@ export default function AdminSystemHealthPage() {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-      toast.success("Infrastructure health telemetry metrics updated!");
+      toast.success("WebRTC operational metrics refreshed!");
     }, 800);
   }
 
-  // System services list
-  const services = [
-    { name: "PostgreSQL Database", status: "Operational", desc: "Multi-tenant tables, orders, products", latency: "14ms", statusType: "healthy" },
-    { name: "Realtime WebSocket Hub", status: "Operational", desc: "Signalling channels, active peer counts", latency: "8ms", statusType: "healthy" },
-    { name: "Supabase REST API Host", status: "Operational", desc: "PostgREST endpoints gateway connection", latency: "32ms", statusType: "healthy" },
-    { name: "S3 Product Images Storage", status: "Operational", desc: "Product media, files buckets server", latency: "42ms", statusType: "healthy" },
-    { name: "Global TURN/STUN Signalling Host", status: "Operational", desc: "WebRTC candidate ICE routing", latency: "18ms", statusType: "healthy" },
+  // Browser distribution data
+  const browserDistribution = [
+    { name: "Google Chrome", share: 64, color: "bg-blue-500" },
+    { name: "Apple Safari", share: 21, color: "bg-indigo-500" },
+    { name: "Mozilla Firefox", share: 8, color: "bg-amber-500" },
+    { name: "Microsoft Edge", share: 7, color: "bg-emerald-500" }
   ];
 
-  // Simulated critical console logs
-  const errorLogs = [
-    { time: "12:04:12", source: "TURN_SERVER", message: "Refused candidate allocation from blocked client port.", type: "warning" },
-    { time: "11:58:34", source: "POSTGREST", message: "Resolved schema reloads notified successfully.", type: "info" },
-    { time: "11:42:01", source: "WEBSOCKET", message: "Active signalling room call_4da2ad29-3fbe client connection dropped.", type: "warning" }
+  // Regional statistics data
+  const regionalStats = [
+    { region: "us-east (Virginia)", active: Math.round(stats.activeCalls * 0.58), rtt: `${stats.avgRtt - 15}ms`, load: "Optimal" },
+    { region: "us-west (Oregon)", active: Math.round(stats.activeCalls * 0.24), rtt: `${stats.avgRtt + 10}ms`, load: "Optimal" },
+    { region: "eu-central (Frankfurt)", active: Math.round(stats.activeCalls * 0.12), rtt: `${stats.avgRtt + 35}ms`, load: "Optimal" },
+    { region: "ap-south (Mumbai)", active: Math.round(stats.activeCalls * 0.06), rtt: `${stats.avgRtt + 60}ms`, load: "Low Load" }
+  ];
+
+  // Live signaling / diagnostics queue
+  const diagnosticLogs = [
+    { time: "Just Now", source: "TURN_EAST", message: "Priority sorted TURN servers: turn:us-east.bridgeone.video first.", type: "info" },
+    { time: "2 min ago", source: "VIEWER_PEER", message: "WebRTC transition: High -> Medium (RTT climbing consecutively: 110ms -> 180ms -> 255ms).", type: "warning" },
+    { time: "4 min ago", source: "SELLER_PEER", message: "ICE link failed. Executing automatic restart failover to TURN backup relay.", type: "info" },
+    { time: "8 min ago", source: "DIAGNOSTICS", message: "CPU event loop delay warning (lag detected: 2850ms). Cap max profile.", type: "warning" }
   ];
 
   return (
-    <div className="space-y-4 md:space-y-6 text-slate-900 max-w-7xl relative">
+    <div className="space-y-6 text-slate-900 max-w-7xl relative">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">System Infrastructure Health</h1>
-          <p className="mt-1 text-xs text-slate-500">Monitor active WebRTC channels, memory capacities, STUN servers, and database telemetry.</p>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">WebRTC Operations Dashboard</h1>
+            <span className="relative flex h-2 w-2">
+              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 ${liveDot ? "opacity-100" : ""}`}></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+          </div>
+          <p className="mt-1 text-xs text-slate-500">Real-time telemetry and observations of active seller-customer video/audio connections.</p>
         </div>
 
         <Button
           onClick={handleTriggerRefresh}
           disabled={refreshing}
-          className="flex items-center gap-2 rounded-xl bg-white shadow-sm border border-slate-200 hover:border-slate-200 px-4 py-2.5 text-xs font-bold text-slate-700 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-50"
+          className="flex items-center gap-2 rounded-xl bg-white shadow-sm border border-slate-200 hover:border-slate-300 px-4 py-2.5 text-xs font-bold text-slate-700 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-50"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
-          <span>Refresh Telemetry</span>
+          <span>Force Refresh</span>
         </Button>
       </div>
 
-      {/* Scorecards */}
-      <div className="grid gap-6 sm:grid-cols-3">
+      {/* Main Stats Row */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         
-        {/* CPU */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
+        {/* Active Calls */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3 shadow-sm">
           <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-            <span>CPU Core Load</span>
-            <Cpu className="h-4.5 w-4.5 text-blue-400" />
+            <span>Active Calls</span>
+            <Activity className="h-4.5 w-4.5 text-blue-500" />
           </div>
-          <div className="space-y-2">
-            <p className="text-2xl font-extrabold tracking-tight text-slate-900">{cpuUsage}%</p>
-            
-            {/* Progress load */}
-            <div className="h-1.5 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-200">
-              <div 
-                style={{ width: `${cpuUsage}%` }} 
-                className={`h-full rounded-full transition-all duration-500 ${
-                  cpuUsage > 80 ? "bg-red-500" : cpuUsage > 60 ? "bg-amber-500" : "bg-blue-500"
-                }`}
-              />
-            </div>
+          <div>
+            <p className="text-3xl font-extrabold tracking-tight text-slate-900">{stats.activeCalls}</p>
+            <p className="text-[10px] text-slate-500 mt-1">Simultaneous P2P sessions</p>
           </div>
         </div>
 
-        {/* Memory */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
+        {/* Success Rate */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3 shadow-sm">
           <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-            <span>Memory Utilisation</span>
-            <HardDrive className="h-4.5 w-4.5 text-indigo-400" />
+            <span>Connection Success</span>
+            <CheckCircle2 className="h-4.5 w-4.5 text-emerald-500" />
           </div>
-          <div className="space-y-2">
-            <p className="text-2xl font-extrabold tracking-tight text-slate-900">{memUsage}%</p>
-            
-            {/* Progress load */}
-            <div className="h-1.5 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-200">
-              <div 
-                style={{ width: `${memUsage}%` }} 
-                className="h-full bg-indigo-500 rounded-full transition-all duration-500"
-              />
-            </div>
+          <div>
+            <p className="text-3xl font-extrabold tracking-tight text-slate-900">{stats.successRate}%</p>
+            <p className="text-[10px] text-slate-500 mt-1">Failed calls: {stats.failedCalls}</p>
           </div>
         </div>
 
-        {/* Latency */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
+        {/* TURN Usage */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3 shadow-sm">
           <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-            <span>Database Ping latency</span>
-            <Database className="h-4.5 w-4.5 text-emerald-400" />
+            <span>TURN Relay Ratio</span>
+            <Globe className="h-4.5 w-4.5 text-indigo-500" />
           </div>
-          <div className="space-y-2">
-            <p className="text-2xl font-extrabold tracking-tight text-slate-900">{latency}ms</p>
-            
-            {/* Progress load */}
-            <div className="h-1.5 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-200">
-              <div 
-                style={{ width: `${(latency / 100) * 100}%` }} 
-                className="h-full bg-emerald-500 rounded-full transition-all duration-500"
-              />
-            </div>
+          <div>
+            <p className="text-3xl font-extrabold tracking-tight text-slate-900">{stats.relayRatio.toFixed(1)}%</p>
+            <p className="text-[10px] text-slate-500 mt-1">{stats.turnUsageCount} active allocations</p>
+          </div>
+        </div>
+
+        {/* Average RTT */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3 shadow-sm">
+          <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+            <span>Average RTT Latency</span>
+            <Wifi className="h-4.5 w-4.5 text-amber-500" />
+          </div>
+          <div>
+            <p className="text-3xl font-extrabold tracking-tight text-slate-900">{stats.avgRtt}ms</p>
+            <p className="text-[10px] text-slate-500 mt-1">Jitter: {stats.avgJitter.toFixed(1)}ms | Loss: {stats.avgPacketLoss.toFixed(2)}%</p>
           </div>
         </div>
 
       </div>
 
-      <div className="grid gap-4 md:gap-6 grid-cols-1 lg:grid-cols-3">
+      {/* Detail Metrics Row */}
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
         
-        {/* Left 2 Cols: Platform Services status list */}
-        <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4">
-          <div>
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Core Microservices status</h3>
-            <p className="text-xs text-slate-500">Live operational validation logs for primary interfaces</p>
-          </div>
+        {/* Left: Quality Stats & Channels */}
+        <div className="lg:col-span-2 space-y-6">
+          
+          {/* Quality Metrics Grid */}
+          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-5">
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Call Quality Averages</h3>
+              <p className="text-xs text-slate-500">Real-time statistics averaged across all active channels.</p>
+            </div>
 
-          <div className="divide-y divide-slate-100 text-xs">
-            {services.map(ser => (
-              <div key={ser.name} className="flex justify-between items-center py-4 first:pt-0 last:pb-0">
-                <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-white shadow-sm border border-slate-200 flex items-center justify-center shrink-0">
-                    <Server className="h-4 w-4 text-slate-500" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-slate-900 text-xs">{ser.name}</p>
-                    <p className="text-[10px] text-slate-500 mt-0.5">{ser.desc}</p>
-                  </div>
-                </div>
-
-                <div className="text-right flex items-center gap-3">
-                  <span className="font-mono text-[10px] text-slate-500">Lat: {ser.latency}</span>
-                  <span className="inline-flex items-center gap-1 text-[8px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded uppercase">
-                    <CheckCircle2 className="h-2.5 w-2.5" /> Operational
-                  </span>
-                </div>
+            <div className="grid gap-4 sm:grid-cols-3 text-xs">
+              <div className="border border-slate-100 bg-slate-50/50 p-4 rounded-xl">
+                <p className="text-slate-500 uppercase tracking-wider text-[9px] font-bold">Avg Bitrate</p>
+                <p className="text-lg font-bold text-slate-800 mt-1">{stats.avgBitrate.toFixed(2)} Mbps</p>
               </div>
-            ))}
+              <div className="border border-slate-100 bg-slate-50/50 p-4 rounded-xl">
+                <p className="text-slate-500 uppercase tracking-wider text-[9px] font-bold">ICE Restarts</p>
+                <p className="text-lg font-bold text-slate-800 mt-1">{stats.recoveryEvents} event spikes</p>
+              </div>
+              <div className="border border-slate-100 bg-slate-50/50 p-4 rounded-xl">
+                <p className="text-slate-500 uppercase tracking-wider text-[9px] font-bold">Active Codecs</p>
+                <p className="text-lg font-bold text-slate-800 mt-1">H.264 / OPUS</p>
+              </div>
+            </div>
           </div>
+
+          {/* Regional Statistics */}
+          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4">
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Regional Gateway Load</h3>
+              <p className="text-xs text-slate-500">Active sessions and average RTT sorted by geographical routing.</p>
+            </div>
+
+            <div className="divide-y divide-slate-100 text-xs">
+              {regionalStats.map(reg => (
+                <div key={reg.region} className="flex justify-between items-center py-3.5 first:pt-0 last:pb-0">
+                  <div className="flex items-center gap-3">
+                    <Server className="h-4 w-4 text-slate-400" />
+                    <div>
+                      <p className="font-bold text-slate-900">{reg.region}</p>
+                      <p className="text-[10px] text-slate-500 mt-0.5">{reg.active} active connections</p>
+                    </div>
+                  </div>
+
+                  <div className="text-right flex items-center gap-4">
+                    <span className="font-mono text-[10px] text-slate-500">RTT: {reg.rtt}</span>
+                    <span className="inline-flex items-center gap-1 text-[8px] font-bold text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded uppercase">
+                      {reg.load}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
 
-        {/* Right 1 Col: Platform Diagnostic Logs console */}
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4 flex flex-col justify-between">
-          <div>
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Diagnostic Logs console</h3>
-            <p className="text-xs text-slate-500">Real-time gateway warning & allocation logs</p>
-          </div>
+        {/* Right: Browser Distribution & Live Diagnostics Logs */}
+        <div className="space-y-6">
 
-          <div className="space-y-3 font-mono text-[9px] text-slate-500 bg-slate-50 p-4 rounded-xl border border-slate-200 h-56 overflow-y-auto leading-normal">
-            {errorLogs.map((log, idx) => (
-              <div key={idx} className="pb-2.5 border-b border-slate-100/80 last:border-0 last:pb-0 space-y-0.5">
-                <div className="flex justify-between text-slate-500">
-                  <span>[{log.time}] {log.source}</span>
-                  <span className={`uppercase font-bold ${
-                    log.type === "warning" ? "text-amber-500" : "text-blue-500"
-                  }`}>{log.type}</span>
+          {/* Browser Distribution Card */}
+          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4">
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Browser Distribution</h3>
+              <p className="text-xs text-slate-500">Current browser engine usage ratio.</p>
+            </div>
+
+            <div className="space-y-3.5 text-xs">
+              {browserDistribution.map(b => (
+                <div key={b.name} className="space-y-1.5">
+                  <div className="flex justify-between font-bold text-slate-700 text-[11px]">
+                    <span>{b.name}</span>
+                    <span>{b.share}%</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-200">
+                    <div style={{ width: `${b.share}%` }} className={`h-full rounded-full ${b.color}`} />
+                  </div>
                 </div>
-                <p className="text-slate-700 leading-normal">{log.message}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
-          <div className="text-[9px] text-slate-500 pt-3 border-t border-slate-100">
-            For critical database diagnostic triggers, visit Developer endpoints webhooks.
+          {/* Live Diagnostics Console */}
+          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 space-y-4">
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-[10px] text-slate-500">Live Diagnostic Events</h3>
+              <p className="text-xs text-slate-500">Real-time troubleshooting warnings & adaptations.</p>
+            </div>
+
+            <div className="space-y-3 font-mono text-[9px] text-slate-500 bg-slate-50 p-4 rounded-xl border border-slate-200 h-52 overflow-y-auto leading-normal">
+              {diagnosticLogs.map((log, idx) => (
+                <div key={idx} className="pb-2 border-b border-slate-100 last:border-0 last:pb-0 space-y-0.5">
+                  <div className="flex justify-between text-slate-400">
+                    <span>[{log.time}] {log.source}</span>
+                    <span className={`uppercase font-bold ${
+                      log.type === "warning" ? "text-amber-500" : "text-blue-500"
+                    }`}>{log.type}</span>
+                  </div>
+                  <p className="text-slate-700">{log.message}</p>
+                </div>
+              ))}
+            </div>
           </div>
+
         </div>
 
       </div>

@@ -15,7 +15,7 @@ import { TableSkeleton } from "@/components/skeletons";
 
 
 const PLANS = [
-  { value: "free", label: "Free Plan" },
+  { value: "starter", label: "Starter Plan" },
   { value: "basic", label: "Basic Plan" },
   { value: "pro", label: "Pro Plan" },
 ];
@@ -51,7 +51,7 @@ export default function AdminShopsPage() {
         (shop.profiles?.full_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
         (shop.profiles?.email || "").toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesPlan = planFilter === "all" || (shop.plan_name || "free") === planFilter;
+      const matchesPlan = planFilter === "all" || (shop.plan_name || "starter") === planFilter;
       
       const matchesStatus = 
         statusFilter === "all" || 
@@ -151,7 +151,7 @@ export default function AdminShopsPage() {
               className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-200"
             >
               <option value="all">All Plans</option>
-              <option value="free">Free Plan</option>
+              <option value="starter">Starter Plan</option>
               <option value="basic">Basic Plan</option>
               <option value="pro">Pro Plan</option>
             </select>
@@ -235,7 +235,7 @@ export default function AdminShopsPage() {
                     {/* Subscription Select Dropdown */}
                     <td className="px-6 py-5 align-middle">
                       <select
-                        value={s.plan_name || "free"}
+                        value={s.plan_name || "starter"}
                         onChange={(e) => handlePlanChange(s.id, e.target.value)}
                         disabled={updatePlan.isPending}
                         className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-900 outline-none focus:border-blue-500 disabled:opacity-50 font-bold transition-all"

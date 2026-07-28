@@ -71,10 +71,10 @@ export default function AdminAuditLogsPage() {
         actorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         actorEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
         log.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        log.module.toLowerCase().includes(searchQuery.toLowerCase());
+        (log.resource || "").toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesStatus = statusFilter === "all" || log.status === statusFilter;
-      const matchesModule = moduleFilter === "all" || log.module === moduleFilter;
+      const matchesStatus = statusFilter === "all";
+      const matchesModule = moduleFilter === "all" || log.resource === moduleFilter;
 
       return matchesSearch && matchesStatus && matchesModule;
     });
@@ -182,7 +182,7 @@ export default function AdminAuditLogsPage() {
                   minute: "2-digit"
                 }) : "—";
 
-                const isSuccess = log.status === "success";
+                const isSuccess = true; // audit_logs don't have a status column — all logged events are successful
                 const actorName = log.profiles?.full_name || "System Autopilot";
                 const actorEmail = log.profiles?.email || "system@bridgeone.com";
 
@@ -207,7 +207,7 @@ export default function AdminAuditLogsPage() {
 
                     {/* Target Module */}
                     <td className="px-6 py-5 align-middle font-semibold text-slate-500">
-                      {log.module}
+                      {log.resource || "—"}
                     </td>
 
                     {/* IP & Browser */}
@@ -218,7 +218,7 @@ export default function AdminAuditLogsPage() {
                       </div>
                       <div className="flex items-center gap-1 mt-1">
                         <Terminal className="h-3 w-3" />
-                        <span className="truncate max-w-[150px]">{log.browser || "Chrome Browser"}</span>
+                        <span className="truncate max-w-[150px]">{log.user_agent || "Chrome Browser"}</span>
                       </div>
                     </td>
 

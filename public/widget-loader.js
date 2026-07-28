@@ -1,48 +1,58 @@
 (function () {
-  // 1. Check Configuration
-  const config = window.BridgeOneConfig;
-  if (!config || !config.shopId) {
-    console.warn("[BridgeOne] Config or shopId is missing. Widget will not load.");
-    return;
-  }
-
-  // 2. Constants
+  // 1. Constants
   const SUPABASE_URL = "https://xrsujalzbvvlyplehdrm.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhyc3VqYWx6YnZ2bHlwbGVoZHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5OTAzNDMsImV4cCI6MjA5ODU2NjM0M30.xewCP7FmemrZ1D7_wtlsPjT1tQlTUBcLa52hi6_R1sE";
 
-  // Dynamic host determination (works in localhost and production)
+  // 2. Extract Configuration dynamically from script tag attributes or global config
   const scriptEl = document.currentScript || Array.from(document.querySelectorAll('script')).find(s => s.src.includes('widget-loader.js'));
+  const config = window.BridgeOneConfig || {};
+  
+  const shopId = config.shopId || (scriptEl ? scriptEl.getAttribute("data-shop-id") : null);
+  const widgetKey = config.widgetKey || (scriptEl ? scriptEl.getAttribute("data-widget-key") : null);
+
+  if (!shopId || !widgetKey) {
+    console.warn("[BridgeOne] data-shop-id or data-widget-key attribute is missing. Widget will not load.");
+    return;
+  }
+
+  // Dynamic host determination (works in localhost and production)
   const hostUrl = scriptEl ? new URL(scriptEl.src).origin : "http://localhost:5173";
 
-  const cleanShopId = encodeURIComponent(String(config.shopId).trim());
+  const cleanShopId = String(shopId).trim();
+  const cleanWidgetKey = String(widgetKey).trim();
+  const currentDomain = window.location.hostname;
 
-  // Fetch shop config from Supabase REST API
-  const fetchUrl = `${SUPABASE_URL}/rest/v1/widget_settings?select=primary_color,widget_position&shop_id=eq.${cleanShopId}`;
+  // 3. Fetch and Validate config from secure definer RPC function on Supabase
+  const fetchUrl = `${SUPABASE_URL}/rest/v1/rpc/validate_widget_key`;
 
   fetch(fetchUrl, {
-    method: "GET",
+    method: "POST",
     headers: {
       "apikey": SUPABASE_ANON_KEY,
       "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
       "Content-Type": "application/json"
-    }
+    },
+    body: JSON.stringify({
+      p_shop_id: cleanShopId,
+      p_widget_key: cleanWidgetKey,
+      p_domain: currentDomain
+    })
   })
     .then(res => res.json())
-    .then(data => {
-      const shop = data && data[0];
-      if (!shop) {
-        console.error(`[BridgeOne] Settings not found for Shop ID: ${config.shopId}`);
+    .then(validationResult => {
+      if (!validationResult || validationResult.valid === false) {
+        console.error(`[BridgeOne] Widget validation failed: ${validationResult?.error || 'Unknown error'}`);
         return;
       }
-      initializeWidget(shop);
+      initializeWidget(validationResult);
     })
     .catch(err => {
-      console.error("[BridgeOne] Failed to load widget configuration:", err);
+      console.error("[BridgeOne] Failed to validate widget configuration:", err);
     });
 
-  function initializeWidget(shop) {
-    const color = shop.primary_color || "#2563eb";
-    const position = shop.widget_position || "bottom-right";
+  function initializeWidget(settings) {
+    const color = settings.primary_color || "#2563eb";
+    const position = settings.widget_position || "bottom-right";
     const isOnline = true; // Assume online for widget UI until socket connects
 
     // Apply basic styles dynamically
@@ -177,7 +187,7 @@
 
     const iframe = document.createElement("iframe");
     iframe.className = "b1-widget-iframe";
-    iframe.src = `${hostUrl}/widget/${config.shopId}`;
+    iframe.src = `${hostUrl}/widget/${cleanShopId}`;
     iframe.setAttribute("allow", "camera *; microphone *; display-capture *; autoplay *; fullscreen *");
     iframe.setAttribute("allowusermedia", "true");
 
@@ -195,7 +205,6 @@
       if (isOpen) {
         container.style.display = "block";
         launcher.innerHTML = closeIcon;
-        // Small delay to trigger CSS transition
         setTimeout(() => {
           container.classList.add("active");
         }, 10);
@@ -203,7 +212,6 @@
         container.classList.remove("active");
         launcher.innerHTML = videoIcon;
         launcher.appendChild(indicator);
-        // Hide after transition ends
         setTimeout(() => {
           if (!isOpen) container.style.display = "none";
         }, 250);
@@ -212,7 +220,6 @@
 
     // Listen to messages from the Iframe
     window.addEventListener("message", (event) => {
-      // Validate host
       if (event.origin !== hostUrl) return;
 
       if (event.data === "close-widget") {

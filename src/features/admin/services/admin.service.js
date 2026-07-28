@@ -56,12 +56,28 @@ export async function getAdminShops() {
     .from("shops")
     .select(`
       *,
-      profiles:owner_id ( full_name, email )
+      profiles:owner_id ( full_name, email ),
+      subscriptions ( plan_name )
     `)
     .order("created_at", { ascending: false });
 
   if (error) throw error;
-  return data ?? [];
+
+  // Map subscription plan_name to shop.plan_name (handles single object from PostgREST)
+  return (data ?? []).map(shop => {
+    let planName = "starter";
+    if (shop.subscriptions) {
+      if (Array.isArray(shop.subscriptions)) {
+        planName = shop.subscriptions[0]?.plan_name || "starter";
+      } else {
+        planName = shop.subscriptions.plan_name || "starter";
+      }
+    }
+    return {
+      ...shop,
+      plan_name: planName
+    };
+  });
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -102,19 +118,68 @@ export async function toggleShopStatus(shopId, isActive) {
 }
 
 export async function updateShopPlan(shopId, planName) {
-  const { data, error } = await supabase
-    .from("shops")
-    .update({ plan_name: planName })
-    .eq("id", shopId)
-    .select()
-    .single();
+  // Check if subscription exists for this shop
+  const { data: sub, error: subSelectError } = await supabase
+    .from("subscriptions")
+    .select("id")
+    .eq("shop_id", shopId)
+    .maybeSingle();
 
-  if (error) {
-    await writeAuditLog(`Failed to update plan to ${planName} for shop ${shopId}`, "Plans", "failed");
-    throw error;
+  if (subSelectError) throw subSelectError;
+
+  let result;
+  if (sub?.id) {
+    // Update existing subscription
+    const { data, error } = await supabase
+      .from("subscriptions")
+      .update({ plan_name: planName, plan: planName })
+      .eq("shop_id", shopId)
+      .select()
+      .single();
+    if (error) throw error;
+    result = data;
+  } else {
+    // Create new subscription if none exists
+    // Get the owner_id of the shop
+    const { data: shopData, error: shopDataError } = await supabase
+      .from("shops")
+      .select("owner_id")
+      .eq("id", shopId)
+      .single();
+    if (shopDataError) throw shopDataError;
+
+    const { data: newData, error: insertError } = await supabase
+      .from("subscriptions")
+      .insert({
+        shop_id: shopId,
+        user_id: shopData?.owner_id,
+        owner_id: shopData?.owner_id,
+        plan_name: planName,
+        plan: planName,
+        status: "active"
+      })
+      .select()
+      .single();
+    if (insertError) throw insertError;
+    result = newData;
   }
-  await writeAuditLog(`Updated subscription plan for ${data.shop_name} to ${planName.toUpperCase()}`, "Plans", "success");
-  return data;
+
+  // To maintain backward compatibility with components expecting shop object:
+  // We'll fetch the shop details and attach plan_name
+  const { data: shop, error: shopFetchError } = await supabase
+    .from("shops")
+    .select("*, profiles:owner_id(full_name, email)")
+    .eq("id", shopId)
+    .single();
+  if (shopFetchError) throw shopFetchError;
+
+  const finalData = {
+    ...shop,
+    plan_name: planName
+  };
+
+  await writeAuditLog(`Updated subscription plan for ${finalData.shop_name} to ${planName.toUpperCase()}`, "Plans", "success");
+  return finalData;
 }
 
 // ─────────────────────────────────────────────────────────────

@@ -437,7 +437,7 @@ export default function AdminSettingsPage() {
                     <div key={plan.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4 hover:border-slate-300 transition-colors">
                       <div>
                         <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{plan.display_name}</h4>
-                        <p className="text-2xl font-black text-slate-900 tracking-tight mt-1">₹{plan.monthly_price}<span className="text-sm font-medium text-slate-500">/mo</span></p>
+                        <p className="text-2xl font-black text-slate-900 tracking-tight mt-1">${plan.monthly_price}<span className="text-sm font-medium text-slate-500">/mo</span></p>
                       </div>
                       <div className="text-[10px] text-slate-500 border-t border-slate-100 pt-3 space-y-1.5">
                         <p className="flex justify-between">Call Limit: <span className="text-slate-900 font-bold">{plan.call_limit === -1 ? "Unlimited" : plan.call_limit}</span></p>
@@ -712,7 +712,7 @@ export default function AdminSettingsPage() {
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                   <DollarSign className="h-3.5 w-3.5 text-blue-400" />
-                  <span>Monthly Price (₹)</span>
+                  <span>Monthly Price ($)</span>
                 </label>
                 <input
                   type="number"
