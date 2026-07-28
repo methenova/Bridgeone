@@ -35,9 +35,7 @@ export async function getProducts(shopId, filters = {}) {
     );
   }
 
-  if (categoryId) {
-    query = query.eq("category_id", categoryId);
-  }
+
 
   if (status === "active") {
     query = query.eq("is_active", true);
@@ -192,16 +190,7 @@ export async function bulkUpdateStatus(ids, is_active) {
 // GET CATEGORIES
 // ─────────────────────────────────────────────────────────────
 export async function getCategories() {
-  const { data, error } = await executeQuery(
-    supabase
-      .from("categories")
-      .select("id, name, slug, icon")
-      .order("name")
-  );
-
-  if (error) throw error;
-
-  return data ?? [];
+  return [];
 }
 
 // ─────────────────────────────────────────────────────────────

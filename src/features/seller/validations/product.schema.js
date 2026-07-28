@@ -19,10 +19,6 @@ export const productSchema = z
         "Slug must be lowercase letters, numbers, and hyphens only"
       ),
 
-    category_id: z
-      .string()
-      .uuid("Please select a valid category")
-      .min(1, "Category is required"),
 
     description: z
       .string()

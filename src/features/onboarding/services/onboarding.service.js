@@ -127,13 +127,7 @@ export async function finalizeOnboarding(userId, metadata) {
     createdEntities.orgId = orgData.id;
 
     // 2. Create Shop
-    const { data: categoryData } = await supabase
-      .from("categories")
-      .select("id")
-      .eq("slug", metadata.businessCategory || "fashion_apparel")
-      .maybeSingle();
-
-    const categoryId = categoryData?.id || null;
+    const category = metadata.businessCategory || "Fashion & Apparel";
 
     const cleanDomain = (metadata.businessWebsite || "")
       .trim()
@@ -161,7 +155,7 @@ export async function finalizeOnboarding(userId, metadata) {
       status: metadata.selectedPlan === "starter" ? "active" : "suspended",
       is_verified: false,
       widget_enabled: true,
-      category_id: categoryId,
+      category: category,
       gst_number: metadata.gstNumber || null,
       working_hours: metadata.workingHours || "Mon-Fri: 09:00 - 18:00",
       currency: metadata.currency || "USD",

@@ -30,17 +30,20 @@ export default function CustomerMarketplacePage() {
         // Fetch active products
         const { data: prodData } = await supabase
           .from("products")
-          .select("*, categories:category_id (name, slug)")
+          .select("*, shops:shop_id (category)")
           .eq("is_active", true)
           .limit(16);
         setProducts(prodData || []);
 
-        // Fetch categories
-        const { data: catData } = await supabase
-          .from("categories")
-          .select("*")
-          .order("name");
-        setCategories(catData || []);
+        // Derive active categories from loaded shops dynamically
+        const derivedCategories = Array.from(
+          new Set((shopData || []).map((s) => s.category).filter(Boolean))
+        ).map((cat) => ({
+          id: cat,
+          slug: cat,
+          name: cat,
+        }));
+        setCategories(derivedCategories);
 
       } catch (err) {
         console.error("Load marketplace error:", err);
@@ -58,7 +61,7 @@ export default function CustomerMarketplacePage() {
                           p.description?.toLowerCase().includes(searchQuery.toLowerCase());
     
     if (activeCategory === "all") return matchesSearch;
-    return matchesSearch && p.categories?.slug === activeCategory;
+    return matchesSearch && p.shops?.category === activeCategory;
   });
 
   if (loading) {

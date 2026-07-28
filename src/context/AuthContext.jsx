@@ -369,13 +369,7 @@ export function AuthProvider({ children }) {
         .replace(/^https?:\/\//i, "")
         .replace(/\/.*$/, "") || `${shopName.toLowerCase().replace(/\s+/g, "-")}.com`;
 
-      const { data: categoryData } = await supabase
-        .from("categories")
-        .select("id")
-        .eq("slug", details.category || "fashion_apparel")
-        .maybeSingle();
-
-      const categoryId = categoryData?.id || null;
+      const category = details.category || "Fashion & Apparel";
 
       const shopPayload = {
         owner_id: user.id,
@@ -387,7 +381,7 @@ export function AuthProvider({ children }) {
         business_phone: currentOrganization.business_phone || "",
         website: details.website || `http://${cleanDomain}`,
         domain: cleanDomain,
-        category_id: categoryId,
+        category: category,
         status: "active",
         widget_enabled: true
       };

@@ -41,7 +41,7 @@ export default function CheckoutPage() {
         // Fetch product details
         const { data: prod, error: prodErr } = await supabase
           .from("products")
-          .select("*, categories:category_id (name)")
+          .select("*")
           .eq("id", productId)
           .maybeSingle();
 

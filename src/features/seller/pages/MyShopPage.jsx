@@ -198,13 +198,7 @@ export default function MyShopPage() {
         .replace(/^https?:\/\//i, "")
         .replace(/\/.*$/, "") || `${editForm.name.toLowerCase().replace(/\s+/g, "-")}.com`;
 
-      const { data: cat } = await supabase
-        .from("categories")
-        .select("id")
-        .eq("slug", editForm.category)
-        .maybeSingle();
-
-      const categoryId = cat?.id || null;
+      const category = editForm.category || "Fashion & Apparel";
 
       // 1. Update shops table
       const { error: shopError } = await supabase
@@ -214,7 +208,7 @@ export default function MyShopPage() {
           name: editForm.name,
           website: editForm.website,
           domain: cleanDomain,
-          category_id: categoryId,
+          category: category,
           default_language: editForm.defaultLanguage,
           language: editForm.defaultLanguage,
           currency: editForm.currency,
@@ -263,13 +257,7 @@ export default function MyShopPage() {
         .replace(/^https?:\/\//i, "")
         .replace(/\/.*$/, "") || `${createForm.name.toLowerCase().replace(/\s+/g, "-")}.com`;
 
-      const { data: cat } = await supabase
-        .from("categories")
-        .select("id")
-        .eq("slug", createForm.category)
-        .maybeSingle();
-
-      const categoryId = cat?.id || null;
+      const category = createForm.category || "Fashion & Apparel";
 
       const payload = {
         owner_id: user.id,
@@ -281,7 +269,7 @@ export default function MyShopPage() {
         business_phone: currentOrganization.business_phone || "",
         website: createForm.website || `http://${cleanDomain}`,
         domain: cleanDomain,
-        category_id: categoryId,
+        category: category,
         status: "active",
         widget_enabled: true
       };
@@ -330,7 +318,7 @@ export default function MyShopPage() {
         business_phone: shop.business_phone,
         website: shop.website,
         domain: shop.domain ? `copy-${shop.domain}` : null,
-        category_id: shop.category_id,
+        category: shop.category,
         currency: shop.currency,
         language: shop.language,
         default_language: shop.default_language,

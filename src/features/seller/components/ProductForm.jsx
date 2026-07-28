@@ -23,7 +23,6 @@ import ProductImageUploader from "./ProductImageUploader";
 const DEFAULT_VALUES = {
   name: "",
   slug: "",
-  category_id: "",
   description: "",
   price: "",
   discount_price: "",
@@ -39,7 +38,6 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
   const productId = product?.id;
 
   // ── Data ─────────────────────────────────────────────────────
-  const { data: categories = [], isLoading: categoriesLoading } = useCategories();
   const { data: existingImages = [] } = useProductImages(productId);
 
   // ── Mutations ─────────────────────────────────────────────────
@@ -75,7 +73,6 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
       reset({
         name: product.name || "",
         slug: product.slug || "",
-        category_id: product.category_id || "",
         description: product.description || "",
         price: product.price ? String(product.price) : "",
         discount_price: product.discount_price ? String(product.discount_price) : "",
@@ -215,29 +212,7 @@ export default function ProductForm({ shopId, shopName, product, onSuccess }) {
             )}
           </div>
 
-          {/* Category */}
-          <div className="space-y-1.5">
-            <label className={labelClass}>
-              Category <span className="text-red-650 font-semibold">*</span>
-            </label>
-            <select
-              {...register("category_id")}
-              disabled={categoriesLoading}
-              className={fieldClass}
-            >
-              <option value="">
-                {categoriesLoading ? "Loading categories..." : "Select Category"}
-              </option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.icon ? `${cat.icon} ` : ""}{cat.name}
-                </option>
-              ))}
-            </select>
-            {errors.category_id && (
-              <p className={errorClass}>{errors.category_id.message}</p>
-            )}
-          </div>
+
 
           {/* SKU */}
           <div className="space-y-1.5">
