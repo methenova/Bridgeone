@@ -169,11 +169,14 @@ export default function LivePage() {
         `)
         .eq("shop_id", shopId)
         .then(({ data }) => {
-          const formatted = (data || []).map(m => ({
-            id: m.shop_agents?.[0]?.id || m.id,
-            display_name: m.shop_agents?.[0]?.display_name || m.profiles?.full_name || "Agent",
-            status: m.shop_agents?.[0]?.status || "offline"
-          }));
+          const formatted = (data || []).map(m => {
+            const agent = Array.isArray(m.shop_agents) ? (m.shop_agents[0] || null) : (m.shop_agents || null);
+            return {
+              id: agent?.id || m.id,
+              display_name: agent?.display_name || m.profiles?.full_name || "Agent",
+              status: agent?.status || "offline"
+            };
+          });
           setAgentsList(formatted);
         });
     }
@@ -575,7 +578,8 @@ export default function LivePage() {
             .eq("profile_id", user.id)
             .maybeSingle();
 
-          const realAgentId = memData?.shop_agents?.[0]?.id || null;
+          const agent = Array.isArray(memData?.shop_agents) ? (memData.shop_agents[0] || null) : (memData?.shop_agents || null);
+          const realAgentId = agent?.id || null;
           if (realAgentId) {
             await supabase
               .from("call_logs")

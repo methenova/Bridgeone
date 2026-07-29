@@ -83,7 +83,8 @@ export default function AgentDashboardPage() {
             .eq("shop_id", shopId)
             .eq("profile_id", profile.id)
             .maybeSingle();
-          status = dataMember?.shop_agents?.[0]?.status || "online";
+          const agent = Array.isArray(dataMember?.shop_agents) ? (dataMember.shop_agents[0] || null) : (dataMember?.shop_agents || null);
+          status = agent?.status || "online";
         }
 
         setAgentStatus(status);

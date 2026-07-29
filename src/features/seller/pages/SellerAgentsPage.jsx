@@ -69,7 +69,7 @@ export default function SellerAgentsPage() {
 
       // Flatten into a unified agent list for the UI
       const teamList = (members || []).map(m => {
-        const agent = m.shop_agents?.[0] || null;
+        const agent = Array.isArray(m.shop_agents) ? (m.shop_agents[0] || null) : (m.shop_agents || null);
         return {
           // Use shop_agents.id if exists, otherwise shop_members.id
           id: agent?.id || m.id,
