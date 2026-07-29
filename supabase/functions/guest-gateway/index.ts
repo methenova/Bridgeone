@@ -44,7 +44,7 @@ serve(async (req) => {
     // 3. Retrieve Shop details for key/origin validation
     const { data: shop, error: shopError } = await supabaseAdmin
       .from("shops")
-      .select("id, api_key, shopify_domain, website, website_url")
+      .select("id, api_key, widget_key, shopify_domain, website, website_url")
       .eq("id", shopId)
       .maybeSingle();
 
@@ -55,13 +55,17 @@ serve(async (req) => {
       );
     }
 
-    // 4. Validate API Key
+    // 4. Validate API Key / Widget Key
     const requestKey = apiKey || req.headers.get("x-api-key");
-    if (shop.api_key && shop.api_key !== requestKey) {
-      return new Response(
-        JSON.stringify({ error: "Invalid API Key" }),
-        { status: 401, headers: { ...buildCorsHeaders("null"), "Content-Type": "application/json" } }
-      );
+    if (requestKey) {
+      const matchesApiKey = shop.api_key && shop.api_key === requestKey;
+      const matchesWidgetKey = shop.widget_key && shop.widget_key === requestKey;
+      if (!matchesApiKey && !matchesWidgetKey) {
+        return new Response(
+          JSON.stringify({ error: "Invalid API Key or Widget Key" }),
+          { status: 401, headers: { ...buildCorsHeaders("*"), "Content-Type": "application/json" } }
+        );
+      }
     }
 
     // 5. Verify Origin Domain + compute allowedOrigin for subsequent CORS headers.
