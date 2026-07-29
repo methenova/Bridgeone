@@ -111,11 +111,11 @@ export async function createPeer() {
 
 export async function cleanOldRooms(roomCodePrefix) {
     try {
-        // Get room ids for this room_code prefix (e.g. call_shopId_userId)
+        // Get room ids for this room_key prefix (e.g. call_shopId_userId)
         const { data: rooms } = await supabase
             .from("video_rooms")
             .select("id")
-            .like("room_code", `${roomCodePrefix}%`);
+            .like("room_key", `${roomCodePrefix}%`);
 
         if (rooms && rooms.length > 0) {
             const ids = rooms.map((r) => r.id);

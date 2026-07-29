@@ -110,7 +110,7 @@ export class WebRTCRoomManager extends RoomManager {
     return supabase
       .from("video_rooms")
       .insert({
-        room_code: roomCode,
+        room_key: roomCode,
         shop_id: shopId,
         agent_id: agentId,
         status: "waiting",
@@ -126,13 +126,13 @@ export class WebRTCRoomManager extends RoomManager {
       return supabase
         .from("video_rooms")
         .update({ answer })
-        .eq("room_code", roomCode);
+        .eq("room_key", roomCode);
     }
 
     const { data, error } = await supabase
       .from("video_rooms")
       .select("*")
-      .eq("room_code", roomCode)
+      .eq("room_key", roomCode)
       .in("status", ["waiting", "ringing", "connected"])
       .maybeSingle();
 
@@ -170,7 +170,7 @@ export class WebRTCRoomManager extends RoomManager {
       const { data: room } = await supabase
         .from("video_rooms")
         .select("id")
-        .eq("room_code", roomCode)
+        .eq("room_key", roomCode)
         .maybeSingle();
 
       if (room) {

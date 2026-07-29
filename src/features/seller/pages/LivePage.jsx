@@ -253,8 +253,8 @@ export default function LivePage() {
 
     async function fetchCaller() {
       try {
-        // Parse the call log ID embedded in the room code (e.g. call_shopId_logId_random)
-        const parts = (incomingCall.room_code || "").split("_");
+        const roomCode = incomingCall.room_key || incomingCall.room_code || "";
+        const parts = roomCode.split("_");
         const callLogId = parts.length >= 3 ? parts[2] : null;
 
         if (!callLogId) return;
@@ -307,7 +307,7 @@ export default function LivePage() {
     console.log("[LivePage] Initializing unified Realtime channel for shop ID:", shopId);
 
     const channelName = `live-page-${shopId}`;
-    
+
     // Proactively remove any existing channel with the same name to prevent duplicates
     const existingChannel = supabase.getChannels().find(c => c.topic === `realtime:${channelName}`);
     if (existingChannel) {
@@ -341,7 +341,7 @@ export default function LivePage() {
       // 3.5. Broadcast Incoming Call ( shopper calling the seller directly for instant popup )
       .on("broadcast", { event: "incoming_call" }, ({ payload }) => {
         const room = payload.room;
-        const roomCode = room?.room_code || "";
+        const roomCode = room?.room_key || room?.room_code || "";
         if (room && room.shop_id === shopId && roomCode.startsWith("call_") && (room.status === "waiting" || room.status === "ringing" || room.status === "connected")) {
           if (incomingCallRef.current?.id === room.id) return;
           console.log("[LivePage] Incoming call broadcast received:", room);
@@ -359,7 +359,7 @@ export default function LivePage() {
         },
         (payload) => {
           const room = payload.new;
-          const roomCode = room?.room_code || "";
+          const roomCode = room?.room_key || room?.room_code || "";
           // Filter by shop_id in JS for robustness
           if (room.shop_id === shopId && roomCode.startsWith("call_") && (room.status === "waiting" || room.status === "ringing" || room.status === "connected")) {
             // Ignore if we already have this call pending
@@ -466,7 +466,7 @@ export default function LivePage() {
       // Go live
       try {
         const mediaStream = await startStream();
-        
+
         console.log("[LivePage] Initializing SellerPeer for shop:", shopId);
         const peer = new SellerPeer(shopId, user?.id, mediaStream);
         sellerPeerRef.current = peer;
@@ -564,7 +564,7 @@ export default function LivePage() {
       await peer.start();
 
       setActiveConsultation(true);
-      
+
       // Link the current agent to this call log
       try {
         const parts = (targetRoomCode || "").split("_");
@@ -598,10 +598,10 @@ export default function LivePage() {
       setCallCamEnabled(callStream.getVideoTracks().length > 0);
       setConsultationDuration(0);
       setConsultationIceState(null);
-      
+
       // Auto transition presence to In Call
       await updateAgentStatus("In Call");
-      
+
       toast.success("Consultation started!");
 
     } catch (err) {
@@ -674,10 +674,10 @@ export default function LivePage() {
     setCallCamEnabled(true);
     setConsultationDuration(0);
     setConsultationIceState(null);
-    
+
     // Auto transition presence back to Available
     await updateAgentStatus("Available");
-    
+
     toast.success("Call ended");
   }
 
@@ -775,7 +775,7 @@ export default function LivePage() {
   // Handle viewer requesting to join the live stream (Speak request)
   function handleApproveSpeak(req) {
     console.log("[LivePage] Approving speak request for viewer:", req.senderId);
-    
+
     // 1. Notify the viewer via realtime broadcast channel
     channelRef.current?.send({
       type: "broadcast",
@@ -929,11 +929,10 @@ export default function LivePage() {
         </div>
         <button
           onClick={handleToggleLive}
-          className={`flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-bold transition-all shadow-lg active:scale-95 ${
-            isLive
+          className={`flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-bold transition-all shadow-lg active:scale-95 ${isLive
               ? "bg-red-600 text-white hover:bg-red-500 shadow-red-600/20"
               : "bg-blue-600 text-white hover:bg-blue-500 shadow-blue-600/20"
-          }`}
+            }`}
         >
           {isLive ? <StopCircle className="h-4 w-4" /> : <Video className="h-4 w-4" />}
           {isLive ? "End Stream" : "Go Live"}
@@ -992,7 +991,7 @@ export default function LivePage() {
               <div className="w-full h-full flex items-center justify-center bg-slate-900 relative overflow-hidden">
                 {/* Decorative background grid/gradients */}
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.06)_0%,transparent_75%)]" />
-                
+
                 {/* Center Setup Panel */}
                 <div className="relative z-10 glass-panel premium-shadow rounded-2xl p-8 flex flex-col items-center max-w-sm w-full mx-4 space-y-6 text-center">
                   <div className="inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider rounded-full px-3 py-1 animate-pulse">
@@ -1084,11 +1083,10 @@ export default function LivePage() {
               <button
                 onClick={handleToggleStreamMic}
                 title={streamMicMuted ? "Unmute Microphone" : "Mute Microphone"}
-                className={`flex h-9 w-9 items-center justify-center rounded-full transition-all hover:scale-105 border ${
-                  streamMicMuted
+                className={`flex h-9 w-9 items-center justify-center rounded-full transition-all hover:scale-105 border ${streamMicMuted
                     ? "bg-rose-500/20 text-rose-400 border-rose-500/30 hover:bg-rose-500/30"
                     : "bg-white/10 text-slate-900 border-white/10 hover:bg-white/20"
-                }`}
+                  }`}
               >
                 {streamMicMuted ? <MicOff size={16} /> : <Mic size={16} />}
               </button>
@@ -1096,11 +1094,10 @@ export default function LivePage() {
               <button
                 onClick={handleToggleStreamCam}
                 title={streamCamMuted ? "Start Camera" : "Stop Camera"}
-                className={`flex h-9 w-9 items-center justify-center rounded-full transition-all hover:scale-105 border ${
-                  streamCamMuted
+                className={`flex h-9 w-9 items-center justify-center rounded-full transition-all hover:scale-105 border ${streamCamMuted
                     ? "bg-rose-500/20 text-rose-400 border-rose-500/30 hover:bg-rose-500/30"
                     : "bg-white/10 text-slate-900 border-white/10 hover:bg-white/20"
-                }`}
+                  }`}
               >
                 {streamCamMuted ? <VideoOff size={16} /> : <Video size={16} />}
               </button>
@@ -1201,13 +1198,12 @@ export default function LivePage() {
                     <span>·</span>
                     <span className="font-medium text-slate-405 font-mono">{timeStr}</span>
                   </div>
-                  
+
                   {/* Message Bubble */}
-                  <div className={`max-w-[85%] rounded-2xl px-3.5 py-2 text-xs shadow-xs leading-relaxed border ${
-                    isMe 
-                      ? "bg-blue-600 text-white border-blue-500 rounded-tr-none" 
+                  <div className={`max-w-[85%] rounded-2xl px-3.5 py-2 text-xs shadow-xs leading-relaxed border ${isMe
+                      ? "bg-blue-600 text-white border-blue-500 rounded-tr-none"
                       : "bg-white text-slate-800 border-slate-100 rounded-tl-none"
-                  }`}>
+                    }`}>
                     {c.text}
                   </div>
                 </div>
@@ -1230,9 +1226,9 @@ export default function LivePage() {
           {/* Quick Replies Row */}
           <div className="px-4 py-2 bg-slate-50/50 border-t border-slate-100 flex items-center gap-1.5 overflow-x-auto scrollbar-none whitespace-nowrap">
             {[
-              "👋 Wave Hello", 
-              "🛍️ View Pinned", 
-              "👍 Thanks for joining!", 
+              "👋 Wave Hello",
+              "🛍️ View Pinned",
+              "👍 Thanks for joining!",
               "💬 Drop any questions!"
             ].map((reply) => (
               <button
@@ -1275,18 +1271,17 @@ export default function LivePage() {
               <div
                 key={p.id}
                 onClick={() => handlePinProduct(p)}
-                className={`group relative cursor-pointer rounded-2xl border p-3 flex flex-col transition-all duration-300 ${
-                  isPinned
+                className={`group relative cursor-pointer rounded-2xl border p-3 flex flex-col transition-all duration-300 ${isPinned
                     ? "border-blue-500 bg-blue-50 shadow-sm ring-1 ring-blue-500/20"
                     : "glass-panel premium-shadow hover-lift hover:border-slate-300 hover:shadow-md transition-all"
-                }`}
+                  }`}
               >
                 {/* Image Showcase Container */}
                 <div className="relative h-28 w-full overflow-hidden rounded-xl bg-slate-50 border border-slate-100 mb-3 flex items-center justify-center shrink-0">
                   {p.thumbnail_url ? (
-                    <img 
-                      src={p.thumbnail_url} 
-                      alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                    <img
+                      src={p.thumbnail_url}
+                      alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (
                     <span className="text-2xl">📦</span>
@@ -1300,11 +1295,10 @@ export default function LivePage() {
                   )}
 
                   {/* Stock Badge Overlay */}
-                  <span className={`absolute bottom-1.5 right-1.5 text-[8px] font-bold px-1.5 py-0.5 rounded-md shadow-xs border ${
-                    p.stock > 0 
-                      ? "bg-emerald-50 border-emerald-100 text-emerald-700" 
+                  <span className={`absolute bottom-1.5 right-1.5 text-[8px] font-bold px-1.5 py-0.5 rounded-md shadow-xs border ${p.stock > 0
+                      ? "bg-emerald-50 border-emerald-100 text-emerald-700"
                       : "bg-red-50 border-red-100 text-red-700"
-                  }`}>
+                    }`}>
                     {p.stock > 0 ? `${p.stock} In Stock` : "Out of Stock"}
                   </span>
                 </div>
@@ -1312,7 +1306,7 @@ export default function LivePage() {
                 {/* Details */}
                 <div className="flex-1 flex flex-col text-left space-y-1">
                   <p className="line-clamp-1 text-xs font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{p.name}</p>
-                  
+
                   {/* Price */}
                   <div className="flex items-baseline justify-between">
                     <p className="text-xs font-black text-slate-900">₹{Number(p.price).toLocaleString()}</p>
@@ -1321,15 +1315,14 @@ export default function LivePage() {
                     )}
                   </div>
                 </div>
-                
+
                 {/* Action button */}
                 <button
                   onClick={(e) => { e.stopPropagation(); handlePinProduct(p); }}
-                  className={`mt-3 w-full rounded-xl py-2 text-[10px] font-bold uppercase tracking-wider transition-all duration-150 cursor-pointer ${
-                    isPinned
+                  className={`mt-3 w-full rounded-xl py-2 text-[10px] font-bold uppercase tracking-wider transition-all duration-150 cursor-pointer ${isPinned
                       ? "bg-blue-600 hover:bg-blue-700 text-white shadow-sm shadow-blue-600/10"
                       : "bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                  }`}
+                    }`}
                 >
                   {isPinned ? "Pinned Live" : "Pin Product"}
                 </button>
@@ -1354,8 +1347,8 @@ export default function LivePage() {
                 {callerDetails?.customer_name || "Incoming Consultation Call"}
               </h3>
               <p className="text-xs text-slate-500">
-                {callerDetails 
-                  ? `${callerDetails.customer_name} is requesting a 1-on-1 video call consultation.` 
+                {callerDetails
+                  ? `${callerDetails.customer_name} is requesting a 1-on-1 video call consultation.`
                   : "A customer is requesting a 1-on-1 video call consultation."}
               </p>
               {callerDetails?.customer_email && (
@@ -1385,14 +1378,14 @@ export default function LivePage() {
         const isConsultConnected = consultationIceState === "connected" || consultationIceState === "completed";
         const consultStatusColor = isConsultConnected ? "green" : (!consultationIceState || consultationIceState === "new" || consultationIceState === "checking") ? "amber" : "red";
         const formatDur = (s) => `${Math.floor(s / 60).toString().padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
-        
+
         return (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in">
             <div className="relative w-full max-w-5xl h-[85vh] rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-2xl flex flex-col md:flex-row">
-              
+
               {/* Left Panel: Remote Video Stream (Main Feed) */}
               <div className="flex-1 bg-slate-50 relative flex items-center justify-center border-b md:border-b-0 md:border-r border-white/10">
-                
+
                 {/* Status Badge (top-left) */}
                 <div className="absolute left-6 top-6 z-20 flex items-center gap-2.5 rounded-full bg-black/60 backdrop-blur-md px-4 py-2 text-xs font-semibold text-slate-900 border border-white/10 shadow-lg">
                   <span className="relative flex h-2 w-2">
@@ -1453,11 +1446,10 @@ export default function LivePage() {
                   <button
                     onClick={toggleCallMic}
                     title={callMicMuted ? "Unmute Mic" : "Mute Mic"}
-                    className={`flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border ${
-                      callMicMuted
+                    className={`flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border ${callMicMuted
                         ? "bg-rose-500/20 text-rose-400 border-rose-500/30 hover:bg-rose-500/30"
                         : "bg-white/10 text-slate-900 border-white/10 hover:bg-white/20"
-                    }`}
+                      }`}
                   >
                     {callMicMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
                   </button>
@@ -1466,11 +1458,10 @@ export default function LivePage() {
                   <button
                     onClick={toggleCallCamera}
                     title={callCamEnabled ? "Turn off Camera" : "Turn on Camera"}
-                    className={`flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border ${
-                      !callCamEnabled
+                    className={`flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border ${!callCamEnabled
                         ? "bg-rose-500/20 text-rose-400 border-rose-500/30 hover:bg-rose-500/30"
                         : "bg-white/10 text-slate-900 border-white/10 hover:bg-white/20"
-                    }`}
+                      }`}
                   >
                     {callCamEnabled ? <Video className="h-5 w-5" /> : <VideoOff className="h-5 w-5" />}
                   </button>
@@ -1479,11 +1470,10 @@ export default function LivePage() {
                   <button
                     onClick={toggleScreenShare}
                     title={screenSharing ? "Stop Screen Share" : "Share Screen"}
-                    className={`flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border ${
-                      screenSharing
+                    className={`flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border ${screenSharing
                         ? "bg-blue-500/20 text-blue-400 border-blue-500/30 hover:bg-blue-500/30"
                         : "bg-white/10 text-slate-900 border-white/10 hover:bg-white/20"
-                    }`}
+                      }`}
                   >
                     <MonitorUp className="h-5 w-5" />
                   </button>
@@ -1492,11 +1482,10 @@ export default function LivePage() {
                   <button
                     onClick={toggleBackgroundBlur}
                     title={backgroundBlurred ? "Disable Background Blur" : "Enable Background Blur"}
-                    className={`flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border ${
-                      backgroundBlurred
+                    className={`flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border ${backgroundBlurred
                         ? "bg-fuchsia-500/20 text-fuchsia-400 border-fuchsia-500/30 hover:bg-fuchsia-500/30"
                         : "bg-white/10 text-slate-900 border-white/10 hover:bg-white/20"
-                    }`}
+                      }`}
                   >
                     <Sparkles className="h-5 w-5" />
                   </button>
@@ -1517,22 +1506,22 @@ export default function LivePage() {
 
               {/* Right Panel: Call Center Tabbed Tools (Info, Products, Queue) */}
               <div className="w-full md:w-[22rem] flex flex-col bg-slate-50 text-xs border-t md:border-t-0 border-l border-slate-200 h-1/2 md:h-full">
-                
+
                 {/* Tab select bar */}
                 <div className="grid grid-cols-3 border-b border-slate-200 text-[10px] font-bold uppercase tracking-wider text-center">
-                  <button 
+                  <button
                     onClick={() => setActiveCallTab("info")}
                     className={`py-3 border-b-2 transition-all cursor-pointer ${activeCallTab === "info" ? "border-blue-600 text-blue-600 font-black" : "border-transparent text-slate-500 hover:text-slate-900"}`}
                   >
                     Info
                   </button>
-                  <button 
+                  <button
                     onClick={() => setActiveCallTab("products")}
                     className={`py-3 border-b-2 transition-all cursor-pointer ${activeCallTab === "products" ? "border-blue-600 text-blue-600 font-black" : "border-transparent text-slate-500 hover:text-slate-900"}`}
                   >
                     Recommend
                   </button>
-                  <button 
+                  <button
                     onClick={() => setActiveCallTab("queue")}
                     className={`py-3 border-b-2 transition-all cursor-pointer ${activeCallTab === "queue" ? "border-blue-600 text-blue-600 font-black" : "border-transparent text-slate-500 hover:text-slate-900"}`}
                   >
@@ -1542,7 +1531,7 @@ export default function LivePage() {
 
                 {/* Tab content area */}
                 <div className="flex-1 overflow-y-auto p-5 space-y-5 scrollbar-none">
-                  
+
                   {/* TAB 1: CUSTOMER INFO, NOTES, AND TRANSFERS */}
                   {activeCallTab === "info" && (
                     <div className="space-y-5">
@@ -1615,12 +1604,11 @@ export default function LivePage() {
                         {products.map(p => {
                           const isPinned = pinnedProduct?.id === p.id;
                           return (
-                            <div 
+                            <div
                               key={p.id}
                               onClick={() => handlePinProduct(p)}
-                              className={`flex items-center justify-between p-2.5 rounded-xl border transition-all cursor-pointer ${
-                                isPinned ? "border-blue-500 bg-blue-500/5" : "border-white/5 bg-slate-50 hover:border-white/10"
-                              }`}
+                              className={`flex items-center justify-between p-2.5 rounded-xl border transition-all cursor-pointer ${isPinned ? "border-blue-500 bg-blue-500/5" : "border-white/5 bg-slate-50 hover:border-white/10"
+                                }`}
                             >
                               <div className="flex items-center gap-2.5">
                                 <div className="h-9 w-9 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 hover:shadow-md transition-all duration-300 border border-white/5 flex items-center justify-center shrink-0">
@@ -1632,9 +1620,8 @@ export default function LivePage() {
                                 </div>
                               </div>
                               <button
-                                className={`px-2.5 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${
-                                  isPinned ? "bg-blue-600 text-white" : "bg-white shadow-sm border border-white/10 text-slate-450 hover:text-white"
-                                }`}
+                                className={`px-2.5 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${isPinned ? "bg-blue-600 text-white" : "bg-white shadow-sm border border-white/10 text-slate-450 hover:text-white"
+                                  }`}
                               >
                                 {isPinned ? "Pinned" : "Share"}
                               </button>
