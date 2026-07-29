@@ -110,12 +110,13 @@ export async function logNotification({ userId, notificationId = null, channel, 
 /**
  * Create an In-App notification record
  */
-export async function createInAppNotification({ userId, title, body, type = "system", data = {} }) {
+export async function createInAppNotification({ userId, shopId, title, body, type = "system", data = {} }) {
   try {
     const { data: notification, error } = await supabase
       .from("notifications")
       .insert({
-        user_id: userId,
+        user_id: userId || null,
+        shop_id: shopId || null,
         title,
         body,
         type,
