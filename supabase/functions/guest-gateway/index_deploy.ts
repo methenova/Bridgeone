@@ -232,7 +232,6 @@ serve(async (req) => {
           shop_id: shopId,
           visitor_id: visitorId,
           channel,
-          source: "widget",
           status: "waiting",
           started_at: new Date().toISOString(),
           last_activity_at: new Date().toISOString(),
@@ -258,13 +257,14 @@ serve(async (req) => {
       if (directAgent) return directAgent.id;
 
       // 2. Profile check: is givenId a profile_id belonging to a shop_member?
-      const { data: memberAgent } = await supabaseAdmin
+      const { data: memberAgents } = await supabaseAdmin
         .from("shop_agents")
         .select("id, shop_member:shop_member_id(profile_id)")
-        .maybeSingle();
+        .limit(50);
 
-      if (memberAgent && (memberAgent.shop_member as any)?.profile_id === givenId) {
-        return memberAgent.id;
+      if (memberAgents) {
+        const match = memberAgents.find((a: any) => a.shop_member?.profile_id === givenId);
+        if (match) return match.id;
       }
 
       // If not a valid shop_agents ID, return null to avoid Foreign Key Violation (FK)
@@ -287,7 +287,6 @@ serve(async (req) => {
       const { data, error } = await supabaseAdmin
         .from("video_rooms")
         .insert({
-          room_key: roomCode,
           room_code: roomCode,
           shop_id: shopId,
           agent_id: validAgentId,
@@ -463,9 +462,10 @@ serve(async (req) => {
     );
 
   } catch (err) {
+    const origin = req.headers.get("origin") || "*";
     return new Response(
-      JSON.stringify({ error: err.message }),
-      { status: 500, headers: { ...buildCorsHeaders(allowedOrigin), "Content-Type": "application/json" } }
+      JSON.stringify({ error: err.message, stack: err.stack }),
+      { status: 500, headers: { ...buildCorsHeaders(origin), "Content-Type": "application/json" } }
     );
   }
 });
