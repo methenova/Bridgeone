@@ -167,8 +167,8 @@ supabase.auth.onAuthStateChange(() => { _sessionCache = null; });
 export async function addCandidate(roomId, sender, candidate) {
     const session = await _getSessionCached();
     if (!session) {
-        const apiKey = window.BridgeOneShopApiKey || "";
-        const shopId = window.BridgeOneShopId || "";
+        const apiKey = window.BridgeOneShopApiKey || window.BridgeOneConfig?.widgetKey || "";
+        const shopId = window.BridgeOneShopId || window.BridgeOneConfig?.shopId || "";
         return supabase.functions.invoke("guest-gateway", {
             body: {
                 action: "add_candidate",

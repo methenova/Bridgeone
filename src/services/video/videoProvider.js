@@ -88,11 +88,12 @@ export class WebRTCRoomManager extends RoomManager {
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
-      const apiKey = window.BridgeOneShopApiKey || "";
+      const apiKey = window.BridgeOneShopApiKey || window.BridgeOneConfig?.widgetKey || "";
+      const effectiveShopId = shopId || window.BridgeOneShopId || window.BridgeOneConfig?.shopId || "";
       const { data, error } = await supabase.functions.invoke("guest-gateway", {
         body: {
           action: "create_room",
-          shopId,
+          shopId: effectiveShopId,
           apiKey,
           roomCode,
           sellerId: agentId,

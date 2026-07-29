@@ -803,7 +803,7 @@ export default function WidgetPage() {
           body: {
             action: "create_call_log",
             shopId,
-            apiKey: shop?.api_key || window.BridgeOneShopApiKey || "",
+            apiKey: shop?.api_key || shop?.widget_key || window.BridgeOneShopApiKey || window.BridgeOneConfig?.widgetKey || "",
             customerName: name.trim(),
             customerEmail: email.trim() || null,
             customerPhone: phone.trim() || null,
@@ -984,7 +984,7 @@ export default function WidgetPage() {
             body: {
               action: "update_call_log",
               shopId,
-              apiKey: shop?.api_key || window.BridgeOneShopApiKey || "",
+              apiKey: shop?.api_key || shop?.widget_key || window.BridgeOneShopApiKey || window.BridgeOneConfig?.widgetKey || "",
               id: logId,
               duration: finalDuration,
               status: finalDuration > 0 ? "completed" : "missed"
@@ -1108,7 +1108,7 @@ export default function WidgetPage() {
             body: {
               action: "create_callback",
               shopId,
-              apiKey: shop?.api_key || window.BridgeOneShopApiKey || "",
+              apiKey: shop?.api_key || shop?.widget_key || window.BridgeOneShopApiKey || window.BridgeOneConfig?.widgetKey || "",
               customerName: name.trim(),
               customerEmail: email.trim() || null,
               customerPhone: phone.trim() || null,
@@ -1239,7 +1239,7 @@ export default function WidgetPage() {
             body: {
               action: "update_call_log",
               shopId,
-              apiKey: shop?.api_key || window.BridgeOneShopApiKey || "",
+              apiKey: shop?.api_key || shop?.widget_key || window.BridgeOneShopApiKey || window.BridgeOneConfig?.widgetKey || "",
               id: logId,
               status: "missed"
             }
@@ -2447,7 +2447,7 @@ export default function WidgetPage() {
                         body: {
                           action: "update_call_log",
                           shopId,
-                          apiKey: shop?.api_key || window.BridgeOneShopApiKey || "",
+                          apiKey: shop?.api_key || shop?.widget_key || window.BridgeOneShopApiKey || window.BridgeOneConfig?.widgetKey || "",
                           id: postCallLogId,
                           notes: updatedNotes,
                           csatScore: customerRating,
