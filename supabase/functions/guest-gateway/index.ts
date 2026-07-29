@@ -283,6 +283,7 @@ serve(async (req) => {
 
     if (action === "create_room") {
       const { roomCode, sellerId, offer, customerName, customerEmail, customerPhone } = body;
+      const effectiveRoomKey = roomCode || body.roomKey || body.room_key || body.roomId || `room_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
       const visitorId = await resolveVisitor(customerName, customerEmail, customerPhone);
       const conversationId = await resolveConversation(visitorId, "video");
@@ -291,7 +292,7 @@ serve(async (req) => {
       const { data, error } = await supabaseAdmin
         .from("video_rooms")
         .insert({
-          room_key: roomCode,
+          room_key: effectiveRoomKey,
           shop_id: shopId,
           agent_id: validAgentId,
           visitor_id: visitorId,
@@ -322,7 +323,9 @@ serve(async (req) => {
       await supabaseAdmin.from("video_candidates").delete().eq("room_id", roomId);
       const { data, error } = await supabaseAdmin.from("video_rooms").delete().eq("id", roomId).select();
 
-      await supabaseAdmin.from("notifications").delete().match({ shop_id: shopId, type: "incoming_call" });
+      try {
+        await supabaseAdmin.from("notifications").delete().eq("shop_id", shopId).eq("type", "incoming_call");
+      } catch (_notifErr) {}
 
       result = resolveSingle(data);
       writeError = error;
@@ -386,7 +389,9 @@ serve(async (req) => {
         .eq("id", id)
         .select();
 
-      await supabaseAdmin.from("notifications").delete().match({ shop_id: shopId, type: "incoming_call" });
+      try {
+        await supabaseAdmin.from("notifications").delete().eq("shop_id", shopId).eq("type", "incoming_call");
+      } catch (_notifErr) {}
 
       result = resolveSingle(data);
       writeError = error;
