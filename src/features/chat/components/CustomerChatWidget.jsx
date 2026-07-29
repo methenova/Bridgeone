@@ -584,15 +584,15 @@ export default function CustomerChatWidget({ shop }) {
                 }`} />
               </span>
               <div>
-                <h4 className="text-[11px] font-bold text-slate-900 leading-tight">
+                <h4 className="text-[11px] font-bold text-white leading-tight">
                   {isConnected ? `Zara Shop` : connLabel}
                 </h4>
                 {isConnected && (
-                  <p className="text-[9px] text-slate-500 font-mono tabular-nums leading-none mt-0.5">{formatDuration(callDuration)}</p>
+                  <p className="text-[9px] text-white/70 font-mono tabular-nums leading-none mt-0.5 tracking-wider">{formatDuration(callDuration)}</p>
                 )}
               </div>
             </div>
-            <span className="text-[8px] bg-white/10 px-2 py-0.5 rounded-md text-slate-900 font-bold uppercase tracking-wider">Consultation</span>
+            <span className="text-[8px] bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded-md text-white font-bold uppercase tracking-widest border border-white/10">Consultation</span>
           </div>
 
           {/* Video Area (Occupies full space) */}
@@ -636,12 +636,12 @@ export default function CustomerChatWidget({ shop }) {
                   className={`w-full h-full object-cover scale-x-[-1] transition-opacity duration-300 ${camEnabled ? "opacity-100" : "opacity-0"}`}
                 />
                 {!camEnabled && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-white shadow-sm text-slate-600 gap-1.5">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 text-slate-400 gap-1.5">
                     <VideoOff className="h-4 w-4" />
                     <span className="text-[7px] uppercase tracking-wider font-bold">Cam Off</span>
                   </div>
                 )}
-                <div className="absolute bottom-1.5 left-2 bg-black/40 backdrop-blur-sm px-1.5 py-0.5 rounded-md text-[7px] font-bold text-slate-900/80 uppercase tracking-wide">You</div>
+                <div className="absolute bottom-1.5 left-2 bg-black/50 backdrop-blur-md px-1.5 py-0.5 rounded-md text-[7px] font-bold text-white uppercase tracking-wide">You</div>
               </div>
             )}
 
@@ -651,26 +651,26 @@ export default function CustomerChatWidget({ shop }) {
               <button
                 onClick={toggleMic}
                 title={micMuted ? "Unmute Mic" : "Mute Mic"}
-                className={`flex h-10 w-10 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border ${
+                className={`flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border backdrop-blur-md ${
                   micMuted
-                    ? "bg-rose-500/20 text-rose-400 border-rose-500/30 hover:bg-rose-500/30"
-                    : "bg-white/10 text-slate-900 border-white/10 hover:bg-white/20"
+                    ? "bg-rose-500/20 text-rose-400 border-rose-500/40 hover:bg-rose-500/30"
+                    : "bg-white/10 text-white border-white/20 hover:bg-white/20"
                 }`}
               >
-                {micMuted ? <MicOff className="h-4.5 w-4.5" /> : <Mic className="h-4.5 w-4.5" />}
+                {micMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
               </button>
 
               {/* Camera */}
               <button
                 onClick={toggleCamera}
                 title={camEnabled ? "Turn off Camera" : "Turn on Camera"}
-                className={`flex h-10 w-10 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border ${
+                className={`flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 border backdrop-blur-md ${
                   !camEnabled
-                    ? "bg-rose-500/20 text-rose-400 border-rose-500/30 hover:bg-rose-500/30"
-                    : "bg-white/10 text-slate-900 border-white/10 hover:bg-white/20"
+                    ? "bg-rose-500/20 text-rose-400 border-rose-500/40 hover:bg-rose-500/30"
+                    : "bg-white/10 text-white border-white/20 hover:bg-white/20"
                 }`}
               >
-                {camEnabled ? <Video className="h-4.5 w-4.5" /> : <VideoOff className="h-4.5 w-4.5" />}
+                {camEnabled ? <Video className="h-5 w-5" /> : <VideoOff className="h-5 w-5" />}
               </button>
 
               {/* Divider */}

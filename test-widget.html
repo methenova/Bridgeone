@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Widget Test Page - Indian Wear Store</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 40px;
+      background: #f8f9fa;
+      color: #333;
+    }
+    h1 { color: #1a1a2e; }
+    p { color: #555; line-height: 1.6; }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .product-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .product-card h3 { margin: 0 0 8px; }
+    .product-card p { margin: 0; font-size: 14px; }
+    .price { color: #2563eb; font-weight: bold; font-size: 18px; }
+    .debug { background: #1a1a2e; color: #22c55e; padding: 16px; border-radius: 8px; margin-top: 30px; font-family: monospace; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>🛍️ Indian Wear Store - Widget Test</h1>
+  <p>Widget button should appear at bottom-right corner. Open browser console (F12) to see debug logs.</p>
+
+  <div class="product-grid">
+    <div class="product-card">
+      <h3>Silk Saree</h3>
+      <p>Beautiful Kanchipuram silk saree</p>
+      <p class="price">₹4,999</p>
+    </div>
+    <div class="product-card">
+      <h3>Kurta Set</h3>
+      <p>Cotton embroidered kurta with pajama</p>
+      <p class="price">₹1,299</p>
+    </div>
+    <div class="product-card">
+      <h3>Lehenga Choli</h3>
+      <p>Bridal lehenga with heavy work</p>
+      <p class="price">₹12,999</p>
+    </div>
+  </div>
+
+  <div class="debug" id="debug-log">
+    <strong>[Debug Console]</strong><br/>
+    Loading widget...<br/>
+  </div>
+
+  <!-- BridgeOne Config MUST be set BEFORE the script loads -->
+  <script>
+    window.BridgeOneConfig = { 
+      shopId: "f5f673b2-348f-4d43-89c6-b407bc262dfc", 
+      widgetKey: "kid_a99a3ddbbe4c88e4" 
+    };
+
+    // Capture console.log/warn/error to show on page
+    const debugEl = document.getElementById('debug-log');
+    const origLog = console.log;
+    const origWarn = console.warn;
+    const origError = console.error;
+    
+    function addDebug(prefix, args) {
+      const msg = Array.from(args).map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
+      debugEl.innerHTML += `<br/>${prefix} ${msg}`;
+    }
+    
+    console.log = function() { origLog.apply(console, arguments); addDebug('✅', arguments); };
+    console.warn = function() { origWarn.apply(console, arguments); addDebug('⚠️', arguments); };
+    console.error = function() { origError.apply(console, arguments); addDebug('❌', arguments); };
+  </script>
+  <script src="http://localhost:5173/widget-loader.js"></script>
+</body>
+</html>

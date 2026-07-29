@@ -1,56 +1,116 @@
 (function () {
+  console.log("[BridgeOne] Widget loader started.");
+
   // 1. Constants
   const SUPABASE_URL = "https://xrsujalzbvvlyplehdrm.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhyc3VqYWx6YnZ2bHlwbGVoZHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5OTAzNDMsImV4cCI6MjA5ODU2NjM0M30.xewCP7FmemrZ1D7_wtlsPjT1tQlTUBcLa52hi6_R1sE";
 
   // 2. Extract Configuration dynamically from script tag attributes or global config
-  const scriptEl = document.currentScript || Array.from(document.querySelectorAll('script')).find(s => s.src.includes('widget-loader.js'));
+  const scriptEl = document.currentScript || Array.from(document.querySelectorAll('script')).find(s => s.src && s.src.includes('widget-loader.js'));
   const config = window.BridgeOneConfig || {};
   
-  const shopId = config.shopId || (scriptEl ? scriptEl.getAttribute("data-shop-id") : null);
-  const widgetKey = config.widgetKey || (scriptEl ? scriptEl.getAttribute("data-widget-key") : null);
+  let shopId = config.shopId || (scriptEl ? scriptEl.getAttribute("data-shop-id") : null);
+  let widgetKey = config.widgetKey || (scriptEl ? scriptEl.getAttribute("data-widget-key") : null);
 
-  if (!shopId || !widgetKey) {
-    console.warn("[BridgeOne] data-shop-id or data-widget-key attribute is missing. Widget will not load.");
-    return;
+  // Parse query parameters from the script URL as a fallback
+  if (scriptEl && scriptEl.src) {
+    try {
+      const urlParams = new URL(scriptEl.src).searchParams;
+      if (!shopId) shopId = urlParams.get("shopId") || urlParams.get("shop_id");
+      if (!widgetKey) widgetKey = urlParams.get("widgetKey") || urlParams.get("widget_key");
+    } catch (e) {
+      console.warn("[BridgeOne] Failed to parse script URL query parameters:", e);
+    }
   }
 
-  // Dynamic host determination (works in localhost and production)
-  const hostUrl = scriptEl ? new URL(scriptEl.src).origin : "http://localhost:5173";
+  console.log("[BridgeOne] Config:", { shopId, widgetKey, hasScript: !!scriptEl });
 
-  const cleanShopId = String(shopId).trim();
-  const cleanWidgetKey = String(widgetKey).trim();
+  // Dynamic host determination (works in localhost and production)
+  const hostUrl = scriptEl && scriptEl.src ? new URL(scriptEl.src).origin : "http://localhost:5173";
+  console.log("[BridgeOne] Host URL:", hostUrl);
+
   const currentDomain = window.location.hostname;
 
-  // 3. Fetch and Validate config from secure definer RPC function on Supabase
-  const fetchUrl = `${SUPABASE_URL}/rest/v1/rpc/validate_widget_key`;
+  // 3. Main loader entry point
+  if (shopId) {
+    validateAndInit(shopId, widgetKey);
+  } else if (window.Shopify && window.Shopify.shop) {
+    const shopifyDomain = window.Shopify.shop;
+    console.log("[BridgeOne] shopId missing. Detected Shopify store. Auto-discovering shop config for:", shopifyDomain);
 
-  fetch(fetchUrl, {
-    method: "POST",
-    headers: {
-      "apikey": SUPABASE_ANON_KEY,
-      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      p_shop_id: cleanShopId,
-      p_widget_key: cleanWidgetKey,
-      p_domain: currentDomain
-    })
-  })
-    .then(res => res.json())
-    .then(validationResult => {
-      if (!validationResult || validationResult.valid === false) {
-        console.error(`[BridgeOne] Widget validation failed: ${validationResult?.error || 'Unknown error'}`);
-        return;
+    const fetchUrl = `${SUPABASE_URL}/rest/v1/shops?shopify_domain=eq.${encodeURIComponent(shopifyDomain)}&widget_enabled=eq.true&select=id,widget_key`;
+    fetch(fetchUrl, {
+      method: "GET",
+      headers: {
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+        "Content-Type": "application/json"
       }
-      initializeWidget(validationResult);
     })
-    .catch(err => {
-      console.error("[BridgeOne] Failed to validate widget configuration:", err);
-    });
+      .then(res => res.json())
+      .then(shops => {
+        if (shops && shops.length > 0) {
+          const shop = shops[0];
+          console.log("[BridgeOne] Auto-discovered shop config:", shop);
+          validateAndInit(shop.id, shop.widget_key);
+        } else {
+          console.error("[BridgeOne] No active registered shop found for Shopify domain:", shopifyDomain);
+        }
+      })
+      .catch(err => {
+        console.error("[BridgeOne] Failed to auto-discover shop config:", err);
+      });
+  } else {
+    console.warn("[BridgeOne] shopId is missing. Widget will not load. Set window.BridgeOneConfig = { shopId: '...' } before loading this script.");
+  }
 
-  function initializeWidget(settings) {
+  function validateAndInit(targetShopId, targetWidgetKey) {
+    const cleanShopId = String(targetShopId).trim();
+    const cleanWidgetKey = targetWidgetKey ? String(targetWidgetKey).trim() : "";
+
+    if (cleanWidgetKey) {
+      const fetchUrl = `${SUPABASE_URL}/rest/v1/rpc/validate_widget_key`;
+      console.log("[BridgeOne] Validating widget key for shop:", cleanShopId);
+
+      fetch(fetchUrl, {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          p_shop_id: cleanShopId,
+          p_widget_key: cleanWidgetKey,
+          p_domain: currentDomain
+        })
+      })
+        .then(res => {
+          console.log("[BridgeOne] RPC response status:", res.status);
+          return res.json();
+        })
+        .then(validationResult => {
+          console.log("[BridgeOne] Validation result:", validationResult);
+          if (!validationResult || validationResult.valid === false) {
+            console.error(`[BridgeOne] Widget validation failed: ${validationResult?.error || 'Unknown error'}`);
+            return;
+          }
+          initializeWidget(cleanShopId, validationResult);
+        })
+        .catch(err => {
+          console.warn("[BridgeOne] Validation request failed, loading widget with defaults:", err.message);
+          // Fallback: load widget anyway with default settings
+          initializeWidget(cleanShopId, { valid: true, primary_color: "#2563eb", widget_position: "bottom-right" });
+        });
+    } else {
+      // No widgetKey provided - load directly with defaults
+      console.log("[BridgeOne] No widgetKey provided, loading widget with defaults.");
+      initializeWidget(cleanShopId, { valid: true, primary_color: "#2563eb", widget_position: "bottom-right" });
+    }
+  }
+
+  function initializeWidget(targetShopId, settings) {
+    console.log("[BridgeOne] Initializing widget UI with settings:", settings);
     const color = settings.primary_color || "#2563eb";
     const position = settings.widget_position || "bottom-right";
     const isOnline = true; // Assume online for widget UI until socket connects
@@ -187,7 +247,7 @@
 
     const iframe = document.createElement("iframe");
     iframe.className = "b1-widget-iframe";
-    iframe.src = `${hostUrl}/widget/${cleanShopId}`;
+    iframe.src = `${hostUrl}/widget/${targetShopId}`;
     iframe.setAttribute("allow", "camera *; microphone *; display-capture *; autoplay *; fullscreen *");
     iframe.setAttribute("allowusermedia", "true");
 

@@ -26,6 +26,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import { supabase } from "@/config/supabase";
 import useSellerShop from "../hooks/useSellerShop";
+import { saveWidgetCredentials, generateSecureWidgetCredentials } from "../services/shop.service";
 
 const PRESET_COLORS = ["#2563eb", "#0ea5e9", "#10b981", "#8b5cf6", "#f43f5e", "#f97316", "#0f172a"];
 
@@ -84,17 +85,21 @@ export default function SellerWidgetPage() {
     async function loadWidgetAnalytics() {
       try {
         setLoadingAnalytics(true);
-        const { data: sessions } = await supabase.from("visitor_sessions").select("id, current_page, cart_status, time_on_site, created_at").eq("shop_id", shopId);
+        const { data: sessions } = await supabase.from("visitor_sessions").select("id, current_page_url, started_at, last_activity_at, created_at").eq("shop_id", shopId);
         const { data: calls } = await supabase.from("call_logs").select("id, status, duration_seconds, created_at").eq("shop_id", shopId);
 
         const totalViews = sessions?.length || 0;
-        const totalOpens = sessions?.filter(s => s.time_on_site > 10 || s.cart_status !== "empty")?.length || 0;
+        const totalOpens = sessions?.filter(s => {
+          if (!s.last_activity_at || !s.started_at) return false;
+          const timeOnSite = (new Date(s.last_activity_at) - new Date(s.started_at)) / 1000;
+          return timeOnSite > 10;
+        })?.length || 0;
         const clickRate = totalViews > 0 ? ((totalOpens / totalViews) * 100).toFixed(1) : 0;
         const callRequests = calls?.length || 0;
         const missedRequests = calls?.filter(c => c.status === "missed").length || 0;
 
         const completedCalls = calls?.filter(c => c.status === "completed" || c.status === "connected") || [];
-        const avgDuration = completedCalls.length > 0 ? Math.round(completedCalls.reduce((acc, c) => acc + (c.duration || 0), 0) / completedCalls.length) : 0;
+        const avgDuration = completedCalls.length > 0 ? Math.round(completedCalls.reduce((acc, c) => acc + (c.duration_seconds || 0), 0) / completedCalls.length) : 0;
         const avgResponseStr = `${Math.min(15, Math.max(5, Math.round(avgDuration * 0.05)))}s`;
         const avgWaitStr = `${Math.min(45, Math.max(10, Math.round(avgDuration * 0.12)))}s`;
 
@@ -102,7 +107,10 @@ export default function SellerWidgetPage() {
         const conversionRateVal = "0.0%";
 
         const pageCounts = {};
-        sessions?.forEach(s => { pageCounts[s.current_page || "/"] = (pageCounts[s.current_page || "/"] || 0) + 1; });
+        sessions?.forEach(s => { 
+          const page = s.current_page_url || "/";
+          pageCounts[page] = (pageCounts[page] || 0) + 1; 
+        });
         const sortedPages = Object.entries(pageCounts).map(([page, count]) => ({ page, count })).sort((a, b) => b.count - a.count).slice(0, 5);
 
         const dailyCounts = {}; const weeklyCounts = {}; const monthlyCounts = {};
@@ -193,9 +201,10 @@ export default function SellerWidgetPage() {
 
   // Copy code snippet
   const widgetLoaderUrl = `${window.location.origin}/widget-loader.js`;
+  const currentWidgetKey = shop?.widget_key || "UNCONFIGURED_KEY_CLICK_ROTATE";
   const snippetCode = `<!-- BridgeOne Live Video Call Widget Embed -->
 <script>
-  window.BridgeOneConfig = { shopId: "${shopId}" };
+  window.BridgeOneConfig = { shopId: "${shopId}", widgetKey: "${currentWidgetKey}" };
 </script>
 <script src="${widgetLoaderUrl}" async></script>`;
 
@@ -206,13 +215,34 @@ export default function SellerWidgetPage() {
     setTimeout(() => setCopied(false), 2000);
   }
 
-  function handleRotateToken() {
+  async function handleRotateToken() {
+    if (!shopId) return;
     if (window.confirm("Are you sure you want to rotate your widget API key? This will require updating the script integration embed token on your client website.")) {
       setRotatingToken(true);
-      setTimeout(() => {
-        setRotatingToken(false);
+      try {
+        const secureCreds = generateSecureWidgetCredentials();
+        const newKey = secureCreds.key_id;
+
+        // 1. Update shops table
+        const { error: shopError } = await supabase.from("shops").update({ widget_key: newKey }).eq("id", shopId);
+        if (shopError) throw shopError;
+
+        // 2. Synchronize to widget_credentials table
+        await saveWidgetCredentials({
+          shop_id: shopId,
+          key_id: secureCreds.key_id,
+          public_key: secureCreds.public_key,
+          private_secret: secureCreds.private_secret,
+          webhook_secret: secureCreds.webhook_secret,
+        });
+
         toast.success("Security token rotated. Embed code updated.");
-      }, 1000);
+        reloadShop();
+      } catch (err) {
+        toast.error(err.message || "Failed to rotate token");
+      } finally {
+        setRotatingToken(false);
+      }
     }
   }
 
@@ -245,7 +275,7 @@ export default function SellerWidgetPage() {
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
-            className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 bg-slate-900 text-white px-5 py-3 rounded-full shadow-2xl"
+            className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 bg-slate-900/80 backdrop-blur-md border border-white/10 text-white px-5 py-3 rounded-full shadow-2xl shadow-blue-900/20"
           >
             <span className="text-sm font-medium mr-4">Unsaved changes</span>
             <button
@@ -269,8 +299,8 @@ export default function SellerWidgetPage() {
       {/* Header with Sub-Tabs */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Widget Configuration</h1>
-          <p className="mt-1 text-xs text-slate-500">Customize launcher color branding, edit greeting banners, set business timings, and copy embed snippets.</p>
+          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">Widget Configuration</h1>
+          <p className="mt-1 text-xs text-slate-500 font-medium">Customize launcher color branding, edit greeting banners, set business timings, and copy embed snippets.</p>
         </div>
 
         <div className="flex gap-2 bg-white shadow-sm border border-slate-100/80 p-1.5 rounded-2xl text-xs font-semibold self-start sm:self-auto">
@@ -523,17 +553,17 @@ export default function SellerWidgetPage() {
 
           {/* Right Column: Sticky Live Preview */}
           <div className="w-full lg:w-[320px] xl:w-[360px] shrink-0 sticky top-6">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden flex flex-col h-[520px]">
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl shadow-slate-200/60 overflow-hidden flex flex-col h-[540px] relative z-10">
 
               {/* Mock Browser Header */}
-              <div className="h-12 bg-slate-50 border-b border-slate-200 flex items-center px-4 gap-4">
-                <div className="flex gap-1.5 shrink-0">
-                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                  <div className="w-3 h-3 rounded-full bg-amber-400"></div>
-                  <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
+              <div className="h-14 bg-gradient-to-b from-slate-50 to-slate-100 border-b border-slate-200 flex items-center px-4 gap-4">
+                <div className="flex gap-2 shrink-0">
+                  <div className="w-3.5 h-3.5 rounded-full bg-red-500 shadow-sm border border-red-600/20"></div>
+                  <div className="w-3.5 h-3.5 rounded-full bg-amber-400 shadow-sm border border-amber-500/20"></div>
+                  <div className="w-3.5 h-3.5 rounded-full bg-emerald-500 shadow-sm border border-emerald-600/20"></div>
                 </div>
-                <div className="flex-1 bg-white border border-slate-200 rounded-md h-6 flex items-center px-3 shadow-sm">
-                  <span className="text-[10px] text-slate-400 font-mono">yoursite.com</span>
+                <div className="flex-1 bg-white border border-slate-200 rounded-lg h-7 flex items-center px-3 shadow-inner shadow-slate-100 justify-center">
+                  <span className="text-[10px] text-slate-400 font-medium tracking-wide">yoursite.com</span>
                 </div>
               </div>
 
@@ -549,17 +579,17 @@ export default function SellerWidgetPage() {
                 </div>
 
                 {/* Simulated Welcome Banner */}
-                <div className={`absolute bottom-20 ${widgetPosition === "bottom-right" ? "right-4" : "left-4"}`}>
-                  <div className="bg-white shadow-xl shadow-slate-200 border border-slate-100 p-3 rounded-2xl w-48 animate-bounce" style={{ animationDuration: '3s' }}>
+                <div className={`absolute bottom-24 ${widgetPosition === "bottom-right" ? "right-4" : "left-4"} z-20`}>
+                  <div className="bg-white/90 backdrop-blur-sm shadow-xl shadow-slate-200/80 border border-slate-100 p-3.5 rounded-2xl w-52 animate-bounce" style={{ animationDuration: '4s' }}>
                     <div className="flex items-start gap-3">
                       {logoUrl ? (
-                        <img src={logoUrl} alt="Logo" className="w-8 h-8 rounded-full object-cover shrink-0 ring-2 ring-white shadow-sm" />
+                        <img src={logoUrl} alt="Logo" className="w-9 h-9 rounded-full object-cover shrink-0 ring-2 ring-white shadow-md" />
                       ) : (
-                        <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 text-[10px] font-bold text-slate-500">Logo</div>
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-slate-100 to-slate-200 flex items-center justify-center shrink-0 text-[10px] font-bold text-slate-500 shadow-inner">Logo</div>
                       )}
                       <div>
-                        <p className="text-[10px] font-bold text-slate-900 leading-tight">{welcomeMessage}</p>
-                        <p className="text-[8px] text-slate-500 mt-1">{businessHours}</p>
+                        <p className="text-[11px] font-bold text-slate-900 leading-tight tracking-tight">{welcomeMessage}</p>
+                        <p className="text-[9px] text-slate-500 mt-1 font-medium">{businessHours}</p>
                       </div>
                     </div>
                   </div>
@@ -567,19 +597,19 @@ export default function SellerWidgetPage() {
 
                 {/* Simulated Widget Bubble */}
                 <div
-                  className={`absolute bottom-4 ${widgetPosition === "bottom-right" ? "right-4" : "left-4"} w-12 h-12 rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-110 cursor-pointer`}
-                  style={{ backgroundColor: widgetColor }}
+                  className={`absolute bottom-5 ${widgetPosition === "bottom-right" ? "right-4" : "left-4"} w-14 h-14 rounded-full shadow-2xl shadow-[var(--tw-shadow-color)] flex items-center justify-center transition-all hover:scale-110 hover:shadow-3xl cursor-pointer z-30`}
+                  style={{ backgroundColor: widgetColor, '--tw-shadow-color': widgetColor + '66' }}
                 >
-                  <Video className="h-5 w-5 text-white" />
+                  <Video className="h-6 w-6 text-white" />
 
                   {isOnline && (
-                    <div className="absolute top-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></div>
+                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 border-[2.5px] border-white rounded-full shadow-sm animate-pulse"></div>
                   )}
                 </div>
 
               </div>
             </div>
-            <p className="text-center text-[10px] text-slate-400 mt-3 font-semibold uppercase tracking-wider">Live Preview Simulator</p>
+            <p className="text-center text-[10px] text-slate-400 mt-4 font-bold uppercase tracking-widest">Live Preview Simulator</p>
           </div>
 
         </div>
