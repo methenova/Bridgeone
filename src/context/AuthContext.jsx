@@ -147,10 +147,10 @@ export function AuthProvider({ children }) {
           routing_rules: ws.settings?.routing_rules,
           is_online: shop.widget_enabled,
           webhook_url: customInt.webhook_url,
-          api_key: customInt.api_key,
+          api_key: shop.api_key || customInt.api_key || "",
           google_analytics_id: customInt.google_analytics_id,
           meta_pixel_id: customInt.meta_pixel_id,
-          shopify_domain: customInt.shopify_domain,
+          shopify_domain: shop.shopify_domain || customInt.shopify_domain || "",
           woocommerce_url: customInt.woocommerce_url
         };
       });

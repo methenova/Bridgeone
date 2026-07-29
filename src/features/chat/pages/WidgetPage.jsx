@@ -341,6 +341,8 @@ export default function WidgetPage() {
               logo_url, 
               widget_enabled,
               owner_id,
+              api_key,
+              shopify_domain,
               widget_settings ( primary_color, settings ),
               shop_subscriptions ( plan_id ),
               shop_integrations ( provider, settings )
@@ -364,7 +366,8 @@ export default function WidgetPage() {
             business_hours: ws.settings?.business_hours || "",
             business_hours_config: ws.settings?.business_hours_config || null,
             owner_id: rawData.owner_id,
-            api_key: customInt.api_key || ""
+            api_key: rawData.api_key || customInt.api_key || "",
+            shopify_domain: rawData.shopify_domain || customInt.shopify_domain || ""
           };
 
           // Cache config for 5 minutes (300 seconds)
