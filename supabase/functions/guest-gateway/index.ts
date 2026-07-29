@@ -288,7 +288,6 @@ serve(async (req) => {
         .from("video_rooms")
         .insert({
           room_key: roomCode,
-          room_code: roomCode,
           shop_id: shopId,
           agent_id: validAgentId,
           visitor_id: visitorId,
@@ -429,6 +428,8 @@ serve(async (req) => {
         .insert({
           conversation_id: conversationId,
           visitor_id: visitorId,
+          topic: "general",
+          extension: "chat",
           sender_type: "visitor",
           message_type: "text",
           content,
