@@ -263,7 +263,7 @@ export default function SellerAgentsPage() {
 
         await supabase
           .from("shops")
-          .update({ is_online: hasOnline })
+          .update({ widget_enabled: hasOnline })
           .eq("id", shopId);
       }
 

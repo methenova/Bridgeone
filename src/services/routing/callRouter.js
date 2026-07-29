@@ -209,7 +209,7 @@ export class CallRouter {
       // 1. Validate Shop
       const { data: shop, error: shopErr } = await supabase
         .from("shops")
-        .select("id, status, business_hours, owner_id")
+        .select("id, status, working_hours, owner_id")
         .eq("id", shopId)
         .maybeSingle();
 
@@ -222,7 +222,7 @@ export class CallRouter {
       }
 
       // 2. Check Business Hours
-      if (!isWithinBusinessHours(shop.business_hours)) {
+      if (!isWithinBusinessHours(shop.working_hours)) {
         return { success: false, queueRequired: false, reason: "outside_business_hours" };
       }
 
