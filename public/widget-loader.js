@@ -92,7 +92,14 @@
         .then(validationResult => {
           console.log("[BridgeOne] Validation result:", validationResult);
           if (!validationResult || validationResult.valid === false) {
-            console.error(`[BridgeOne] Widget validation failed: ${validationResult?.error || 'Unknown error'}`);
+            const errorMsg = validationResult?.error || 'Unknown error';
+            // Allow widget to load when disabled (agents offline) - widget handles offline state gracefully
+            if (errorMsg.includes('disabled')) {
+              console.warn(`[BridgeOne] Widget is disabled (agents may be offline). Loading in offline mode.`);
+              initializeWidget(cleanShopId, { valid: true, primary_color: "#2563eb", widget_position: "bottom-right" });
+              return;
+            }
+            console.error(`[BridgeOne] Widget validation failed: ${errorMsg}`);
             return;
           }
           initializeWidget(cleanShopId, validationResult);
