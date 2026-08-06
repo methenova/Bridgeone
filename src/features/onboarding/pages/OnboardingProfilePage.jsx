@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { User, Mail, Phone, Globe, Clock, Camera, ArrowRight, ShieldCheck, AlertCircle, Lock } from "lucide-react";
 import { useAuthContext } from "@/context/AuthContext";
-import { updateProfile } from "@/features/auth/services/profile.service";
+import { updateProfile } from "@/services/auth/profileService";
 
 const COUNTRIES = [
   { code: "US", name: "United States" },

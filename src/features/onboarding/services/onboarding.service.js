@@ -1,6 +1,6 @@
 import { supabase } from "@/config/supabase";
 import { createAuditLog } from "@/services/audit/audit.service";
-import { saveWidgetCredentials, generateSecureWidgetCredentials } from "@/features/seller/services/shop.service";
+import { saveWidgetCredentials, generateSecureWidgetCredentials } from "@/services/shop/shopService";
 
 /**
  * Evaluates the user's progress and returns the URL route for the last incomplete onboarding step.

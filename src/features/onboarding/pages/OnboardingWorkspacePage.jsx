@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Store, Clock, Languages, DollarSign, Users, ArrowRight, ShieldCheck, AlertCircle, Camera, TrendingUp } from "lucide-react";
 import { useAuthContext } from "@/context/AuthContext";
-import { updateProfile } from "@/features/auth/services/profile.service";
+import { updateProfile } from "@/services/auth/profileService";
 import { saveTemporaryOnboardingState } from "@/features/onboarding/services/onboarding.service";
 
 const LANGUAGES = [

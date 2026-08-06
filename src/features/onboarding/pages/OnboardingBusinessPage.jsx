@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Store, Mail, Phone, Globe, Layers, MapPin, Building2, Hash, ArrowRight, ShieldCheck, AlertCircle } from "lucide-react";
 import { useAuthContext } from "@/context/AuthContext";
-import { updateProfile } from "@/features/auth/services/profile.service";
+import { updateProfile } from "@/services/auth/profileService";
 import { saveTemporaryOnboardingState } from "@/features/onboarding/services/onboarding.service";
 
 const BUSINESS_CATEGORIES = [

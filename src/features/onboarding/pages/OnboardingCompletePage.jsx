@@ -7,8 +7,8 @@ import {
   Globe, Laptop, Terminal, Layers, FileCode, CheckSquare
 } from "lucide-react";
 import { useAuthContext } from "@/context/AuthContext";
-import { updateProfile } from "@/features/auth/services/profile.service";
-import { getShopByOwner, getWidgetCredentials, saveWidgetCredentials, generateSecureWidgetCredentials } from "@/features/seller/services/shop.service";
+import { updateProfile } from "@/services/auth/profileService";
+import { getShopByOwner, getWidgetCredentials, saveWidgetCredentials, generateSecureWidgetCredentials } from "@/services/shop/shopService";
 
 export default function OnboardingCompletePage() {
   const navigate = useNavigate();
