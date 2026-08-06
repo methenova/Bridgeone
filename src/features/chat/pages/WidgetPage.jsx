@@ -411,7 +411,6 @@ export default function WidgetPage() {
           .gte("last_seen", threshold);
         
         const activeOnlineUserIds = new Set((onlinePresences || []).map(p => p.user_id));
-        setOnlineAgentsCount(activeOnlineUserIds.size);
 
         // Fetch all shop agents with display names
         const { data: allAgsData } = await supabase
@@ -430,7 +429,8 @@ export default function WidgetPage() {
           a => a.shop_member && a.shop_member.shop_id === shopId
         ).map(a => {
           const profileId = a.shop_member?.profile_id;
-          const isOnline = activeOnlineUserIds.has(profileId);
+          // Check agent_presence first, then fall back to shop_agents.status
+          const isOnline = activeOnlineUserIds.has(profileId) || a.status === "online";
           return {
             id: a.id,
             status: isOnline ? "online" : "offline",
@@ -439,6 +439,10 @@ export default function WidgetPage() {
             avatar_url: a.shop_member?.profiles?.avatar_url || null,
           };
         });
+
+        // Update online count: count agents with presence heartbeat OR shop_agents online status
+        const onlineAgentCount = teamAgs.filter(a => a.is_online).length;
+        setOnlineAgentsCount(onlineAgentCount);
         setAgentsList(teamAgs);
 
         // Fetch all products for the shop to match referrer URLs
@@ -508,51 +512,62 @@ export default function WidgetPage() {
       )
       .subscribe();
 
+    // Shared handler to refresh agent roster status
+    const refreshAgentRoster = async () => {
+      const threshold = new Date(Date.now() - 90000).toISOString();
+      const { data: onlinePresences } = await supabase
+        .from("agent_presence")
+        .select("user_id, status, last_seen")
+        .eq("shop_id", shopId)
+        .eq("status", "online")
+        .gte("last_seen", threshold);
+      
+      const activeOnlineUserIds = new Set((onlinePresences || []).map(p => p.user_id));
+
+      const { data: allAgsData } = await supabase
+        .from("shop_agents")
+        .select(`
+          id,
+          display_name,
+          status,
+          shop_member:shop_member_id (
+            shop_id,
+            profile_id,
+            profiles:profile_id ( full_name, avatar_url )
+          )
+        `);
+      const teamAgs = (allAgsData || []).filter(
+        a => a.shop_member && a.shop_member.shop_id === shopId
+      ).map(a => {
+        const profileId = a.shop_member?.profile_id;
+        // Check agent_presence first, then fall back to shop_agents.status
+        const isOnline = activeOnlineUserIds.has(profileId) || a.status === "online";
+        return {
+          id: a.id,
+          status: isOnline ? "online" : "offline",
+          is_online: isOnline,
+          display_name: a.display_name || a.shop_member?.profiles?.full_name || "Agent",
+          avatar_url: a.shop_member?.profiles?.avatar_url || null,
+        };
+      });
+
+      const onlineAgentCount = teamAgs.filter(a => a.is_online).length;
+      setOnlineAgentsCount(onlineAgentCount);
+      setAgentsList(teamAgs);
+    };
+
     // Subscribe to agent presence changes dynamically
     const agentsChannel = supabase
       .channel(`widget-agents-${shopId}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "agent_presence", filter: `shop_id=eq.${shopId}` },
-        async () => {
-          const threshold = new Date(Date.now() - 90000).toISOString();
-          const { data: onlinePresences } = await supabase
-            .from("agent_presence")
-            .select("user_id, status, last_seen")
-            .eq("shop_id", shopId)
-            .eq("status", "online")
-            .gte("last_seen", threshold);
-          
-          const activeOnlineUserIds = new Set((onlinePresences || []).map(p => p.user_id));
-          setOnlineAgentsCount(activeOnlineUserIds.size);
-
-          const { data: allAgsData } = await supabase
-            .from("shop_agents")
-            .select(`
-              id,
-              display_name,
-              status,
-              shop_member:shop_member_id (
-                shop_id,
-                profile_id,
-                profiles:profile_id ( full_name, avatar_url )
-              )
-            `);
-          const teamAgs = (allAgsData || []).filter(
-            a => a.shop_member && a.shop_member.shop_id === shopId
-          ).map(a => {
-            const profileId = a.shop_member?.profile_id;
-            const isOnline = activeOnlineUserIds.has(profileId);
-            return {
-              id: a.id,
-              status: isOnline ? "online" : "offline",
-              is_online: isOnline,
-              display_name: a.display_name || a.shop_member?.profiles?.full_name || "Agent",
-              avatar_url: a.shop_member?.profiles?.avatar_url || null,
-            };
-          });
-          setAgentsList(teamAgs);
-        }
+        refreshAgentRoster
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "shop_agents" },
+        refreshAgentRoster
       )
       .subscribe();
 

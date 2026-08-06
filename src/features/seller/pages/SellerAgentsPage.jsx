@@ -219,7 +219,7 @@ export default function SellerAgentsPage() {
     }
   }
 
-  // Update agent status (on shop_agents table & shop online status)
+  // Update agent status (on shop_agents table, agent_presence table, & shop online status)
   async function handleUpdateStatus(ag, newStatus) {
     try {
       // Optimistically update React state immediately
@@ -250,6 +250,37 @@ export default function SellerAgentsPage() {
           .select()
           .single();
         if (error) throw error;
+      }
+
+      // Sync agent_presence table (the widget reads this for roster availability)
+      if (ag.profile_id && shopId) {
+        const now = new Date().toISOString();
+        const presencePayload = {
+          user_id: ag.profile_id,
+          shop_id: shopId,
+          status: newStatus,
+          last_seen: now,
+          last_activity: now,
+          updated_at: now
+        };
+
+        const { data: existingPresence } = await supabase
+          .from("agent_presence")
+          .select("id")
+          .eq("user_id", ag.profile_id)
+          .eq("shop_id", shopId)
+          .maybeSingle();
+
+        if (existingPresence) {
+          await supabase
+            .from("agent_presence")
+            .update(presencePayload)
+            .eq("id", existingPresence.id);
+        } else {
+          await supabase
+            .from("agent_presence")
+            .insert({ ...presencePayload, created_at: now });
+        }
       }
 
       // Automatically sync overall shop online status when agent status changes
