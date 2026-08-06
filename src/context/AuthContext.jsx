@@ -380,7 +380,6 @@ export function AuthProvider({ children }) {
         business_email: currentOrganization.business_email || user.email,
         business_phone: currentOrganization.business_phone || "",
         website: details.website || `http://${cleanDomain}`,
-        domain: cleanDomain,
         category: category,
         status: "active",
         widget_enabled: true

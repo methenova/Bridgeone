@@ -207,7 +207,6 @@ export default function MyShopPage() {
           shop_name: editForm.name,
           name: editForm.name,
           website: editForm.website,
-          domain: cleanDomain,
           category: category,
           default_language: editForm.defaultLanguage,
           language: editForm.defaultLanguage,
@@ -268,7 +267,6 @@ export default function MyShopPage() {
         business_email: currentOrganization.business_email || user.email,
         business_phone: currentOrganization.business_phone || "",
         website: createForm.website || `http://${cleanDomain}`,
-        domain: cleanDomain,
         category: category,
         status: "active",
         widget_enabled: true
@@ -317,7 +315,6 @@ export default function MyShopPage() {
         business_email: shop.business_email,
         business_phone: shop.business_phone,
         website: shop.website,
-        domain: shop.domain ? `copy-${shop.domain}` : null,
         category: shop.category,
         currency: shop.currency,
         language: shop.language,

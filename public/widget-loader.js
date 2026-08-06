@@ -248,8 +248,7 @@
     const iframe = document.createElement("iframe");
     iframe.className = "b1-widget-iframe";
     iframe.src = `${hostUrl}/widget/${targetShopId}`;
-    iframe.setAttribute("allow", "camera *; microphone *; display-capture *; autoplay *; fullscreen *");
-    iframe.setAttribute("allowusermedia", "true");
+    iframe.setAttribute("allow", "camera; microphone; display-capture; autoplay; fullscreen");
 
     container.appendChild(iframe);
 

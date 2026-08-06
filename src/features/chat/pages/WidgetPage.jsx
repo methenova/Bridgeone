@@ -772,6 +772,14 @@ export default function WidgetPage() {
 
     let mediaStream = null;
     try {
+      // Guard: mediaDevices is undefined in insecure contexts (non-HTTPS) or restricted iframes
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new DOMException(
+          "Media devices are unavailable. This may be because the page is not served over HTTPS or the widget iframe lacks camera/microphone permissions.",
+          "NotSupportedError"
+        );
+      }
+
       // Prompt for camera/mic
       try {
         mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -785,7 +793,9 @@ export default function WidgetPage() {
       toast.success("Devices ready", { id: "widget-media" });
     } catch (err) {
       console.error("[Widget] Media access denied:", err);
-      if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+      if (err.name === "NotSupportedError") {
+        toast.error("Camera/microphone not available. Please ensure this page is served over HTTPS.", { id: "widget-media", duration: 8000 });
+      } else if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
         toast.error("Camera/microphone permissions were denied. Please unlock settings in your browser address bar.", { id: "widget-media", duration: 8000 });
       } else {
         toast.error("Could not access camera or microphone", { id: "widget-media" });
