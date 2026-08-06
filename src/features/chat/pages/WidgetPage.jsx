@@ -8,94 +8,11 @@ import { SellerPeer } from "@/services/video/sellerPeer";
 import { CallRouter } from "@/features/call/services/callRouter";
 import { CallQueueService } from "@/features/call/services/callQueueService";
 import { cache } from "@/services/cache/cacheService";
-
-// Check if current time in shop timezone is outside operational hours, shifts, or holidays
-function checkIsOutsideBusinessHours(shop) {
-  if (!shop) return false;
-
-  const config = shop.business_hours_config || { timezone: "UTC", holidays: [], shifts: [] };
-  const timezone = config.timezone || "UTC";
-
-  // Get current time in specified timezone
-  const now = new Date();
-  let timeInTZ;
-  try {
-    timeInTZ = new Date(now.toLocaleString("en-US", { timeZone: timezone }));
-  } catch (e) {
-    timeInTZ = now;
-  }
-
-  const currentYear = timeInTZ.getFullYear();
-  const currentMonth = (timeInTZ.getMonth() + 1).toString().padStart(2, "0");
-  const currentDate = timeInTZ.getDate().toString().padStart(2, "0");
-  const todayStr = `${currentYear}-${currentMonth}-${currentDate}`; // "YYYY-MM-DD"
-  const todayMDStr = `${currentMonth}-${currentDate}`; // "MM-DD"
-
-  // Check holidays
-  const holidays = config.holidays || [];
-  if (holidays.includes(todayStr) || holidays.includes(todayMDStr)) {
-    return true;
-  }
-
-  const dayName = timeInTZ.toLocaleDateString("en-US", { weekday: "short" }); // e.g. "Mon"
-  const currentHour = timeInTZ.getHours();
-  const currentMin = timeInTZ.getMinutes();
-  const currentMinutes = currentHour * 60 + currentMin;
-
-  // Check shifts
-  const shifts = config.shifts || [];
-  if (shifts && shifts.length > 0) {
-    const parseTimeToMinutes = (timeStr) => {
-      if (!timeStr) return null;
-      const [h, m] = timeStr.split(":").map(Number);
-      return h * 60 + m;
-    };
-
-    let insideAnyShift = false;
-    for (const shift of shifts) {
-      const startMin = parseTimeToMinutes(shift.start);
-      const endMin = parseTimeToMinutes(shift.end);
-      if (startMin !== null && endMin !== null) {
-        if (currentMinutes >= startMin && currentMinutes <= endMin) {
-          insideAnyShift = true;
-          break;
-        }
-      }
-    }
-
-    if (!insideAnyShift) {
-      return true; // Outside shifts
-    }
-    return false; // Within shifts
-  }
-
-  // Fallback to text parsing
-  const textHours = shop.business_hours || "";
-  if (textHours) {
-    const isWeekday = ["Mon", "Tue", "Wed", "Thu", "Fri"].includes(dayName);
-    let activeForDay = false;
-    if (textHours.toLowerCase().includes("mon-fri") && isWeekday) activeForDay = true;
-    if (textHours.toLowerCase().includes("everyday") || textHours.toLowerCase().includes("24/7")) activeForDay = true;
-    if (textHours.toLowerCase().includes(dayName.toLowerCase())) activeForDay = true;
-
-    if (!activeForDay) return true;
-
-    const match = textHours.match(/(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})/);
-    if (match) {
-      const [_, startStr, endStr] = match;
-      const [sh, sm] = startStr.split(":").map(Number);
-      const [eh, em] = endStr.split(":").map(Number);
-      const startMin = sh * 60 + sm;
-      const endMin = eh * 60 + em;
-
-      if (currentMinutes < startMin || currentMinutes > endMin) {
-        return true;
-      }
-    }
-  }
-
-  return false;
-}
+import { checkIsOutsideBusinessHours } from "@/features/chat/utils/businessHours";
+import { useWidgetMedia } from "@/features/chat/hooks/useWidgetMedia";
+import { WidgetLimitExceededScreen } from "@/features/chat/components/widget/WidgetLimitExceededScreen";
+import { WidgetHeader } from "@/features/chat/components/widget/WidgetHeader";
+import { WidgetFeedbackModal } from "@/features/chat/components/widget/WidgetFeedbackModal";
 
 export default function WidgetPage() {
   const { shopId } = useParams();
@@ -1311,47 +1228,7 @@ export default function WidgetPage() {
   }
 
   if (limitExceeded) {
-    return (
-      <div className="h-screen flex flex-col bg-slate-50 text-slate-100 overflow-hidden font-sans border border-slate-200 shadow-2xl relative select-none">
-        <header className="flex items-center justify-between border-b border-slate-200 px-5 py-4 bg-white shadow-sm/40 backdrop-blur-md shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl border border-slate-200 overflow-hidden bg-white shadow-sm flex items-center justify-center shrink-0">
-              {shop?.logo_url ? <img src={shop.logo_url} alt="" className="h-full w-full object-cover" /> : <Video className="h-4.5 w-4.5 text-slate-500" />}
-            </div>
-            <div>
-              <h1 className="text-sm font-bold text-slate-900 leading-tight">{shop?.name || "Live Consultation"}</h1>
-            </div>
-          </div>
-          <button
-            onClick={() => window.parent.postMessage("close-widget", "*")}
-            className="h-8 w-8 flex items-center justify-center rounded-xl bg-white/60 shadow-sm hover:bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-900 transition-colors"
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </header>
-        <main className="flex-1 p-6 flex flex-col items-center justify-center text-center space-y-5 bg-slate-50">
-          <div className="h-16 w-16 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-500 flex items-center justify-center animate-bounce">
-            <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-          </div>
-          <div className="space-y-1.5">
-            <h2 className="text-base font-extrabold text-slate-900">Call Limit Reached</h2>
-            <p className="text-xs text-slate-500 max-w-[260px] leading-relaxed mx-auto">
-              This merchant has reached their monthly video consultation call limit. Please contact store support for assistance.
-            </p>
-          </div>
-          <button
-            onClick={() => window.parent.postMessage("close-widget", "*")}
-            className="rounded-xl border border-slate-200 hover:border-slate-200 bg-white/60 shadow-sm hover:bg-slate-100 text-xs font-semibold px-6 py-2.5 text-slate-700 hover:text-slate-900 transition-colors cursor-pointer"
-          >
-            Close Widget
-          </button>
-        </main>
-      </div>
-    );
+    return <WidgetLimitExceededScreen shop={shop} />;
   }
 
   return (
@@ -1424,35 +1301,7 @@ export default function WidgetPage() {
       )}
 
       {/* Widget Header */}
-      <header className="flex items-center justify-between border-b border-slate-200 px-5 py-4 bg-white shadow-sm/40 backdrop-blur-md shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl border border-slate-200 overflow-hidden bg-white shadow-sm flex items-center justify-center shrink-0">
-            {shop?.logo_url ? (
-              <img src={shop.logo_url} alt={`${shop.name} Logo`} loading="lazy" decoding="async" className="h-full w-full object-cover" />
-            ) : (
-              <Video className="h-4.5 w-4.5 text-slate-500" />
-            )}
-          </div>
-          <div>
-            <h1 className="text-sm font-bold text-slate-900 leading-tight">{shop?.name || "Live Consultation"}</h1>
-            <div className="flex items-center gap-1.5 mt-0.5" aria-live="polite">
-              <span className={`h-1.5 w-1.5 rounded-full ${shop?.is_online ? "bg-green-500" : "bg-slate-500"}`} />
-              <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">
-                {shop?.is_online ? "Online Now" : "Offline"}
-              </span>
-            </div>
-          </div>
-        </div>
-        <button
-          onClick={handleHangUp}
-          aria-label="Close widget window"
-          className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/60 shadow-sm hover:bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-900 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
-        >
-          <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </header>
+      <WidgetHeader shop={shop} onClose={handleHangUp} />
 
       {/* Main Body Flow */}
       <main className="flex-1 overflow-y-auto p-5 flex flex-col relative min-h-0 bg-slate-50">
@@ -2413,145 +2262,70 @@ export default function WidgetPage() {
 
         {/* State G: Post-Call Summary and Feedback Form */}
         {flowState === "post-call" && (
-          <div className="my-auto flex flex-col items-center justify-center text-center space-y-4 p-4 bg-slate-50 text-slate-100" aria-live="polite">
-            <div className="h-12 w-12 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center animate-bounce">
-              <Star className="h-5 w-5 fill-blue-400" />
-            </div>
+          <WidgetFeedbackModal
+            answeringAgentName={answeringAgentName}
+            finalDurationText={finalDurationText}
+            discussedProducts={discussedProducts}
+            feedbackSubmitted={feedbackSubmitted}
+            customerRating={customerRating}
+            setCustomerRating={setCustomerRating}
+            feedbackText={feedbackText}
+            setFeedbackText={setFeedbackText}
+            primaryColor={primaryColor}
+            onClose={() => {
+              setFlowState(shop?.is_online ? "form" : "offline");
+              window.parent.postMessage("close-widget", "*");
+              resetFields();
+            }}
+            onSubmitFeedback={async (e) => {
+              e.preventDefault();
+              if (!postCallLogId) return;
+              try {
+                // Fetch existing notes first to avoid overwriting
+                const { data: callLog } = await supabase
+                  .from("call_logs")
+                  .select("notes")
+                  .eq("id", postCallLogId)
+                  .single();
 
-            <div className="space-y-1">
-              <h2 className="text-sm font-extrabold text-slate-900">Consultation Summary</h2>
-              <p className="text-[11px] text-slate-500">Thank you for your valuable time!</p>
-            </div>
+                const agentNotes = callLog?.notes || "";
+                const updatedNotes = feedbackText.trim()
+                  ? `${agentNotes}\n\n[Customer Feedback]: ${feedbackText.trim()}`
+                  : agentNotes;
 
-            {/* Call Info details */}
-            <div className="w-full bg-white shadow-sm/35 border border-slate-200 rounded-xl p-3.5 text-left text-[11px] space-y-1.5 font-semibold text-slate-350">
-              <div className="flex justify-between">
-                <span className="text-slate-500">Expert Agent:</span>
-                <span className="text-slate-900">{answeringAgentName || "Our Store Specialist"}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Call Duration:</span>
-                <span className="text-slate-900">{finalDurationText || "0s"}</span>
-              </div>
-              {discussedProducts && discussedProducts.length > 0 && (
-                <div className="flex flex-col gap-1 pt-1.5 border-t border-slate-200/60">
-                  <span className="text-slate-500">Products Discussed:</span>
-                  <div className="flex flex-wrap gap-1 mt-0.5">
-                    {discussedProducts.map((p, idx) => (
-                      <span key={idx} className="bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md">
-                        {p}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Star Rating and Comment Form */}
-            {!feedbackSubmitted ? (
-              <form
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  if (!postCallLogId) return;
-                  try {
-                    // Fetch existing notes first to avoid overwriting
-                    const { data: callLog } = await supabase
-                      .from("call_logs")
-                      .select("notes")
-                      .eq("id", postCallLogId)
-                      .single();
-
-                    const agentNotes = callLog?.notes || "";
-                    const updatedNotes = feedbackText.trim()
-                      ? `${agentNotes}\n\n[Customer Feedback]: ${feedbackText.trim()}`
-                      : agentNotes;
-
-                    const { data: authSession } = await supabase.auth.getSession();
-                    if (!authSession.session) {
-                      await supabase.functions.invoke("guest-gateway", {
-                        body: {
-                          action: "update_call_log",
-                          shopId,
-                          apiKey: shop?.api_key || shop?.widget_key || window.BridgeOneShopApiKey || window.BridgeOneConfig?.widgetKey || "",
-                          id: postCallLogId,
-                          notes: updatedNotes,
-                          csatScore: customerRating,
-                          callRating: customerRating
-                        }
-                      });
-                    } else {
-                      await supabase
-                        .from("call_logs")
-                        .update({
-                          csat_score: customerRating,
-                          call_rating: customerRating,
-                          notes: updatedNotes
-                        })
-                        .eq("id", postCallLogId);
+                const { data: authSession } = await supabase.auth.getSession();
+                if (!authSession.session) {
+                  await supabase.functions.invoke("guest-gateway", {
+                    body: {
+                      action: "update_call_log",
+                      shopId,
+                      apiKey: shop?.api_key || shop?.widget_key || window.BridgeOneShopApiKey || window.BridgeOneConfig?.widgetKey || "",
+                      id: postCallLogId,
+                      notes: updatedNotes,
+                      csatScore: customerRating,
+                      callRating: customerRating
                     }
+                  });
+                } else {
+                  await supabase
+                    .from("call_logs")
+                    .update({
+                      csat_score: customerRating,
+                      call_rating: customerRating,
+                      notes: updatedNotes
+                    })
+                    .eq("id", postCallLogId);
+                }
 
-                    setFeedbackSubmitted(true);
-                    toast.success("Feedback submitted!");
-                  } catch (err) {
-                    console.warn("Failed to save feedback:", err);
-                    toast.error("Failed to submit feedback.");
-                    setFeedbackSubmitted(true);
-                  }
-                }}
-                className="w-full space-y-3.5 pt-2"
-              >
-                <div className="space-y-1.5">
-                  <span className="text-slate-500 text-[8px] uppercase tracking-wider block font-bold">Rate Your Experience</span>
-                  <div className="flex justify-center gap-1.5">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        type="button"
-                        onClick={() => setCustomerRating(star)}
-                        aria-label={`Rate ${star} Stars`}
-                        className="text-slate-500 hover:text-amber-400 cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none rounded"
-                      >
-                        <Star className={`h-6 w-6 ${customerRating >= star ? "text-amber-400 fill-amber-400" : "text-slate-700"}`} />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="relative">
-                  <textarea
-                    rows={3}
-                    value={feedbackText}
-                    onChange={(e) => setFeedbackText(e.target.value)}
-                    aria-label="Write your feedback comments"
-                    placeholder="Tell us how we did (optional)..."
-                    className="w-full rounded-xl border border-slate-200 bg-white/60 shadow-sm p-3 text-xs text-slate-900 placeholder-slate-400 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none resize-none transition-all"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  style={{ backgroundColor: primaryColor }}
-                  className="w-full rounded-xl py-3 text-xs font-bold text-slate-900 shadow-xl hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
-                >
-                  Submit Review
-                </button>
-              </form>
-            ) : (
-              <div className="space-y-3 pt-2 w-full">
-                <p className="text-xs text-green-400 font-bold">✓ Feedback recorded. Thank you!</p>
-                <button
-                  onClick={() => {
-                    setFlowState(shop?.is_online ? "form" : "offline");
-                    window.parent.postMessage("close-widget", "*");
-                    resetFields();
-                  }}
-                  className="w-full rounded-xl bg-white shadow-sm hover:bg-slate-100 border border-slate-200 text-xs font-bold py-3 text-slate-700 hover:text-slate-900 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
-                >
-                  Close & Return
-                </button>
-              </div>
-            )}
-          </div>
+                setFeedbackSubmitted(true);
+                toast.success("Feedback submitted!");
+              } catch (err) {
+                console.warn("Failed to save feedback:", err);
+                toast.error("Failed to submit feedback.");
+                setFeedbackSubmitted(true);
+              }
+            }}
+          />
         )}
 
       </main>
