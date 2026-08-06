@@ -5,11 +5,13 @@ import toast from "react-hot-toast";
 
 import { supabase } from "@/config/supabase";
 import { SellerPeer } from "@/services/video/sellerPeer";
-import { CallRouter } from "@/features/call/services/callRouter";
-import { CallQueueService } from "@/features/call/services/callQueueService";
+import { CallRouter } from "@/services/routing/callRouter";
+import { CallQueueService } from "@/services/queue/callQueueService";
 import { cache } from "@/services/cache/cacheService";
 import { checkIsOutsideBusinessHours } from "@/features/chat/utils/businessHours";
 import { useWidgetMedia } from "@/features/chat/hooks/useWidgetMedia";
+import { useWidgetNetwork } from "@/features/chat/hooks/useWidgetNetwork";
+import { useWidgetCustomerProfile } from "@/features/chat/hooks/useWidgetCustomerProfile";
 import { WidgetLimitExceededScreen } from "@/features/chat/components/widget/WidgetLimitExceededScreen";
 import { WidgetHeader } from "@/features/chat/components/widget/WidgetHeader";
 import { WidgetFeedbackModal } from "@/features/chat/components/widget/WidgetFeedbackModal";
@@ -89,77 +91,56 @@ export default function WidgetPage() {
         Notification.requestPermission();
       }
     }
+  }, []);
 
-    // Load returning customer profile and history from local storage
-    try {
-      const storedName = localStorage.getItem("bo_customer_name") || "";
-      const storedEmail = localStorage.getItem("bo_customer_email") || "";
-      const storedPhone = localStorage.getItem("bo_customer_phone") || "";
-      const storedLang = localStorage.getItem("bo_customer_language") || "en";
+  // Network online/offline monitoring
+  const { isOnline } = useWidgetNetwork();
 
-      const storedCalls = JSON.parse(localStorage.getItem("bo_previous_calls") || "[]");
-      const storedProducts = JSON.parse(localStorage.getItem("bo_previous_products") || "[]");
+  // Returning customer profile and localStorage identity
+  const {
+    visitorSessionId,
+    hasRegisteredBefore,
+    setHasRegisteredBefore,
+    name,
+    setName,
+    email,
+    setEmail,
+    phone,
+    setPhone,
+    language,
+    setLanguage,
+    previousCalls,
+    setPreviousCalls,
+    previousProducts,
+    setPreviousProducts,
+    saveCustomerProfile
+  } = useWidgetCustomerProfile();
 
-      if (storedName) {
-        setName(storedName);
-        setHasRegisteredBefore(true);
-      }
-      if (storedEmail) setEmail(storedEmail);
-      if (storedPhone) setPhone(storedPhone);
-      setLanguage(storedLang);
-      setPreviousCalls(storedCalls);
-      setPreviousProducts(storedProducts);
-    } catch (e) {
-      console.warn("[LocalStorage] Failed to load returning customer profiles:", e);
-    }
+  // WebRTC media device management
+  const {
+    localStream,
+    setLocalStream,
+    micEnabled,
+    camEnabled,
+    setCamEnabled,
+    setMicEnabled,
+    initMediaStream,
+    toggleMic,
+    toggleCam,
+    stopMediaStream
+  } = useWidgetMedia();
 
-    // Monitor internet connectivity changes
-    const handleOnline = () => {
-
-      setIsOnline(true);
-      toast.success("Internet connection restored!", { id: "network-status" });
-    };
-    const handleOffline = () => {
-      setIsOnline(false);
-      toast.error("Network disconnected. Please check your internet connection.", { id: "network-status", duration: 5000 });
-    };
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    // Optimize media handshake: Query and cache permissions early to reduce call connection delay
+  // Optimize media handshake: Query and cache permissions early
+  useEffect(() => {
     if (typeof navigator !== "undefined" && navigator.permissions && navigator.permissions.query) {
       navigator.permissions.query({ name: "camera" }).catch(() => { });
       navigator.permissions.query({ name: "microphone" }).catch(() => { });
     }
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
   }, []);
 
   // Widget flow states: 'form' | 'calling' | 'connected' | 'offline' | 'callback-submitted'
   const [flowState, setFlowState] = useState("form");
-  const [hasRegisteredBefore, setHasRegisteredBefore] = useState(false);
   const [currentQueueId, setCurrentQueueId] = useState(null);
-  const [visitorSessionId] = useState(() => {
-    try {
-      let cached = localStorage.getItem("bo_visitor_session_id");
-      if (!cached) {
-        cached = `visitor_${Math.random().toString(36).substring(2, 9)}`;
-        localStorage.setItem("bo_visitor_session_id", cached);
-      }
-      return cached;
-    } catch {
-      return `visitor_${Math.random().toString(36).substring(2, 9)}`;
-    }
-  });
-
-  // Caller identity form
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
 
   // Online agents count state
   const [onlineAgentsCount, setOnlineAgentsCount] = useState(0);
@@ -191,10 +172,6 @@ export default function WidgetPage() {
   const [callbackDate, setCallbackDate] = useState("");
   const [callbackTimeOnly, setCallbackTimeOnly] = useState("");
 
-  // Returning customer profile and history states
-  const [language, setLanguage] = useState("en");
-  const [previousCalls, setPreviousCalls] = useState([]);
-  const [previousProducts, setPreviousProducts] = useState([]);
   const [showHistoryPanel, setShowHistoryPanel] = useState(false);
 
   // Post-call feedback states
@@ -206,9 +183,6 @@ export default function WidgetPage() {
   const [feedbackText, setFeedbackText] = useState("");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
-  // Network connection state
-  const [isOnline, setIsOnline] = useState(typeof navigator !== "undefined" ? navigator.onLine : true);
-
   // Queue position state
   const [queuePosition, setQueuePosition] = useState(1);
 
@@ -216,11 +190,8 @@ export default function WidgetPage() {
   const [callbackTime, setCallbackTime] = useState("");
 
   // WebRTC Stream states
-  const [localStream, setLocalStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
   const [iceState, setIceState] = useState(null);
-  const [micMuted, setMicMuted] = useState(false);
-  const [camEnabled, setCamEnabled] = useState(true);
   const [callDuration, setCallDuration] = useState(0);
   const [limitExceeded, setLimitExceeded] = useState(false);
 
@@ -1141,26 +1112,8 @@ export default function WidgetPage() {
     }
   };
 
-  // 7. Toggle Mic/Cam controls
-  function toggleMic() {
-    if (localStream) {
-      const audioTrack = localStream.getAudioTracks()[0];
-      if (audioTrack) {
-        audioTrack.enabled = !audioTrack.enabled;
-        setMicMuted(!audioTrack.enabled);
-      }
-    }
-  }
-
-  function toggleCamera() {
-    if (localStream) {
-      const videoTrack = localStream.getVideoTracks()[0];
-      if (videoTrack) {
-        videoTrack.enabled = !videoTrack.enabled;
-        setCamEnabled(videoTrack.enabled);
-      }
-    }
-  }
+  // 7. Toggle Mic/Cam controls (using useWidgetMedia hook)
+  const toggleCamera = toggleCam;
 
   // Switch call queue to offline callback schedule
   async function handleSwitchToCallback() {

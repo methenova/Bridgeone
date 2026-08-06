@@ -21,7 +21,7 @@ import toast from "react-hot-toast";
 import { supabase } from "@/config/supabase";
 import useSellerShop from "../hooks/useSellerShop";
 import { TableSkeleton } from "@/components/skeletons";
-import { AgentPresenceService } from "@/features/call/services/presenceService";
+import { AgentPresenceService } from "@/services/presence/presenceService";
 
 export default function SellerAgentsPage() {
   const { shop, loading: shopLoading } = useSellerShop();

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuthContext } from "@/context/AuthContext";
 import { Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
-import { getNextOnboardingStep } from "@/features/onboarding/services/onboarding.service";
+import { getNextOnboardingStep } from "@/services/onboarding/onboardingService";
 import { syncUserDeviceTokenOnLogin } from "@/services/device/deviceToken.service";
 
 export default function LoginForm() {
