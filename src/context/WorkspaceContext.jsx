@@ -302,7 +302,7 @@ export function WorkspaceProvider({ children, user }) {
     }
   };
 
-  const value = {
+  const value = React.useMemo(() => ({
     organizations,
     currentOrganization,
     shops,
@@ -317,7 +317,22 @@ export function WorkspaceProvider({ children, user }) {
     deleteOrganization,
     transferOrganizationOwnership,
     createShopInActiveOrg,
-  };
+  }), [
+    organizations,
+    currentOrganization,
+    shops,
+    currentShop,
+    loadingWorkspace,
+    loadWorkspace,
+    user?.id,
+    switchOrganization,
+    switchShop,
+    createOrganization,
+    renameOrganization,
+    deleteOrganization,
+    transferOrganizationOwnership,
+    createShopInActiveOrg,
+  ]);
 
   return <WorkspaceContext.Provider value={value}>{children}</WorkspaceContext.Provider>;
 }
