@@ -21,6 +21,7 @@ import toast from "react-hot-toast";
 import { supabase } from "@/config/supabase";
 import useSellerShop from "../hooks/useSellerShop";
 import { TableSkeleton } from "@/components/skeletons";
+import { AgentPresenceService } from "@/features/call/services/presenceService";
 
 export default function SellerAgentsPage() {
   const { shop, loading: shopLoading } = useSellerShop();
@@ -252,35 +253,9 @@ export default function SellerAgentsPage() {
         if (error) throw error;
       }
 
-      // Sync agent_presence table (the widget reads this for roster availability)
+      // Sync presence table & shop_agents table via centralized AgentPresenceService
       if (ag.profile_id && shopId) {
-        const now = new Date().toISOString();
-        const presencePayload = {
-          user_id: ag.profile_id,
-          shop_id: shopId,
-          status: newStatus,
-          last_seen: now,
-          last_activity: now,
-          updated_at: now
-        };
-
-        const { data: existingPresence } = await supabase
-          .from("agent_presence")
-          .select("id")
-          .eq("user_id", ag.profile_id)
-          .eq("shop_id", shopId)
-          .maybeSingle();
-
-        if (existingPresence) {
-          await supabase
-            .from("agent_presence")
-            .update(presencePayload)
-            .eq("id", existingPresence.id);
-        } else {
-          await supabase
-            .from("agent_presence")
-            .insert({ ...presencePayload, created_at: now });
-        }
+        await AgentPresenceService.setPresence(ag.profile_id, shopId, newStatus);
       }
 
       // Automatically sync overall shop online status when agent status changes
