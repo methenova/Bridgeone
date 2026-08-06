@@ -1,4 +1,5 @@
 import { supabase } from "@/config/supabase";
+import { realtimeManager } from "@/services/realtime/realtimeManager";
 
 const activeChannels = new Map();
 let heartbeatInterval = null;
@@ -242,24 +243,23 @@ export class AgentPresenceService {
    * @returns {function} Unsubscribe cleanup function
    */
   static subscribeToPresence(shopId, callback) {
-    const channel = supabase.channel(`presence:${shopId}`);
+    const topic = `presence:${shopId}`;
+    const channel = realtimeManager.subscribe(topic);
 
-    channel
-      .on("presence", { event: "sync" }, () => {
-        const state = channel.presenceState();
-        const presenceMap = {};
-        Object.keys(state).forEach((key) => {
-          const userPresences = state[key];
-          if (userPresences && userPresences.length > 0) {
-            presenceMap[key] = userPresences[0];
-          }
-        });
-        callback(presenceMap);
-      })
-      .subscribe();
+    channel.on("presence", { event: "sync" }, () => {
+      const state = channel.presenceState();
+      const presenceMap = {};
+      Object.keys(state).forEach((key) => {
+        const userPresences = state[key];
+        if (userPresences && userPresences.length > 0) {
+          presenceMap[key] = userPresences[0];
+        }
+      });
+      callback(presenceMap);
+    });
 
     return () => {
-      supabase.removeChannel(channel);
+      realtimeManager.unsubscribe(topic);
     };
   }
 

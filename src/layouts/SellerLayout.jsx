@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/context/AuthContext";
 import { supabase } from "@/config/supabase";
+import { realtimeManager } from "@/services/realtime/realtimeManager";
 import useSellerShop from "@/features/seller/hooks/useSellerShop";
 import PremiumLayout from "./components/PremiumLayout";
 import toast from "react-hot-toast";
@@ -65,7 +66,8 @@ export default function SellerLayout() {
     ringtone.loop = true;
 
     // Single consolidated channel for all Postgres changes updates to minimize sockets and memory leaks
-    const globalSellerSub = supabase.channel(`global-seller-channel-${shopId}`)
+    const topic = `global-seller-channel-${shopId}`;
+    const globalSellerSub = realtimeManager.subscribe(topic)
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "notifications", filter: `shop_id=eq.${shopId}` },
@@ -233,7 +235,7 @@ export default function SellerLayout() {
       .subscribe();
 
     return () => {
-      supabase.removeChannel(globalSellerSub);
+      realtimeManager.unsubscribe(topic);
     };
   }, [shopId, profile?.id, navigate]);
 

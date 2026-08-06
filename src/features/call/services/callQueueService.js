@@ -1,4 +1,5 @@
 import { supabase } from "@/config/supabase";
+import { realtimeManager } from "@/services/realtime/realtimeManager";
 
 /**
  * Call Queue Service for Managing Video Call Waiting Lines
@@ -234,15 +235,15 @@ export class CallQueueService {
    * Broadcast updates on Supabase channels
    */
   static broadcastQueueChange(shopId) {
-    const channel = supabase.channel(`queue:${shopId}`);
-    channel.subscribe((status) => {
+    const topic = `queue:${shopId}`;
+    const channel = realtimeManager.subscribe(topic, {}, (status) => {
       if (status === "SUBSCRIBED") {
         channel.send({
           type: "broadcast",
           event: "queue_updated",
           payload: { shopId }
         });
-        setTimeout(() => supabase.removeChannel(channel), 1000);
+        setTimeout(() => realtimeManager.unsubscribe(topic), 1000);
       }
     });
   }
