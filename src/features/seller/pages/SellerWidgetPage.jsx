@@ -24,9 +24,12 @@ import {
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 
-import { supabase } from "@/config/supabase";
 import useSellerShop from "../hooks/useSellerShop";
-import { saveWidgetCredentials, generateSecureWidgetCredentials } from "../services/shop.service";
+import {
+  fetchWidgetAnalytics,
+  updateWidgetSettings,
+  rotateWidgetToken
+} from "../services/widgetSettings.service";
 
 const PRESET_COLORS = ["#2563eb", "#0ea5e9", "#10b981", "#8b5cf6", "#f43f5e", "#f97316", "#0f172a"];
 
@@ -85,8 +88,7 @@ export default function SellerWidgetPage() {
     async function loadWidgetAnalytics() {
       try {
         setLoadingAnalytics(true);
-        const { data: sessions } = await supabase.from("visitor_sessions").select("id, current_page_url, started_at, last_activity_at, created_at").eq("shop_id", shopId);
-        const { data: calls } = await supabase.from("call_logs").select("id, status, duration_seconds, created_at").eq("shop_id", shopId);
+        const { sessions, calls } = await fetchWidgetAnalytics(shopId);
 
         const totalViews = sessions?.length || 0;
         const totalOpens = sessions?.filter(s => {
@@ -164,32 +166,15 @@ export default function SellerWidgetPage() {
     if (!shopId || saving || !isDirty) return;
     setSaving(true);
     try {
-      // 1. Update shops table for root configuration
-      const { error: shopError } = await supabase.from("shops").update({
-        widget_enabled: isOnline,
-        logo_url: logoUrl
-      }).eq("id", shopId);
+      await updateWidgetSettings(shopId, {
+        isOnline,
+        logoUrl,
+        widgetColor,
+        widgetPosition,
+        welcomeMessage,
+        businessHours,
+      });
 
-      if (shopError) throw shopError;
-
-      // 2. Fetch current widget_settings to preserve existing settings jsonb
-      const { data: ws } = await supabase.from("widget_settings")
-        .select("settings").eq("shop_id", shopId).maybeSingle();
-      
-      const currentSettings = ws?.settings || {};
-
-      // 3. Update widget_settings table for widget-specific UI configuration
-      const { error: widgetError } = await supabase.from("widget_settings").update({
-        primary_color: widgetColor,
-        widget_position: widgetPosition,
-        welcome_message: welcomeMessage,
-        settings: {
-          ...currentSettings,
-          business_hours: businessHours
-        }
-      }).eq("shop_id", shopId);
-
-      if (widgetError) throw widgetError;
       toast.success("Widget configuration updated successfully!");
       reloadShop();
     } catch (err) {
@@ -220,21 +205,7 @@ export default function SellerWidgetPage() {
     if (window.confirm("Are you sure you want to rotate your widget API key? This will require updating the script integration embed token on your client website.")) {
       setRotatingToken(true);
       try {
-        const secureCreds = generateSecureWidgetCredentials();
-        const newKey = secureCreds.key_id;
-
-        // 1. Update shops table
-        const { error: shopError } = await supabase.from("shops").update({ widget_key: newKey }).eq("id", shopId);
-        if (shopError) throw shopError;
-
-        // 2. Synchronize to widget_credentials table
-        await saveWidgetCredentials({
-          shop_id: shopId,
-          key_id: secureCreds.key_id,
-          public_key: secureCreds.public_key,
-          private_secret: secureCreds.private_secret,
-          webhook_secret: secureCreds.webhook_secret,
-        });
+        await rotateWidgetToken(shopId);
 
         toast.success("Security token rotated. Embed code updated.");
         reloadShop();
