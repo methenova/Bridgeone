@@ -41,6 +41,14 @@ class TelemetryService {
           stack: reason?.stack,
         });
       });
+
+      window.addEventListener("offline", () => {
+        this.logWarning("network", "Network connection lost (Device offline)");
+      });
+
+      window.addEventListener("online", () => {
+        this.logInfo("network", "Network connection restored (Device back online)");
+      });
     }
 
     console.log("[TelemetryService] Global diagnostics initialized.");
