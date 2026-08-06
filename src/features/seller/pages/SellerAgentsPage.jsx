@@ -22,6 +22,7 @@ import { supabase } from "@/config/supabase";
 import useSellerShop from "../hooks/useSellerShop";
 import { TableSkeleton } from "@/components/skeletons";
 import { AgentPresenceService } from "@/services/presence/presenceService";
+import { realtimeManager } from "@/services/realtime/realtimeManager";
 
 export default function SellerAgentsPage() {
   const { shop, loading: shopLoading } = useSellerShop();
@@ -116,7 +117,8 @@ export default function SellerAgentsPage() {
     loadTeamData();
 
     // Subscribe to shop_agents presence updates in real-time
-    const channel = supabase.channel(`shop-agents-presence-${shopId}`)
+    const topic = `shop-agents-presence-${shopId}`;
+    const channel = realtimeManager.subscribe(topic)
       .on(
         "postgres_changes",
         {
@@ -139,11 +141,10 @@ export default function SellerAgentsPage() {
         () => {
           loadTeamData();
         }
-      )
-      .subscribe();
+      );
 
     return () => {
-      supabase.removeChannel(channel);
+      realtimeManager.unsubscribe(topic);
     };
   }, [shopId]);
 
