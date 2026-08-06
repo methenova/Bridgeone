@@ -386,3 +386,36 @@ export async function getFeaturedShops(limit = 6) {
 
   return data ?? [];
 }
+
+/**
+ * Upsert Custom Integration Settings for Shop
+ */
+export async function upsertShopIntegration(shopId, settings) {
+  const { data: existing } = await supabase
+    .from("shop_integrations")
+    .select("id, settings")
+    .eq("shop_id", shopId)
+    .eq("provider", "custom")
+    .maybeSingle();
+
+  const newSettings = { ...(existing?.settings || {}), ...settings };
+
+  let result;
+  if (existing) {
+    result = await supabase
+      .from("shop_integrations")
+      .update({ settings: newSettings })
+      .eq("id", existing.id)
+      .select()
+      .single();
+  } else {
+    result = await supabase
+      .from("shop_integrations")
+      .insert({ shop_id: shopId, provider: "custom", status: "active", settings: newSettings })
+      .select()
+      .single();
+  }
+
+  if (result.error) throw result.error;
+  return result.data;
+}

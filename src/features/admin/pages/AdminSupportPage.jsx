@@ -13,7 +13,12 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
-import { supabase } from "@/config/supabase";
+import { 
+  getSupportTickets, 
+  createSupportTicket, 
+  deleteSupportTicket, 
+  updateSupportTicketStatus 
+} from "@/features/admin/services/admin.service";
 import { TableSkeleton } from "@/components/skeletons";
 
 // ── Status config ──────────────────────────────────────────────
@@ -51,11 +56,7 @@ export default function AdminSupportPage() {
   async function loadTickets() {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("support_tickets")
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
+      const data = await getSupportTickets();
       setTickets(data || []);
     } catch (err) {
       console.error("[Support] Fetch error:", err);
@@ -70,11 +71,7 @@ export default function AdminSupportPage() {
   async function handleStatusChange(ticketId, newStatus) {
     setUpdatingId(ticketId);
     try {
-      const { error } = await supabase
-        .from("support_tickets")
-        .update({ status: newStatus })
-        .eq("id", ticketId);
-      if (error) throw error;
+      await updateSupportTicketStatus(ticketId, newStatus);
       toast.success("Ticket status updated");
       setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, status: newStatus } : t));
     } catch (err) {
@@ -88,8 +85,7 @@ export default function AdminSupportPage() {
   async function handleDeleteTicket(ticketId) {
     if (!window.confirm("Delete this ticket permanently?")) return;
     try {
-      const { error } = await supabase.from("support_tickets").delete().eq("id", ticketId);
-      if (error) throw error;
+      await deleteSupportTicket(ticketId);
       toast.success("Ticket deleted");
       setTickets(prev => prev.filter(t => t.id !== ticketId));
     } catch (err) {
@@ -106,10 +102,9 @@ export default function AdminSupportPage() {
     }
     setSubmitting(true);
     try {
-      const { error } = await supabase.from("support_tickets").insert({
+      await createSupportTicket({
         subject: formTitle, description: formDesc, type: formType, status: "open"
       });
-      if (error) throw error;
       toast.success("Support ticket registered");
       setIsOpen(false);
       loadTickets();

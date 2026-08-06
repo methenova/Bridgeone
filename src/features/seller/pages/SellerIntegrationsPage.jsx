@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 
-import { supabase } from "@/config/supabase";
+import { upsertShopIntegration } from "@/features/seller/services/shop.service";
 import useSellerShop from "../hooks/useSellerShop";
 import { FormSkeleton } from "@/components/skeletons";
 
@@ -59,34 +59,14 @@ export default function SellerIntegrationsPage() {
     if (!shopId || saving) return;
     setSaving(true);
     try {
-      const { data: existing } = await supabase
-        .from("shop_integrations")
-        .select("id, settings")
-        .eq("shop_id", shopId)
-        .eq("provider", "custom")
-        .maybeSingle();
-
-      const newSettings = {
-        ...(existing?.settings || {}),
+      await upsertShopIntegration(shopId, {
         webhook_url: webhookUrl,
         api_key: apiKey,
         google_analytics_id: googleAnalyticsId,
         meta_pixel_id: metaPixelId,
         shopify_domain: shopifyDomain,
         woocommerce_url: woocommerceUrl
-      };
-
-      let error;
-      if (existing) {
-        ({ error } = await supabase.from("shop_integrations")
-          .update({ settings: newSettings })
-          .eq("id", existing.id));
-      } else {
-        ({ error } = await supabase.from("shop_integrations")
-          .insert({ shop_id: shopId, provider: "custom", status: "active", settings: newSettings }));
-      }
-
-      if (error) throw error;
+      });
       toast.success("Integrations configurations saved successfully!");
       reloadShop();
     } catch (err) {
@@ -101,26 +81,7 @@ export default function SellerIntegrationsPage() {
     setGeneratingKey(true);
     const mockKey = "bo_live_" + Array.from({ length: 24 }, () => Math.random().toString(36)[2]).join("");
     try {
-      const { data: existing } = await supabase
-        .from("shop_integrations")
-        .select("id, settings")
-        .eq("shop_id", shopId)
-        .eq("provider", "custom")
-        .maybeSingle();
-
-      const newSettings = { ...(existing?.settings || {}), api_key: mockKey };
-
-      let error;
-      if (existing) {
-        ({ error } = await supabase.from("shop_integrations")
-          .update({ settings: newSettings })
-          .eq("id", existing.id));
-      } else {
-        ({ error } = await supabase.from("shop_integrations")
-          .insert({ shop_id: shopId, provider: "custom", status: "active", settings: newSettings }));
-      }
-
-      if (error) throw error;
+      await upsertShopIntegration(shopId, { api_key: mockKey });
       setApiKey(mockKey);
       toast.success("Developer API Key generated successfully!");
       reloadShop();

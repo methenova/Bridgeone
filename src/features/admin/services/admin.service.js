@@ -389,3 +389,49 @@ export async function updateSubscriptionPlan(planId, updates) {
   await writeAuditLog(`Updated subscription plan thresholds for ${planId.toUpperCase()}`, "Plans", "success");
   return data;
 }
+
+// ─────────────────────────────────────────────────────────────
+// SUPPORT TICKETS MANAGEMENT
+// ─────────────────────────────────────────────────────────────
+export async function getSupportTickets() {
+  const { data, error } = await supabase
+    .from("support_tickets")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function createSupportTicket(ticketData) {
+  const { data, error } = await supabase
+    .from("support_tickets")
+    .insert(ticketData)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteSupportTicket(ticketId) {
+  const { error } = await supabase
+    .from("support_tickets")
+    .delete()
+    .eq("id", ticketId);
+
+  if (error) throw error;
+}
+
+export async function updateSupportTicketStatus(ticketId, status) {
+  const { data, error } = await supabase
+    .from("support_tickets")
+    .update({ status })
+    .eq("id", ticketId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
