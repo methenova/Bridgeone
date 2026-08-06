@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import toast from "react-hot-toast";
+import { telemetryService } from "@/services/telemetry/telemetryService";
 
 /**
  * Custom Hook for managing WebRTC Audio/Video Media Devices in the Chat Widget.
@@ -23,9 +24,15 @@ export function useWidgetMedia() {
     try {
       mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
     } catch (mediaErr) {
+      telemetryService.captureMediaError(mediaErr, { video: true, audio: true });
       console.warn("[WidgetMedia] Webcam blocked, trying audio only:", mediaErr);
       toast.success("Starting audio-only consultation", { id: "widget-media" });
-      mediaStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+      try {
+        mediaStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+      } catch (audioErr) {
+        telemetryService.captureMediaError(audioErr, { video: false, audio: true });
+        throw audioErr;
+      }
     }
 
     localStreamRef.current = mediaStream;
