@@ -22,6 +22,10 @@ import {
   updatePlatformSettings,
   getSubscriptionPlans,
   updateSubscriptionPlan,
+  getSupportTickets,
+  createSupportTicket,
+  deleteSupportTicket,
+  updateSupportTicketStatus,
 } from "../services/admin.service";
 
 const adminKeys = {
@@ -36,6 +40,7 @@ const adminKeys = {
   callbacks: () => [...adminKeys.all, "callbacks"],
   settings: () => [...adminKeys.all, "settings"],
   plans: () => [...adminKeys.all, "plans"],
+  tickets: () => [...adminKeys.all, "tickets"],
 };
 
 export function useAdminStats() {
@@ -226,5 +231,48 @@ export function useUpdateSubscriptionPlan() {
       toast.success("Subscription tier updated");
     },
     onError: (err) => toast.error(err.message || "Failed to update plan"),
+  });
+}
+
+export function useSupportTickets() {
+  return useQuery({
+    queryKey: adminKeys.tickets(),
+    queryFn: getSupportTickets,
+  });
+}
+
+export function useCreateSupportTicket() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createSupportTicket,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminKeys.tickets() });
+      toast.success("Support ticket logged successfully!");
+    },
+    onError: (err) => toast.error(err.message || "Failed to log support ticket"),
+  });
+}
+
+export function useDeleteSupportTicket() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteSupportTicket,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminKeys.tickets() });
+      toast.success("Ticket deleted");
+    },
+    onError: (err) => toast.error(err.message || "Failed to delete ticket"),
+  });
+}
+
+export function useUpdateSupportTicketStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, status }) => updateSupportTicketStatus(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminKeys.tickets() });
+      toast.success("Status updated");
+    },
+    onError: (err) => toast.error(err.message || "Failed to update status"),
   });
 }
