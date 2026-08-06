@@ -1,5 +1,5 @@
 import { Eye, Printer } from "lucide-react";
-import ProductStatusBadge from "./ProductStatusBadge";
+import StatusBadge from "@/components/common/StatusBadge";
 
 export default function SellerOrderRow({ order, onView, onPrintInvoice }) {
   const customerName = order.customer?.full_name || "Guest Customer";
@@ -71,7 +71,7 @@ export default function SellerOrderRow({ order, onView, onPrintInvoice }) {
       {/* Status */}
       <td className="px-6 py-5 align-middle">
         <div className="flex items-center gap-2">
-          <ProductStatusBadge status={order.status === "pending" ? "inactive" : order.status === "cancelled" ? "inactive" : "active"} />
+          <StatusBadge status={order.status === "pending" ? "pending" : order.status === "cancelled" ? "canceled" : "completed"} />
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600">
             {order.status}
           </span>

@@ -3,7 +3,7 @@ import { Pencil, Trash2, Star, ToggleLeft, ToggleRight, ArrowUpDown, ArrowUp, Ar
 import { motion } from "framer-motion";
 
 import { useDeleteProduct, useUpdateProduct } from "../hooks/useProducts";
-import ProductStatusBadge from "./ProductStatusBadge";
+import StatusBadge from "@/components/common/StatusBadge";
 import InventoryBadge from "./InventoryBadge";
 import { TableSkeleton } from "@/components/skeletons";
 import ProductEmptyState from "./ProductEmptyState";
@@ -306,7 +306,7 @@ export default function ProductList({
                   {/* Status */}
                   <td className="px-6 py-5 align-middle">
                     <div className="flex items-center gap-2">
-                      <ProductStatusBadge
+                      <StatusBadge
                         status={product.is_active ? "active" : "inactive"}
                       />
                       {/* Inline toggle */}
