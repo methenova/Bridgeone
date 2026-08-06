@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useAuthContext } from "@/context/AuthContext";
 import { supabase } from "@/config/supabase";
 import useSellerShop from "@/features/seller/hooks/useSellerShop";
-import { AgentPresenceService } from "@/services/presence/presenceService";
-import { CallQueueService } from "@/services/queue/callQueueService";
+import { AgentPresenceService } from "@/features/call/services/presenceService";
+import { CallQueueService } from "@/features/call/services/callQueueService";
 import { 
   Video, 
   MessageSquare, 

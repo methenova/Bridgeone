@@ -5,8 +5,8 @@ import toast from "react-hot-toast";
 
 import { supabase } from "@/config/supabase";
 import { SellerPeer } from "@/services/video/sellerPeer";
-import { CallRouter } from "@/services/routing/callRouter";
-import { CallQueueService } from "@/services/queue/callQueueService";
+import { CallRouter } from "@/features/call/services/callRouter";
+import { CallQueueService } from "@/features/call/services/callQueueService";
 import { cache } from "@/services/cache/cacheService";
 
 // Check if current time in shop timezone is outside operational hours, shifts, or holidays
