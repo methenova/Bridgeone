@@ -367,6 +367,7 @@ export default function AdminWidgetsPage() {
             </motion.div>
           </div>
         )}
+      </AnimatePresence>
       {/* Rotate Key Confirmation Modal */}
       <RotateKeyModal
         isOpen={Boolean(selectedShopForRotate)}

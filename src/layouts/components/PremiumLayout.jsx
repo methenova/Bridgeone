@@ -214,21 +214,6 @@ export default function PremiumLayout({
                 </>
               )}
             </AnimatePresence>
-                      <button
-                        onClick={() => {
-                          setIsOrgModalOpen(true);
-                          setActiveModalTab("create_org");
-                          setWorkspaceOpen(false);
-                        }}
-                        className="w-full flex items-center justify-center gap-1 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-[9px] font-bold cursor-pointer shadow-sm"
-                      >
-                        + Add Org
-                      </button>
-                    </div>
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>
 
             {!sidebarCollapsed && (
               <button 

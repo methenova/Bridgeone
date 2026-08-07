@@ -784,6 +784,9 @@ export default function SellerWidgetPage() {
               </div>
             </>
           )}
+        </div>
+      )}
+
       {/* Rotate Key Confirmation Modal */}
       <RotateKeyModal
         isOpen={showRotateModal}

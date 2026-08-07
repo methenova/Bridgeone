@@ -168,8 +168,6 @@ export async function loginUser({
   }
 }
 
-import { clearUserWorkspaceStorage } from "@/services/storage/workspaceStorage";
-
 export async function logoutUser() {
   try {
     const { data: { user } } = await supabase.auth.getUser();
