@@ -66,7 +66,11 @@ export default function LoginForm() {
       // If onboarding_completed = true -> Dashboard
       navigate("/dashboard", { replace: true });
     } catch (error) {
-      setErrorMsg(error.message || "Failed to log in. Please check your credentials.");
+      let rawMsg = error?.message || error?.error_description || (typeof error === "string" ? error : "");
+      if (!rawMsg || rawMsg === "{}" || typeof rawMsg !== "string") {
+        rawMsg = "Invalid login credentials. Please check your email and password.";
+      }
+      setErrorMsg(rawMsg);
     } finally {
       setLoading(false);
     }
