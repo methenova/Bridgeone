@@ -18,6 +18,7 @@ import {
   useDeleteSupportTicket,
   useUpdateSupportTicketStatus
 } from "@/features/admin/hooks/useAdmin";
+import { TableSkeleton } from "@/components/skeletons";
 
 // ── Status config ──────────────────────────────────────────────
 const STATUS_CONFIG = {
