@@ -75,6 +75,7 @@ const AdminAnalyticsPage = lazy(() => import("@/features/admin/pages/AdminAnalyt
 const AdminSupportPage = lazy(() => import("@/features/admin/pages/AdminSupportPage"));
 const AdminNotificationsPage = lazy(() => import("@/features/admin/pages/AdminNotificationsPage"));
 const AdminAuditLogsPage = lazy(() => import("@/features/admin/pages/AdminAuditLogsPage"));
+const AdminDeveloperPage = lazy(() => import("@/features/admin/pages/AdminDeveloperPage"));
 const AdminSystemHealthPage = lazy(() => import("@/features/admin/pages/AdminSystemHealthPage"));
 const AdminObservabilityPage = lazy(() => import("@/features/admin/pages/AdminObservabilityPage"));
 const AdminCallsPage = lazy(() => import("@/features/admin/pages/AdminCallsPage"));
