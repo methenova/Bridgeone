@@ -1,94 +1,67 @@
-import assert from "assert";
+import { describe, it, expect } from "vitest";
 
-console.log("🚀 Running Production Chat Engine Unit Tests...");
-
-// 1. Test message payload mapping (Text & File Sharing)
-try {
-  const createMessagePayload = ({ conversationId, content, fileUrl, fileName }) => {
-    return {
-      conversation_id: conversationId,
-      content,
-      message_type: fileUrl ? "file" : "text",
-      file_url: fileUrl || null,
-      file_name: fileName || null,
-      delivery_status: "sent",
-      is_read: false
+describe("Production Chat Engine Unit Tests", () => {
+  it("verifies message payload mapping (Text & File Sharing)", () => {
+    const createMessagePayload = ({ conversationId, content, fileUrl, fileName }) => {
+      return {
+        conversation_id: conversationId,
+        content,
+        message_type: fileUrl ? "file" : "text",
+        file_url: fileUrl || null,
+        file_name: fileName || null,
+        delivery_status: "sent",
+        is_read: false
+      };
     };
-  };
 
-  // Text message
-  const textMsg = createMessagePayload({
-    conversationId: "conv-1",
-    content: "Hello agent!"
+    const textMsg = createMessagePayload({
+      conversationId: "conv-1",
+      content: "Hello agent!"
+    });
+    expect(textMsg.message_type).toBe("text");
+    expect(textMsg.delivery_status).toBe("sent");
+
+    const fileMsg = createMessagePayload({
+      conversationId: "conv-1",
+      content: "Sharing resume",
+      fileUrl: "https://example.com/resume.pdf",
+      fileName: "resume.pdf"
+    });
+    expect(fileMsg.message_type).toBe("file");
+    expect(fileMsg.file_url).toBe("https://example.com/resume.pdf");
   });
-  assert.strictEqual(textMsg.message_type, "text", "Message type must be text");
-  assert.strictEqual(textMsg.delivery_status, "sent", "Default delivery status must be sent");
 
-  // File message
-  const fileMsg = createMessagePayload({
-    conversationId: "conv-1",
-    content: "Sharing resume",
-    fileUrl: "https://example.com/resume.pdf",
-    fileName: "resume.pdf"
-  });
-  assert.strictEqual(fileMsg.message_type, "file", "Message type must be file");
-  assert.strictEqual(fileMsg.file_url, "https://example.com/resume.pdf", "File URL must be mapped correctly");
-
-  console.log("✅ Message mapping verified successfully!");
-} catch (err) {
-  console.error("❌ Message mapping tests failed:", err.message);
-  process.exit(1);
-}
-
-// 2. Test Delivery Status Transitions (sent -> delivered -> read)
-try {
-  const transitions = {
-    sent: "delivered",
-    delivered: "read"
-  };
-
-  const transitionStatus = (currentStatus, action) => {
-    if (action === "deliver" && currentStatus === "sent") return "delivered";
-    if (action === "read" && (currentStatus === "delivered" || currentStatus === "sent")) return "read";
-    return currentStatus;
-  };
-
-  let status = "sent";
-  status = transitionStatus(status, "deliver");
-  assert.strictEqual(status, "delivered", "Sent status transitions to delivered on deliver action");
-
-  status = transitionStatus(status, "read");
-  assert.strictEqual(status, "read", "Delivered status transitions to read on read action");
-
-  console.log("✅ Delivery status transitions verified successfully!");
-} catch (err) {
-  console.error("❌ Status transition tests failed:", err.message);
-  process.exit(1);
-}
-
-// 3. Test AI Auto-Reply Flag Toggling
-try {
-  let conversationMetadata = {
-    ai_enabled: false
-  };
-
-  const setAIFlag = (meta, enabled) => {
-    return {
-      ...meta,
-      ai_enabled: enabled
+  it("verifies delivery status transitions (sent -> delivered -> read)", () => {
+    const transitionStatus = (currentStatus, action) => {
+      if (action === "deliver" && currentStatus === "sent") return "delivered";
+      if (action === "read" && (currentStatus === "delivered" || currentStatus === "sent")) return "read";
+      return currentStatus;
     };
-  };
 
-  conversationMetadata = setAIFlag(conversationMetadata, true);
-  assert.strictEqual(conversationMetadata.ai_enabled, true, "AI assistant flag must be enabled");
+    let status = "sent";
+    status = transitionStatus(status, "deliver");
+    expect(status).toBe("delivered");
 
-  conversationMetadata = setAIFlag(conversationMetadata, false);
-  assert.strictEqual(conversationMetadata.ai_enabled, false, "AI assistant flag must be disabled");
+    status = transitionStatus(status, "read");
+    expect(status).toBe("read");
+  });
 
-  console.log("✅ AI assistant metadata flags verified successfully!");
-} catch (err) {
-  console.error("❌ AI flag tests failed:", err.message);
-  process.exit(1);
-}
+  it("verifies AI auto-reply flag toggling", () => {
+    let conversationMetadata = {
+      ai_enabled: false
+    };
 
-console.log("🎉 All Production Chat Engine Unit Tests passed cleanly!");
+    const setAIFlag = (meta, enabled) => {
+      return {
+        ...meta,
+        ai_enabled: enabled
+      };
+    };
+
+    conversationMetadata = setAIFlag(conversationMetadata, true);
+    expect(conversationMetadata.ai_enabled).toBe(true);
+
+    conversationMetadata = setAIFlag(conversationMetadata, false);
+    expect(conversationMetadata.ai_enabled).toBe(false);
+  });
+});
