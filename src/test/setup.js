@@ -1,4 +1,5 @@
 import { vi } from "vitest";
+import "@testing-library/jest-dom";
 
 // Mock global Audio
 global.Audio = class {
