@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Navigate, useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
 import { useAuthContext } from "@/context/AuthContext";
 import { getNextOnboardingStep } from "@/features/onboarding/services/onboarding.service";
 
@@ -18,6 +19,9 @@ export default function ProtectedRoute({ children, allowedRoles }) {
 
   const [targetStep, setTargetStep] = useState(null);
   const [checkingStep, setCheckingStep] = useState(true);
+
+  // Prevent duplicate access-denied toasts on rapid re-renders
+  const lastDeniedPathRef = useRef(null);
 
   // Email verification check
   const isEmailVerified = Boolean(user?.email_confirmed_at);
@@ -95,9 +99,21 @@ export default function ProtectedRoute({ children, allowedRoles }) {
   // admin and super_admin bypass all seller/agent allowedRoles restrictions —
   // they have platform-wide access and use their own route set under /dashboard.
   if (allowedRoles && profile?.role && !isAdmin && !allowedRoles.includes(profile.role)) {
-    console.warn(`Access denied for role: ${profile.role}. Required:`, allowedRoles);
+    // Show Access Denied toast (debounced to prevent rapid re-render spam)
+    if (lastDeniedPathRef.current !== location.pathname) {
+      lastDeniedPathRef.current = location.pathname;
+      const roleName = profile.role.charAt(0).toUpperCase() + profile.role.slice(1);
+      const requiredNames = allowedRoles.map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(", ");
+      toast.error(
+        `Access Denied — Your "${roleName}" role does not have permission to access this page. Required: ${requiredNames}.`,
+        { id: `access-denied-${location.pathname}`, duration: 5000 }
+      );
+    }
     return <Navigate to="/dashboard" replace />;
   }
+
+  // Reset denied path tracker when access is granted
+  lastDeniedPathRef.current = null;
 
   // 7. Otherwise, allow dashboard page access
   return children;

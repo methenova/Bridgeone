@@ -3,6 +3,8 @@ import {
   useContext,
   useEffect,
   useState,
+  useRef,
+  useCallback,
 } from "react";
 
 import { supabase } from "@/config/supabase";
@@ -18,6 +20,8 @@ import {
   getProfile,
 } from "@/features/auth/services/profile.service";
 
+import { clearUserWorkspaceStorage } from "@/services/storage/workspaceStorage";
+
 import { WorkspaceProvider, useWorkspaceContext } from "./WorkspaceContext";
 
 const AuthContext = createContext();
@@ -26,6 +30,53 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // In-flight request deduplication and race-condition safety tracking
+  const activeFetchUserIdRef = useRef(null);
+  const activeFetchPromiseRef = useRef(null);
+
+  const fetchProfileForUser = useCallback(async (userId, forceRefresh = false) => {
+    if (!userId) {
+      activeFetchUserIdRef.current = null;
+      activeFetchPromiseRef.current = null;
+      setProfile(null);
+      return null;
+    }
+
+    // Reuse in-flight promise if already fetching for the exact same userId (and not forcing refresh)
+    if (
+      !forceRefresh &&
+      activeFetchUserIdRef.current === userId &&
+      activeFetchPromiseRef.current
+    ) {
+      return activeFetchPromiseRef.current;
+    }
+
+    activeFetchUserIdRef.current = userId;
+    const fetchPromise = (async () => {
+      try {
+        const profileData = await getProfile(userId);
+        // Only set profile state if the active user hasn't changed during the async request
+        if (activeFetchUserIdRef.current === userId) {
+          setProfile(profileData);
+        }
+        return profileData;
+      } catch (error) {
+        console.error("AuthContext getProfile error:", error);
+        if (activeFetchUserIdRef.current === userId) {
+          setProfile(null);
+        }
+        return null;
+      } finally {
+        if (activeFetchUserIdRef.current === userId) {
+          activeFetchPromiseRef.current = null;
+        }
+      }
+    })();
+
+    activeFetchPromiseRef.current = fetchPromise;
+    return fetchPromise;
+  }, []);
 
   useEffect(() => {
     const {
@@ -36,54 +87,56 @@ export function AuthProvider({ children }) {
 
       if (authUser) {
         try {
-          const profileData = await getProfile(authUser.id);
-          setProfile(profileData);
+          await fetchProfileForUser(authUser.id);
         } catch (error) {
           console.error(error);
         } finally {
           setLoading(false);
         }
       } else {
+        activeFetchUserIdRef.current = null;
+        activeFetchPromiseRef.current = null;
         setProfile(null);
         setLoading(false);
       }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [fetchProfileForUser]);
 
   async function login(values) {
-    const { user } = await loginUser(values);
-    setUser(user);
-    const profileData = await getProfile(user.id);
-    setProfile(profileData);
-    return { user, profile: profileData };
+    const { user: authUser } = await loginUser(values);
+    setUser(authUser);
+    const profileData = await fetchProfileForUser(authUser.id);
+    return { user: authUser, profile: profileData };
   }
 
   async function refreshProfile() {
     if (!user) return null;
-    const profileData = await getProfile(user.id);
-    setProfile(profileData);
-    return profileData;
+    return await fetchProfileForUser(user.id, true);
   }
 
   async function register(values) {
     const data = await registerUser(values);
     const currentUser = await getCurrentUser();
+    let profileData = null;
     if (currentUser) {
       setUser(currentUser);
-      const profileData = await getProfile(currentUser.id);
-      setProfile(profileData);
+      profileData = await fetchProfileForUser(currentUser.id);
     }
-    return data;
+    return { ...data, profile: profileData };
   }
 
   async function logout() {
+    const currentUserId = user?.id;
+    activeFetchUserIdRef.current = null;
+    activeFetchPromiseRef.current = null;
     try {
       await logoutUser();
     } catch (err) {
       console.error("Error signing out:", err);
     } finally {
+      clearUserWorkspaceStorage(currentUserId);
       setUser(null);
       setProfile(null);
     }

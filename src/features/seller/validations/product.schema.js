@@ -1,4 +1,42 @@
-import { z } from "zod";
+// ─────────────────────────────────────────────────────────────
+// VARIANT & OPTION SCHEMAS
+// ─────────────────────────────────────────────────────────────
+export const optionSchema = z.object({
+  name: z.string().min(1, "Option name is required (e.g. Size, Color)"),
+  values: z
+    .array(z.string().min(1, "Option value cannot be empty"))
+    .min(1, "At least one value required per option"),
+});
+
+export const variantSchema = z.object({
+  id: z.string().optional(),
+  title: z.string().optional(),
+  options: z.record(z.string(), z.string()).optional().default({}),
+  sku: z.string().min(1, "Variant SKU is required"),
+  price: z
+    .string()
+    .min(1, "Price is required")
+    .refine(
+      (val) => !isNaN(Number(val)) && Number(val) > 0,
+      "Price must be a positive number"
+    ),
+  discount_price: z
+    .string()
+    .optional()
+    .or(z.literal(""))
+    .refine(
+      (val) => !val || (!isNaN(Number(val)) && Number(val) >= 0),
+      "Discount price must be a non-negative number"
+    ),
+  stock: z
+    .string()
+    .min(1, "Stock is required")
+    .refine(
+      (val) => !isNaN(Number(val)) && Number(val) >= 0,
+      "Stock must be a non-negative integer"
+    ),
+  is_active: z.boolean().default(true),
+});
 
 // ─────────────────────────────────────────────────────────────
 // PRODUCT SCHEMA
@@ -19,6 +57,10 @@ export const productSchema = z
         "Slug must be lowercase letters, numbers, and hyphens only"
       ),
 
+    category_id: z
+      .string()
+      .optional()
+      .or(z.literal("")),
 
     description: z
       .string()
@@ -68,6 +110,13 @@ export const productSchema = z
     is_active: z.boolean().default(true),
 
     is_featured: z.boolean().default(false),
+
+    // Variant extension fields
+    has_variants: z.boolean().default(false),
+
+    options: z.array(optionSchema).optional().default([]),
+
+    variants: z.array(variantSchema).optional().default([]),
   })
   .refine(
     (data) => {
@@ -79,6 +128,30 @@ export const productSchema = z
     {
       message: "Discount price must be less than the original price",
       path: ["discount_price"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.has_variants) {
+        return data.options && data.options.length > 0 && data.options.some((o) => o.values && o.values.length > 0);
+      }
+      return true;
+    },
+    {
+      message: "Please add at least one option (e.g. Size or Color) with values",
+      path: ["has_variants"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.has_variants) {
+        return data.variants && data.variants.length > 0;
+      }
+      return true;
+    },
+    {
+      message: "Please generate or add at least one product variant",
+      path: ["has_variants"],
     }
   );
 

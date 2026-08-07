@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Zap, ShieldCheck, ArrowRight, Sparkles, AlertCircle, Check, CheckCircle2 } from "lucide-react";
@@ -69,12 +69,12 @@ export default function OnboardingSubscriptionPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  useState(() => {
-    const meta = profile?.onboarding_metadata || {};
-    if (meta.selectedPlan) {
-      setSelectedPlan(meta.selectedPlan);
+  useEffect(() => {
+    const savedPlan = profile?.onboarding_metadata?.selectedPlan;
+    if (savedPlan) {
+      setSelectedPlan(savedPlan);
     }
-  }, [profile]);
+  }, [profile?.onboarding_metadata?.selectedPlan]);
 
   async function handleSaveSubscription(e) {
     e.preventDefault();
@@ -103,7 +103,7 @@ export default function OnboardingSubscriptionPage() {
         await refreshProfile();
 
         // 4. Redirect to Stripe checkout session for paid tiers
-        if (selectedPlan === "growth" || selectedPlan === "enterprise") {
+        if (selectedPlan === "pro" || selectedPlan === "enterprise") {
           const { supabase } = await import("@/config/supabase");
           const { data, error: stripeError } = await supabase.functions.invoke("create-checkout-session", {
             body: {

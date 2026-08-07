@@ -1,5 +1,7 @@
 import { supabase } from "@/config/supabase";
 import { createAuditLog } from "@/services/audit/audit.service";
+import { clearUserWorkspaceStorage } from "@/services/storage/workspaceStorage";
+import { validatePasswordSecurity } from "@/services/auth/passwordSecurity.service";
 
 export async function registerUser({
   name,
@@ -9,6 +11,9 @@ export async function registerUser({
   const cleanEmail = email.trim().toLowerCase();
   const cleanName = name.trim();
   const now = new Date().toISOString();
+
+  // Validate password security against HaveIBeenPwned breach database
+  await validatePasswordSecurity(password);
 
   let clientIp = "127.0.0.1";
   try {
@@ -35,47 +40,52 @@ export async function registerUser({
 
   if (error) throw error;
 
-  // 2. Insert profile into profiles table
+  // 2. Insert profile into profiles table with strict error handling & rollback
   if (data?.user) {
-    try {
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .upsert(
-          {
-            id: data.user.id,
-            email: cleanEmail,
-            full_name: cleanName,
-            role: "owner",
-            onboarding_completed: false,
-            current_onboarding_step: 1,
-            status: "active",
-            email_verified: false,
-            phone_verified: false,
-            profile_completed: false,
-            login_count: 0,
-            failed_login_attempts: 0,
-            created_ip: clientIp,
-            updated_ip: clientIp,
-            created_at: now,
-            updated_at: now,
-          },
-          { onConflict: "id" }
-        );
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .upsert(
+        {
+          id: data.user.id,
+          email: cleanEmail,
+          full_name: cleanName,
+          role: "owner",
+          onboarding_completed: false,
+          current_onboarding_step: 1,
+          status: "active",
+          email_verified: false,
+          phone_verified: false,
+          profile_completed: false,
+          login_count: 0,
+          failed_login_attempts: 0,
+          created_ip: clientIp,
+          updated_ip: clientIp,
+          created_at: now,
+          updated_at: now,
+        },
+        { onConflict: "id" }
+      );
 
-      if (profileError) {
-        console.warn("Profiles table insert warning:", profileError.message);
-      } else {
-        await createAuditLog({
-          userId: data.user.id,
-          action: "register",
-          resource: "auth",
-          resourceId: data.user.id,
-          metadata: { email: cleanEmail },
-        });
+    if (profileError) {
+      console.error("Profile creation error during registration:", profileError);
+      // Clean up session if profile creation fails to prevent orphan session without profile
+      try {
+        await supabase.auth.signOut();
+      } catch (signOutErr) {
+        console.warn("Sign out during registration error rollback warning:", signOutErr);
       }
-    } catch (err) {
-      console.warn("Profiles insert error:", err);
+      throw new Error(
+        `Account creation failed while initializing profile: ${profileError.message || "Database error."}. Please try again.`
+      );
     }
+
+    await createAuditLog({
+      userId: data.user.id,
+      action: "register",
+      resource: "auth",
+      resourceId: data.user.id,
+      metadata: { email: cleanEmail },
+    });
   }
 
   return data;
@@ -158,19 +168,25 @@ export async function loginUser({
   }
 }
 
+import { clearUserWorkspaceStorage } from "@/services/storage/workspaceStorage";
+
 export async function logoutUser() {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (user?.id) {
+      clearUserWorkspaceStorage(user.id);
       await createAuditLog({
         userId: user.id,
         action: "logout",
         resource: "auth",
         resourceId: user.id,
       });
+    } else {
+      clearUserWorkspaceStorage();
     }
   } catch (err) {
-    console.warn("logoutUser audit log notice:", err);
+    console.warn("logoutUser notice:", err);
+    clearUserWorkspaceStorage();
   }
   return await supabase.auth.signOut();
 }
@@ -185,6 +201,9 @@ export async function getSession() {
 }
 
 export async function updatePassword(newPassword) {
+  // Validate new password security against HaveIBeenPwned breach database
+  await validatePasswordSecurity(newPassword);
+
   const { data, error } = await supabase.auth.updateUser({ password: newPassword });
   if (error) throw error;
 

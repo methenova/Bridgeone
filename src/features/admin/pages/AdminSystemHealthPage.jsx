@@ -12,15 +12,22 @@ import {
   Globe,
   Wifi,
   Smartphone,
-  Info
+  Info,
+  ShieldCheck,
+  Zap,
+  Mail,
+  CreditCard
 } from "lucide-react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
+import { SystemHealthService } from "@/services/health/systemHealthService";
 
 export default function AdminSystemHealthPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [liveDot, setLiveDot] = useState(true);
+  const [healthData, setHealthData] = useState(null);
+  const [lastCheckTime, setLastCheckTime] = useState(null);
 
   // Live real-time stats state
   const [stats, setStats] = useState({
@@ -36,6 +43,18 @@ export default function AdminSystemHealthPage() {
     failedCalls: 1
   });
 
+  const runHealthCheck = async () => {
+    try {
+      const data = await SystemHealthService.checkAllServices();
+      setHealthData(data);
+      setLastCheckTime(new Date().toLocaleTimeString());
+    } catch (_err) {}
+  };
+
+  useEffect(() => {
+    runHealthCheck();
+  }, []);
+
   // Automatically refresh stats every 3 seconds with slight variations to simulate active telemetry feeds
   useEffect(() => {
     const interval = setInterval(() => {
@@ -44,7 +63,6 @@ export default function AdminSystemHealthPage() {
         const change = Math.floor(Math.random() * 5) - 2;
         const newActive = Math.max(120, Math.min(180, prev.activeCalls + change));
         
-        // Slightly fluctuate parameters
         const newRtt = Math.max(45, Math.min(95, prev.avgRtt + (Math.floor(Math.random() * 7) - 3)));
         const newLoss = Math.max(0.05, Math.min(0.65, prev.avgPacketLoss + (Math.random() * 0.08 - 0.04)));
         const newJitter = Math.max(2.5, Math.min(9.5, prev.avgJitter + (Math.random() * 1.2 - 0.6)));
@@ -67,12 +85,11 @@ export default function AdminSystemHealthPage() {
     return () => clearInterval(interval);
   }, []);
 
-  function handleTriggerRefresh() {
+  async function handleTriggerRefresh() {
     setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-      toast.success("WebRTC operational metrics refreshed!");
-    }, 800);
+    await runHealthCheck();
+    setRefreshing(false);
+    toast.success("System health probes & operational metrics refreshed!");
   }
 
   // Browser distribution data
@@ -123,6 +140,45 @@ export default function AdminSystemHealthPage() {
           <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
           <span>Force Refresh</span>
         </Button>
+      </div>
+
+      {/* Critical Subsystem Probes */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 shadow-sm">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-extrabold uppercase tracking-wider text-slate-700">Critical Subsystem Health Probes</h2>
+            <p className="text-xs text-slate-500 mt-0.5">Live latency probes across database, edge functions, storage, realtime, billing, and notification gateways.</p>
+          </div>
+          {lastCheckTime && (
+            <span className="text-[10px] font-mono text-slate-400">Last Probe: {lastCheckTime}</span>
+          )}
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 text-xs">
+          {healthData?.services ? (
+            Object.values(healthData.services).map((srv) => (
+              <div key={srv.name} className="border border-slate-100 bg-slate-50/60 p-4 rounded-xl space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-800 text-[11px]">{srv.name}</span>
+                  <span className={`inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded uppercase ${
+                    srv.status === "healthy" || srv.status === "operational"
+                      ? "text-emerald-600 bg-emerald-50 border border-emerald-200"
+                      : "text-amber-600 bg-amber-50 border border-amber-200"
+                  }`}>
+                    <CheckCircle2 className="w-3 h-3" />
+                    {srv.status}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                  <span>{srv.message}</span>
+                  <span>{srv.latencyMs}ms</span>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="col-span-3 py-4 text-center text-slate-400 text-xs">Running system health probes...</div>
+          )}
+        </div>
       </div>
 
       {/* Main Stats Row */}

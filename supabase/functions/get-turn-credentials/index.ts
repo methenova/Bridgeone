@@ -24,8 +24,8 @@ serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const region = body.region || "us-east";
 
-    // Set expiration to 24 hours from now
-    const ttlSeconds = 86400;
+    // Set expiration to 4 hours from now for optimal security
+    const ttlSeconds = 14400;
     const expiryTimestamp = Math.floor(Date.now() / 1000) + ttlSeconds;
     const username = `${expiryTimestamp}:bridgeone_webrtc_session`;
 

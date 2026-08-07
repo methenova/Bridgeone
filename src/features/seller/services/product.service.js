@@ -26,7 +26,7 @@ export async function getProducts(shopId, filters = {}) {
 
   let query = supabase
     .from("products")
-    .select("*", { count: "exact" })
+    .select("*, categories ( id, name, slug )", { count: "exact" })
     .eq("shop_id", shopId);
 
   if (search.trim()) {
@@ -190,7 +190,46 @@ export async function bulkUpdateStatus(ids, is_active) {
 // GET CATEGORIES
 // ─────────────────────────────────────────────────────────────
 export async function getCategories() {
-  return [];
+  const { data, error } = await executeQuery(
+    supabase.from("categories").select("*").order("name", { ascending: true })
+  );
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+/**
+ * Create a new category and auto-generate slug.
+ */
+export async function createCategory(name, description = "") {
+  const cleanName = name.trim();
+  if (!cleanName) {
+    throw new BridgeOneError("Category name is required", "VALIDATION_ERROR");
+  }
+
+  const slug = generateSlug(cleanName);
+
+  // Check if category already exists by slug or name
+  const { data: existing } = await supabase
+    .from("categories")
+    .select("*")
+    .or(`name.ilike.${cleanName},slug.eq.${slug}`)
+    .maybeSingle();
+
+  if (existing) {
+    return existing;
+  }
+
+  const { data, error } = await executeQuery(
+    supabase
+      .from("categories")
+      .insert({ name: cleanName, slug, description })
+      .select()
+      .single()
+  );
+
+  if (error) throw error;
+  return data;
 }
 
 // ─────────────────────────────────────────────────────────────

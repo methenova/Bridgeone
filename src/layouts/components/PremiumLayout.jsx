@@ -150,7 +150,7 @@ export default function PremiumLayout({
                   onClick={() => setWorkspaceOpen(!workspaceOpen)}
                   className="flex items-center gap-1 text-sm font-extrabold text-slate-900 truncate hover:text-blue-600 transition-colors text-left"
                 >
-                  <span>{currentOrganization?.organization_name || workspaceName}</span>
+                  <span>{currentShop?.shop_name || workspaceName || "My Store"}</span>
                   <ChevronDown className={`h-3.5 w-3.5 text-slate-550 shrink-0 transition-transform ${workspaceOpen ? 'rotate-180' : ''}`} />
                 </button>
               )}
@@ -165,38 +165,11 @@ export default function PremiumLayout({
                     initial={{ opacity: 0, y: 8, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                    className="absolute left-4 right-4 top-14 bg-white border border-slate-200 rounded-2xl shadow-xl z-40 p-3 max-h-[360px] overflow-y-auto space-y-4"
+                    className="absolute left-4 right-4 top-14 bg-white border border-slate-200 rounded-2xl shadow-xl z-40 p-3 max-h-[360px] overflow-y-auto space-y-3"
                   >
-                    {/* Organizations List */}
-                    <div className="space-y-1.5">
-                      <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 px-2">Organizations</p>
-                      <div className="space-y-0.5">
-                        {organizations.map(org => {
-                          const isSelected = org.id === currentOrganization?.id;
-                          return (
-                            <button
-                              key={org.id}
-                              onClick={() => {
-                                switchOrganization(org.id);
-                                setWorkspaceOpen(false);
-                              }}
-                              className={`w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs text-left transition-colors font-bold ${
-                                isSelected
-                                  ? "bg-blue-50 text-blue-700"
-                                  : "text-slate-650 hover:bg-slate-50 hover:text-slate-900"
-                              }`}
-                            >
-                              <span className="truncate">{org.organization_name}</span>
-                              {isSelected && <Zap className="h-3 w-3 text-blue-600 fill-blue-600" />}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
                     {/* Shops List */}
-                    <div className="space-y-1.5 border-t border-slate-100 pt-3">
-                      <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 px-2">Active Org Shops</p>
+                    <div className="space-y-1.5">
+                      <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 px-2">Your Stores & Shops</p>
                       <div className="space-y-0.5">
                         {shops.map(s => {
                           const isSelected = s.id === currentShop?.id;
@@ -219,24 +192,28 @@ export default function PremiumLayout({
                           );
                         })}
                         {shops.length === 0 && (
-                          <p className="text-[10px] text-slate-400 px-2 italic">No shops in this organization</p>
+                          <p className="text-[10px] text-slate-400 px-2 italic">No shops created yet</p>
                         )}
                       </div>
                     </div>
 
-                    {/* Action buttons */}
-                    <div className="border-t border-slate-100 pt-2.5 flex gap-1.5">
+                    {/* Action button */}
+                    <div className="border-t border-slate-100 pt-2 flex">
                       <button
                         onClick={() => {
-                          setRenameOrgName(currentOrganization?.organization_name || "");
                           setIsOrgModalOpen(true);
-                          setActiveModalTab("settings");
+                          setActiveModalTab("create_shop");
                           setWorkspaceOpen(false);
                         }}
-                        className="w-full flex items-center justify-center gap-1 py-2 hover:bg-slate-50 border border-slate-200 rounded-xl text-[9px] font-bold text-slate-700 cursor-pointer"
+                        className="w-full flex items-center justify-center gap-1.5 py-2 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl text-[10px] font-bold text-blue-700 cursor-pointer transition-colors"
                       >
-                        <Settings className="h-3.5 w-3.5" /> Settings
+                        <Plus className="h-3.5 w-3.5" /> Create New Shop
                       </button>
+                    </div>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
                       <button
                         onClick={() => {
                           setIsOrgModalOpen(true);
@@ -678,9 +655,7 @@ export default function PremiumLayout({
         shopId={shopId}
       />
 
-
-
-      {/* Organization Switcher / Management Modal */}
+      {/* Shop Management / Creation Modal */}
       <AnimatePresence>
         {isOrgModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm p-4">
@@ -689,13 +664,13 @@ export default function PremiumLayout({
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-lg rounded-[2rem] border border-slate-150 bg-white shadow-2xl overflow-hidden flex flex-col max-h-[90vh] z-50 animate-in"
+              className="relative w-full max-w-md rounded-[2rem] border border-slate-150 bg-white shadow-2xl overflow-hidden flex flex-col max-h-[90vh] z-50 animate-in"
             >
               {/* Modal Header */}
               <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
                 <div>
-                  <h3 className="text-base font-extrabold text-slate-900">Organization Settings</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">Manage your shops and workspace contexts</p>
+                  <h3 className="text-base font-extrabold text-slate-900">Create New Shop</h3>
+                  <p className="text-xs text-slate-500 mt-0.5">Add a new store or shop to your account</p>
                 </div>
                 <button
                   onClick={() => setIsOrgModalOpen(false)}
@@ -705,246 +680,70 @@ export default function PremiumLayout({
                 </button>
               </div>
 
-              {/* Tabs */}
-              <div className="flex border-b border-slate-100 bg-slate-50/50 p-1.5 gap-1 shrink-0">
-                <button
-                  onClick={() => setActiveModalTab("settings")}
-                  className={`flex-1 py-2 text-center rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    activeModalTab === "settings" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"
-                  }`}
+              {/* Modal Body: Create Shop Form */}
+              <div className="flex-1 overflow-y-auto p-6">
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    if (!newShopName.trim()) return;
+                    try {
+                      await createShopInActiveOrg(newShopName.trim(), {
+                        website: newShopWebsite.trim(),
+                        category: newShopCategory
+                      });
+                      toast.success(`Shop "${newShopName}" created successfully!`);
+                      setNewShopName("");
+                      setNewShopWebsite("");
+                      setNewShopCategory("fashion_apparel");
+                      setIsOrgModalOpen(false);
+                    } catch (err) {
+                      toast.error(err.message || "Failed to create shop.");
+                    }
+                  }}
+                  className="space-y-4"
                 >
-                  Manage Active Org
-                </button>
-                <button
-                  onClick={() => setActiveModalTab("create_org")}
-                  className={`flex-1 py-2 text-center rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    activeModalTab === "create_org" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"
-                  }`}
-                >
-                  Create Organization
-                </button>
-                <button
-                  onClick={() => setActiveModalTab("create_shop")}
-                  className={`flex-1 py-2 text-center rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    activeModalTab === "create_shop" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"
-                  }`}
-                >
-                  Add New Shop
-                </button>
-              </div>
-
-              {/* Modal Body */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-6">
-                {/* TAB 1: ORG SETTINGS */}
-                {activeModalTab === "settings" && currentOrganization && (
-                  <div className="space-y-6">
-                    {/* Rename */}
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-505 uppercase">Rename Organization</label>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={renameOrgName}
-                          onChange={(e) => setRenameOrgName(e.target.value)}
-                          className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs text-slate-900 outline-none focus:border-blue-500"
-                          placeholder="Organization name"
-                        />
-                        <button
-                          onClick={async () => {
-                            if (!renameOrgName.trim()) return;
-                            try {
-                              await renameOrganization(currentOrganization.id, renameOrgName.trim());
-                              toast.success("Organization renamed successfully!");
-                            } catch (err) {
-                              toast.error(err.message || "Failed to rename organization.");
-                            }
-                          }}
-                          className="px-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
-                        >
-                          Save
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Transfer Ownership */}
-                    <div className="space-y-2 border-t border-slate-100 pt-6">
-                      <label className="text-[10px] font-bold text-amber-600 uppercase">Transfer Ownership</label>
-                      <p className="text-[10px] text-slate-500 leading-normal">
-                        Enter the registered user email address you wish to transfer this organization to. This action is irreversible.
-                      </p>
-                      <div className="flex gap-2">
-                        <input
-                          type="email"
-                          value={transferEmail}
-                          onChange={(e) => setTransferEmail(e.target.value)}
-                          className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs text-slate-900 outline-none focus:border-blue-500"
-                          placeholder="newowner@example.com"
-                        />
-                        <button
-                          onClick={async () => {
-                            if (!transferEmail.trim()) return;
-                            if (!window.confirm(`Are you absolutely sure you want to transfer ownership of ${currentOrganization.organization_name} to ${transferEmail}? You will immediately lose access!`)) return;
-                            try {
-                              await transferOrganizationOwnership(currentOrganization.id, transferEmail.trim());
-                              toast.success("Ownership transferred successfully! Reloading workspace...");
-                              setIsOrgModalOpen(false);
-                            } catch (err) {
-                              toast.error(err.message || "Failed to transfer ownership.");
-                            }
-                          }}
-                          className="px-4 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
-                        >
-                          Transfer
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Delete Org */}
-                    <div className="space-y-2 border-t border-slate-100 pt-6">
-                      <label className="text-[10px] font-bold text-rose-600 uppercase">Danger Zone</label>
-                      <div className="bg-red-50 border border-red-150 rounded-xl p-4 flex flex-col gap-3">
-                        <p className="text-[10px] text-rose-805 leading-normal font-medium">
-                          Deleting this organization will permanently remove all associated shops, widget configurations, agent details, and logs. This cannot be undone.
-                        </p>
-                        {!showDeleteConfirm ? (
-                          <button
-                            onClick={() => setShowDeleteConfirm(true)}
-                            className="py-2.5 bg-rose-600 hover:bg-rose-550 text-white rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" /> Delete Organization
-                          </button>
-                        ) : (
-                          <div className="flex gap-2 justify-end">
-                            <button
-                              onClick={() => setShowDeleteConfirm(false)}
-                              className="px-3 py-1.5 border border-slate-200 rounded-lg text-[10px] font-bold text-slate-500 hover:text-slate-900 cursor-pointer bg-white"
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              onClick={async () => {
-                                try {
-                                  await deleteOrganization(currentOrganization.id);
-                                  toast.success("Organization successfully deleted!");
-                                  setIsOrgModalOpen(false);
-                                  setShowDeleteConfirm(false);
-                                } catch (err) {
-                                  toast.error(err.message || "Failed to delete organization.");
-                                }
-                              }}
-                              className="px-3 py-1.5 bg-rose-700 hover:bg-rose-650 text-white rounded-lg text-[10px] font-bold cursor-pointer"
-                            >
-                              Confirm Delete
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">Shop Name</label>
+                    <input
+                      type="text"
+                      value={newShopName}
+                      onChange={(e) => setNewShopName(e.target.value)}
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs text-slate-900 outline-none focus:border-blue-500"
+                      placeholder="e.g. London Boutique"
+                      required
+                    />
                   </div>
-                )}
-
-                {/* TAB 2: CREATE ORG */}
-                {activeModalTab === "create_org" && (
-                  <form
-                    onSubmit={async (e) => {
-                      e.preventDefault();
-                      if (!newOrgName.trim()) return;
-                      try {
-                        await createOrganization(newOrgName.trim());
-                        toast.success(`Organization "${newOrgName}" created!`);
-                        setNewOrgName("");
-                        setIsOrgModalOpen(false);
-                      } catch (err) {
-                        toast.error(err.message || "Failed to create organization.");
-                      }
-                    }}
-                    className="space-y-4"
-                  >
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-slate-550 uppercase">Organization Name</label>
-                      <input
-                        type="text"
-                        value={newOrgName}
-                        onChange={(e) => setNewOrgName(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs text-slate-900 outline-none focus:border-blue-500"
-                        placeholder="e.g. Acme Corp"
-                        required
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-lg shadow-blue-500/10"
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">Shop Website URL</label>
+                    <input
+                      type="url"
+                      value={newShopWebsite}
+                      onChange={(e) => setNewShopWebsite(e.target.value)}
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs text-slate-900 outline-none focus:border-blue-500"
+                      placeholder="https://londonboutique.com"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase">Business Category</label>
+                    <select
+                      value={newShopCategory}
+                      onChange={(e) => setNewShopCategory(e.target.value)}
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs text-slate-900 outline-none focus:border-blue-500"
                     >
-                      Create Organization & Switch
-                    </button>
-                  </form>
-                )}
-
-                {/* TAB 3: CREATE SHOP */}
-                {activeModalTab === "create_shop" && (
-                  <form
-                    onSubmit={async (e) => {
-                      e.preventDefault();
-                      if (!newShopName.trim()) return;
-                      try {
-                        await createShopInActiveOrg(newShopName.trim(), {
-                          website: newShopWebsite.trim(),
-                          category: newShopCategory
-                        });
-                        toast.success(`Shop "${newShopName}" added to organization!`);
-                        setNewShopName("");
-                        setNewShopWebsite("");
-                        setNewShopCategory("fashion_apparel");
-                        setIsOrgModalOpen(false);
-                      } catch (err) {
-                        toast.error(err.message || "Failed to add shop.");
-                      }
-                    }}
-                    className="space-y-4"
+                      <option value="fashion_apparel">Fashion & Apparel</option>
+                      <option value="electronics_gadgets">Electronics & Gadgets</option>
+                      <option value="home_living">Home & Living</option>
+                      <option value="beauty_wellness">Beauty & Wellness</option>
+                      <option value="other">Other / General Retail</option>
+                    </select>
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-lg shadow-blue-500/10 mt-2"
                   >
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase">Shop Name</label>
-                      <input
-                        type="text"
-                        value={newShopName}
-                        onChange={(e) => setNewShopName(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs text-slate-900 outline-none focus:border-blue-500"
-                        placeholder="e.g. London Boutique"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase">Shop Website URL</label>
-                      <input
-                        type="url"
-                        value={newShopWebsite}
-                        onChange={(e) => setNewShopWebsite(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs text-slate-900 outline-none focus:border-blue-500"
-                        placeholder="https://londonboutique.com"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase">Business Category</label>
-                      <select
-                        value={newShopCategory}
-                        onChange={(e) => setNewShopCategory(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs text-slate-900 outline-none focus:border-blue-500"
-                      >
-                        <option value="fashion_apparel">Fashion & Apparel</option>
-                        <option value="electronics_gadgets">Electronics & Gadgets</option>
-                        <option value="home_living">Home & Living</option>
-                        <option value="beauty_wellness">Beauty & Wellness</option>
-                        <option value="other">Other / General Retail</option>
-                      </select>
-                    </div>
-                    <button
-                      type="submit"
-                      className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-lg shadow-blue-500/10"
-                    >
-                      Add Shop & Activate
-                    </button>
-                  </form>
-                )}
+                    Create Shop & Switch
+                  </button>
+                </form>
               </div>
             </motion.div>
           </div>

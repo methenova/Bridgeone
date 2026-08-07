@@ -31,6 +31,11 @@ export default defineConfig({
     },
   },
 
+  test: {
+    include: ["src/**/*.test.{js,jsx}"],
+    environment: "jsdom",
+  },
+
   build: {
     target: "esnext",
     cssMinify: true,

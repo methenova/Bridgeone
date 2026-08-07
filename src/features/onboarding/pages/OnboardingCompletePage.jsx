@@ -9,6 +9,7 @@ import {
 import { useAuthContext } from "@/context/AuthContext";
 import { updateProfile } from "@/services/auth/profileService";
 import { getShopByOwner, getWidgetCredentials, saveWidgetCredentials, generateSecureWidgetCredentials } from "@/services/shop/shopService";
+import { getStandardEmbedScript, getFrameworkEmbedSnippets } from "@/services/widget/embedGenerator";
 
 export default function OnboardingCompletePage() {
   const navigate = useNavigate();

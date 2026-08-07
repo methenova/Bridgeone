@@ -134,32 +134,97 @@ export default function AnalyticsPage() {
     };
   }, [filteredData.orders]);
 
-  // Call stats calculator
+  // Call stats calculator using database timestamps and call records
   const callStats = useMemo(() => {
     const total = filteredData.calls.length;
-    const connected = filteredData.calls.filter((c) => c.status === "completed" || c.duration > 0).length;
+    const connectedCalls = filteredData.calls.filter(
+      (c) => c.status === "completed" || (c.duration_seconds || c.duration || 0) > 0
+    );
+    const connected = connectedCalls.length;
     const missed = total - connected;
-    
+
     let totalDur = 0;
+    let totalAssistedSales = 0;
+    let totalResponseTime = 0;
+    let responseCount = 0;
+    let totalWaitTime = 0;
+    let waitCount = 0;
+
     filteredData.calls.forEach((c) => {
-      totalDur += c.duration || 0;
+      // 1. Duration
+      const dur = c.duration_seconds || c.duration || 0;
+      totalDur += dur;
+
+      // 2. Assisted Sales: Sum actual revenue_generated from database row
+      const rev = Number(c.revenue_generated || 0);
+      totalAssistedSales += rev;
+
+      // 3. Response Time calculation: answered_at - (ringing_at || started_at)
+      if (c.answered_at) {
+        const answeredTs = new Date(c.answered_at).getTime();
+        const startTs = c.ringing_at
+          ? new Date(c.ringing_at).getTime()
+          : c.started_at
+          ? new Date(c.started_at).getTime()
+          : new Date(c.created_at).getTime();
+
+        if (!isNaN(answeredTs) && !isNaN(startTs) && answeredTs >= startTs) {
+          const respSec = Math.round((answeredTs - startTs) / 1000);
+          totalResponseTime += respSec;
+          responseCount++;
+        } else if (c.wait_time_seconds != null) {
+          totalResponseTime += Number(c.wait_time_seconds);
+          responseCount++;
+        }
+      }
+
+      // 4. Wait Time calculation: wait_time_seconds or (answered_at/ended_at - started_at)
+      if (c.wait_time_seconds != null) {
+        totalWaitTime += Number(c.wait_time_seconds);
+        waitCount++;
+      } else {
+        const endTs = c.answered_at
+          ? new Date(c.answered_at).getTime()
+          : c.ended_at
+          ? new Date(c.ended_at).getTime()
+          : null;
+        const startTs = c.started_at
+          ? new Date(c.started_at).getTime()
+          : c.created_at
+          ? new Date(c.created_at).getTime()
+          : null;
+
+        if (endTs && startTs && endTs >= startTs) {
+          totalWaitTime += Math.round((endTs - startTs) / 1000);
+          waitCount++;
+        }
+      }
     });
 
     const avgDuration = connected > 0 ? Math.round(totalDur / connected) : 0;
+    const avgResponseTime = responseCount > 0 ? Math.round(totalResponseTime / responseCount) : 0;
+    const avgWaitTime = waitCount > 0 ? Math.round(totalWaitTime / waitCount) : 0;
 
-    // Conversion rate: Orders vs Total Calls
-    const conversionRate = total > 0 ? ((metrics.totalOrdersCount / total) * 100).toFixed(1) : "0.0";
+    // Conversion rate: Connected Calls with revenue vs Total Connected Calls
+    const callsWithRevenue = connectedCalls.filter(
+      (c) => Number(c.revenue_generated) > 0
+    ).length;
 
-    // Sales from assisted calls: sum of order value that occurred
-    const salesFromCalls = Math.round(metrics.revenue * 0.85); // Estimated call assistance conversion
+    const conversionRate = connected > 0
+      ? ((callsWithRevenue / connected) * 100).toFixed(1)
+      : total > 0
+      ? ((metrics.totalOrdersCount / total) * 100).toFixed(1)
+      : "0.0";
 
-    return { 
-      total, 
-      connected, 
-      missed, 
+    return {
+      total,
+      connected,
+      missed,
       avgDuration,
+      avgResponseTime,
+      avgWaitTime,
       conversionRate,
-      salesFromCalls
+      salesFromCalls: totalAssistedSales,
     };
   }, [filteredData.calls, metrics.totalOrdersCount, metrics.revenue]);
 
@@ -447,41 +512,59 @@ export default function AnalyticsPage() {
           <span>Call Center Telemetry</span>
         </h2>
         
-        <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
+        <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
             <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
               <span>Total Calls</span>
-              <Video className="h-4.5 w-4.5 text-slate-400" />
+              <Video className="h-4 w-4 text-slate-400" />
             </div>
             <div>
-              <p className="text-2xl font-extrabold tracking-tight text-slate-900">{callStats.total}</p>
+              <p className="text-xl font-extrabold tracking-tight text-slate-900">{callStats.total}</p>
             </div>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
             <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-              <span>Connected calls</span>
-              <PhoneCall className="h-4.5 w-4.5 text-emerald-400" />
+              <span>Connected</span>
+              <PhoneCall className="h-4 w-4 text-emerald-400" />
             </div>
             <div>
-              <p className="text-2xl font-extrabold tracking-tight text-emerald-600">{callStats.connected}</p>
+              <p className="text-xl font-extrabold tracking-tight text-emerald-600">{callStats.connected}</p>
             </div>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
             <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-              <span>Missed calls</span>
-              <PhoneMissed className="h-4.5 w-4.5 text-red-400" />
+              <span>Missed</span>
+              <PhoneMissed className="h-4 w-4 text-red-400" />
             </div>
             <div>
-              <p className="text-2xl font-extrabold tracking-tight text-red-500">{callStats.missed}</p>
+              <p className="text-xl font-extrabold tracking-tight text-red-500">{callStats.missed}</p>
             </div>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
             <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
               <span>Avg Duration</span>
-              <Clock className="h-4.5 w-4.5 text-slate-400" />
+              <Clock className="h-4 w-4 text-slate-400" />
             </div>
             <div>
-              <p className="text-2xl font-extrabold tracking-tight text-slate-900">{formatDuration(callStats.avgDuration)}</p>
+              <p className="text-xl font-extrabold tracking-tight text-slate-900">{formatDuration(callStats.avgDuration)}</p>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
+            <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+              <span>Avg Response</span>
+              <Zap className="h-4 w-4 text-amber-500" />
+            </div>
+            <div>
+              <p className="text-xl font-extrabold tracking-tight text-amber-600">{formatDuration(callStats.avgResponseTime)}</p>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/50 hover:border-slate-300 transition-all duration-200">
+            <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+              <span>Avg Wait Time</span>
+              <Clock className="h-4 w-4 text-purple-400" />
+            </div>
+            <div>
+              <p className="text-xl font-extrabold tracking-tight text-purple-600">{formatDuration(callStats.avgWaitTime)}</p>
             </div>
           </div>
         </div>

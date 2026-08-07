@@ -20,8 +20,7 @@ import {
 
 const menu = [
   { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard", badge: null },
-  { title: "Organizations", icon: Store, path: "/dashboard/organizations", badge: null },
-  { title: "Org Admins", icon: ShieldAlert, path: "/dashboard/org-admins", badge: null },
+  { title: "Stores & Shops", icon: Store, path: "/dashboard/shops", badge: null },
   { title: "Platform Users", icon: Users, path: "/dashboard/users", badge: null },
   { title: "Subscriptions", icon: CreditCard, path: "/dashboard/subscriptions", badge: null },
   { title: "Widgets", icon: Sliders, path: "/dashboard/widgets", badge: null },

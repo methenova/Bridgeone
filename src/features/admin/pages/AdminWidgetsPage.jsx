@@ -24,6 +24,8 @@ import { useAdminShops } from "../hooks/useAdmin";
 import { supabase } from "@/config/supabase";
 import { TableSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
+import { getStandardEmbedScript } from "@/services/widget/embedGenerator";
+import RotateKeyModal from "@/components/common/RotateKeyModal";
 
 export default function AdminWidgetsPage() {
   const { data: shops = [], isLoading, refetch } = useAdminShops();
@@ -33,6 +35,10 @@ export default function AdminWidgetsPage() {
   // Snippet Modal state
   const [selectedShop, setSelectedShop] = useState(null);
   const [copied, setCopied] = useState(false);
+
+  // Modal State for Key Rotation
+  const [selectedShopForRotate, setSelectedShopForRotate] = useState(null);
+  const [rotatingKey, setRotatingKey] = useState(false);
 
   // Widget preview details modal state
   const [previewShop, setPreviewShop] = useState(null);
@@ -57,14 +63,7 @@ export default function AdminWidgetsPage() {
 
   // Copy Code snippet to clipboard
   function handleCopySnippet(shopId) {
-    const hostUrl = window.location.origin;
-    const snippet = `<!-- BridgeOne Live Video Widget Embed -->
-<script>
-  window.BridgeOneConfig = {
-    shopId: "${shopId}"
-  };
-</script>
-<script src="${hostUrl}/widget-loader.js" async></script>`;
+    const snippet = getStandardEmbedScript({ shopId });
 
     navigator.clipboard.writeText(snippet);
     setCopied(true);
@@ -72,10 +71,30 @@ export default function AdminWidgetsPage() {
     setTimeout(() => setCopied(false), 2000);
   }
 
-  // Simulate API key regeneration
-  function handleRegenerateKey(shopName) {
-    if (window.confirm(`Are you sure you want to regenerate the API key token for "${shopName}"? This will invalidate the existing embedded script on the client store.`)) {
-      toast.success("Security token rotated. Please update the embed code on the client store.");
+  // Open Key rotation confirmation modal
+  function handleRegenerateKey(shop) {
+    setSelectedShopForRotate(shop);
+  }
+
+  async function handleConfirmRotateAdmin() {
+    if (!selectedShopForRotate) return;
+    setRotatingKey(true);
+    try {
+      const newKey = `wk_live_${Math.random().toString(36).substring(2, 10)}${Date.now().toString(36)}`;
+      const { error } = await supabase
+        .from("shops")
+        .update({ widget_key: newKey })
+        .eq("id", selectedShopForRotate.id);
+
+      if (error) throw error;
+
+      toast.success(`Security key rotated for "${selectedShopForRotate.shop_name}".`);
+      setSelectedShopForRotate(null);
+      refetch();
+    } catch (err) {
+      toast.error(err.message || "Failed to rotate API key");
+    } finally {
+      setRotatingKey(false);
     }
   }
 
@@ -348,7 +367,15 @@ export default function AdminWidgetsPage() {
             </motion.div>
           </div>
         )}
-      </AnimatePresence>
+      {/* Rotate Key Confirmation Modal */}
+      <RotateKeyModal
+        isOpen={Boolean(selectedShopForRotate)}
+        onClose={() => setSelectedShopForRotate(null)}
+        onConfirm={handleConfirmRotateAdmin}
+        shopName={selectedShopForRotate?.shop_name || "Shop"}
+        currentKey={selectedShopForRotate?.widget_key || ""}
+        isLoading={rotatingKey}
+      />
 
     </div>
   );

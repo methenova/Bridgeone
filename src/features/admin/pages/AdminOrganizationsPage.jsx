@@ -27,8 +27,9 @@ import { Button } from "@/components/ui/button";
 
 const PLANS = [
   { value: "starter", label: "Starter Plan" },
-  { value: "basic", label: "Basic Plan" },
   { value: "pro", label: "Pro Plan" },
+  { value: "enterprise", label: "Enterprise Plan" },
+  { value: "basic", label: "Basic Plan" },
 ];
 
 const categories = [

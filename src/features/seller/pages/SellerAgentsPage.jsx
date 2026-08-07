@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { 
   Users, 
   UserPlus, 
@@ -13,7 +13,13 @@ import {
   Building,
   Check,
   ToggleLeft,
-  ToggleRight
+  ToggleRight,
+  Mail,
+  RefreshCw,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+  Send
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
@@ -23,9 +29,17 @@ import useSellerShop from "../hooks/useSellerShop";
 import { TableSkeleton } from "@/components/skeletons";
 import { AgentPresenceService } from "@/services/presence/presenceService";
 import { realtimeManager } from "@/services/realtime/realtimeManager";
+import { useAuthContext } from "@/context/AuthContext";
+import {
+  createInvitation,
+  getShopInvitations,
+  cancelInvitation,
+  resendInvitation,
+} from "../services/invitation.service";
 
 export default function SellerAgentsPage() {
   const { shop, loading: shopLoading } = useSellerShop();
+  const { user } = useAuthContext();
   const shopId = shop?.id;
 
   const [agents, setAgents] = useState([]);
@@ -42,10 +56,21 @@ export default function SellerAgentsPage() {
 
   // Modals state
   const [isInviteOpen, setIsInviteOpen] = useState(false);
+  const [inviteTab, setInviteTab] = useState("existing"); // "existing" | "email"
   const [selectedProfileId, setSelectedProfileId] = useState("");
   const [selectedRole, setSelectedRole] = useState("agent");
   const [selectedDept, setSelectedDept] = useState("Sales");
   const [submittingInvite, setSubmittingInvite] = useState(false);
+
+  // Email invitation state
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [emailRole, setEmailRole] = useState("agent");
+  const [submittingEmailInvite, setSubmittingEmailInvite] = useState(false);
+
+  // Pending invitations state
+  const [pendingInvitations, setPendingInvitations] = useState([]);
+  const [invitationsExpanded, setInvitationsExpanded] = useState(false);
+  const [loadingInvitations, setLoadingInvitations] = useState(false);
 
   // Load team agents and profile lists
   async function loadTeamData() {
@@ -112,9 +137,24 @@ export default function SellerAgentsPage() {
     }
   }
 
+  // Load pending invitations
+  async function loadInvitations() {
+    if (!shopId) return;
+    try {
+      setLoadingInvitations(true);
+      const invitations = await getShopInvitations(shopId);
+      setPendingInvitations(invitations);
+    } catch (err) {
+      console.error("[Agents] Invitations load error:", err);
+    } finally {
+      setLoadingInvitations(false);
+    }
+  }
+
   useEffect(() => {
     if (!shopId) return;
     loadTeamData();
+    loadInvitations();
 
     // Subscribe to shop_agents presence updates in real-time
     const topic = `shop-agents-presence-${shopId}`;
@@ -194,6 +234,53 @@ export default function SellerAgentsPage() {
     }
   }
 
+  // Invite Agent via Email — creates a shop_invitation record
+  async function handleEmailInvite(e) {
+    e.preventDefault();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!inviteEmail.trim() || !emailRegex.test(inviteEmail.trim())) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+    setSubmittingEmailInvite(true);
+    try {
+      await createInvitation(shopId, user?.id, inviteEmail.trim(), emailRole);
+      toast.success(`Invitation sent to ${inviteEmail.trim()}`);
+      setIsInviteOpen(false);
+      setInviteEmail("");
+      setEmailRole("agent");
+      setInvitationsExpanded(true);
+      loadInvitations();
+    } catch (err) {
+      toast.error(err.message || "Failed to send invitation");
+    } finally {
+      setSubmittingEmailInvite(false);
+    }
+  }
+
+  // Cancel a pending email invitation
+  async function handleCancelInvitation(invId) {
+    if (!window.confirm("Cancel this pending invitation?")) return;
+    try {
+      await cancelInvitation(invId);
+      toast.success("Invitation cancelled");
+      loadInvitations();
+    } catch (err) {
+      toast.error(err.message || "Failed to cancel invitation");
+    }
+  }
+
+  // Resend an invitation
+  async function handleResendInvitation(invId) {
+    try {
+      await resendInvitation(invId);
+      toast.success("Invitation resent successfully");
+      loadInvitations();
+    } catch (err) {
+      toast.error(err.message || "Failed to resend invitation");
+    }
+  }
+
   // Remove Agent — removes both shop_agent and shop_member records
   async function handleRemoveAgent(ag) {
     if (!window.confirm("Are you sure you want to remove this agent from your store?")) return;
@@ -221,17 +308,25 @@ export default function SellerAgentsPage() {
     }
   }
 
+  // Mutex to prevent concurrent status updates per member
+  const statusUpdateLocks = useRef(new Set());
+
   // Update agent status (on shop_agents table, agent_presence table, & shop online status)
   async function handleUpdateStatus(ag, newStatus) {
+    // Prevent concurrent status toggles for the same member
+    if (statusUpdateLocks.current.has(ag.member_id)) return;
+    statusUpdateLocks.current.add(ag.member_id);
+
     try {
-      // Optimistically update React state immediately
+      // Optimistic UI update — only change status display, do NOT set has_agent_record yet
       setAgents(prev => prev.map(item => 
         item.member_id === ag.member_id 
-          ? { ...item, status: newStatus, has_agent_record: true } 
+          ? { ...item, status: newStatus } 
           : item
       ));
 
-      if (ag.has_agent_record && ag.id) {
+      if (ag.has_agent_record && ag.id && ag.id !== ag.member_id) {
+        // Agent record already exists — update it by its real shop_agents.id
         const { error } = await supabase
           .from("shop_agents")
           .update({ 
@@ -241,17 +336,30 @@ export default function SellerAgentsPage() {
           .eq("id", ag.id);
         if (error) throw error;
       } else {
+        // No agent record yet — use upsert to prevent duplicates on rapid toggles
         const { data: newAg, error } = await supabase
           .from("shop_agents")
-          .insert({
-            shop_member_id: ag.member_id,
-            status: newStatus,
-            last_seen_at: new Date().toISOString(),
-            max_active_conversations: 3
-          })
+          .upsert(
+            {
+              shop_member_id: ag.member_id,
+              status: newStatus,
+              last_seen_at: new Date().toISOString(),
+              max_active_conversations: 3,
+            },
+            { onConflict: "shop_member_id" }
+          )
           .select()
           .single();
         if (error) throw error;
+
+        // Patch the real agent ID back into local state immediately
+        if (newAg?.id) {
+          setAgents(prev => prev.map(item =>
+            item.member_id === ag.member_id
+              ? { ...item, id: newAg.id, has_agent_record: true, status: newStatus }
+              : item
+          ));
+        }
       }
 
       // Sync presence table & shop_agents table via centralized AgentPresenceService
@@ -280,6 +388,8 @@ export default function SellerAgentsPage() {
       console.error("[Agents] Status update error:", err);
       toast.error(err.message || "Failed to update agent status");
       await loadTeamData();
+    } finally {
+      statusUpdateLocks.current.delete(ag.member_id);
     }
   }
 
@@ -532,6 +642,90 @@ export default function SellerAgentsPage() {
         </div>
       )}
 
+      {/* PENDING INVITATIONS PANEL */}
+      {pendingInvitations.length > 0 && (
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setInvitationsExpanded(!invitationsExpanded)}
+            className="w-full flex items-center justify-between px-6 py-4 text-left cursor-pointer hover:bg-slate-50/50 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-9 rounded-xl bg-amber-50 border border-amber-200/60 text-amber-600 flex items-center justify-center">
+                <Mail className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-sm font-bold text-slate-900">Pending Invitations</span>
+                <span className="ml-2 text-[10px] font-extrabold bg-amber-100 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full">
+                  {pendingInvitations.filter(i => i.status === "pending").length}
+                </span>
+              </div>
+            </div>
+            {invitationsExpanded ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+          </button>
+
+          <AnimatePresence>
+            {invitationsExpanded && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="border-t border-slate-100"
+              >
+                <div className="divide-y divide-slate-100">
+                  {pendingInvitations.map((inv) => {
+                    const isExpired = new Date(inv.expires_at) < new Date();
+                    const statusLabel = isExpired ? "Expired" : inv.status;
+                    const statusClass = isExpired
+                      ? "bg-slate-100 text-slate-500 border-slate-200"
+                      : "bg-amber-50 text-amber-700 border-amber-200";
+
+                    return (
+                      <div key={inv.id} className="flex items-center justify-between px-6 py-4 text-xs">
+                        <div className="flex items-center gap-3">
+                          <div className="h-9 w-9 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 font-bold">
+                            {inv.email.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="font-bold text-slate-900 text-sm">{inv.email}</p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="text-[10px] text-slate-500">Role: <strong className="text-slate-700">{inv.role}</strong></span>
+                              <span className="text-slate-300">•</span>
+                              <span className="text-[10px] text-slate-500">Sent {new Date(inv.created_at).toLocaleDateString()}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2.5">
+                          <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full border ${statusClass}`}>
+                            {statusLabel}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleResendInvitation(inv.id)}
+                            title="Resend Invitation"
+                            className="flex items-center justify-center h-8 w-8 rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all cursor-pointer"
+                          >
+                            <RefreshCw className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleCancelInvitation(inv.id)}
+                            title="Cancel Invitation"
+                            className="flex items-center justify-center h-8 w-8 rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-all cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
+
       {/* INVITE MODAL */}
       <AnimatePresence>
         {isInviteOpen && (
@@ -549,53 +743,129 @@ export default function SellerAgentsPage() {
                 </button>
               </div>
 
-              <form onSubmit={handleInviteAgent} className="space-y-4 text-xs">
-                
-                {/* Profile selection */}
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">Select platform profile</label>
-                  <select
-                    value={selectedProfileId}
-                    onChange={(e) => setSelectedProfileId(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500"
-                    required
-                  >
-                    <option value="">-- Choose User Profile --</option>
-                    {availableProfiles.map(p => (
-                      <option key={p.id} value={p.id}>{p.full_name} ({p.email})</option>
-                    ))}
-                  </select>
-                </div>
+              {/* Tab Toggle */}
+              <div className="flex rounded-xl bg-slate-100 p-1 gap-1">
+                <button
+                  type="button"
+                  onClick={() => setInviteTab("existing")}
+                  className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-bold transition-all cursor-pointer ${
+                    inviteTab === "existing"
+                      ? "bg-white text-slate-900 shadow-sm"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  <Users className="w-3.5 h-3.5" />
+                  Existing User
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setInviteTab("email")}
+                  className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-bold transition-all cursor-pointer ${
+                    inviteTab === "email"
+                      ? "bg-white text-slate-900 shadow-sm"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  Email Invite
+                </button>
+              </div>
 
-                {/* Team role */}
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">Select Team role</label>
-                  <select
-                    value={selectedRole}
-                    onChange={(e) => setSelectedRole(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500"
-                  >
-                    <option value="agent">Agent (Answer Calls only)</option>
-                    <option value="manager">Manager (Full edit store catalog access)</option>
-                  </select>
-                </div>
+              {/* Existing User Tab */}
+              {inviteTab === "existing" && (
+                <form onSubmit={handleInviteAgent} className="space-y-4 text-xs">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">Select platform profile</label>
+                    <select
+                      value={selectedProfileId}
+                      onChange={(e) => setSelectedProfileId(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500"
+                      required
+                    >
+                      <option value="">-- Choose User Profile --</option>
+                      {availableProfiles.map(p => (
+                        <option key={p.id} value={p.id}>{p.full_name} ({p.email})</option>
+                      ))}
+                    </select>
+                  </div>
 
-                <div className="border-t border-slate-100 pt-5 flex justify-end gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setIsInviteOpen(false)} className="px-4 py-2.5 border border-slate-200 rounded-xl text-slate-500 hover:text-slate-900 cursor-pointer text-xs font-bold"
-                  >
-                    Cancel
-                  </button>
-                  
-                  <button
-                    type="submit"
-                    disabled={submittingInvite} className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10"
-                  >
-                    {submittingInvite && <Loader2 className="h-3 w-3 animate-spin" />}
-                    Invite
-                  </button>
-                </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">Select Team role</label>
+                    <select
+                      value={selectedRole}
+                      onChange={(e) => setSelectedRole(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500"
+                    >
+                      <option value="agent">Agent (Answer Calls only)</option>
+                      <option value="manager">Manager (Full edit store catalog access)</option>
+                    </select>
+                  </div>
 
-              </form>
+                  <div className="border-t border-slate-100 pt-5 flex justify-end gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setIsInviteOpen(false)} className="px-4 py-2.5 border border-slate-200 rounded-xl text-slate-500 hover:text-slate-900 cursor-pointer text-xs font-bold"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={submittingInvite} className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-500 cursor-pointer shadow-lg shadow-blue-500/10"
+                    >
+                      {submittingInvite && <Loader2 className="h-3 w-3 animate-spin" />}
+                      Invite
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {/* Email Invite Tab */}
+              {inviteTab === "email" && (
+                <form onSubmit={handleEmailInvite} className="space-y-4 text-xs">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">
+                      <Mail className="w-3 h-3 text-slate-400" />
+                      Agent email address
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="agent@example.com"
+                      value={inviteEmail}
+                      onChange={(e) => setInviteEmail(e.target.value)}
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500 placeholder-slate-400"
+                      required
+                    />
+                    <p className="text-[10px] text-slate-400 mt-1">
+                      An invitation will be created. The agent can join your store after registering on the platform.
+                    </p>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">Assigned role</label>
+                    <select
+                      value={emailRole}
+                      onChange={(e) => setEmailRole(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 outline-none focus:border-blue-500"
+                    >
+                      <option value="agent">Agent (Answer Calls only)</option>
+                      <option value="manager">Manager (Full edit store catalog access)</option>
+                    </select>
+                  </div>
+
+                  <div className="border-t border-slate-100 pt-5 flex justify-end gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setIsInviteOpen(false)} className="px-4 py-2.5 border border-slate-200 rounded-xl text-slate-500 hover:text-slate-900 cursor-pointer text-xs font-bold"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={submittingEmailInvite} className="flex items-center gap-1.5 rounded-xl bg-fuchsia-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-fuchsia-500 cursor-pointer shadow-lg shadow-fuchsia-500/10"
+                    >
+                      {submittingEmailInvite ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
+                      Send Invitation
+                    </button>
+                  </div>
+                </form>
+              )}
             </motion.div>
           </div>
         )}

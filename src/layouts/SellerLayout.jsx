@@ -17,7 +17,8 @@ import {
   Layers,
   Settings,
   User,
-  Store
+  Store,
+  Sparkles
 } from "lucide-react";
 
 const menu = [
@@ -26,6 +27,7 @@ const menu = [
   { title: "Customers", icon: Users, path: "/dashboard/customers", badge: null },
   { title: "Agents", icon: Shield, path: "/dashboard/agents", badge: null },
   { title: "Widget", icon: Sliders, path: "/dashboard/widget", badge: null },
+  { title: "Proactive Popins", icon: Sparkles, path: "/dashboard/popins", badge: null },
   { title: "Analytics", icon: BarChart3, path: "/dashboard/analytics", badge: null },
   { title: "Notifications", icon: Bell, path: "/dashboard/notifications", badge: null },
   { title: "Integrations", icon: Layers, path: "/dashboard/integrations", badge: null },
@@ -295,7 +297,7 @@ export default function SellerLayout() {
   const filteredMenu = menu.filter(item => {
     if (profile?.role === "agent") {
       // Hide owner-only features from agents
-      return !["Agents", "Widget", "Integrations", "Analytics", "Notifications"].includes(item.title);
+      return !["Agents", "Widget", "Proactive Popins", "Integrations", "Analytics", "Notifications"].includes(item.title);
     }
     return true;
   });

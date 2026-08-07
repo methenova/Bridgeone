@@ -86,15 +86,19 @@ export async function saveTemporaryOnboardingState(userId, stepMetadata) {
 }
 
 /**
- * Create all onboarding database records (Organization, Shop, Widget Credentials, Subscription)
- * in a transaction-like sequence with manual rollback on failure.
+ * Create or update all onboarding database records (Organization, Shop, Widget Credentials, Subscription)
+ * in an idempotent sequence with non-destructive updates and selective rollback on failure.
  */
 export async function finalizeOnboarding(userId, metadata) {
   if (!userId || !metadata) {
     throw new Error("Missing user ID or onboarding metadata.");
   }
 
-  const createdEntities = {
+  const tracking = {
+    isNewOrg: false,
+    isNewShop: false,
+    isNewCreds: false,
+    isNewSub: false,
     orgId: null,
     shopId: null,
     credentialsId: null,
@@ -104,14 +108,17 @@ export async function finalizeOnboarding(userId, metadata) {
   const now = new Date().toISOString();
 
   try {
-    // Clean up any existing shops/organizations for this owner from failed/previous runs
-    const { error: delShopsErr } = await supabase.from("shops").delete().eq("owner_id", userId);
-    if (delShopsErr) throw delShopsErr;
+    // 1. Organization Handling (Idempotent Check & Update/Insert)
+    const { data: existingOrg, error: findOrgErr } = await supabase
+      .from("organizations")
+      .select("*")
+      .eq("owner_id", userId)
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .maybeSingle();
 
-    const { error: delOrgsErr } = await supabase.from("organizations").delete().eq("owner_id", userId);
-    if (delOrgsErr) throw delOrgsErr;
+    if (findOrgErr) throw findOrgErr;
 
-    // 1. Create Organization
     const orgPayload = {
       owner_id: userId,
       organization_name: metadata.businessName || "Default Organization",
@@ -120,26 +127,48 @@ export async function finalizeOnboarding(userId, metadata) {
       country: metadata.country || null,
       gst_number: metadata.gstNumber || null,
       status: "active",
-      created_at: now,
       updated_at: now,
     };
 
-    const { data: orgData, error: orgError } = await supabase
-      .from("organizations")
-      .insert(orgPayload)
-      .select()
-      .single();
+    let orgData;
+    if (existingOrg) {
+      const { data: updatedOrg, error: updateOrgErr } = await supabase
+        .from("organizations")
+        .update(orgPayload)
+        .eq("id", existingOrg.id)
+        .select()
+        .single();
 
-    if (orgError) throw orgError;
-    createdEntities.orgId = orgData.id;
+      if (updateOrgErr) throw updateOrgErr;
+      orgData = updatedOrg;
+    } else {
+      const { data: newOrg, error: insertOrgErr } = await supabase
+        .from("organizations")
+        .insert({
+          ...orgPayload,
+          created_at: now,
+        })
+        .select()
+        .single();
 
-    // 2. Create Shop
+      if (insertOrgErr) throw insertOrgErr;
+      orgData = newOrg;
+      tracking.isNewOrg = true;
+    }
+    tracking.orgId = orgData.id;
+
+    // 2. Shop Handling (Idempotent Check & Update/Insert)
+    const { data: existingShop, error: findShopErr } = await supabase
+      .from("shops")
+      .select("*")
+      .eq("owner_id", userId)
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .maybeSingle();
+
+    if (findShopErr) throw findShopErr;
+
     const category = metadata.businessCategory || "Fashion & Apparel";
-
-    const cleanDomain = (metadata.businessWebsite || "")
-      .trim()
-      .replace(/^https?:\/\//i, "")
-      .replace(/\/.*$/, "");
 
     const shopPayload = {
       owner_id: userId,
@@ -169,69 +198,119 @@ export async function finalizeOnboarding(userId, metadata) {
       language: metadata.defaultLanguage || "en",
       expected_visitors: metadata.monthlyVisitors || "10k-50k",
       number_of_agents: metadata.agentCount || "1-5",
-      created_at: now,
       updated_at: now,
     };
 
-    const { data: shopData, error: shopError } = await supabase
-      .from("shops")
-      .insert(shopPayload)
-      .select()
-      .single();
+    let shopData;
+    if (existingShop) {
+      const { data: updatedShop, error: updateShopErr } = await supabase
+        .from("shops")
+        .update(shopPayload)
+        .eq("id", existingShop.id)
+        .select()
+        .single();
 
-    if (shopError) throw shopError;
-    createdEntities.shopId = shopData.id;
+      if (updateShopErr) throw updateShopErr;
+      shopData = updatedShop;
+    } else {
+      const { data: newShop, error: insertShopErr } = await supabase
+        .from("shops")
+        .insert({
+          ...shopPayload,
+          created_at: now,
+        })
+        .select()
+        .single();
 
-    // 3. Create Widget Credentials
-    const secureCreds = generateSecureWidgetCredentials();
-
-    const credsData = await saveWidgetCredentials({
-      shop_id: shopData.id,
-      key_id: secureCreds.key_id,
-      public_key: secureCreds.public_key,
-      private_secret: secureCreds.private_secret,
-      webhook_secret: secureCreds.webhook_secret,
-    });
-
-    if (!credsData || !credsData.id) {
-      throw new Error("Failed to generate widget credentials securely.");
+      if (insertShopErr) throw insertShopErr;
+      shopData = newShop;
+      tracking.isNewShop = true;
     }
-    createdEntities.credentialsId = credsData.id;
+    tracking.shopId = shopData.id;
+
+    // 3. Widget Credentials Handling (Preserve existing keys if present)
+    let credsData = await getWidgetCredentials(shopData.id);
+
+    if (!credsData) {
+      const secureCreds = generateSecureWidgetCredentials();
+      credsData = await saveWidgetCredentials({
+        shop_id: shopData.id,
+        key_id: secureCreds.key_id,
+        public_key: secureCreds.public_key,
+        private_secret: secureCreds.private_secret,
+        webhook_secret: secureCreds.webhook_secret,
+      });
+
+      if (!credsData || !credsData.id) {
+        throw new Error("Failed to generate widget credentials securely.");
+      }
+      tracking.isNewCreds = true;
+    }
+    tracking.credentialsId = credsData.id;
 
     // Also update widget keys on shops table for backward compatibility
-    await supabase
-      .from("shops")
-      .update({
-        widget_key: secureCreds.key_id,
-        api_key: secureCreds.public_key,
-      })
-      .eq("id", shopData.id);
+    if (credsData.key_id || credsData.public_key) {
+      await supabase
+        .from("shops")
+        .update({
+          widget_key: credsData.key_id || credsData.widget_key,
+          api_key: credsData.public_key || credsData.public_api_key,
+        })
+        .eq("id", shopData.id);
+    }
 
-    // 4. Create Subscription
+    // 4. Subscription Handling (Idempotent Check & Update/Insert)
+    const { data: existingSub, error: findSubErr } = await supabase
+      .from("subscriptions")
+      .select("*")
+      .eq("shop_id", shopData.id)
+      .maybeSingle();
+
+    if (findSubErr) throw findSubErr;
+
     const trialEndDate = new Date();
     trialEndDate.setDate(trialEndDate.getDate() + 14);
+
+    const selectedPlan = metadata.selectedPlan || "starter";
 
     const subscriptionPayload = {
       shop_id: shopData.id,
       user_id: userId,
       owner_id: userId,
-      plan: metadata.selectedPlan || "growth",
-      plan_name: metadata.selectedPlan || "growth",
-      status: metadata.selectedPlan === "starter" ? "trialing" : "incomplete",
+      plan: selectedPlan,
+      plan_name: selectedPlan,
+      status: selectedPlan === "starter" ? "trialing" : "incomplete",
       billing_cycle: "monthly",
       trial_end: trialEndDate.toISOString(),
-      created_at: now,
       updated_at: now,
     };
 
-    const { data: subData, error: subError } = await supabase
-      .from("subscriptions")
-      .insert(subscriptionPayload)
-      .select()
-      .single();
+    let subData;
+    if (existingSub) {
+      const { data: updatedSub, error: updateSubErr } = await supabase
+        .from("subscriptions")
+        .update(subscriptionPayload)
+        .eq("id", existingSub.id)
+        .select()
+        .single();
 
-    if (subError) throw subError;
-    createdEntities.subscriptionId = subData.id;
+      if (updateSubErr) throw updateSubErr;
+      subData = updatedSub;
+    } else {
+      const { data: newSub, error: insertSubErr } = await supabase
+        .from("subscriptions")
+        .insert({
+          ...subscriptionPayload,
+          created_at: now,
+        })
+        .select()
+        .single();
+
+      if (insertSubErr) throw insertSubErr;
+      subData = newSub;
+      tracking.isNewSub = true;
+    }
+    tracking.subscriptionId = subData.id;
 
     // 5. Update profile current_onboarding_step to 5 (installation)
     const { error: profileError } = await supabase
@@ -255,27 +334,26 @@ export async function finalizeOnboarding(userId, metadata) {
       metadata: { businessName: metadata.businessName },
     });
 
-    // Log widget credentials generation audit event
-    await createAuditLog({
-      userId,
-      organizationId: orgData.id,
-      shopId: shopData.id,
-      action: "widget_generation",
-      resource: "widget",
-      resourceId: credsData.id,
-    });
+    if (tracking.isNewCreds) {
+      await createAuditLog({
+        userId,
+        organizationId: orgData.id,
+        shopId: shopData.id,
+        action: "widget_generation",
+        resource: "widget",
+        resourceId: credsData.id,
+      });
 
-    // Log API keys generation audit event
-    await createAuditLog({
-      userId,
-      organizationId: orgData.id,
-      shopId: shopData.id,
-      action: "api_key_generation",
-      resource: "widget",
-      resourceId: credsData.id,
-    });
+      await createAuditLog({
+        userId,
+        organizationId: orgData.id,
+        shopId: shopData.id,
+        action: "api_key_generation",
+        resource: "widget",
+        resourceId: credsData.id,
+      });
+    }
 
-    // Log subscription selection audit event
     await createAuditLog({
       userId,
       organizationId: orgData.id,
@@ -296,20 +374,21 @@ export async function finalizeOnboarding(userId, metadata) {
   } catch (error) {
     console.error("Error during finalizeOnboarding, starting rollback...", error);
 
-    // Manual Rollback implementation to prevent orphan data
-    if (createdEntities.subscriptionId) {
-      await supabase.from("subscriptions").delete().eq("id", createdEntities.subscriptionId);
+    // Roll back only newly created entities to prevent orphan data while preserving pre-existing data
+    if (tracking.isNewSub && tracking.subscriptionId) {
+      await supabase.from("subscriptions").delete().eq("id", tracking.subscriptionId);
     }
-    if (createdEntities.credentialsId) {
-      await supabase.from("widget_credentials").delete().eq("id", createdEntities.credentialsId);
+    if (tracking.isNewCreds && tracking.credentialsId) {
+      await supabase.from("widget_credentials").delete().eq("id", tracking.credentialsId);
     }
-    if (createdEntities.shopId) {
-      await supabase.from("shops").delete().eq("id", createdEntities.shopId);
+    if (tracking.isNewShop && tracking.shopId) {
+      await supabase.from("shops").delete().eq("id", tracking.shopId);
     }
-    if (createdEntities.orgId) {
-      await supabase.from("organizations").delete().eq("id", createdEntities.orgId);
+    if (tracking.isNewOrg && tracking.orgId) {
+      await supabase.from("organizations").delete().eq("id", tracking.orgId);
     }
 
-    throw new Error(error.message || "Failed to finalize onboarding. Rollback completed.");
+    throw new Error(error.message || "Failed to finalize onboarding. Selective rollback completed.");
   }
 }
+

@@ -43,13 +43,13 @@ export default function AdminAnalyticsPage() {
         // 1. Fetch Call Logs stats
         const { data: calls, error: callsErr } = await supabase
           .from("call_logs")
-          .select("id, duration_seconds, status, shop_id, shops(shop_name)");
+          .select("id, duration_seconds, status, shop_id, answered_at, ringing_at, started_at, wait_time_seconds, revenue_generated, shops(shop_name)");
         
         const count = calls?.length || 0;
         setTotalCalls(count);
 
         // Calculate average call duration (where connected)
-        const connectedCalls = calls?.filter(c => c.status === "completed" || c.status === "connected") || [];
+        const connectedCalls = calls?.filter(c => c.status === "completed" || c.status === "connected" || (c.duration_seconds || 0) > 0) || [];
         if (connectedCalls.length > 0) {
           const totalSec = connectedCalls.reduce((acc, c) => acc + parseInt(c.duration_seconds || 0), 0);
           const avgSec = Math.round(totalSec / connectedCalls.length);
@@ -57,7 +57,7 @@ export default function AdminAnalyticsPage() {
           const s = avgSec % 60;
           setAvgCallDuration(`${m}m ${s}s`);
         } else {
-          setAvgCallDuration("2m 14s"); // Fallback mock average
+          setAvgCallDuration("0m 0s");
         }
 
         // 2. Revenue metrics — marketplace orders removed, set to 0

@@ -185,13 +185,11 @@ export default function SellerWidgetPage() {
   }
 
   // Copy code snippet
-  const widgetLoaderUrl = `${window.location.origin}/widget-loader.js`;
   const currentWidgetKey = shop?.widget_key || "UNCONFIGURED_KEY_CLICK_ROTATE";
-  const snippetCode = `<!-- BridgeOne Live Video Call Widget Embed -->
-<script>
-  window.BridgeOneConfig = { shopId: "${shopId}", widgetKey: "${currentWidgetKey}" };
-</script>
-<script src="${widgetLoaderUrl}" async></script>`;
+  const snippetCode = getStandardEmbedScript({
+    shopId,
+    widgetKey: currentWidgetKey,
+  });
 
   function handleCopySnippet() {
     navigator.clipboard.writeText(snippetCode);
@@ -200,20 +198,22 @@ export default function SellerWidgetPage() {
     setTimeout(() => setCopied(false), 2000);
   }
 
-  async function handleRotateToken() {
-    if (!shopId) return;
-    if (window.confirm("Are you sure you want to rotate your widget API key? This will require updating the script integration embed token on your client website.")) {
-      setRotatingToken(true);
-      try {
-        await rotateWidgetToken(shopId);
+  function handleRotateToken() {
+    setShowRotateModal(true);
+  }
 
-        toast.success("Security token rotated. Embed code updated.");
-        reloadShop();
-      } catch (err) {
-        toast.error(err.message || "Failed to rotate token");
-      } finally {
-        setRotatingToken(false);
-      }
+  async function handleConfirmRotateToken() {
+    if (!shopId) return;
+    setRotatingToken(true);
+    try {
+      await rotateWidgetToken(shopId);
+      toast.success("Security token rotated. Embed code updated.");
+      reloadShop();
+      setShowRotateModal(false);
+    } catch (err) {
+      toast.error(err.message || "Failed to rotate token");
+    } finally {
+      setRotatingToken(false);
     }
   }
 
@@ -784,8 +784,15 @@ export default function SellerWidgetPage() {
               </div>
             </>
           )}
-        </div>
-      )}
+      {/* Rotate Key Confirmation Modal */}
+      <RotateKeyModal
+        isOpen={showRotateModal}
+        onClose={() => setShowRotateModal(false)}
+        onConfirm={handleConfirmRotateToken}
+        shopName={shop.name}
+        currentKey={currentWidgetKey}
+        isLoading={rotatingToken}
+      />
 
     </div>
   );

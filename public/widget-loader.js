@@ -265,22 +265,31 @@
 
     let isOpen = false;
 
+    function openWidget() {
+      isOpen = true;
+      container.style.display = "block";
+      launcher.innerHTML = closeIcon;
+      setTimeout(() => {
+        container.classList.add("active");
+      }, 10);
+    }
+
+    function closeWidget() {
+      isOpen = false;
+      container.classList.remove("active");
+      launcher.innerHTML = videoIcon;
+      launcher.appendChild(indicator);
+      setTimeout(() => {
+        if (!isOpen) container.style.display = "none";
+      }, 250);
+    }
+
     // Click handler
     launcher.addEventListener("click", () => {
-      isOpen = !isOpen;
       if (isOpen) {
-        container.style.display = "block";
-        launcher.innerHTML = closeIcon;
-        setTimeout(() => {
-          container.classList.add("active");
-        }, 10);
+        closeWidget();
       } else {
-        container.classList.remove("active");
-        launcher.innerHTML = videoIcon;
-        launcher.appendChild(indicator);
-        setTimeout(() => {
-          if (!isOpen) container.style.display = "none";
-        }, 250);
+        openWidget();
       }
     });
 
@@ -289,14 +298,188 @@
       if (event.origin !== hostUrl) return;
 
       if (event.data === "close-widget") {
-        isOpen = false;
-        container.classList.remove("active");
-        launcher.innerHTML = videoIcon;
-        launcher.appendChild(indicator);
-        setTimeout(() => {
-          container.style.display = "none";
-        }, 250);
+        closeWidget();
       }
     });
+
+    // Proactive Popins Engine
+    fetchAndInitPopins(targetShopId, position, openWidget);
+  }
+
+  function fetchAndInitPopins(targetShopId, position, openWidgetFn) {
+    const fetchUrl = `${SUPABASE_URL}/rest/v1/popins?shop_id=eq.${encodeURIComponent(targetShopId)}&is_active=eq.true&select=*`;
+    fetch(fetchUrl, {
+      method: "GET",
+      headers: {
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => res.json())
+      .then(popins => {
+        if (!popins || !Array.isArray(popins) || popins.length === 0) return;
+
+        const currentPath = window.location.pathname;
+        const currentUrl = window.location.href;
+
+        const activeRule = popins.find(p => {
+          const freqKey = `b1_popin_${p.id}`;
+          if (p.frequency_limit === 'once_per_session' && sessionStorage.getItem(freqKey)) return false;
+          if (p.frequency_limit === 'once_per_visitor' && localStorage.getItem(freqKey)) return false;
+
+          if (p.page_target_type === 'specific') {
+            const urls = p.page_target_urls || [];
+            if (urls.length > 0 && !urls.some(u => currentPath.includes(u) || currentUrl.includes(u))) {
+              return false;
+            }
+          } else if (p.page_target_type === 'exclude') {
+            const urls = p.page_target_urls || [];
+            if (urls.some(u => currentPath.includes(u) || currentUrl.includes(u))) {
+              return false;
+            }
+          }
+
+          return true;
+        });
+
+        if (!activeRule) return;
+
+        const triggerPopin = () => {
+          showPopinCard(activeRule, position, openWidgetFn);
+        };
+
+        if (activeRule.trigger_type === 'delay') {
+          const delayMs = (activeRule.trigger_delay_seconds || 5) * 1000;
+          setTimeout(triggerPopin, delayMs);
+        } else if (activeRule.trigger_type === 'exit_intent') {
+          let triggered = false;
+          const handleMouseLeave = (e) => {
+            if (e.clientY <= 5 && !triggered) {
+              triggered = true;
+              document.removeEventListener('mouseleave', handleMouseLeave);
+              triggerPopin();
+            }
+          };
+          document.addEventListener('mouseleave', handleMouseLeave);
+        } else if (activeRule.trigger_type === 'scroll') {
+          let triggered = false;
+          const targetPercent = activeRule.trigger_scroll_percent || 50;
+          const handleScroll = () => {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercent = (scrollTop / (scrollHeight || 1)) * 100;
+            if (scrollPercent >= targetPercent && !triggered) {
+              triggered = true;
+              window.removeEventListener('scroll', handleScroll);
+              triggerPopin();
+            }
+          };
+          window.addEventListener('scroll', handleScroll);
+        } else {
+          setTimeout(triggerPopin, 3000);
+        }
+      })
+      .catch(err => {
+        console.warn("[BridgeOne] Popin fetch warning:", err.message);
+      });
+  }
+
+  function showPopinCard(rule, position, openWidgetFn) {
+    const freqKey = `b1_popin_${rule.id}`;
+    sessionStorage.setItem(freqKey, "1");
+    localStorage.setItem(freqKey, "1");
+
+    // Track impression
+    try {
+      fetch(`${SUPABASE_URL}/rest/v1/rpc/increment_popin_impressions`, {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ p_popin_id: rule.id })
+      }).catch(() => {});
+    } catch (e) {}
+
+    const popinEl = document.createElement("div");
+    const isRight = position === "bottom-right";
+    const themeColor = rule.theme_color || "#2563eb";
+
+    popinEl.style.cssText = `
+      position: fixed;
+      bottom: 96px;
+      ${isRight ? "right: 24px;" : "left: 24px;"}
+      width: 320px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.05);
+      padding: 16px;
+      z-index: 999997;
+      font-family: system-ui, -apple-system, sans-serif;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: translateY(20px) scale(0.95);
+      opacity: 0;
+    `;
+
+    popinEl.innerHTML = `
+      <div style="display: flex; items-center; justify-content: space-between; margin-bottom: 8px;">
+        <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; tracking-wider; color: ${themeColor}; background: ${themeColor}15; padding: 2px 8px; border-radius: 9999px;">
+          Live Assistance
+        </span>
+        <button id="b1-popin-close" style="background: none; border: none; cursor: pointer; color: #94a3b8; padding: 2px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 700; color: #0f172a;">${rule.title}</h4>
+      <p style="margin: 0 0 14px 0; font-size: 12px; color: #64748b; line-height: 1.4;">${rule.message}</p>
+      <button id="b1-popin-cta" style="width: 100%; background: ${themeColor}; color: white; border: none; border-radius: 10px; padding: 10px 14px; font-size: 12px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;">
+        ${rule.cta_text || "Talk to Expert Live"}
+      </button>
+    `;
+
+    document.body.appendChild(popinEl);
+
+    setTimeout(() => {
+      popinEl.style.transform = "translateY(0) scale(1)";
+      popinEl.style.opacity = "1";
+    }, 50);
+
+    const closeBtn = popinEl.querySelector("#b1-popin-close");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        popinEl.style.opacity = "0";
+        popinEl.style.transform = "translateY(10px) scale(0.95)";
+        setTimeout(() => popinEl.remove(), 300);
+      });
+    }
+
+    const ctaBtn = popinEl.querySelector("#b1-popin-cta");
+    if (ctaBtn) {
+      ctaBtn.addEventListener("click", () => {
+        // Track conversion
+        try {
+          fetch(`${SUPABASE_URL}/rest/v1/rpc/increment_popin_conversions`, {
+            method: "POST",
+            headers: {
+              "apikey": SUPABASE_ANON_KEY,
+              "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ p_popin_id: rule.id })
+          }).catch(() => {});
+        } catch (e) {}
+
+        popinEl.style.opacity = "0";
+        setTimeout(() => popinEl.remove(), 200);
+
+        if (rule.cta_action === "custom_url" && rule.cta_url) {
+          window.open(rule.cta_url, "_blank");
+        } else {
+          openWidgetFn();
+        }
+      });
+    }
   }
 })();

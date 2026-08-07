@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Pencil, Trash2, Star, ToggleLeft, ToggleRight, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { Pencil, Trash2, Star, ToggleLeft, ToggleRight, ArrowUpDown, ArrowUp, ArrowDown, Share2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { useDeleteProduct, useUpdateProduct } from "../hooks/useProducts";
@@ -17,6 +17,7 @@ export default function ProductList({
   selectedIds = [],
   onSelectChange,
   onEdit,
+  onShare,
   onAddProduct,
 }) {
   const deleteProduct = useDeleteProduct();
@@ -260,9 +261,16 @@ export default function ProductList({
                         <p className="truncate font-bold text-slate-900 text-sm max-w-[180px]">
                           {product.name}
                         </p>
-                        <p className="mt-0.5 text-[10px] text-slate-500 font-mono">
-                          SKU: {product.sku}
-                        </p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <p className="text-[10px] text-slate-500 font-mono">
+                            SKU: {product.sku}
+                          </p>
+                          {product.metadata?.has_variants && product.metadata?.variants?.length > 0 && (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200/60 text-[9px] font-bold">
+                              {product.metadata.variants.length} Variants
+                            </span>
+                          )}
+                        </div>
                         {(product.featured || product.is_featured) && (
                           <div className="mt-1 flex items-center gap-1 text-amber-600 font-semibold">
                             <Star className="h-3 w-3 fill-amber-400" />
@@ -328,6 +336,16 @@ export default function ProductList({
                   {/* Actions */}
                   <td className="px-6 py-5 align-middle text-right">
                     <div className="flex items-center justify-end gap-2.5">
+
+                      {onShare && (
+                        <button
+                          onClick={() => onShare(product)}
+                          title="Share Product"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white shadow-sm/40 text-blue-600 hover:text-blue-700 hover:border-blue-300 hover:bg-blue-50 transition-all cursor-pointer"
+                        >
+                          <Share2 className="h-4 w-4" />
+                        </button>
+                      )}
 
                       <button
                         onClick={() => onEdit(product)}

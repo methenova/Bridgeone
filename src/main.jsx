@@ -10,9 +10,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { Toaster } from "react-hot-toast";
 import { telemetryService } from "@/services/telemetry/telemetryService";
+import { errorMonitoringService } from "@/services/telemetry/errorMonitoring.service";
 
-// Initialize global production telemetry and error listeners
+// Initialize global production telemetry and error monitoring listeners
 telemetryService.init();
+errorMonitoringService.init();
 
 const queryClient = new QueryClient({
   defaultOptions: {

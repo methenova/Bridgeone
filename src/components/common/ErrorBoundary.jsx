@@ -1,5 +1,6 @@
 import React from "react";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
+import { errorMonitoringService } from "@/services/telemetry/errorMonitoring.service";
 
 export class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -13,6 +14,7 @@ export class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     console.error("[ErrorBoundary] Caught uncaught React error:", error, errorInfo);
+    errorMonitoringService.captureReactError(error, errorInfo);
   }
 
   handleReset = () => {

@@ -10,6 +10,7 @@ import {
   bulkDeleteProducts,
   bulkUpdateStatus,
   getCategories,
+  createCategory,
 } from "../services/product.service";
 
 // ─────────────────────────────────────────────────────────────
@@ -48,13 +49,28 @@ export function useProduct(productId) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// GET CATEGORIES
+// GET & CREATE CATEGORIES
 // ─────────────────────────────────────────────────────────────
 export function useCategories() {
   return useQuery({
     queryKey: productKeys.categories(),
     queryFn: getCategories,
     staleTime: 1000 * 60 * 10, // 10 minutes — categories rarely change
+  });
+}
+
+export function useCreateCategory() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ name, description }) => createCategory(name, description),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: productKeys.categories() });
+      toast.success(`Category "${data.name}" created!`);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to create category");
+    },
   });
 }
 

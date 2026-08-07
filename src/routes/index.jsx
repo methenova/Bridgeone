@@ -52,6 +52,7 @@ const CallHistoryPage = lazy(() => import("@/features/seller/pages/CallHistoryPa
 const CallbacksPage = lazy(() => import("@/features/seller/pages/CallbacksPage"));
 const SellerAgentsPage = lazy(() => import("@/features/seller/pages/SellerAgentsPage"));
 const SellerWidgetPage = lazy(() => import("@/features/seller/pages/SellerWidgetPage"));
+const SellerPopinsPage = lazy(() => import("@/features/seller/pages/SellerPopinsPage"));
 const SellerNotificationsPage = lazy(() => import("@/features/seller/pages/SellerNotificationsPage"));
 const SellerIntegrationsPage = lazy(() => import("@/features/seller/pages/SellerIntegrationsPage"));
 const OnboardingProfilePage = lazy(() => import("@/features/onboarding/pages/OnboardingProfilePage"));
@@ -74,8 +75,8 @@ const AdminAnalyticsPage = lazy(() => import("@/features/admin/pages/AdminAnalyt
 const AdminSupportPage = lazy(() => import("@/features/admin/pages/AdminSupportPage"));
 const AdminNotificationsPage = lazy(() => import("@/features/admin/pages/AdminNotificationsPage"));
 const AdminAuditLogsPage = lazy(() => import("@/features/admin/pages/AdminAuditLogsPage"));
-const AdminDeveloperPage = lazy(() => import("@/features/admin/pages/AdminDeveloperPage"));
 const AdminSystemHealthPage = lazy(() => import("@/features/admin/pages/AdminSystemHealthPage"));
+const AdminObservabilityPage = lazy(() => import("@/features/admin/pages/AdminObservabilityPage"));
 const AdminCallsPage = lazy(() => import("@/features/admin/pages/AdminCallsPage"));
 const AdminSettingsPage = lazy(() => import("@/features/admin/pages/AdminSettingsPage"));
 
@@ -249,6 +250,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "popins",
+        element: (
+          <ProtectedRoute allowedRoles={["owner", "seller"]}>
+            {Loadable(SellerPopinsPage)}
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "notifications",
         element: (
           <ProtectedRoute allowedRoles={["owner", "seller"]}>
@@ -401,6 +410,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["admin", "super_admin"]}>
             {Loadable(AdminSystemHealthPage)}
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "observability",
+        element: (
+          <ProtectedRoute allowedRoles={["admin", "super_admin"]}>
+            {Loadable(AdminObservabilityPage)}
           </ProtectedRoute>
         ),
       },

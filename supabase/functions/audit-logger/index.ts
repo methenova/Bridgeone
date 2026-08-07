@@ -57,6 +57,20 @@ serve(async (req) => {
                       "127.0.0.1";
     const userAgent = req.headers.get("user-agent") || "Web Browser";
 
+    // Database-backed rate limiting (Max 60 audit logs per user per minute)
+    try {
+      const { data: hitCount } = await supabaseAdmin.rpc("increment_rate_limit", {
+        rate_key: `audit_log:${user.id}`,
+        window_seconds: 60
+      });
+      if (hitCount && hitCount > 60) {
+        return new Response(
+          JSON.stringify({ error: "Audit logging rate limit exceeded." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    } catch (_rateErr) {}
+
     // Insert audit log to database (preventing spoofing by forcing auth user id)
     const { data, error } = await supabaseAdmin
       .from("audit_logs")

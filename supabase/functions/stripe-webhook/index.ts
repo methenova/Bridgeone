@@ -16,10 +16,18 @@ serve(async (req) => {
   try {
     const stripeSecret = Deno.env.get("STRIPE_SECRET_KEY");
     const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
-    if (!stripeSecret || !webhookSecret) {
+    const missingSecrets: string[] = [];
+    if (!stripeSecret) missingSecrets.push("STRIPE_SECRET_KEY");
+    if (!webhookSecret) missingSecrets.push("STRIPE_WEBHOOK_SECRET");
+    if (!supabaseUrl) missingSecrets.push("SUPABASE_URL");
+    if (!supabaseServiceKey) missingSecrets.push("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (missingSecrets.length > 0) {
       return new Response(
-        JSON.stringify({ error: "Stripe configuration parameters missing on server." }),
+        JSON.stringify({ error: `Configuration error: Missing required production secret(s): ${missingSecrets.join(", ")}.` }),
         { status: 500, headers: corsHeaders }
       );
     }

@@ -18,6 +18,7 @@ import ProductList from "../components/ProductList";
 import ProductPagination from "../components/ProductPagination";
 import BulkActionBar from "../components/BulkActionBar";
 import ProductForm from "../components/ProductForm";
+import ProductShareModal from "../components/ProductShareModal";
 
 // ─────────────────────────────────────────────────────────────
 // No Shop State
@@ -171,6 +172,9 @@ export default function ProductsPage() {
     clearSelection();
   }
 
+  // ── Share modal ─────────────────────────────────────────────
+  const [sharingProduct, setSharingProduct] = useState(null);
+
   // ── Drawer (add / edit) ────────────────────────────────────
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -247,6 +251,7 @@ export default function ProductsPage() {
           selectedIds={selectedIds}
           onSelectChange={setSelectedIds}
           onEdit={openEditDrawer}
+          onShare={(product) => setSharingProduct(product)}
           onAddProduct={openAddDrawer}
         />
       </div>
@@ -280,6 +285,14 @@ export default function ProductsPage() {
         shopId={shopId}
         shopName={shop.name}
         onClose={closeDrawer}
+      />
+
+      {/* ── Product Share Modal ───────────────────────────────── */}
+      <ProductShareModal
+        isOpen={Boolean(sharingProduct)}
+        product={sharingProduct}
+        shopId={shopId}
+        onClose={() => setSharingProduct(null)}
       />
 
     </div>

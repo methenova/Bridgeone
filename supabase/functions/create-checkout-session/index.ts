@@ -18,16 +18,22 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: corsHeaders });
     }
 
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     const stripeSecret = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeSecret) {
+
+    const missingSecrets: string[] = [];
+    if (!supabaseUrl) missingSecrets.push("SUPABASE_URL");
+    if (!supabaseServiceKey) missingSecrets.push("SUPABASE_SERVICE_ROLE_KEY");
+    if (!stripeSecret) missingSecrets.push("STRIPE_SECRET_KEY");
+
+    if (missingSecrets.length > 0) {
       return new Response(
-        JSON.stringify({ error: "Stripe integration credentials not configured on backend." }),
+        JSON.stringify({ error: `Configuration error: Missing required production secret(s): ${missingSecrets.join(", ")}.` }),
         { status: 500, headers: corsHeaders }
       );
     }
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
       auth: { persistSession: false },
     });
@@ -46,6 +52,28 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: "Missing required parameters: plan, shopId" }),
         { status: 400, headers: corsHeaders }
+      );
+    }
+
+    // Validate that user is an authorized member or owner of the target shop
+    const { data: isShopMember } = await supabaseAdmin
+      .from("shop_members")
+      .select("id")
+      .eq("shop_id", shopId)
+      .eq("profile_id", user.id)
+      .maybeSingle();
+
+    const { data: isShopOwner } = await supabaseAdmin
+      .from("shops")
+      .select("id")
+      .eq("id", shopId)
+      .eq("owner_id", user.id)
+      .maybeSingle();
+
+    if (!isShopMember && !isShopOwner) {
+      return new Response(
+        JSON.stringify({ error: "Forbidden: You are not an authorized member or owner of this shop." }),
+        { status: 403, headers: corsHeaders }
       );
     }
 

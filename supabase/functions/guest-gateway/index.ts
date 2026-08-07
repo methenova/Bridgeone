@@ -26,6 +26,14 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return new Response(
+        JSON.stringify({ error: "Configuration error: Missing required production secret(s): SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY." }),
+        { status: 500, headers: { ...buildCorsHeaders("null"), "Content-Type": "application/json" } }
+      );
+    }
+
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
       auth: { persistSession: false },
     });
@@ -55,15 +63,32 @@ serve(async (req) => {
       );
     }
 
-    // 4. Validate API Key / Widget Key
+    // 4. Validate API Key / Widget Key (Mandatory Authentication)
     const requestKey = apiKey || req.headers.get("x-api-key");
-    if (requestKey) {
-      const matchesApiKey = shop.api_key && shop.api_key === requestKey;
-      const matchesWidgetKey = shop.widget_key && shop.widget_key === requestKey;
-      if (!matchesApiKey && !matchesWidgetKey) {
+    if (!requestKey) {
+      return new Response(
+        JSON.stringify({ error: "Authentication required: Missing API Key or Widget Key" }),
+        { status: 401, headers: { ...buildCorsHeaders("null"), "Content-Type": "application/json" } }
+      );
+    }
+
+    const matchesApiKey = shop.api_key && shop.api_key === requestKey;
+    const matchesWidgetKey = shop.widget_key && shop.widget_key === requestKey;
+
+    if (!matchesApiKey && !matchesWidgetKey) {
+      // Check widget_credentials table for rotated or dynamic keys
+      const { data: validCred } = await supabaseAdmin
+        .from("widget_credentials")
+        .select("key_id")
+        .eq("shop_id", shopId)
+        .eq("key_id", requestKey)
+        .eq("is_revoked", false)
+        .maybeSingle();
+
+      if (!validCred) {
         return new Response(
           JSON.stringify({ error: "Invalid API Key or Widget Key" }),
-          { status: 401, headers: { ...buildCorsHeaders("*"), "Content-Type": "application/json" } }
+          { status: 401, headers: { ...buildCorsHeaders("null"), "Content-Type": "application/json" } }
         );
       }
     }
