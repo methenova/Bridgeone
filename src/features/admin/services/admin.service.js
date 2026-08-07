@@ -80,21 +80,17 @@ export async function getAdminShops() {
   });
 }
 
-// ─────────────────────────────────────────────────────────────
-// AUDIT LOG HELPER
-// ─────────────────────────────────────────────────────────────
+import { createAuditLog } from "@/services/audit/audit.service";
+
 export async function writeAuditLog(action, module, status = "success") {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    await supabase.from("audit_logs").insert({
-      user_id: user.id,
+    await createAuditLog({
       action,
-      module,
-      status,
-      ip_address: "127.0.0.1",
-      browser: navigator.userAgent || "Chrome Client"
+      resource: module || "system",
+      metadata: { status, user_agent: typeof navigator !== "undefined" ? navigator.userAgent : "Chrome Client" }
     });
   } catch (err) {
     console.warn("Failed to write audit log:", err);

@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
+import { createAuditLog } from "@/services/audit/audit.service";
 
 export default function ManagementDashboardPage() {
   const { profile } = useAuthContext();
@@ -102,9 +103,9 @@ export default function ManagementDashboardPage() {
       if (error) throw error;
 
       // Log audit trail
-      await supabase.from("audit_logs").insert({
-        actor_id: profile.id,
+      await createAuditLog({
         action: "force_kill_all_rooms",
+        resource: "video_rooms",
         metadata: { timestamp: new Date().toISOString(), result: "success" }
       });
 
@@ -123,9 +124,9 @@ export default function ManagementDashboardPage() {
     setTimeout(async () => {
       try {
         // Log audit log
-        await supabase.from("audit_logs").insert({
-          actor_id: profile.id,
+        await createAuditLog({
           action: "flush_cache",
+          resource: "redis_cache",
           metadata: { target: "all_redis_nodes" }
         });
         toast.success("Redis memory flushed and CDN edge cache purged!");
@@ -144,9 +145,9 @@ export default function ManagementDashboardPage() {
     setTimeout(async () => {
       try {
         // Log audit log
-        await supabase.from("audit_logs").insert({
-          actor_id: profile.id,
+        await createAuditLog({
           action: "database_optimization",
+          resource: "postgres_database",
           metadata: { task: "vacuum_analyze_tables" }
         });
         toast.success("Database optimization index rebuilding and table vacuum completed!");
@@ -182,9 +183,9 @@ export default function ManagementDashboardPage() {
         if (error) throw error;
       }
 
-      await supabase.from("audit_logs").insert({
-        actor_id: profile.id,
+      await createAuditLog({
         action: "global_broadcast",
+        resource: "notifications",
         metadata: { message: alertText.trim() }
       });
 
