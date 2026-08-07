@@ -4,15 +4,19 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import ProtectedRoute from "@/components/common/ProtectedRoute";
 import { RoleSettingsPage, RoleCallsPage, RoleAnalyticsPage, RoleNotificationsPage } from "@/routes/RoleRouter";
 
+import ErrorBoundary from "@/components/common/ErrorBoundary";
+
 // Loadable utility wrapper
 const Loadable = (Component) => (
-  <Suspense fallback={
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-600">
-      <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-blue-600" />
-    </div>
-  }>
-    <Component />
-  </Suspense>
+  <ErrorBoundary>
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-600">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-blue-600" />
+      </div>
+    }>
+      <Component />
+    </Suspense>
+  </ErrorBoundary>
 );
 
 // Layouts
