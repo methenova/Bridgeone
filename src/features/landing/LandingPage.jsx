@@ -244,8 +244,7 @@ function CinematicHero() {
 
         {/* ── HERO FLOATING INTERFACE SHOWCASE (Vertical Circular One-By-One Carousel) ── */}
         <div
-          className="relative w-full flex flex-col items-center justify-center mt-8 lg:mt-0 py-2"
-          style={{ perspective: "1400px" }}
+          className="relative w-full flex flex-col items-center justify-center mt-6 lg:mt-0 py-2 overflow-hidden px-2 sm:px-0"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
@@ -256,63 +255,62 @@ function CinematicHero() {
               rotate: [0, 180, 360],
             }}
             transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[520px] h-[340px] sm:h-[520px] bg-gradient-to-tr from-fuchsia-500/20 via-pink-400/20 to-purple-400/20 rounded-[45%] blur-3xl z-0 pointer-events-none"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] sm:w-[520px] h-[280px] sm:h-[520px] bg-gradient-to-tr from-fuchsia-500/20 via-pink-400/20 to-purple-400/20 rounded-[45%] blur-3xl z-0 pointer-events-none"
           />
 
-          {/* 3D Vertical Circular Stage Container */}
-          <div className="relative w-full max-w-[440px] min-h-[460px] sm:min-h-[480px] flex items-center justify-center z-20 px-2 sm:px-0">
+          {/* 3D Circular Stage Container */}
+          <div className="relative w-full max-w-[440px] flex items-center justify-center z-20">
             <AnimatePresence mode="wait">
               {/* SLIDE 0: Luxe Apparel Product Offer Card */}
               {activeSlide === 0 && (
                 <motion.div
                   key="slide-product"
-                  initial={{ opacity: 0, rotateX: 65, y: 140, scale: 0.82 }}
-                  animate={{ opacity: 1, rotateX: 0, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, rotateX: -65, y: -140, scale: 0.82 }}
-                  transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                  style={{ transformStyle: "preserve-3d" }}
+                  initial={{ opacity: 0, scale: 0.9, y: 30 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: -30 }}
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="w-full"
                 >
-                  <div className="bg-white/95 backdrop-blur-2xl p-5 sm:p-8 rounded-3xl border border-white shadow-2xl shadow-fuchsia-500/15 space-y-5 sm:space-y-6">
-                    <div className="flex justify-between items-center pb-3.5 border-b border-slate-100">
-                      <div className="flex items-center gap-2.5 sm:gap-3">
-                        <div className="h-10 sm:h-11 w-10 sm:w-11 rounded-2xl bg-slate-950 text-white font-extrabold flex items-center justify-center text-xs sm:text-sm shadow-md">
+                  <div className="bg-white/95 backdrop-blur-2xl p-4 sm:p-7 rounded-3xl border border-slate-200/80 shadow-2xl shadow-fuchsia-500/15 space-y-4 sm:space-y-6">
+                    <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+                      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                        <div className="h-9 sm:h-11 w-9 sm:w-11 rounded-2xl bg-slate-950 text-white font-extrabold flex items-center justify-center text-[10px] sm:text-sm shadow-md shrink-0">
                           LUXE
                         </div>
-                        <div>
-                          <h4 className="font-bold text-xs sm:text-sm text-slate-900">Luxe Apparel & Accessories</h4>
-                          <p className="text-[10px] sm:text-xs text-slate-400">Interactive Demo Showcase</p>
+                        <div className="min-w-0">
+                          <h4 className="font-bold text-xs sm:text-sm text-slate-900 truncate">Luxe Apparel & Accessories</h4>
+                          <p className="text-[10px] sm:text-xs text-slate-400 truncate">Interactive Demo Showcase</p>
                         </div>
                       </div>
-                      <span className="px-2.5 py-1 rounded-full bg-fuchsia-50 text-fuchsia-600 text-[10px] sm:text-xs font-bold border border-fuchsia-100 shrink-0">
-                        Item #9482
+                      <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-fuchsia-50 text-fuchsia-600 text-[9px] sm:text-xs font-bold border border-fuchsia-100 shrink-0">
+                        #9482
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="h-36 sm:h-48 rounded-2xl bg-slate-50 border border-slate-200/60 flex flex-col items-center justify-center p-3 sm:p-4 text-center space-y-1.5 sm:space-y-2 shadow-inner">
-                        <ShoppingBag className="w-7 sm:w-9 h-7 sm:h-9 text-slate-400" />
-                        <span className="text-xs font-bold text-slate-700">Silk Cashmere Overcoat</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                      <div className="h-32 sm:h-44 rounded-2xl bg-slate-50 border border-slate-200/60 flex flex-col items-center justify-center p-3 text-center space-y-1 shadow-inner">
+                        <ShoppingBag className="w-6 sm:w-8 h-6 sm:h-8 text-slate-400" />
+                        <span className="text-[11px] sm:text-xs font-bold text-slate-700">Silk Cashmere Overcoat</span>
                         <span className="text-xs font-mono font-bold text-fuchsia-500">$1,450.00</span>
                       </div>
-                      <div className="space-y-2 sm:space-y-3 flex flex-col justify-center">
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-fuchsia-600 bg-fuchsia-50 px-2.5 py-1 rounded-full inline-block w-fit border border-fuchsia-200/50">
+                      <div className="space-y-1.5 sm:space-y-3 flex flex-col justify-center">
+                        <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-fuchsia-600 bg-fuchsia-50 px-2 py-0.5 rounded-full inline-block w-fit border border-fuchsia-200/50">
                           In Stock • Ready to Ship
                         </span>
-                        <h3 className="text-base sm:text-lg font-extrabold text-slate-900 leading-snug">
+                        <h3 className="text-sm sm:text-lg font-extrabold text-slate-900 leading-snug">
                           Tailored Italian Wool Blend
                         </h3>
-                        <p className="text-[11px] text-slate-500 leading-relaxed">
+                        <p className="text-[10px] sm:text-[11px] text-slate-500 leading-relaxed">
                           Handcrafted in Milan. Requires fitting advice or live sizing consultation?
                         </p>
                       </div>
                     </div>
 
-                    <div className="pt-2 flex items-center justify-between border-t border-slate-100 text-[11px] sm:text-xs font-bold text-slate-500">
-                      <span className="flex items-center gap-1.5 text-emerald-600">
-                        <CheckCircle2 className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> Live Fitting Advisor Online
+                    <div className="pt-2 flex items-center justify-between border-t border-slate-100 text-[10px] sm:text-xs font-bold text-slate-500">
+                      <span className="flex items-center gap-1 text-emerald-600">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Live Fitting Advisor Online
                       </span>
-                      <span className="text-fuchsia-500 text-[10px] sm:text-xs">Rotate Vertical ↻</span>
+                      <span className="text-fuchsia-500 text-[9px] sm:text-xs">Rotate ↻</span>
                     </div>
                   </div>
                 </motion.div>
@@ -322,15 +320,14 @@ function CinematicHero() {
               {activeSlide === 1 && (
                 <motion.div
                   key="slide-widget"
-                  initial={{ opacity: 0, rotateX: 65, y: 140, scale: 0.82 }}
-                  animate={{ opacity: 1, rotateX: 0, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, rotateX: -65, y: -140, scale: 0.82 }}
-                  transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                  style={{ transformStyle: "preserve-3d" }}
+                  initial={{ opacity: 0, scale: 0.9, y: 30 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: -30 }}
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="w-full"
                 >
-                  <div className="bg-white/95 backdrop-blur-2xl p-5 sm:p-7 rounded-3xl border border-white shadow-2xl shadow-slate-900/15 space-y-4">
-                    <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <div className="bg-white/95 backdrop-blur-2xl p-4 sm:p-7 rounded-3xl border border-slate-200/80 shadow-2xl shadow-slate-900/15 space-y-3.5 sm:space-y-4">
+                    <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
                       <div className="flex items-center gap-2">
                         <div className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
                         <span className="text-xs font-extrabold text-slate-900">BridgeOne Visitor Widget</span>
@@ -338,7 +335,7 @@ function CinematicHero() {
                       <span className="text-[10px] font-mono text-slate-400">v2.4.0</span>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-slate-100 text-[11px] font-bold">
+                    <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-slate-100 text-[10px] sm:text-[11px] font-bold">
                       {[
                         { id: "video", label: "Video", icon: Video },
                         { id: "chat", label: "Chat", icon: MessageSquare },
@@ -347,42 +344,42 @@ function CinematicHero() {
                         <button
                           key={m.id}
                           onClick={() => setActiveTab(m.id)}
-                          className={`py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${activeTab === m.id
+                          className={`py-1.5 sm:py-2 rounded-lg flex items-center justify-center gap-1 transition-all ${activeTab === m.id
                               ? "bg-white text-fuchsia-500 shadow-sm font-extrabold"
                               : "text-slate-600 hover:text-slate-900"
                             }`}
                         >
-                          <m.icon className="w-3.5 h-3.5" />
+                          <m.icon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                           <span>{m.label}</span>
                         </button>
                       ))}
                     </div>
 
-                    <div className="h-64 sm:h-72 rounded-2xl bg-slate-50 border border-slate-200/70 p-3.5 sm:p-4 flex flex-col justify-between relative overflow-hidden">
+                    <div className="h-56 sm:h-72 rounded-2xl bg-slate-50 border border-slate-200/70 p-3 sm:p-4 flex flex-col justify-between relative overflow-hidden">
                       {activeTab === "video" && (
-                        <div className="space-y-3 h-full flex flex-col justify-between">
+                        <div className="space-y-2.5 h-full flex flex-col justify-between">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <img
                                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
-                                className="w-8 h-8 rounded-full object-cover border border-fuchsia-500"
+                                className="w-7 h-7 rounded-full object-cover border border-fuchsia-500"
                                 alt="Agent"
                               />
                               <div>
-                                <p className="text-xs font-bold text-slate-900">Elena Rostova</p>
-                                <p className="text-[10px] text-emerald-600 font-semibold">Live Sales Advisor</p>
+                                <p className="text-[11px] font-bold text-slate-900">Elena Rostova</p>
+                                <p className="text-[9px] text-emerald-600 font-semibold">Live Sales Advisor</p>
                               </div>
                             </div>
-                            <span className="px-2 py-0.5 rounded bg-fuchsia-100 text-fuchsia-600 text-[10px] font-bold font-mono">
+                            <span className="px-1.5 py-0.5 rounded bg-fuchsia-100 text-fuchsia-600 text-[9px] font-bold font-mono">
                               02:14
                             </span>
                           </div>
 
-                          <div className="h-36 sm:h-44 rounded-xl bg-slate-900 relative overflow-hidden flex items-center justify-center shadow-md">
-                            <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded text-[9px] text-white font-bold">
+                          <div className="h-28 sm:h-44 rounded-xl bg-slate-900 relative overflow-hidden flex items-center justify-center shadow-md">
+                            <div className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 bg-black/60 backdrop-blur-md rounded text-[8px] sm:text-[9px] text-white font-bold">
                               Live 1080p Stream
                             </div>
-                            <div className="absolute bottom-2 right-2 flex items-end gap-1">
+                            <div className="absolute bottom-1.5 right-1.5 flex items-end gap-1">
                               {[6, 12, 8, 14, 10].map((h, i) => (
                                 <motion.div
                                   key={i}
@@ -394,11 +391,11 @@ function CinematicHero() {
                             </div>
                           </div>
 
-                          <div className="flex gap-2">
-                            <button className="flex-1 py-2 rounded-xl bg-slate-950 text-white font-bold text-xs shadow-sm hover:bg-black transition-colors">
+                          <div className="flex gap-1.5">
+                            <button className="flex-1 py-1.5 sm:py-2 rounded-xl bg-slate-950 text-white font-bold text-[10px] sm:text-xs shadow-sm hover:bg-black transition-colors">
                               Push Item to Cart
                             </button>
-                            <button className="px-3 rounded-xl bg-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-300 transition-colors">
+                            <button className="px-2.5 rounded-xl bg-slate-200 text-slate-700 font-bold text-[10px] sm:text-xs hover:bg-slate-300 transition-colors">
                               Mute
                             </button>
                           </div>
@@ -407,42 +404,42 @@ function CinematicHero() {
 
                       {activeTab === "chat" && (
                         <div className="h-full flex flex-col justify-between space-y-2">
-                          <div className="space-y-2 text-xs">
-                            <div className="bg-slate-950 text-white p-2.5 rounded-2xl rounded-tr-none max-w-[80%] ml-auto font-medium">
+                          <div className="space-y-1.5 text-[11px]">
+                            <div className="bg-slate-950 text-white p-2 rounded-2xl rounded-tr-none max-w-[85%] ml-auto font-medium">
                               Hi! Does the cashmere jacket fit true to size?
                             </div>
-                            <div className="bg-white border border-slate-200 text-slate-800 p-2.5 rounded-2xl rounded-tl-none max-w-[85%] font-medium shadow-xs">
+                            <div className="bg-white border border-slate-200 text-slate-800 p-2 rounded-2xl rounded-tl-none max-w-[88%] font-medium shadow-xs">
                               Hello! Yes, it features an Italian tailored fit. Would you like a live video demo?
                             </div>
                           </div>
-                          <div className="flex items-center gap-2 pt-2 border-t border-slate-200">
+                          <div className="flex items-center gap-1.5 pt-1.5 border-t border-slate-200">
                             <input
                               type="text"
                               readOnly
                               value="Yes please, show me live!"
-                              className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none"
+                              className="flex-1 bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-[10px] sm:text-xs text-slate-800 focus:outline-none"
                             />
-                            <button className="p-2 rounded-lg bg-slate-950 text-white">
-                              <Send className="w-3.5 h-3.5" />
+                            <button className="p-1.5 rounded-lg bg-slate-950 text-white">
+                              <Send className="w-3 h-3" />
                             </button>
                           </div>
                         </div>
                       )}
 
                       {activeTab === "audio" && (
-                        <div className="h-full flex flex-col justify-between items-center text-center p-4">
-                          <div className="w-12 h-12 rounded-full bg-fuchsia-50 border border-fuchsia-200 flex items-center justify-center text-fuchsia-500">
-                            <Phone className="w-6 h-6 animate-pulse" />
+                        <div className="h-full flex flex-col justify-between items-center text-center p-2 sm:p-4">
+                          <div className="w-10 h-10 rounded-full bg-fuchsia-50 border border-fuchsia-200 flex items-center justify-center text-fuchsia-500">
+                            <Phone className="w-5 h-5 animate-pulse" />
                           </div>
                           <div>
-                            <h5 className="font-bold text-xs text-slate-900">Crystal Clear Audio Call</h5>
-                            <p className="text-[10px] text-slate-400">Ultra-clear HD voice stream active</p>
+                            <h5 className="font-bold text-[11px] sm:text-xs text-slate-900">Crystal Clear Audio Call</h5>
+                            <p className="text-[9px] text-slate-400">Ultra-clear HD voice active</p>
                           </div>
-                          <div className="flex items-center gap-3">
-                            <button className="p-2.5 rounded-full bg-slate-200 text-slate-700">
-                              <Mic className="w-4 h-4" />
+                          <div className="flex items-center gap-2">
+                            <button className="p-2 rounded-full bg-slate-200 text-slate-700">
+                              <Mic className="w-3.5 h-3.5" />
                             </button>
-                            <button className="px-4 py-2 rounded-full bg-rose-600 text-white font-bold text-xs">
+                            <button className="px-3 py-1.5 rounded-full bg-rose-600 text-white font-bold text-[10px] sm:text-xs">
                               End Call
                             </button>
                           </div>
@@ -457,48 +454,47 @@ function CinematicHero() {
               {activeSlide === 2 && (
                 <motion.div
                   key="slide-analytics"
-                  initial={{ opacity: 0, rotateX: 65, y: 140, scale: 0.82 }}
-                  animate={{ opacity: 1, rotateX: 0, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, rotateX: -65, y: -140, scale: 0.82 }}
-                  transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                  style={{ transformStyle: "preserve-3d" }}
+                  initial={{ opacity: 0, scale: 0.9, y: 30 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: -30 }}
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="w-full"
                 >
-                  <div className="bg-white/95 backdrop-blur-2xl p-5 sm:p-8 rounded-3xl border border-white text-slate-900 shadow-2xl shadow-fuchsia-500/10 space-y-5 sm:space-y-6">
-                    <div className="flex justify-between items-center pb-4 border-b border-slate-100">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-2xl bg-slate-950 flex items-center justify-center text-white font-bold shadow-md">
-                          <BarChart3 className="w-5 h-5 text-fuchsia-400" />
+                  <div className="bg-white/95 backdrop-blur-2xl p-4 sm:p-7 rounded-3xl border border-slate-200/80 text-slate-900 shadow-2xl shadow-fuchsia-500/10 space-y-4 sm:space-y-6">
+                    <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+                      <div className="flex items-center gap-2.5 sm:gap-3">
+                        <div className="h-9 sm:h-10 w-9 sm:w-10 rounded-2xl bg-slate-950 flex items-center justify-center text-white font-bold shadow-md shrink-0">
+                          <BarChart3 className="w-4.5 sm:w-5 h-4.5 sm:h-5 text-fuchsia-400" />
                         </div>
                         <div>
                           <h4 className="font-bold text-xs sm:text-sm text-slate-900">Live Sales Engine</h4>
                           <p className="text-[10px] sm:text-xs text-slate-400">Real-Time Intent Routing</p>
                         </div>
                       </div>
-                      <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[10px] sm:text-xs font-bold border border-emerald-200/60 flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> Active
+                      <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-emerald-50 text-emerald-600 text-[9px] sm:text-xs font-bold border border-emerald-200/60 flex items-center gap-1 shrink-0">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Active
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                      <div className="p-3 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200/60 space-y-1">
-                        <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Conversion Rate</p>
-                        <p className="text-xl sm:text-2xl font-extrabold text-fuchsia-600">+44.8%</p>
-                        <p className="text-[10px] text-emerald-600 font-semibold">↑ 12% vs text chat</p>
+                    <div className="grid grid-cols-2 gap-2 sm:gap-4">
+                      <div className="p-2.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200/60 space-y-0.5 sm:space-y-1">
+                        <p className="text-[9px] sm:text-[10px] uppercase tracking-wider text-slate-400 font-bold">Conversion Rate</p>
+                        <p className="text-lg sm:text-2xl font-extrabold text-fuchsia-600">+44.8%</p>
+                        <p className="text-[9px] sm:text-[10px] text-emerald-600 font-semibold">↑ 12% vs text</p>
                       </div>
-                      <div className="p-3 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200/60 space-y-1">
-                        <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Connect Latency</p>
-                        <p className="text-xl sm:text-2xl font-extrabold text-slate-900">3.2s</p>
-                        <p className="text-[10px] text-slate-400 font-medium">Instant Connection</p>
+                      <div className="p-2.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200/60 space-y-0.5 sm:space-y-1">
+                        <p className="text-[9px] sm:text-[10px] uppercase tracking-wider text-slate-400 font-bold">Connect Latency</p>
+                        <p className="text-lg sm:text-2xl font-extrabold text-slate-900">3.2s</p>
+                        <p className="text-[9px] sm:text-[10px] text-slate-400 font-medium">Instant Live</p>
                       </div>
                     </div>
 
-                    <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200/60 space-y-3">
-                      <div className="flex justify-between items-center text-xs">
+                    <div className="p-3 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200/60 space-y-2.5 sm:space-y-3">
+                      <div className="flex justify-between items-center text-[10px] sm:text-xs">
                         <span className="font-bold text-slate-700">Agent Dispatch Speed</span>
                         <span className="font-mono text-fuchsia-600 font-bold">Instant</span>
                       </div>
-                      <div className="h-2 rounded-full bg-slate-200 overflow-hidden">
+                      <div className="h-1.5 sm:h-2 rounded-full bg-slate-200 overflow-hidden">
                         <motion.div 
                           initial={{ width: 0 }}
                           animate={{ width: "88%" }}
@@ -508,9 +504,9 @@ function CinematicHero() {
                       </div>
                     </div>
 
-                    <div className="pt-2 flex items-center justify-between text-[11px] sm:text-xs font-bold text-slate-400">
-                      <span>SOC 2 Type II Certified</span>
-                      <span className="text-fuchsia-500 text-[10px] sm:text-xs">Auto-Rotating ↻</span>
+                    <div className="pt-1.5 flex items-center justify-between text-[10px] sm:text-xs font-bold text-slate-400">
+                      <span>SOC 2 Certified</span>
+                      <span className="text-fuchsia-500 text-[9px] sm:text-xs">Auto-Rotating ↻</span>
                     </div>
                   </div>
                 </motion.div>
@@ -518,29 +514,28 @@ function CinematicHero() {
             </AnimatePresence>
           </div>
 
-          {/* Convenient Step Navigation Controls (Positioned Below Stage on Mobile, Clean Row) */}
-          <div className="z-40 mt-5 flex flex-row items-center justify-center gap-2 bg-white/90 backdrop-blur-xl p-1.5 sm:p-2 rounded-2xl border border-slate-200/80 shadow-xl shadow-slate-900/5 max-w-full overflow-x-auto">
+          {/* Convenient Step Navigation Controls (100% Fluid & Compact on Mobile) */}
+          <div className="z-40 mt-4 flex flex-row items-center justify-center gap-1 sm:gap-2 bg-white/90 backdrop-blur-xl p-1 sm:p-1.5 rounded-2xl border border-slate-200/80 shadow-lg shadow-slate-900/5 max-w-full">
             {[
-              { id: 0, label: "01", title: "Product Card" },
-              { id: 1, label: "02", title: "Live Widget" },
-              { id: 2, label: "03", title: "Sales Engine" },
+              { id: 0, label: "01", title: "Product" },
+              { id: 1, label: "02", title: "Widget" },
+              { id: 2, label: "03", title: "Engine" },
             ].map((slide) => (
               <button
                 key={slide.id}
                 onClick={() => setActiveSlide(slide.id)}
-                title={slide.title}
-                className={`group relative flex items-center gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl transition-all duration-300 cursor-pointer ${
+                className={`group relative flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl transition-all duration-300 cursor-pointer ${
                   activeSlide === slide.id
                     ? "bg-slate-900 text-white shadow-md shadow-slate-950/20 scale-105"
                     : "bg-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-100/80"
                 }`}
               >
-                <span className={`w-6 sm:w-7 h-6 sm:h-7 rounded-lg flex items-center justify-center text-[10px] font-extrabold transition-colors ${
+                <span className={`w-5 sm:w-6 h-5 sm:h-6 rounded-lg flex items-center justify-center text-[9px] sm:text-[10px] font-extrabold transition-colors ${
                   activeSlide === slide.id ? "bg-fuchsia-500 text-white shadow-sm" : "bg-slate-100 text-slate-600"
                 }`}>
                   {slide.label}
                 </span>
-                <span className="text-[11px] sm:text-xs font-bold whitespace-nowrap pr-0.5">
+                <span className="text-[10px] sm:text-xs font-bold whitespace-nowrap">
                   {slide.title}
                 </span>
               </button>
